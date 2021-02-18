@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/listViewBox.dart';
 import 'package:zukses_app_1/component/listviewboxmeeting.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/util/util.dart';
+import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
         new GestureDetector(
           onTap: () {
             print("Container clicked");
-            tapHour();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CameraInstruction()),
+            );
+            //tapHour();
           },
           child: new Container(
               width: double.infinity,
