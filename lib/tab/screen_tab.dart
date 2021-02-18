@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/tab/screen_home.dart';
 import 'package:zukses_app_1/tab/screen_meeting.dart';
 import 'package:zukses_app_1/tab/screen_task.dart';
@@ -6,16 +7,6 @@ import 'package:zukses_app_1/tab/screen_attendance.dart';
 
 class ScreenTab extends StatefulWidget {
   ScreenTab({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -44,9 +35,7 @@ class _ScreenTab extends State<ScreenTab> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Zukses'),
-      ),
+      backgroundColor: colorBackground,
       body: screenList[_currentScreenIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped,
