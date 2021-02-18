@@ -4,16 +4,18 @@ import 'package:intl/intl.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 // ignore: must_be_immutable
-class ListViewBoxMeeting extends StatelessWidget {
-  ListViewBoxMeeting({
+class ListViewBox extends StatelessWidget {
+  ListViewBox({
     Key key,
-    this.meetingtitle,
-    this.meetingdetail,
-    this.status1,
-    this.status2,
+    this.title,
+    this.detail,
+    this.viewType,
+    this.widget1,
+    this.widget2,
   }) : super(key: key);
 
-  final String meetingtitle, meetingdetail, status1, status2;
+  final String title, detail, viewType;
+  final Widget widget1, widget2;
 
   DateFormat dateFormat = DateFormat.yMMMMd();
 
@@ -24,7 +26,7 @@ class ListViewBoxMeeting extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
             decoration: BoxDecoration(
-              color: colorNeutral130,
+              color: colorBackground,
               border: Border(
                 bottom: BorderSide(width: 1.0, color: colorNeutral2),
               ),
@@ -39,27 +41,30 @@ class ListViewBoxMeeting extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        meetingtitle,
+                        title,
                         style: TextStyle(fontSize: 14, color: colorPrimary),
                       ),
                     ),
                     Text(
-                      meetingdetail,
+                      detail,
                       style: TextStyle(fontSize: 12, color: colorNeutral2),
                     )
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    FaIcon(FontAwesomeIcons.tasks, color: colorSecondaryYellow),
-                    SizedBox(width: 20),
-                    FaIcon(
-                      FontAwesomeIcons.tasks,
-                      color: colorSecondaryRed,
-                    )
-                  ],
-                )
+                viewType == "meeting"
+                    ? Container()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          FaIcon(FontAwesomeIcons.tasks,
+                              color: colorSecondaryYellow),
+                          SizedBox(width: 20),
+                          FaIcon(
+                            FontAwesomeIcons.tasks,
+                            color: colorSecondaryRed,
+                          )
+                        ],
+                      )
               ],
             )));
   }
