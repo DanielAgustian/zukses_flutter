@@ -1,21 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/constant/constant.dart';
 
-class LongButton extends StatelessWidget {
-  const LongButton({
+class LongButtonIcon extends StatelessWidget {
+  const LongButtonIcon({
     Key key,
     @required this.size,
     this.onClick,
     this.title,
     this.bgColor,
     this.textColor,
+    this.iconWidget,
   }) : super(key: key);
 
   final Size size;
   final Function onClick;
   final String title;
   final Color bgColor, textColor;
+  final Widget iconWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +25,22 @@ class LongButton extends StatelessWidget {
       textColor: textColor,
       color: bgColor,
       onPressed: onClick,
-      shape:
-          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
+      shape: new RoundedRectangleBorder(
+        borderRadius: new BorderRadius.circular(10.0),
+      ),
       child: Container(
-        width: size.width ,
+        width: size.width,
         height: 40,
-        child: Center(
-          child: Text(
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          iconWidget,
+          SizedBox(width: 10),
+          Text(
             title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-        ),
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          )
+        ]),
       ),
     );
   }

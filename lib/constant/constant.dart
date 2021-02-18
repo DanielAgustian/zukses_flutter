@@ -26,3 +26,5 @@ const colorNeutral2 = Color(0xFFC4C4C4);
 const colorClear = Color(0xFF1BB55C);
 const colorError = Color(0xFFE74C3C);
 const colorBackground = Color(0xFFF9FBFB);
+const colorGoogle = Color(0xFF121212);
+const colorFacebook = Color(0xFF142B6F);

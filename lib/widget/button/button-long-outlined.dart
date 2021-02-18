@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class LongButtonOutline extends StatelessWidget {
   const LongButtonOutline({
     Key key,
@@ -29,7 +28,7 @@ class LongButtonOutline extends StatelessWidget {
           borderRadius: new BorderRadius.circular(10.0),
           side: BorderSide(color: outlineColor, width: 1)),
       child: Container(
-        width: size.width * 0.7,
+        width: size.width,
         height: 40,
         child: Center(
           child: Text(
