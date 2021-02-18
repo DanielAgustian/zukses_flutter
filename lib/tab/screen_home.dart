@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/util/util.dart';
+import 'package:zukses_app_1/constant/constant.dart'; 
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {

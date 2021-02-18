@@ -29,10 +29,8 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   bool _passValidator = false;
   bool _emailValidator = false;
 
-  void register() {
-    bool sukses = false;
-    if (textEmail.text == "") {
-      sukses = false;
+  void register() { 
+    if (textEmail.text == "") { 
       setState(() {
         _emailValidator = true;
       });
@@ -272,7 +270,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                             ? FontAwesomeIcons.solidEye
                                             : FontAwesomeIcons.solidEyeSlash,
                                         color: colorNeutral2,
-                                      ),
+                                      ),  
                                       onPressed: () {
                                         setState(() {
                                           _obscureText1 = !_obscureText1;
