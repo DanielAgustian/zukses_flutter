@@ -44,7 +44,10 @@ class _ScreenTab extends State<ScreenTab> {
             _currentScreenIndex, // this will be set when a new tab is tapped
         items: [
           BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
+            icon: new Icon(
+              Icons.home_filled,
+              size: 27,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
@@ -52,7 +55,7 @@ class _ScreenTab extends State<ScreenTab> {
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.card_travel_outlined), label: 'Task'),
+              icon: FaIcon(FontAwesomeIcons.clipboardList), label: 'Task'),
           BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.solidCalendar), label: 'Schedule'),
         ],
@@ -60,10 +63,9 @@ class _ScreenTab extends State<ScreenTab> {
         selectedFontSize: 14,
         showUnselectedLabels: true,
         selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
-        unselectedItemColor: Colors.grey,
-        selectedIconTheme:
-            IconThemeData(color: Color.fromRGBO(20, 43, 111, 0.9)),
-        unselectedIconTheme: IconThemeData(color: Colors.grey),
+        unselectedItemColor: colorPrimary70,
+        selectedIconTheme: IconThemeData(color: colorPrimary),
+        unselectedIconTheme: IconThemeData(color: colorPrimary70),
       ),
     );
   }

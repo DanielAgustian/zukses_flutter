@@ -17,7 +17,10 @@ class AttendanceScreen extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _AttendanceScreen extends State<AttendanceScreen> {
   String kata = "";
-  final getDayName = DateFormat.yMMMMEEEEd();
+  final getDayName = DateFormat('EEEE');
+  final getDayNumber = DateFormat('d');
+  final getMonthName = DateFormat('MMMM');
+  final getYearNumber = DateFormat('y');
   List<AbsenceTime> absensi = dummy;
   AbsenceTime selected;
   DateTime _currentDate = DateTime.now();
@@ -76,19 +79,38 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colorBackground,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: colorBackground,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text(
+          "Attendance Detail",
+          style: TextStyle(
+              color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
+        ),
+        actions: [
+          IconButton(
+            splashColor: Colors.transparent,
+            icon: FaIcon(
+              FontAwesomeIcons.bars,
+              color: colorPrimary,
+            ),
+            onPressed: () {},
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 16.0),
               child: CalendarCarousel<Event>(
                 onDayPressed: (DateTime date, List<Event> events) {
                   selectDate(date, events);
                 },
-                weekendTextStyle:
-                    TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                thisMonthDayBorderColor: Colors.grey,
+                markedDatesMap: _markedDateMap,
+                height: 420.0,
                 customDayBuilder: (
                   bool isSelectable,
                   int index,
@@ -109,82 +131,110 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                   // }
                   return null;
                 },
-                selectedDayTextStyle: TextStyle(
-                    color: colorBackground, fontWeight: FontWeight.bold),
-                selectedDayButtonColor: colorPrimary,
+                //Formating header
+                headerTextStyle: TextStyle(
+                    color: colorPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+                iconColor: colorPrimary,
+                //Formating weekend date
+                weekendTextStyle:
+                    TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+                //Formating today
                 todayBorderColor: colorPrimary,
                 todayButtonColor: colorBackground,
                 todayTextStyle: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.bold,
                 ),
-                headerTextStyle: TextStyle(
-                    color: colorPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-                iconColor: colorPrimary,
-                markedDatesMap: _markedDateMap,
-                height: 420.0,
+                //Formating selected day
                 selectedDateTime: _currentDate,
+                selectedDayTextStyle: TextStyle(
+                    color: colorBackground, fontWeight: FontWeight.bold),
+                selectedDayButtonColor: colorPrimary,
+                //Formating day
                 daysTextStyle:
                     TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                weekDayBackgroundColor: colorPrimary,
-                weekDayFormat: WeekdayFormat.narrow,
+                //Formating name of day in Week
                 weekFormat: false,
+                weekDayBackgroundColor: colorPrimary,
+                weekdayTextStyle: TextStyle(color: colorBackground),
+                weekDayFormat: WeekdayFormat.narrow,
               ),
             ),
             Container(
               child: Text("$kata"),
             ),
-            RichText(
-              text: TextSpan(
-                text: '${getDayName.format(_currentDate)}, ',
-                style: TextStyle(color: colorPrimary, fontSize: 20),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: 'bold',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: ' world!'),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                text: TextSpan(
+                  text: '${getDayName.format(_currentDate)}, ',
+                  style: TextStyle(color: colorPrimary, fontSize: 20),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: '${getDayNumber.format(_currentDate)} ',
+                    ),
+                    TextSpan(
+                      text: '${getMonthName.format(_currentDate)} ',
+                    ),
+                    TextSpan(
+                      text: '${getYearNumber.format(_currentDate)} ',
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: colorPrimary, width: 2)),
+                    child: Text(
+                      "09.10",
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20),
+                    ),
+                  ),
+                  SizedBox(width: 25),
+                  FaIcon(
+                    FontAwesomeIcons.arrowRight,
+                    color: colorPrimary,
+                  ),
+                  SizedBox(width: 25),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: colorPrimary, width: 2)),
+                    child: Text(
+                      "09.10",
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20),
+                    ),
+                  ),
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: colorPrimary, width: 2)),
-                  child: Text(
-                    "09.10",
-                    style: TextStyle(
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20),
-                  ),
-                ),
-                SizedBox(width: 25),
-                FaIcon(
-                  FontAwesomeIcons.arrowRight,
-                  color: colorPrimary,
-                ),
-                SizedBox(width: 25),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: colorPrimary, width: 2)),
-                  child: Text(
-                    "09.10",
-                    style: TextStyle(
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20),
-                  ),
-                ),
-              ],
-            ),
+            SizedBox(height: 15),
+            Container(
+                child: Text(
+              "Overtime : 0 hrs",
+              style: TextStyle(color: colorPrimary, fontSize: 20),
+            ))
           ],
         ),
       ),
