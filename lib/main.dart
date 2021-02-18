@@ -32,6 +32,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var dayOfWeek = 1;
+  DateTime date = DateTime.now();
+
+  DateTime findFirstDateOfTheWeek(DateTime dateTime) {
+    return dateTime.subtract(Duration(days: dateTime.weekday - 1));
+  }
+
+  DateTime findLastDateOfTheWeek(DateTime dateTime) {
+    return dateTime
+        .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(date.weekday);
+    print(findFirstDateOfTheWeek(date));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
