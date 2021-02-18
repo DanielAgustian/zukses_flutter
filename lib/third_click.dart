@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
-import 'package:zukses_app_1/widget/button/button-long-outlined.dart';
-import 'package:zukses_app_1/widget/button/button-long.dart';
-import 'package:zukses_app_1/widget/onboarding/onboarding-card.dart';
+import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 
 class ThirdPage extends StatefulWidget {
   ThirdPage({Key key, this.title}) : super(key: key);

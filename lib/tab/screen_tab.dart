@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/tab/screen_home.dart';
 import 'package:zukses_app_1/tab/screen_meeting.dart';
@@ -47,13 +48,13 @@ class _ScreenTab extends State<ScreenTab> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: new Icon(Icons.check),
+            icon: FaIcon(FontAwesomeIcons.solidCalendarAlt),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.card_travel_outlined), label: 'Task'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.schedule), label: 'Schedule'),
+              icon: FaIcon(FontAwesomeIcons.solidCalendar), label: 'Schedule'),
         ],
         unselectedFontSize: 12,
         selectedFontSize: 14,

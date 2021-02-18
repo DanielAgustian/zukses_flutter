@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:zukses_app_1/model/dummy-model.dart';
 
 class AttendanceScreen extends StatefulWidget {
   AttendanceScreen({Key key, this.title}) : super(key: key);
@@ -14,88 +16,59 @@ class AttendanceScreen extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _AttendanceScreen extends State<AttendanceScreen> {
+  String kata = "";
+  final getDayName = DateFormat.yMMMMEEEEd();
+  List<AbsenceTime> absensi = dummy;
+  AbsenceTime selected;
   DateTime _currentDate = DateTime.now();
   DateTime _currentDate2 = DateTime.now();
   String _currentMonth = DateFormat.yMMM().format(DateTime.now());
   DateTime _targetDateTime = DateTime.now();
-//  List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
-  static Widget _eventIcon = new Container(
-    decoration: new BoxDecoration(
+
+  static Widget _eventIcon = Container(
+    decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(1000)),
         border: Border.all(color: Colors.blue, width: 2.0)),
-    child: new Icon(
+    child: Icon(
       Icons.person,
       color: Colors.amber,
     ),
   );
 
-  EventList<Event> _markedDateMap = new EventList<Event>(
-    events: {
-      new DateTime.now(): [
-        new Event(
-          date: new DateTime.now(),
-          title: 'Event 1',
-          icon: _eventIcon,
-          dot: Container(
-            margin: EdgeInsets.symmetric(horizontal: 1.0),
-            color: Colors.red,
-            height: 5.0,
-            width: 5.0,
-          ),
-        ),
-        new Event(
-          date: new DateTime.now(),
-          title: 'Event 2',
-          icon: _eventIcon,
-        ),
-        new Event(
-          date: new DateTime.now(),
-          title: 'Event 3',
-          icon: _eventIcon,
-        ),
-      ],
-    },
-  );
+  EventList<Event> _markedDateMap = EventList<Event>();
 
   CalendarCarousel _calendarCarousel, _calendarCarouselNoHeader;
+
+  void selectDate(DateTime date, List<Event> events) {
+    setState(() {
+      _currentDate = date;
+    });
+
+    if (events.length != 0) {
+      setState(() {
+        selected = absensi.where((data) {
+          return data.id == events[0].title;
+        }).toList()[0];
+      });
+    }
+
+    setState(() {
+      kata = "$_currentDate";
+    });
+  }
 
   @override
   void initState() {
     /// Add more events to _markedDateMap EventList
-    _markedDateMap.add(
-        new DateTime.now(),
-        new Event(
-          date: new DateTime.now(),
-          title: 'Event 5',
-          icon: _eventIcon,
-        ));
-
-    _markedDateMap.add(
-        new DateTime.now(),
-        new Event(
-          date: new DateTime.now(),
-          title: 'Event 4',
-          icon: _eventIcon,
-        ));
-
-    _markedDateMap.addAll(new DateTime.now(), [
-      new Event(
-        date: new DateTime.now(),
-        title: 'Event 1',
-        icon: _eventIcon,
-      ),
-      new Event(
-        date: new DateTime.now(),
-        title: 'Event 2',
-        icon: _eventIcon,
-      ),
-      new Event(
-        date: new DateTime.now(),
-        title: 'Event 3',
-        icon: _eventIcon,
-      ),
-    ]);
+    absensi.forEach((data) {
+      _markedDateMap.add(
+          DateTime.parse(data.date),
+          Event(
+              date: DateTime.parse(data.date),
+              title: data.id,
+              dot: data.status == "late" ? dotRed : dotGreen));
+    });
     super.initState();
   }
 
@@ -106,17 +79,17 @@ class _AttendanceScreen extends State<AttendanceScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 16.0),
               child: CalendarCarousel<Event>(
                 onDayPressed: (DateTime date, List<Event> events) {
-                  this.setState(() => _currentDate = date);
+                  selectDate(date, events);
                 },
                 weekendTextStyle:
                     TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
                 thisMonthDayBorderColor: Colors.grey,
                 customDayBuilder: (
-                  /// you can provide your own build function to make custom day containers
                   bool isSelectable,
                   int index,
                   bool isSelectedDay,
@@ -136,23 +109,81 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                   // }
                   return null;
                 },
+                selectedDayTextStyle: TextStyle(
+                    color: colorBackground, fontWeight: FontWeight.bold),
+                selectedDayButtonColor: colorPrimary,
+                todayBorderColor: colorPrimary,
+                todayButtonColor: colorBackground,
+                todayTextStyle: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
                 headerTextStyle: TextStyle(
                     color: colorPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 20),
                 iconColor: colorPrimary,
-                weekDayBackgroundColor: colorPrimary,
-                weekDayFormat: WeekdayFormat.narrow,
-                weekFormat: false,
                 markedDatesMap: _markedDateMap,
                 height: 420.0,
                 selectedDateTime: _currentDate,
-                headerText: '${DateFormat.yMMMM().format(DateTime.now())}',
                 daysTextStyle:
                     TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-
-                /// null for not rendering any border, true for circular border, false for rectangular border
+                weekDayBackgroundColor: colorPrimary,
+                weekDayFormat: WeekdayFormat.narrow,
+                weekFormat: false,
               ),
+            ),
+            Container(
+              child: Text("$kata"),
+            ),
+            RichText(
+              text: TextSpan(
+                text: '${getDayName.format(_currentDate)}, ',
+                style: TextStyle(color: colorPrimary, fontSize: 20),
+                children: <TextSpan>[
+                  TextSpan(
+                      text: 'bold',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' world!'),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: colorPrimary, width: 2)),
+                  child: Text(
+                    "09.10",
+                    style: TextStyle(
+                        color: colorPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
+                SizedBox(width: 25),
+                FaIcon(
+                  FontAwesomeIcons.arrowRight,
+                  color: colorPrimary,
+                ),
+                SizedBox(width: 25),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: colorPrimary, width: 2)),
+                  child: Text(
+                    "09.10",
+                    style: TextStyle(
+                        color: colorPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

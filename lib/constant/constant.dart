@@ -28,3 +28,21 @@ const colorError = Color(0xFFE74C3C);
 const colorBackground = Color(0xFFF9FBFB);
 const colorGoogle = Color(0xFF121212);
 const colorFacebook = Color(0xFF142B6F);
+
+Widget dotYellow = Container(
+    width: 5,
+    height: 5,
+    decoration: BoxDecoration(
+        color: colorSecondaryYellow, borderRadius: BorderRadius.circular(10)));
+
+Widget dotGreen = Container(
+    width: 5,
+    height: 5,
+    decoration: BoxDecoration(
+        color: colorClear, borderRadius: BorderRadius.circular(10)));
+
+Widget dotRed = Container(
+    width: 5,
+    height: 5,
+    decoration: BoxDecoration(
+        color: colorSecondaryRed, borderRadius: BorderRadius.circular(10)));
