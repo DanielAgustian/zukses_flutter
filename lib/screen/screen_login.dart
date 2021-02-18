@@ -2,19 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:zukses_app_1/widget/button/button-long-icon.dart';
+import 'package:zukses_app_1/widget/button/button-long.dart';
 
 class ScreenLogin extends StatefulWidget {
   ScreenLogin({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -24,150 +18,179 @@ class ScreenLogin extends StatefulWidget {
 
 class _ScreenLogin extends State<ScreenLogin> {
   bool _obscureText = true;
+  TextEditingController textUsername = new TextEditingController();
+  TextEditingController textPassword = new TextEditingController();
+  bool _usernameValidator = false;
+  bool _passValidator = false;
+
+  void login() {
+    if (textUsername.text == "") {
+      setState(() {
+        _usernameValidator = true;
+      });
+    } else {
+      setState(() {
+        _usernameValidator = false;
+      });
+    }
+    if (textPassword.text == "") {
+      setState(() {
+        _passValidator = true;
+      });
+    } else {
+      setState(() {
+        _passValidator = false;
+      });
+    }
+
+    if (!_usernameValidator && !_passValidator) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenTab()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text("Zukses"),
-        ),
+        backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
+                padding: EdgeInsets.all(20),
                 alignment: Alignment.topCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
                       Text(
                         "ZUKSES",
                         style: GoogleFonts.lato(
                             textStyle: TextStyle(
-                                color: Color.fromRGBO(20, 43, 111, 0.9),
-                                letterSpacing: 1.5),
+                                color: colorPrimary, letterSpacing: 1.5),
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 40),
-                      SizedBox(
-                        width: 250,
-                        child: RaisedButton(
-                          padding: const EdgeInsets.all(8.0),
-                          textColor: Colors.white,
-                          color: Colors.black,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScreenLogin()),
-                            );
-                          },
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10.0),
-                          ),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('icon/google_icon.png'),
-                                SizedBox(width: 10),
-                                Text(
-                                  "Sign in with Google",
-                                  style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                    fontSize: 16,
-                                  )),
-                                )
-                              ]),
+                      SizedBox(height: size.width * 0.3),
+                      LongButtonIcon(
+                        size: size,
+                        title: "Sign In with Google",
+                        bgColor: colorGoogle,
+                        textColor: colorBackground,
+                        iconWidget: Image.asset(
+                          'icon/google_icon.png',
+                          scale: 0.6,
                         ),
+                        onClick: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenLogin()),
+                          );
+                        },
                       ),
                       SizedBox(
-                        width: 250,
-                        child: RaisedButton(
-                            padding: const EdgeInsets.all(8.0),
-                            textColor: Colors.white,
-                            color: Color.fromRGBO(20, 43, 111, 0.9),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ScreenLogin()),
-                              );
-                            },
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(10.0),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('icon/facebook_icon.png'),
-                                SizedBox(width: 20),
-                                new Text(
-                                  "Sign in with Facebook",
-                                  style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                    fontSize: 16,
-                                  )),
-                                ),
-                              ],
-                            )),
+                        height: 10,
+                      ),
+                      LongButtonIcon(
+                        size: size,
+                        title: "Sign In with Google",
+                        bgColor: colorFacebook,
+                        textColor: colorBackground,
+                        iconWidget: Image.asset(
+                          'icon/facebook_icon.png',
+                          scale: 0.6,
+                        ),
+                        onClick: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenLogin()),
+                          );
+                        },
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 25,
                       ),
                       Text(
                         "OR",
-                        style: GoogleFonts.lato(
-                            textStyle:
-                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        style:
+                            TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
                       ),
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                      SizedBox(height: 25),
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                            border: _usernameValidator
+                                ? Border.all(color: colorError)
+                                : Border.all(color: Colors.transparent),
+                            color: colorBackground,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, 0),
+                                  color: Color.fromRGBO(240, 239, 242, 1),
+                                  blurRadius: 15),
+                            ],
+                            borderRadius: BorderRadius.circular(5)),
                         child: TextFormField(
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 18),
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.text,
+                          onChanged: (val) {},
+                          controller: textUsername,
                           decoration: InputDecoration(
-                            hintText: 'Username',
-                            labelStyle: TextStyle(color: Colors.black54),
-                            hintStyle: TextStyle(color: Colors.black54),
-                          ),
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 20),
+                              hintText: "Username",
+                              hintStyle: TextStyle(
+                                color: _usernameValidator
+                                    ? colorError
+                                    : colorNeutral1,
+                              ),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                            border: _passValidator
+                                ? Border.all(color: colorError)
+                                : Border.all(color: Colors.transparent),
+                            color: colorBackground,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, 0),
+                                  color: Color.fromRGBO(240, 239, 242, 1),
+                                  blurRadius: 15),
+                            ],
+                            borderRadius: BorderRadius.circular(5)),
                         child: TextFormField(
-                          //controller: textPassword,
-                          cursorColor: Colors.blue,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 18),
                           obscureText: _obscureText,
+                          textInputAction: TextInputAction.go,
+                          onChanged: (val) {},
+                          controller: textPassword,
                           decoration: InputDecoration(
-                              hintText: 'Password',
-                              // _passValidator == '' ? null : _passValidator,
-                              labelStyle: TextStyle(color: Colors.black54),
-                              hintStyle: TextStyle(color: Colors.black54),
-                              focusColor: Colors.black,
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black54),
+                              contentPadding:
+                                  EdgeInsets.only(left: 20, top: 15),
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                color:
+                                    _passValidator ? colorError : colorNeutral1,
                               ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                               suffixIcon: IconButton(
                                 icon: FaIcon(
                                   _obscureText
                                       ? FontAwesomeIcons.solidEye
-                                      : FontAwesomeIcons.eye,
-                                  color: Colors.black,
+                                      : FontAwesomeIcons.solidEyeSlash,
+                                  color: colorNeutral2,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -177,44 +200,27 @@ class _ScreenLogin extends State<ScreenLogin> {
                               )),
                         ),
                       ),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                              padding: EdgeInsets.fromLTRB(30, 10, 40, 0),
-                              child: Text(
-                                "Forgot Password?",
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      fontSize: 12,
-                                      color: Color.fromRGBO(20, 43, 111, 0.9),
-                                    ),
-                                    fontWeight: FontWeight.bold),
-                              ))),
-                      SizedBox(height: 40),
                       SizedBox(
-                        width: 250,
-                        child: RaisedButton(
-                          padding: const EdgeInsets.all(8.0),
-                          textColor: Colors.white,
-                          color: Color.fromRGBO(20, 43, 111, 0.9),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScreenTab()),
-                            );
-                          },
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10.0),
-                          ),
-                          child: new Text(
-                            "Login",
+                        height: 15,
+                      ),
+                      Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Forgot Password?",
                             style: GoogleFonts.lato(
                                 textStyle: TextStyle(
-                              fontSize: 16,
-                            )),
-                          ),
-                        ),
+                                  fontSize: 12,
+                                  color: Color.fromRGBO(20, 43, 111, 0.9),
+                                ),
+                                fontWeight: FontWeight.bold),
+                          )),
+                      SizedBox(height: 40),
+                      LongButton(
+                        title: "Log In",
+                        bgColor: colorPrimary,
+                        textColor: colorBackground,
+                        onClick: login,
+                        size: size,
                       ),
                     ]))));
   }
