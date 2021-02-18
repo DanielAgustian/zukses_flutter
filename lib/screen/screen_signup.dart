@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
-import 'package:zukses_app_1/widget/button/button-long-icon.dart';
-import 'package:zukses_app_1/widget/button/button-long.dart';
+import 'package:zukses_app_1/component/button/button-long-icon.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
 
 class ScreenSignUp extends StatefulWidget {
   ScreenSignUp({Key key, this.title}) : super(key: key);
@@ -30,9 +30,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   bool _emailValidator = false;
 
   void register() {
-    bool sukses = false;
     if (textEmail.text == "") {
-      sukses = false;
       setState(() {
         _emailValidator = true;
       });

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/widget/button/button-long.dart';
 
 class CameraInstruction extends StatefulWidget {
   CameraInstruction({Key key, this.title}) : super(key: key);

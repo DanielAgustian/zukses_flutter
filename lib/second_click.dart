@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/third_click.dart';
-import 'package:zukses_app_1/widget/onboarding/onboarding-card.dart';
+import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 
 class SecondPage extends StatefulWidget {
   SecondPage({Key key, this.title}) : super(key: key);
