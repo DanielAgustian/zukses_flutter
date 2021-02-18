@@ -24,24 +24,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   List<AbsenceTime> absensi = dummy;
   AbsenceTime selected;
   DateTime _currentDate = DateTime.now();
-  DateTime _currentDate2 = DateTime.now();
-  String _currentMonth = DateFormat.yMMM().format(DateTime.now());
-  DateTime _targetDateTime = DateTime.now();
-
-  static Widget _eventIcon = Container(
-    decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(1000)),
-        border: Border.all(color: Colors.blue, width: 2.0)),
-    child: Icon(
-      Icons.person,
-      color: Colors.amber,
-    ),
-  );
+  // DateTime _currentDate2 = DateTime.now();
+  // String _currentMonth = DateFormat.yMMMM().format(DateTime.now());
+  // DateTime _targetDateTime = DateTime.now();
 
   EventList<Event> _markedDateMap = EventList<Event>();
-
-  CalendarCarousel _calendarCarousel, _calendarCarouselNoHeader;
 
   void selectDate(DateTime date, List<Event> events) {
     setState(() {
@@ -104,7 +91,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 16.0),
+              margin: EdgeInsets.symmetric(horizontal: 20),
               child: CalendarCarousel<Event>(
                 onDayPressed: (DateTime date, List<Event> events) {
                   selectDate(date, events);
@@ -158,7 +145,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                 //Formating name of day in Week
                 weekFormat: false,
                 weekDayBackgroundColor: colorPrimary,
-                weekdayTextStyle: TextStyle(color: colorBackground),
+                weekdayTextStyle: TextStyle(color: colorBackground, height: 2),
                 weekDayFormat: WeekdayFormat.narrow,
               ),
             ),
