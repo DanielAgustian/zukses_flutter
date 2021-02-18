@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/listViewBox.dart';
+import 'package:zukses_app_1/component/listviewboxmeeting.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +15,10 @@ class HomeScreen extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _HomeScreenState extends State<HomeScreen> {
   String stringTap = "Clock In";
+  var taskName = ["Task 1", "task 2"];
+  var taskDetail = ["Task 1", "task 2"];
+  var meetName = ["Meeting 1", "Meeting 2"];
+  var meetTime = ["14:00-15:00", "19:00-20:00"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,8 +132,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 80,
                   decoration: BoxDecoration(color: Colors.white, boxShadow: [
                     BoxShadow(
-                      color: Colors.black45.withOpacity(0.2),
-                      spreadRadius: 4,
+                      color: colorNeutral2.withOpacity(0.2),
+                      spreadRadius: 2,
                       blurRadius: 10,
                       offset: Offset(0, 3),
                     )
@@ -163,8 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 80,
                   decoration: BoxDecoration(color: Colors.white, boxShadow: [
                     BoxShadow(
-                      color: Colors.black45.withOpacity(0.2),
-                      spreadRadius: 4,
+                      color: colorNeutral2.withOpacity(0.2),
+                      spreadRadius: 2,
                       blurRadius: 10,
                       offset: Offset(0, 3),
                     )
@@ -196,7 +202,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             )),
-        Text("//==========List for Task will be Here======//"),
+        Container(
+          padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: colorNeutral2.withOpacity(0.2),
+              spreadRadius: 4,
+              blurRadius: 10,
+              offset: Offset(0, 3),
+            )
+          ]),
+          child: ListView.builder(
+            itemCount: taskName.length,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListViewBox(
+                tasktitle: taskName[index],
+                taskdetail: taskDetail[index],
+              );
+            },
+          ),
+        ),
         Padding(
           padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
           child: Align(
@@ -294,6 +321,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             )),
+        Container(
+          padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: colorNeutral2.withOpacity(0.2),
+              spreadRadius: 4,
+              blurRadius: 10,
+              offset: Offset(0, 3),
+            )
+          ]),
+          child: ListView.builder(
+            itemCount: taskName.length,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListViewBoxMeeting(
+                meetingtitle: meetName[index],
+                meetingdetail: meetTime[index],
+              );
+            },
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        )
       ],
     )));
   }
