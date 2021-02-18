@@ -150,9 +150,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               ),
             ),
             Container(
-              child: Text("$kata"),
-            ),
-            Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               alignment: Alignment.centerLeft,
               child: RichText(
