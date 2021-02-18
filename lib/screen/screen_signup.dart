@@ -23,6 +23,77 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   TextEditingController textUsername = new TextEditingController();
   TextEditingController textPassword = new TextEditingController();
   TextEditingController textEmail = new TextEditingController();
+
+  bool _confirmPassValidator = false;
+  bool _usernameValidator = false;
+  bool _passValidator = false;
+  bool _emailValidator = false;
+
+  void register() {
+    bool sukses = false;
+    if (textEmail.text == "") {
+      sukses = false;
+      setState(() {
+        _emailValidator = true;
+      });
+    } else {
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+      if (!regex.hasMatch(textEmail.text)) {
+        setState(() {
+          _emailValidator = true;
+        });
+      } else {
+        setState(() {
+          _emailValidator = false;
+        });
+      }
+    }
+    if (textUsername.text == "") {
+      setState(() {
+        _usernameValidator = true;
+      });
+    } else {
+      setState(() {
+        _usernameValidator = false;
+      });
+    }
+    if (textPassword.text == "") {
+      setState(() {
+        _passValidator = true;
+      });
+    } else {
+      setState(() {
+        _passValidator = false;
+      });
+    }
+    if (textConfirmPassword.text == "") {
+      setState(() {
+        _confirmPassValidator = true;
+      });
+    } else {
+      if (textConfirmPassword.text != textPassword.text) {
+        setState(() {
+          _confirmPassValidator = true;
+          _passValidator = true;
+        });
+      }
+      setState(() {
+        _confirmPassValidator = false;
+      });
+    }
+    if (!_emailValidator &&
+        !_usernameValidator &&
+        !_passValidator &&
+        !_confirmPassValidator) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenTab()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -93,145 +164,172 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
                       ),
                       SizedBox(height: 25),
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          onChanged: (val) {},
-                          controller: textEmail,
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 20),
-                              hintText: "Email",
-                              hintStyle: TextStyle(
-                                color: colorNeutral1,
+                      Form(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: _emailValidator
+                                      ? Border.all(color: colorError)
+                                      : Border.all(color: Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        color: Color.fromRGBO(240, 239, 242, 1),
+                                        blurRadius: 15),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                textInputAction: TextInputAction.next,
+                                onChanged: (val) {},
+                                keyboardType: TextInputType.emailAddress,
+                                controller: textEmail,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    hintText: "Email",
+                                    hintStyle: TextStyle(
+                                      color: _emailValidator
+                                          ? colorError
+                                          : colorNeutral1,
+                                    ),
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none),
                               ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          onChanged: (val) {},
-                          controller: textUsername,
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 20),
-                              hintText: "Username",
-                              hintStyle: TextStyle(
-                                color: colorNeutral1,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: _usernameValidator
+                                      ? Border.all(color: colorError)
+                                      : Border.all(color: Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        color: Color.fromRGBO(240, 239, 242, 1),
+                                        blurRadius: 15),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                textInputAction: TextInputAction.next,
+                                onChanged: (val) {},
+                                controller: textUsername,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    hintText: "Username",
+                                    hintStyle: TextStyle(
+                                      color: _usernameValidator
+                                          ? colorError
+                                          : colorNeutral1,
+                                    ),
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none),
                               ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          obscureText: _obscureText1,
-                          textInputAction: TextInputAction.next,
-                          onChanged: (val) {},
-                          controller: textPassword,
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.only(left: 20, top: 15),
-                              hintText: "Password",
-                              hintStyle: TextStyle(
-                                color: colorNeutral1,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: _passValidator
+                                      ? Border.all(color: colorError)
+                                      : Border.all(color: Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        color: Color.fromRGBO(240, 239, 242, 1),
+                                        blurRadius: 15),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                obscureText: _obscureText1,
+                                textInputAction: TextInputAction.next,
+                                onChanged: (val) {},
+                                controller: textPassword,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.only(left: 20, top: 15),
+                                    hintText: "Password",
+                                    hintStyle: TextStyle(
+                                      color: _passValidator
+                                          ? colorError
+                                          : colorNeutral1,
+                                    ),
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    suffixIcon: IconButton(
+                                      icon: FaIcon(
+                                        _obscureText1
+                                            ? FontAwesomeIcons.solidEye
+                                            : FontAwesomeIcons.solidEyeSlash,
+                                        color: colorNeutral2,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscureText1 = !_obscureText1;
+                                        });
+                                      },
+                                    )),
                               ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              suffixIcon: IconButton(
-                                icon: FaIcon(
-                                  _obscureText1
-                                      ? FontAwesomeIcons.solidEye
-                                      : FontAwesomeIcons.eye,
-                                  color: colorNeutral2,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText1 = !_obscureText1;
-                                  });
-                                },
-                              )),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          obscureText: _obscureText2,
-                          textInputAction: TextInputAction.go,
-                          onChanged: (val) {},
-                          controller: textConfirmPassword,
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.only(left: 20, top: 15),
-                              hintText: "Confirm Password",
-                              hintStyle: TextStyle(
-                                color: colorNeutral1,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: _passValidator
+                                      ? Border.all(color: colorError)
+                                      : Border.all(color: Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        color: Color.fromRGBO(240, 239, 242, 1),
+                                        blurRadius: 15),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                obscureText: _obscureText2,
+                                textInputAction: TextInputAction.go,
+                                onChanged: (val) {},
+                                controller: textConfirmPassword,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.only(left: 20, top: 15),
+                                    hintText: "Confirm Password",
+                                    hintStyle: TextStyle(
+                                      color: _confirmPassValidator
+                                          ? colorError
+                                          : colorNeutral1,
+                                    ),
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    suffixIcon: IconButton(
+                                      icon: FaIcon(
+                                        _obscureText2
+                                            ? FontAwesomeIcons.solidEye
+                                            : FontAwesomeIcons.solidEyeSlash,
+                                        color: colorNeutral2,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscureText2 = !_obscureText2;
+                                        });
+                                      },
+                                    )),
                               ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              suffixIcon: IconButton(
-                                icon: FaIcon(
-                                  _obscureText2
-                                      ? FontAwesomeIcons.solidEye
-                                      : FontAwesomeIcons.eye,
-                                  color: colorNeutral2,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText2 = !_obscureText2;
-                                  });
-                                },
-                              )),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 40),
@@ -239,13 +337,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         title: "Sign Up",
                         bgColor: colorPrimary,
                         textColor: colorBackground,
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenTab()),
-                          );
-                        },
+                        onClick: register,
                         size: size,
                       ),
                     ]))));

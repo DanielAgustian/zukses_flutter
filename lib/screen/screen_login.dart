@@ -20,6 +20,37 @@ class _ScreenLogin extends State<ScreenLogin> {
   bool _obscureText = true;
   TextEditingController textUsername = new TextEditingController();
   TextEditingController textPassword = new TextEditingController();
+  bool _usernameValidator = false;
+  bool _passValidator = false;
+
+  void login() {
+    if (textUsername.text == "") {
+      setState(() {
+        _usernameValidator = true;
+      });
+    } else {
+      setState(() {
+        _usernameValidator = false;
+      });
+    }
+    if (textPassword.text == "") {
+      setState(() {
+        _passValidator = true;
+      });
+    } else {
+      setState(() {
+        _passValidator = false;
+      });
+    }
+
+    if (!_usernameValidator && !_passValidator) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenTab()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -93,6 +124,9 @@ class _ScreenLogin extends State<ScreenLogin> {
                       Container(
                         height: 50,
                         decoration: BoxDecoration(
+                            border: _usernameValidator
+                                ? Border.all(color: colorError)
+                                : Border.all(color: Colors.transparent),
                             color: colorBackground,
                             boxShadow: [
                               BoxShadow(
@@ -103,16 +137,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                             borderRadius: BorderRadius.circular(5)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (String val) {
-                            Pattern pattern =
-                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                            RegExp regex = new RegExp(pattern);
-                            if (!regex.hasMatch(val))
-                              return 'Enter Valid Email';
-                            else
-                              return null;
-                          },
+                          keyboardType: TextInputType.text,
                           onChanged: (val) {},
                           controller: textUsername,
                           decoration: InputDecoration(
@@ -120,7 +145,9 @@ class _ScreenLogin extends State<ScreenLogin> {
                                   EdgeInsets.symmetric(horizontal: 20),
                               hintText: "Username",
                               hintStyle: TextStyle(
-                                color: colorNeutral1,
+                                color: _usernameValidator
+                                    ? colorError
+                                    : colorNeutral1,
                               ),
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none),
@@ -132,6 +159,9 @@ class _ScreenLogin extends State<ScreenLogin> {
                       Container(
                         height: 50,
                         decoration: BoxDecoration(
+                            border: _passValidator
+                                ? Border.all(color: colorError)
+                                : Border.all(color: Colors.transparent),
                             color: colorBackground,
                             boxShadow: [
                               BoxShadow(
@@ -150,7 +180,8 @@ class _ScreenLogin extends State<ScreenLogin> {
                                   EdgeInsets.only(left: 20, top: 15),
                               hintText: "Password",
                               hintStyle: TextStyle(
-                                color: colorNeutral1,
+                                color:
+                                    _passValidator ? colorError : colorNeutral1,
                               ),
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
@@ -158,7 +189,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                                 icon: FaIcon(
                                   _obscureText
                                       ? FontAwesomeIcons.solidEye
-                                      : FontAwesomeIcons.eye,
+                                      : FontAwesomeIcons.solidEyeSlash,
                                   color: colorNeutral2,
                                 ),
                                 onPressed: () {
@@ -188,13 +219,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                         title: "Log In",
                         bgColor: colorPrimary,
                         textColor: colorBackground,
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenTab()),
-                          );
-                        },
+                        onClick: login,
                         size: size,
                       ),
                     ]))));
