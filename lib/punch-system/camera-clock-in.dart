@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 
 class PreviewCamera extends StatefulWidget {
   PreviewCamera({Key key, this.title, this.path}) : super(key: key);
@@ -19,6 +21,14 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     super.initState();
     imagePath = widget.path;
     _image = File(imagePath);
+  }
+
+  void photoApproval() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('Count In', true);
+    print("Clock In Successs");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ScreenTab()));
   }
 
   Widget build(BuildContext context) {
@@ -55,7 +65,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        photoApproval();
+                      },
                       child: Text("Continue",
                           style: TextStyle(
                               color: colorBackground,

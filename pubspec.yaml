@@ -34,7 +34,7 @@ dependencies:
   path_provider:
   path:
   flutter_calendar_carousel:
-  
+  shared_preferences:
 dev_dependencies:
   flutter_test:
     sdk: flutter
