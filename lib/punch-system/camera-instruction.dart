@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
+
+import 'package:image_picker/image_picker.dart';
 
 class CameraInstruction extends StatefulWidget {
   CameraInstruction({Key key, this.title}) : super(key: key);
@@ -12,6 +16,9 @@ class CameraInstruction extends StatefulWidget {
 
 class _CameraInstructionScreen extends State<CameraInstruction> {
   bool dontShowAgain = false;
+  final picker = ImagePicker();
+  File _image;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,5 +122,25 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
         }
       });
 
-  void continueButton() {}
+  void continueButton() async {
+    //WidgetsFlutterBinding.ensureInitialized();
+    //final cameras = await availableCameras();
+    /*Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CameraClockIn()));*/
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        String data = pickedFile.path;
+        //print(data);
+        //_image = File(pickedFile.path);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PreviewCamera(
+                      path: data,
+                    )));
+      });
+    }
+  }
 }
