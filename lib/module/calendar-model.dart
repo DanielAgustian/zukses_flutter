@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
+
 class Calendar {
   final DateTime date;
+  int week;
   final bool thisMonth;
   final bool prevMonth;
   final bool nextMonth;
@@ -7,7 +10,8 @@ class Calendar {
       {this.date,
       this.thisMonth = false,
       this.prevMonth = false,
-      this.nextMonth = false});
+      this.nextMonth = false,
+      this.week});
 }
 
 enum StartWeekDay { sunday, monday }
@@ -26,6 +30,22 @@ class CustomCalendar {
       return true;
     }
     return false;
+  }
+
+  int numberOfWeek(int index) {
+    int week = 1;
+    if (index < 14 && index >= 7) {
+      week = 2;
+    } else if (index < 21 && index >= 14) {
+      week = 3;
+    } else if (index < 28 && index >= 21) {
+      week = 4;
+    } else if (index < 35 && index >= 28) {
+      week = 5;
+    } else if (index >= 35) {
+      week = 6;
+    }
+    return week;
   }
 
   /// get the month calendar
@@ -73,6 +93,7 @@ class CustomCalendar {
         otherMonth = month - 1;
         otherYear = year;
       }
+
       // month-1 because _monthDays starts from index 0
       // and month starts from 1
       totalDays = _monthDays[otherMonth - 1];
@@ -109,6 +130,7 @@ class CustomCalendar {
         otherMonth = month + 1;
         otherYear = year;
       }
+
       // month-1 because _monthDays starts from index 0
       // and month starts from 1
       totalDays = _monthDays[otherMonth - 1];
@@ -126,6 +148,17 @@ class CustomCalendar {
           ),
         );
       }
+    }
+
+    for (int i = 0; i < calendar.length; i++) {
+      int week = numberOfWeek(i);
+
+      // handle for day in early month
+      if (week == 1 && calendar[i].date.day >= 20)
+        week = 0;
+      else if ((week == 5 || week == 6) && calendar[i].date.day <= 6) week = 0;
+      calendar[i].week = week;
+ 
     }
 
     return calendar;

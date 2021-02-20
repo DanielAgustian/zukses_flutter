@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarWidget extends StatefulWidget {
+  const CalendarWidget({Key key, this.onSelectDate, this.data})
+      : super(key: key);
+
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
+  final Function onSelectDate;
+  final List data;
 }
 
 enum CalendarViews { dates, months, year }
@@ -61,11 +67,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     return Scaffold(
       body: Center(
         child: Container(
-            margin: EdgeInsets.all(16),
-            padding: EdgeInsets.all(16),
+            // margin: EdgeInsets.all(16),
+            padding: EdgeInsets.all(20),
             height: MediaQuery.of(context).size.height * 0.6,
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: colorBackground,
               borderRadius: BorderRadius.circular(20),
             ),
             child: (_currentView == CalendarViews.dates)
@@ -104,6 +110,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     _sequentialDates = CustomCalendar().getMonthCalendar(
         _currentDateTime.month, _currentDateTime.year,
         startWeekDay: StartWeekDay.monday);
+    print(_sequentialDates.length);
   }
 
   // dates view
@@ -113,19 +120,23 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       children: <Widget>[
         // header
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // prev month button
             _toggleBtn(false),
+            SizedBox(width: 20),
             // month and year
-            Expanded(
+            Container(
               child: InkWell(
-                onTap: () =>
-                    setState(() => _currentView = CalendarViews.months),
+                onTap: () {
+                  print("click bulan");
+                  setState(() => _currentView = CalendarViews.months);
+                },
                 child: Center(
                   child: Text(
                     '${_monthNames[_currentDateTime.month - 1]} ${_currentDateTime.year}',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: colorPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700),
                   ),
@@ -133,17 +144,28 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               ),
             ),
             // next month button
+            SizedBox(width: 20),
             _toggleBtn(true),
           ],
         ),
         SizedBox(
           height: 20,
         ),
-        Divider(
-          color: Colors.white,
-        ),
-        SizedBox(
-          height: 20,
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 5),
+          decoration: BoxDecoration(
+              color: colorPrimary, borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              for (var w in _weekDays)
+                Text(
+                  w,
+                  style: TextStyle(color: colorBackground, fontSize: 14),
+                )
+            ],
+          ),
         ),
         Flexible(child: _calendarBody()),
       ],
@@ -155,7 +177,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     return InkWell(
       onTap: () {
         if (_currentView == CalendarViews.dates) {
-          setState(() => (next) ? _getNextMonth() : _getPrevMonth());
+          setState(() {
+            (next) ? _getNextMonth() : _getPrevMonth();
+          });
         } else if (_currentView == CalendarViews.year) {
           if (next) {
             midYear =
@@ -172,25 +196,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         width: 50,
         height: 50,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.white),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white.withOpacity(0.5),
-                offset: Offset(3, 3),
-                blurRadius: 3,
-                spreadRadius: 0,
-              ),
-            ],
-            gradient: LinearGradient(
-              colors: [Colors.black, Colors.black.withOpacity(0.1)],
-              stops: [0.5, 1],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            )),
+          borderRadius: BorderRadius.circular(25),
+        ),
         child: Icon(
           (next) ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
-          color: Colors.white,
+          color: colorPrimary,
         ),
       ),
     );
@@ -200,20 +210,21 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget _calendarBody() {
     if (_sequentialDates == null) return Container();
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child: GridView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
-        itemCount: _sequentialDates.length + 7,
+        itemCount: _sequentialDates.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           mainAxisSpacing: 20,
           crossAxisCount: 7,
           crossAxisSpacing: 20,
         ),
         itemBuilder: (context, index) {
-          if (index < 7) return _weekDayTitle(index);
-          if (_sequentialDates[index - 7].date == _selectedDateTime)
-            return _selector(_sequentialDates[index - 7]);
-          return _calendarDates(_sequentialDates[index - 7]);
+          // if (_sequentialDates[index].date == _selectedDateTime)
+          //   return _selector(_sequentialDates[index]);
+          return _calendarDates(_sequentialDates[index],
+              index: index, data: widget.data);
         },
       ),
     );
@@ -228,32 +239,83 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   }
 
   // calendar element
-  Widget _calendarDates(Calendar calendarDate) {
-    return InkWell(
-      onTap: () {
-        if (_selectedDateTime != calendarDate.date) {
-          if (calendarDate.nextMonth) {
-            _getNextMonth();
-          } else if (calendarDate.prevMonth) {
-            _getPrevMonth();
-          }
-          setState(() => _selectedDateTime = calendarDate.date);
+  Widget _calendarDates(Calendar calendarDate,
+      {int index, List<AbsenceTime> data}) {
+    Widget dot = Container();
+    if (data != null) {
+      for (var d in data) {
+        if (d.date.isAtSameMomentAs(calendarDate.date)) {
+          dot = d.status == "late" ? dotRed : dotGreen;
         }
-      },
-      child: Center(
-          child: Text(
-        '${calendarDate.date.day}',
-        style: TextStyle(
-          color: (calendarDate.thisMonth)
-              ? (calendarDate.date.weekday == DateTime.sunday)
-                  ? Colors.yellow
-                  : Colors.white
-              : (calendarDate.date.weekday == DateTime.sunday)
-                  ? Colors.yellow.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.5),
-        ),
-      )),
-    );
+      }
+    }
+    return InkWell(
+        onTap: () {
+          if (_selectedDateTime != calendarDate.date) {
+            setState(() => _selectedDateTime = calendarDate.date);
+            if (calendarDate.nextMonth) {
+              setState(() {
+                _selectedDateTime = null;
+              });
+              _getNextMonth();
+            } else if (calendarDate.prevMonth) {
+              setState(() {
+                _selectedDateTime = null;
+              });
+              _getPrevMonth();
+            }
+          }
+          widget.onSelectDate(calendarDate.date, calendarDate.week);
+        },
+        child: _selectedDateTime != calendarDate.date
+            ? Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                        child: Text(
+                      '${calendarDate.date.day}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: (calendarDate.thisMonth)
+                            ? colorPrimary
+                            : colorNeutral2,
+                      ),
+                    )),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    dot
+                  ],
+                ),
+              )
+            : Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(color: colorPrimary, width: 2),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                        child: Text(
+                      '${calendarDate.date.day}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: (calendarDate.thisMonth)
+                            ? colorPrimary
+                            : colorNeutral2,
+                      ),
+                    )),
+                    dot
+                  ],
+                ),
+              ));
   }
 
   // date selector
@@ -262,28 +324,23 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       width: 30,
       height: 30,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: Colors.white, width: 4),
-        gradient: LinearGradient(
-          colors: [Colors.black.withOpacity(0.1), Colors.white],
-          stops: [0.1, 1],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        border: Border.all(color: colorPrimary, width: 2),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Center(
-          child: Text(
-            '${calendarDate.date.day}',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
-          ),
-        ),
-      ),
+      // child: Column(
+      //   children: [
+      //     Container(
+      //       child: Center(
+      //         child: Text(
+      //           '${calendarDate.date.day}',
+      //           style:
+      //               TextStyle(color: colorPrimary, fontWeight: FontWeight.w700),
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 

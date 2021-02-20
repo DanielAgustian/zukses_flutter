@@ -55,9 +55,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     /// Add more events to _markedDateMap EventList
     absensi.forEach((data) {
       _markedDateMap.add(
-          DateTime.parse(data.date),
+          data.date,
           Event(
-              date: DateTime.parse(data.date),
+              date: data.date,
               title: data.id,
               dot: data.status == "late" ? dotRed : dotGreen));
     });
