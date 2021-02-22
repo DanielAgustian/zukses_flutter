@@ -61,10 +61,10 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     //           title: data.id,
     //           dot: data.status == "late" ? dotRed : dotGreen));
     // });
-    absensiList = dummy
-        .where((data) => _selectedWeek.firstWeekDate.isAtSameMomentAs(
-            CustomCalendar().findFirstDateOfTheWeek(_currentDate)))
-        .toList();
+    // absensiList = dummy
+    //     .where((data) => _selectedWeek.firstWeekDate.isAtSameMomentAs(
+    //         CustomCalendar().findFirstDateOfTheWeek(_currentDate)))
+    //     .toList();
     super.initState();
     print("week of year ${_date.weekOfYear}");
     print("week of year ${_date.ordinalDate}");
@@ -74,6 +74,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print("SIZE ${size.height}");
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: AppBar(
@@ -108,8 +109,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                   children: [
                     Container(
                       width: size.width,
-                      height: size.height * 0.5,
+                      height: size.width <= 569
+                          ? size.height * 0.45
+                          : size.height * 0.5,
                       child: CalendarWidget(
+                        fontSize: size.width <= 569 ? textSizeSmall14 : 12,
                         onSelectDate: (date, absence) {
                           selectDate(date, absence);
                         },
@@ -185,7 +189,10 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       child: RichText(
                         text: TextSpan(
                           text: '${getDayName.format(_currentDate)}, ',
-                          style: TextStyle(color: colorPrimary, fontSize: 20),
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize:
+                                  size.width <= 569 ? textSizeSmall18 : 18),
                           children: <TextSpan>[
                             TextSpan(
                               text: '${getDayNumber.format(_currentDate)} ',
@@ -201,14 +208,19 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: 25,
+                      height: size.width <= 569 ? 20 : 25,
                     ),
-                    TimeBox(selected: selected),
+                    TimeBox(
+                      selected: selected,
+                      fontSize: size.width <= 569 ? textSizeSmall18 : 18,
+                    ),
                     SizedBox(height: 15),
                     Container(
                         child: Text(
                       "Overtime : 0 hrs",
-                      style: TextStyle(color: colorPrimary, fontSize: 20),
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: size.width <= 569 ? textSizeSmall18 : 18),
                     ))
                   ],
                 )
@@ -218,15 +230,16 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       width: size.width,
                       height: size.height * 0.06,
                       child: WeekLyCanlendarWidget(
+                        fontSize: size.width <= 569 ? textSizeSmall18 : 18,
                         onChangeWeek: (WeeklyCalendar val) {
-                          print("Week");
-                          print(CustomCalendar()
-                              .findFirstDateOfTheWeek(dummy[0].date));
-                          print(dummy[0].date);
-                          print(val.firstWeekDate);
-                          print(val.firstWeekDate.isAtSameMomentAs(
-                              CustomCalendar()
-                                  .findFirstDateOfTheWeek(dummy[0].date)));
+                          // print("Week");
+                          // print(CustomCalendar()
+                          //     .findFirstDateOfTheWeek(dummy[0].date));
+                          // print(dummy[0].date);
+                          // print(val.firstWeekDate);
+                          // print(val.firstWeekDate.isAtSameMomentAs(
+                          //     CustomCalendar()
+                          //         .findFirstDateOfTheWeek(dummy[0].date)));
                           setState(() {
                             _selectedWeek = val;
                             absensiList = dummy
@@ -242,7 +255,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    absensiList.length == 0
+                    absensiList == null
                         ? Container()
                         : Expanded(
                             child: ListView.builder(
@@ -250,7 +263,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                               itemBuilder: (context, index) {
                                 return Container(
                                   margin: EdgeInsets.symmetric(vertical: 5),
-                                  padding: EdgeInsets.all(10),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 15),
                                   decoration: BoxDecoration(
                                       color: colorBackground,
                                       borderRadius: BorderRadius.circular(5),
@@ -269,18 +283,24 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                               "${getDayName.format(absensiList[index].date)}",
                                               style: TextStyle(
                                                   color: colorPrimary,
-                                                  fontSize: 16)),
+                                                  fontSize: size.width <= 569
+                                                      ? textSizeSmall16
+                                                      : 16)),
                                           Text(
                                               "${getFormatListDate.format(absensiList[index].date)}",
                                               style: TextStyle(
                                                   color: colorPrimary,
-                                                  fontSize: 14))
+                                                  fontSize: size.width <= 569
+                                                      ? textSizeSmall14
+                                                      : 14))
                                         ],
                                       ),
                                       TimeBox(
                                         selected: absensiList[index],
                                         space: size.width * 0.01,
-                                        fontSize: 14,
+                                        fontSize: size.width <= 569
+                                            ? textSizeSmall12
+                                            : 14,
                                       )
                                     ],
                                   ),

@@ -4,11 +4,13 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class WeekLyCanlendarWidget extends StatefulWidget {
-  const WeekLyCanlendarWidget({Key key, this.onChangeWeek}) : super(key: key);
+  const WeekLyCanlendarWidget({Key key, this.onChangeWeek, this.fontSize = 18})
+      : super(key: key);
 
   @override
   _WeekLyCanlendarWidgetState createState() => _WeekLyCanlendarWidgetState();
   final Function onChangeWeek;
+  final double fontSize;
 }
 
 enum CalendarViews { dates, months, year }
@@ -54,7 +56,6 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());
     });
-    week = 1;
   }
 
   @override
@@ -93,6 +94,12 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
     _sequentialDates = dates;
     //get week calendar
     _sequentialWeek = CustomCalendar().getWeeklyCalendar(calendar: dates);
+    _sequentialWeek.forEach((data) {
+      if (data.firstWeekDate.isAtSameMomentAs(
+          CustomCalendar().findFirstDateOfTheWeek(_currentDateTime))) {
+        week = data.week;
+      }
+    });
   }
 
   // next / prev month buttons
@@ -116,7 +123,6 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
       child: Container(
         alignment: Alignment.center,
         width: 50,
-        height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
         ),
@@ -142,7 +148,6 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
               SizedBox(width: 20),
               // month and year
               Container(
-                color: colorBackground,
                 child: InkWell(
                   onTap: () {
                     print("click bulan");
@@ -173,8 +178,8 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      color: colorBackground,
-      child: _sequentialWeek != null ? _datesView() : Container(),
+      child:
+          _sequentialWeek != null ? Center(child: _datesView()) : Container(),
     );
   }
 }

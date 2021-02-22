@@ -39,7 +39,7 @@ class _ThirdPage extends State<ThirdPage> {
                   ),
                   SizedBox(height: 30),
                   OnBoardingCard(
-                    size: size ,
+                    size: size,
                     title: "LOREM IPSUM",
                     description:
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis facilisis neque. Aliquam ",

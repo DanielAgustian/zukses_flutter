@@ -5,13 +5,15 @@ import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarWidget extends StatefulWidget {
-  const CalendarWidget({Key key, this.onSelectDate, this.data})
+  const CalendarWidget(
+      {Key key, this.onSelectDate, this.data, this.fontSize = 14})
       : super(key: key);
 
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
   final Function onSelectDate;
   final List data;
+  final double fontSize;
 }
 
 enum CalendarViews { dates, months, year }
@@ -64,11 +66,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Center(
         child: Container(
             // margin: EdgeInsets.all(16),
-            padding: EdgeInsets.all(20),
             height: MediaQuery.of(context).size.height * 0.6,
             decoration: BoxDecoration(
               color: colorBackground,
@@ -153,16 +155,16 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         ),
         Container(
           decoration: BoxDecoration(
-              color: colorPrimary, borderRadius: BorderRadius.circular(10)),
+              color: colorPrimary, borderRadius: BorderRadius.circular(20)),
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: GridView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.zero,
             itemCount: _weekDays.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisSpacing: 20,
+              mainAxisSpacing: 10,
               crossAxisCount: 7,
-              crossAxisSpacing: 20,
+              crossAxisSpacing: 10,
             ),
             itemBuilder: (context, index) {
               // if (_sequentialDates[index].date == _selectedDateTime)
@@ -238,7 +240,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget _weekDayTitle(int index) {
     return Text(
       _weekDays[index],
-      style: TextStyle(color: colorBackground, fontSize: 12),
+      style: TextStyle(color: colorBackground, fontSize: widget.fontSize - 2),
     );
   }
 
@@ -282,7 +284,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                         child: Text(
                       '${calendarDate.date.day}',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: widget.fontSize,
                         fontWeight: FontWeight.bold,
                         color: (calendarDate.thisMonth)
                             ? colorPrimary
@@ -308,7 +310,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                         child: Text(
                       '${calendarDate.date.day}',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: widget.fontSize,
                         fontWeight: FontWeight.bold,
                         color: (calendarDate.thisMonth)
                             ? colorPrimary

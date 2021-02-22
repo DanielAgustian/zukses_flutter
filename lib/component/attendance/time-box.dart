@@ -18,7 +18,6 @@ class TimeBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -39,6 +38,7 @@ class TimeBox extends StatelessWidget {
           FaIcon(
             FontAwesomeIcons.arrowRight,
             color: colorPrimary,
+            size: fontSize,
           ),
           SizedBox(width: space),
           Container(

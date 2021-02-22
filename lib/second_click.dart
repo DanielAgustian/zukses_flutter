@@ -114,8 +114,8 @@ class _SecondPage extends State<SecondPage> {
                     elevation: 2.0,
                     fillColor: Color.fromRGBO(20, 43, 111, 0.9),
                     child: Container(
-                      width: 70,
-                      height: 70,
+                      width: 60,
+                      height: 60,
                       child: Icon(Icons.arrow_forward,
                           size: 35.0, color: Colors.white70),
                     ),
