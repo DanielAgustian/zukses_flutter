@@ -33,12 +33,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   DateTime _date = DateTime.parse("2021-01-02");
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
-  List<AbsenceTime> absensiList;
-  // DateTime _currentDate2 = DateTime.now();
-  // String _currentMonth = DateFormat.yMMMM().format(DateTime.now());
-  // DateTime _targetDateTime = DateTime.now();
-
-  EventList<Event> _markedDateMap = EventList<Event>();
+  List<AbsenceTime> absensiList; 
 
   void selectDate(DateTime date, AbsenceTime absence) {
     setState(() {
@@ -51,20 +46,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   bool monthly = true;
 
   @override
-  void initState() {
-    /// Add more events to _markedDateMap EventList
-    // absensi.forEach((data) {
-    //   _markedDateMap.add(
-    //       data.date,
-    //       Event(
-    //           date: data.date,
-    //           title: data.id,
-    //           dot: data.status == "late" ? dotRed : dotGreen));
-    // });
-    // absensiList = dummy
-    //     .where((data) => _selectedWeek.firstWeekDate.isAtSameMomentAs(
-    //         CustomCalendar().findFirstDateOfTheWeek(_currentDate)))
-    //     .toList();
+  void initState() { 
     super.initState();
     print("week of year ${_date.weekOfYear}");
     print("week of year ${_date.ordinalDate}");
@@ -73,7 +55,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size; 
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: AppBar(
@@ -119,69 +101,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                         data: dummy,
                       ),
                     ),
-
-                    // SingleChildScrollView(
-                    //   child: Column(
-                    //     children: [
-                    //       Container(
-                    //         margin: EdgeInsets.symmetric(horizontal: 20),
-                    //         child: CalendarCarousel<Event>(
-                    //           onDayPressed: (DateTime date, List<Event> events) {
-                    //             selectDate(date, events);
-                    //           },
-                    //           markedDatesMap: _markedDateMap,
-                    //           height: 420.0,
-                    //           customDayBuilder: (
-                    //             bool isSelectable,
-                    //             int index,
-                    //             bool isSelectedDay,
-                    //             bool isToday,
-                    //             bool isPrevMonthDay,
-                    //             TextStyle textStyle,
-                    //             bool isNextMonthDay,
-                    //             bool isThisMonthDay,
-                    //             DateTime day,
-                    //           ) {
-                    //             // if (day.day == 15) {
-                    //             //   return Center(
-                    //             //     child: Icon(Icons.local_airport),
-                    //             //   );
-                    //             // } else {
-                    //             //   return null;
-                    //             // }
-                    //             return null;
-                    //           },
-                    //           //Formating header
-                    //           headerTextStyle: TextStyle(
-                    //               color: colorPrimary,
-                    //               fontWeight: FontWeight.bold,
-                    //               fontSize: 20),
-                    //           iconColor: colorPrimary,
-                    //           //Formating weekend date
-                    //           weekendTextStyle:
-                    //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                    //           //Formating today
-                    //           todayBorderColor: colorPrimary,
-                    //           todayButtonColor: colorBackground,
-                    //           todayTextStyle: TextStyle(
-                    //             color: colorPrimary,
-                    //             fontWeight: FontWeight.bold,
-                    //           ),
-                    //           //Formating selected day
-                    //           selectedDateTime: _currentDate,
-                    //           selectedDayTextStyle: TextStyle(
-                    //               color: colorBackground, fontWeight: FontWeight.bold),
-                    //           selectedDayButtonColor: colorPrimary,
-                    //           //Formating day
-                    //           daysTextStyle:
-                    //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                    //           //Formating name of day in Week
-                    //           weekFormat: false,
-                    //           weekDayBackgroundColor: colorPrimary,
-                    //           weekdayTextStyle: TextStyle(color: colorBackground, height: 2),
-                    //           weekDayFormat: WeekdayFormat.narrow,
-                    //         ),
-                    //       ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       alignment: Alignment.centerLeft,
@@ -230,15 +149,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       height: size.height * 0.06,
                       child: WeekLyCanlendarWidget(
                         fontSize: size.width <= 569 ? textSizeSmall18 : 18,
-                        onChangeWeek: (WeeklyCalendar val) {
-                          // print("Week");
-                          // print(CustomCalendar()
-                          //     .findFirstDateOfTheWeek(dummy[0].date));
-                          // print(dummy[0].date);
-                          // print(val.firstWeekDate);
-                          // print(val.firstWeekDate.isAtSameMomentAs(
-                          //     CustomCalendar()
-                          //         .findFirstDateOfTheWeek(dummy[0].date)));
+                        onChangeWeek: (WeeklyCalendar val) { 
                           setState(() {
                             _selectedWeek = val;
                             absensiList = dummy
