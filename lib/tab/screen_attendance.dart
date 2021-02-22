@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:week_of_year/week_of_year.dart';
+import 'package:zukses_app_1/module/calendar-model.dart';
+import 'package:zukses_app_1/module/calendar-widget.dart';
+import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 
 class AttendanceScreen extends StatefulWidget {
   AttendanceScreen({Key key, this.title}) : super(key: key);
@@ -26,41 +30,40 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   AbsenceTime selected;
   DateTime _currentDate = DateTime.now();
   DateTime _date = DateTime.parse("2021-01-02");
+  WeeklyCalendar _selectedWeek;
+  DateTime _selectedDate;
+  List<AbsenceTime> absensiList;
   // DateTime _currentDate2 = DateTime.now();
   // String _currentMonth = DateFormat.yMMMM().format(DateTime.now());
   // DateTime _targetDateTime = DateTime.now();
 
   EventList<Event> _markedDateMap = EventList<Event>();
 
-  void selectDate(DateTime date, List<Event> events) {
+  void selectDate(DateTime date, AbsenceTime absence) {
     setState(() {
       _currentDate = date;
-    });
-
-    if (events.length != 0) {
-      setState(() {
-        selected = absensi.where((data) {
-          return data.id == events[0].title;
-        }).toList()[0];
-      });
-    }
-
-    setState(() {
+      selected = absence;
       kata = "$_currentDate";
     });
   }
 
+  bool monthly = true;
+
   @override
   void initState() {
     /// Add more events to _markedDateMap EventList
-    absensi.forEach((data) {
-      _markedDateMap.add(
-          data.date,
-          Event(
-              date: data.date,
-              title: data.id,
-              dot: data.status == "late" ? dotRed : dotGreen));
-    });
+    // absensi.forEach((data) {
+    //   _markedDateMap.add(
+    //       data.date,
+    //       Event(
+    //           date: data.date,
+    //           title: data.id,
+    //           dot: data.status == "late" ? dotRed : dotGreen));
+    // });
+    absensiList = dummy
+        .where((data) => _selectedWeek.firstWeekDate.isAtSameMomentAs(
+            CustomCalendar().findFirstDateOfTheWeek(_currentDate)))
+        .toList();
     super.initState();
     print("week of year ${_date.weekOfYear}");
     print("week of year ${_date.ordinalDate}");
@@ -69,164 +72,202 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: colorBackground,
-      appBar: AppBar(
-        elevation: 0,
         backgroundColor: colorBackground,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text(
-          "Attendance Detail",
-          style: TextStyle(
-              color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
-        ),
-        actions: [
-          IconButton(
-            splashColor: Colors.transparent,
-            icon: FaIcon(
-              FontAwesomeIcons.bars,
-              color: colorPrimary,
-            ),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              child: CalendarCarousel<Event>(
-                onDayPressed: (DateTime date, List<Event> events) {
-                  selectDate(date, events);
-                },
-                markedDatesMap: _markedDateMap,
-                height: 420.0,
-                customDayBuilder: (
-                  bool isSelectable,
-                  int index,
-                  bool isSelectedDay,
-                  bool isToday,
-                  bool isPrevMonthDay,
-                  TextStyle textStyle,
-                  bool isNextMonthDay,
-                  bool isThisMonthDay,
-                  DateTime day,
-                ) {
-                  // if (day.day == 15) {
-                  //   return Center(
-                  //     child: Icon(Icons.local_airport),
-                  //   );
-                  // } else {
-                  //   return null;
-                  // }
-                  return null;
-                },
-                //Formating header
-                headerTextStyle: TextStyle(
-                    color: colorPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-                iconColor: colorPrimary,
-                //Formating weekend date
-                weekendTextStyle:
-                    TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                //Formating today
-                todayBorderColor: colorPrimary,
-                todayButtonColor: colorBackground,
-                todayTextStyle: TextStyle(
-                  color: colorPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-                //Formating selected day
-                selectedDateTime: _currentDate,
-                selectedDayTextStyle: TextStyle(
-                    color: colorBackground, fontWeight: FontWeight.bold),
-                selectedDayButtonColor: colorPrimary,
-                //Formating day
-                daysTextStyle:
-                    TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                //Formating name of day in Week
-                weekFormat: false,
-                weekDayBackgroundColor: colorPrimary,
-                weekdayTextStyle: TextStyle(color: colorBackground, height: 2),
-                weekDayFormat: WeekdayFormat.narrow,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: colorBackground,
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Text(
+            "Attendance Detail",
+            style: TextStyle(
+                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
+          ),
+          actions: [
+            IconButton(
+              splashColor: Colors.transparent,
+              icon: FaIcon(
+                monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
+                color: colorPrimary,
               ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              alignment: Alignment.centerLeft,
-              child: RichText(
-                text: TextSpan(
-                  text: '${getDayName.format(_currentDate)}, ',
-                  style: TextStyle(color: colorPrimary, fontSize: 20),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: '${getDayNumber.format(_currentDate)} ',
-                    ),
-                    TextSpan(
-                      text: '${getMonthName.format(_currentDate)} ',
-                    ),
-                    TextSpan(
-                      text: '${getYearNumber.format(_currentDate)} ',
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: colorPrimary, width: 2)),
-                    child: Text(
-                      "09.10",
-                      style: TextStyle(
-                          color: colorPrimary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20),
-                    ),
-                  ),
-                  SizedBox(width: 25),
-                  FaIcon(
-                    FontAwesomeIcons.arrowRight,
-                    color: colorPrimary,
-                  ),
-                  SizedBox(width: 25),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: colorPrimary, width: 2)),
-                    child: Text(
-                      "09.10",
-                      style: TextStyle(
-                          color: colorPrimary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 15),
-            Container(
-                child: Text(
-              "Overtime : 0 hrs",
-              style: TextStyle(color: colorPrimary, fontSize: 20),
-            ))
+              onPressed: () {
+                setState(() {
+                  monthly = !monthly;
+                });
+              },
+            )
           ],
         ),
-      ),
-    );
+        body: Container(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: monthly
+                ? Column(
+                    children: [
+                      Container(
+                        width: size.width,
+                        height: size.height * 0.5,
+                        child: CalendarWidget(
+                          onSelectDate: (date, absence) {
+                            selectDate(date, absence);
+                          },
+                          data: dummy,
+                        ),
+                      ),
+
+                      // SingleChildScrollView(
+                      //   child: Column(
+                      //     children: [
+                      //       Container(
+                      //         margin: EdgeInsets.symmetric(horizontal: 20),
+                      //         child: CalendarCarousel<Event>(
+                      //           onDayPressed: (DateTime date, List<Event> events) {
+                      //             selectDate(date, events);
+                      //           },
+                      //           markedDatesMap: _markedDateMap,
+                      //           height: 420.0,
+                      //           customDayBuilder: (
+                      //             bool isSelectable,
+                      //             int index,
+                      //             bool isSelectedDay,
+                      //             bool isToday,
+                      //             bool isPrevMonthDay,
+                      //             TextStyle textStyle,
+                      //             bool isNextMonthDay,
+                      //             bool isThisMonthDay,
+                      //             DateTime day,
+                      //           ) {
+                      //             // if (day.day == 15) {
+                      //             //   return Center(
+                      //             //     child: Icon(Icons.local_airport),
+                      //             //   );
+                      //             // } else {
+                      //             //   return null;
+                      //             // }
+                      //             return null;
+                      //           },
+                      //           //Formating header
+                      //           headerTextStyle: TextStyle(
+                      //               color: colorPrimary,
+                      //               fontWeight: FontWeight.bold,
+                      //               fontSize: 20),
+                      //           iconColor: colorPrimary,
+                      //           //Formating weekend date
+                      //           weekendTextStyle:
+                      //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+                      //           //Formating today
+                      //           todayBorderColor: colorPrimary,
+                      //           todayButtonColor: colorBackground,
+                      //           todayTextStyle: TextStyle(
+                      //             color: colorPrimary,
+                      //             fontWeight: FontWeight.bold,
+                      //           ),
+                      //           //Formating selected day
+                      //           selectedDateTime: _currentDate,
+                      //           selectedDayTextStyle: TextStyle(
+                      //               color: colorBackground, fontWeight: FontWeight.bold),
+                      //           selectedDayButtonColor: colorPrimary,
+                      //           //Formating day
+                      //           daysTextStyle:
+                      //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+                      //           //Formating name of day in Week
+                      //           weekFormat: false,
+                      //           weekDayBackgroundColor: colorPrimary,
+                      //           weekdayTextStyle: TextStyle(color: colorBackground, height: 2),
+                      //           weekDayFormat: WeekdayFormat.narrow,
+                      //         ),
+                      //       ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                          text: TextSpan(
+                            text: '${getDayName.format(_currentDate)}, ',
+                            style: TextStyle(color: colorPrimary, fontSize: 20),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: '${getDayNumber.format(_currentDate)} ',
+                              ),
+                              TextSpan(
+                                text: '${getMonthName.format(_currentDate)} ',
+                              ),
+                              TextSpan(
+                                text: '${getYearNumber.format(_currentDate)} ',
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      TimeBox(selected: selected),
+                      SizedBox(height: 15),
+                      Container(
+                          child: Text(
+                        "Overtime : 0 hrs",
+                        style: TextStyle(color: colorPrimary, fontSize: 20),
+                      ))
+                    ],
+                  )
+                : Column(
+                    children: [
+                      Container(
+                        width: size.width,
+                        height: size.height * 0.5,
+                        child: WeekLyCanlendarWidget(
+                          onChangeWeek: (WeeklyCalendar val) {
+                            print("Week");
+                            print(CustomCalendar()
+                                .findFirstDateOfTheWeek(dummy[0].date));
+                            print(dummy[0].date);
+                            print(val.firstWeekDate);
+                            print(val.firstWeekDate.isAtSameMomentAs(
+                                CustomCalendar()
+                                    .findFirstDateOfTheWeek(dummy[0].date)));
+                            setState(() {
+                              _selectedWeek = val;
+                              absensiList = dummy
+                                  .where((data) => _selectedWeek.firstWeekDate
+                                      .isAtSameMomentAs(CustomCalendar()
+                                          .findFirstDateOfTheWeek(data.date)))
+                                  .toList();
+                            });
+                          },
+                          // data: dummy,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      absensiList.length == 0
+                          ? Container()
+                          : Container(
+                              child: Text("AAAAAAAAAAAAAAAAAAAAAA"),
+                            )
+                      // absensiList.map((data) => Container(
+                      //       decoration: BoxDecoration(
+                      //           color: colorBackground,
+                      //           borderRadius: BorderRadius.circular(5),
+                      //           boxShadow: [
+                      //             BoxShadow(
+                      //                 blurRadius: 15,
+                      //                 color: colorNeutral150)
+                      //           ]),
+                      //       child: Row(
+                      //         children: [
+                      //           Column(
+                      //             children: [],
+                      //           ),
+                      //           TimeBox(selected: null)
+                      //         ],
+                      //       ),
+                      //     ))
+                    ],
+                  ),
+          ),
+        ));
   }
 }

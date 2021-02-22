@@ -246,10 +246,13 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget _calendarDates(Calendar calendarDate,
       {int index, List<AbsenceTime> data}) {
     Widget dot = Container();
+    AbsenceTime absence;
     if (data != null) {
       for (var d in data) {
         if (d.date.isAtSameMomentAs(calendarDate.date)) {
           dot = d.status == "late" ? dotRed : dotGreen;
+          absence = d;
+          break;
         }
       }
     }
@@ -269,7 +272,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               _getPrevMonth();
             }
           }
-          widget.onSelectDate(calendarDate.date, calendarDate.week);
+          widget.onSelectDate(calendarDate.date, absence);
         },
         child: _selectedDateTime != calendarDate.date
             ? Container(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 
 // Example holidays
 final Map<DateTime, List> _holidays = {
@@ -24,6 +26,7 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen>
     with TickerProviderStateMixin {
   DateTime _selectedDate;
+  WeeklyCalendar _selectedWeek;
   List<AbsenceTime> absensiList = dummy;
   int week;
   @override
@@ -36,17 +39,28 @@ class _MeetingScreenState extends State<MeetingScreen>
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
+            // Container(
+            //   width: size.width,
+            //   height: size.height * 0.5,
+            //   child: CalendarWidget(
+            //     onSelectDate: (val) {
+            //       setState(() {
+            //         _selectedDate = val;
+            //       });
+            //     },
+            //     data: dummy,
+            //   ),
+            // ),
             Container(
               width: size.width,
               height: size.height * 0.5,
-              child: CalendarWidget(
-                onSelectDate: (val, week) {
+              child: WeekLyCanlendarWidget(
+                onChangeWeek: (val) {
                   setState(() {
-                    _selectedDate = val;
-                    this.week = week;
+                    _selectedWeek = val;
                   });
                 },
-                data: dummy,
+                // data: dummy,
               ),
             ),
             Center(
@@ -56,6 +70,11 @@ class _MeetingScreenState extends State<MeetingScreen>
               child: Text(_selectedDate == null
                   ? 'This is Tab Meeting'
                   : "${_selectedDate.day}"),
+            ),
+            Center(
+              child: Text(_selectedWeek == null
+                  ? 'This is Tab Meeting'
+                  : "${_selectedWeek.week} and ${_selectedWeek.firstWeekDate}"),
             ),
           ],
         ),
