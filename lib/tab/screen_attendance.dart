@@ -6,6 +6,7 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:week_of_year/week_of_year.dart';
 
 class AttendanceScreen extends StatefulWidget {
   AttendanceScreen({Key key, this.title}) : super(key: key);
@@ -24,6 +25,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   List<AbsenceTime> absensi = dummy;
   AbsenceTime selected;
   DateTime _currentDate = DateTime.now();
+  DateTime _date = DateTime.parse("2021-01-02");
   // DateTime _currentDate2 = DateTime.now();
   // String _currentMonth = DateFormat.yMMMM().format(DateTime.now());
   // DateTime _targetDateTime = DateTime.now();
@@ -53,13 +55,16 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     /// Add more events to _markedDateMap EventList
     absensi.forEach((data) {
       _markedDateMap.add(
-          DateTime.parse(data.date),
+          data.date,
           Event(
-              date: DateTime.parse(data.date),
+              date: data.date,
               title: data.id,
               dot: data.status == "late" ? dotRed : dotGreen));
     });
     super.initState();
+    print("week of year ${_date.weekOfYear}");
+    print("week of year ${_date.ordinalDate}");
+    print("week of year ${_date.isLeapYear}");
   }
 
   @override

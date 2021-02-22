@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/second_click.dart';
 import 'package:zukses_app_1/third_click.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(DevicePreview(builder: (context) => MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(fontFamily: 'Lato'),
+      locale: DevicePreview.locale(context), // Add the locale here
+      builder: DevicePreview.appBuilder, // Add the builder here
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -34,6 +38,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var dayOfWeek = 1;
   DateTime date = DateTime.now();
+  DateFormat dayName = DateFormat('E');
 
   DateTime findFirstDateOfTheWeek(DateTime dateTime) {
     return dateTime.subtract(Duration(days: dateTime.weekday - 1));
@@ -49,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
     print(date.weekday);
+    print(dayName.format(date));
     print(findFirstDateOfTheWeek(date));
   }
 
