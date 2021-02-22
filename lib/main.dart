@@ -5,9 +5,10 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/second_click.dart';
 import 'package:zukses_app_1/third_click.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(DevicePreview(builder: (context) => MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(fontFamily: 'Lato'),
+      locale: DevicePreview.locale(context), // Add the locale here
+      builder: DevicePreview.appBuilder, // Add the builder here
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
