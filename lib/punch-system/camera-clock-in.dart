@@ -17,16 +17,25 @@ class PreviewCamera extends StatefulWidget {
 class _PreviewCameraScreen extends State<PreviewCamera> {
   File _image;
   String imagePath;
+  String key = "clock in";
   void initState() {
     super.initState();
     imagePath = widget.path;
     _image = File(imagePath);
+
+    //addBoolClockIn();
   }
 
-  void photoApproval() async {
+  addClockInSF() async {
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('Count In', true);
-    print("Clock In Successs");
+    int counter = 1;
+    await prefs.setInt(key, counter);
+  }
+
+  pushtoScreenTab() async {
+    addClockInSF();
+    //TempLog(namaProses: "Clock In", nilai: true);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ScreenTab()));
   }
@@ -66,7 +75,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   children: [
                     RaisedButton(
                       onPressed: () {
-                        photoApproval();
+                        pushtoScreenTab();
                       },
                       child: Text("Continue",
                           style: TextStyle(
