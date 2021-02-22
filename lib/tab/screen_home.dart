@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
@@ -15,27 +16,19 @@ class HomeScreen extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _HomeScreenState extends State<HomeScreen> {
-  String stringTap = "Clock In";
+  TextEditingController textReasonOvertime = new TextEditingController();
+  String key = "clock in";
+  String stringTap = "Click Here to Clock In";
   var taskName = ["Task 1", "task 2"];
   var taskDetail = ["Task 1", "task 2"];
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
+  int clockIn;
+  String dialogText = "Clock In ";
   @override
   void initState() {
     super.initState();
-  }
-
-  void sharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool clockIn = prefs.getBool("Clock In");
-    if (clockIn) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PopUp()),
-      );
-    } else {
-      print("Not Clock In Yet");
-    }
+    sharedPref();
   }
 
   Widget build(BuildContext context) {
@@ -49,10 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
           new GestureDetector(
             onTap: () {
               print("Container clicked");
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CameraInstruction()),
-              );
+              if (clockIn == 1) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupClockOut(context));
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraInstruction()),
+                );
+              }
+
               //tapHour();
             },
             child: new Container(
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Tap Here to " + stringTap,
+                        stringTap,
                         style: GoogleFonts.lato(
                           textStyle: TextStyle(
                               color: Colors.white, letterSpacing: 1.5),
@@ -253,12 +254,12 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(onPressed: () {
         showDialog(
             context: context,
-            builder: (BuildContext context) => _buildPopupDialog(context));
+            builder: (BuildContext context) => _buildPopupOvertime(context));
       }),
     );
   }
 
-//------------------------------BackEnd----------------------------//
+//Pop Up Dialog for Clock in and Out Confirmation
   Widget _buildPopupDialog(BuildContext context) {
     return new AlertDialog(
       //title: const Text('Popup example'),
@@ -272,13 +273,17 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 200,
           ),
           Text(
-            "Clock Out Success!",
+            dialogText + " Success!",
             style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 20),
           RaisedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context, rootNavigator: true).pop();
+                if (dialogText == "Clock Out") {
+                  Navigator.of(buildContext1, rootNavigator: true).pop();
+                  Navigator.of(buildContext2, rootNavigator: true).pop();
+                }
               },
               color: colorPrimary,
               child: Text(
@@ -287,72 +292,172 @@ class _HomeScreenState extends State<HomeScreen> {
               ))
         ],
       ),
-      actions: <Widget>[
-        /*
-        new FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          
-          textColor: Theme.of(context).primaryColor,
-          child: const Text('OK'),
-        ),*/
-      ],
+      actions: <Widget>[],
     );
   }
 
-  void tapHour() {
-    if (stringTap == "Clock in") {
-      stringTap = "Clock Out";
-    } else {
-      stringTap = "Locked";
-    }
-  }
-}
-
-class PopUp extends StatelessWidget {
-  const PopUp({
-    Key key,
-  }) : super(key: key);
-  Widget build(BuildContext context) {
-    return AlertDialog(
+//Clock Out Step 1========================================
+  BuildContext buildContext1, buildContext2;
+  Widget _buildPopupClockOut(BuildContext context) {
+    buildContext1 = context;
+    return new AlertDialog(
       //title: const Text('Popup example'),
       content: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Image.asset(
-            "assets/images/dummy.png",
-            height: 200,
-            width: 200,
-          ),
           Text(
-            "Clock Out Success!",
-            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+            "Are you work overtime?",
+            style: TextStyle(
+                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
           ),
           SizedBox(height: 20),
-          RaisedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              color: colorPrimary,
-              child: Text(
-                "OK!",
-                style: TextStyle(color: colorBackground),
-              ))
+          SizedBox(
+            width: double.infinity,
+            child: RaisedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _buildPopupOvertime(context));
+                },
+                color: colorPrimary,
+                child: Text(
+                  "Yes, I need Overtime Pay",
+                  style: TextStyle(
+                      color: colorBackground, fontWeight: FontWeight.bold),
+                )),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: RaisedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                color: colorBackground,
+                child: Text(
+                  "No, I Clocked  Out On Time",
+                  style: TextStyle(
+                      color: colorPrimary, fontWeight: FontWeight.bold),
+                )),
+          ),
         ],
       ),
-      actions: <Widget>[
-        /*
-        new FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          
-          textColor: Theme.of(context).primaryColor,
-          child: const Text('OK'),
-        ),*/
-      ],
+      actions: <Widget>[],
     );
+  }
+
+  Widget _buildPopupOvertime(BuildContext context) {
+    buildContext2 = context;
+    return new AlertDialog(
+      //title: const Text('Popup example'),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Overtime Paid Form",
+            style: TextStyle(
+                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: colorPrimary, width: 3)),
+                  child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text("18.00",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: colorPrimary)))),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: FaIcon(
+                    Icons.arrow_forward,
+                    color: colorPrimary,
+                  )),
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: colorSecondaryRed, width: 3)),
+                  child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text("20.30",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: colorSecondaryRed,
+                            fontWeight: FontWeight.bold,
+                          )))),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            decoration: BoxDecoration(color: colorBackground, boxShadow: [
+              BoxShadow(
+                color: colorNeutral2.withOpacity(0.7),
+                spreadRadius: 4,
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              )
+            ]),
+            width: double.infinity,
+            child: TextFormField(
+              controller: textReasonOvertime,
+              keyboardType: TextInputType.multiline,
+              minLines: 4,
+              maxLines: 5,
+              decoration: new InputDecoration(
+                  hintText: 'Reason for Overtime',
+                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral1)),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            width: double.infinity,
+            child: RaisedButton(
+                onPressed: () {
+                  dialogText = "Clock Out";
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _buildPopupDialog(context));
+                },
+                color: colorPrimary,
+                child: Text(
+                  "Yes, I need Overtime Pay",
+                  style: TextStyle(
+                      color: colorBackground, fontWeight: FontWeight.bold),
+                )),
+          ),
+        ],
+      ),
+      actions: <Widget>[],
+    );
+  }
+
+  void sharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      clockIn = prefs.getInt(key);
+    });
+    if (clockIn == 1) {
+      print("Clock in Success");
+      stringTap = "Tap Here to Clock Out";
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => _buildPopupDialog(context));
+      });
+    } else if (clockIn == 0) {
+      print("Init Data");
+    } else {
+      print("Not Clock In Yet");
+    }
   }
 }
