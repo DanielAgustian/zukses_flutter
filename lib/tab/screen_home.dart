@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: colorBackground,
       body: SingleChildScrollView(
@@ -101,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: GoogleFonts.lato(
                               textStyle: TextStyle(
                                   color: colorPrimary, letterSpacing: 0),
-                              fontSize: 20,
+                              fontSize: size.width <= 569 ? 16 : 20,
                               fontWeight: FontWeight.bold),
                         ),
                         Align(
@@ -111,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.lato(
                                 textStyle: TextStyle(
                                     color: Colors.grey, letterSpacing: 0),
-                                fontSize: 12,
+                                fontSize: size.width <= 569 ? 10 : 12,
                               ),
                             )),
                       ],
@@ -140,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Task List",
                 style: GoogleFonts.lato(
                     textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                    fontSize: 20,
+                    fontSize: size.width <= 569 ? 18 : 20,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -157,12 +159,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: "High Priority Task",
                     total: 8,
                     numberColor: colorSecondaryRed,
+                    fontSize: size.width <= 569 ? 34 : 36,
                   ),
                   BoxHome(
-                    title: "Low Priority Task",
-                    total: 8,
-                    numberColor: colorClear,
-                  ),
+                      title: "Low Priority Task",
+                      total: 8,
+                      numberColor: colorClear,
+                      fontSize: size.width <= 569 ? 34 : 36),
                 ],
               )),
           Container(
@@ -194,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Meeting List",
                 style: GoogleFonts.lato(
                     textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                    fontSize: 20,
+                    fontSize: size.width <= 569 ? 18 : 20,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -208,15 +211,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   BoxHome(
-                    title: "Meeting Schedule",
-                    total: 3,
-                    numberColor: colorSecondaryRed,
-                  ),
+                      title: "Meeting Schedule",
+                      total: 3,
+                      numberColor: colorSecondaryRed,
+                      fontSize: size.width <= 569 ? 34 : 36),
                   BoxHome(
-                    title: "Meeting Request",
-                    total: 11,
-                    numberColor: colorSecondaryYellow,
-                  ),
+                      title: "Meeting Request",
+                      total: 11,
+                      numberColor: colorSecondaryYellow,
+                      fontSize: size.width <= 569 ? 34 : 36),
                 ],
               )),
           Container(
@@ -350,60 +353,6 @@ class PopUp extends StatelessWidget {
           child: const Text('OK'),
         ),*/
       ],
-    );
-  }
-}
-
-class BoxHome extends StatelessWidget {
-  const BoxHome({
-    Key key,
-    this.title,
-    this.total,
-    this.numberColor,
-  }) : super(key: key);
-
-  final String title;
-  final int total;
-  final Color numberColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      height: 80,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              color: colorNeutral150,
-              blurRadius: 5,
-            )
-          ]),
-      child: Padding(
-          padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "8",
-                style: TextStyle(
-                    color: numberColor,
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0),
-              ),
-              SizedBox(height: 5),
-              Text(
-                "High Priority Task",
-                style: TextStyle(
-                    color: colorPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0),
-              ),
-            ],
-          )),
     );
   }
 }

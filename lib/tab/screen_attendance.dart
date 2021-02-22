@@ -73,8 +73,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    print("SIZE ${size.height}");
+    Size size = MediaQuery.of(context).size; 
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: AppBar(
