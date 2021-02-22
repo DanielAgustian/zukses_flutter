@@ -149,22 +149,26 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           ],
         ),
         SizedBox(
-          height: 20,
+          height: 10,
         ),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 5),
           decoration: BoxDecoration(
               color: colorPrimary, borderRadius: BorderRadius.circular(10)),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              for (var w in _weekDays)
-                Text(
-                  w,
-                  style: TextStyle(color: colorBackground, fontSize: 14),
-                )
-            ],
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: _weekDays.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              mainAxisSpacing: 20,
+              crossAxisCount: 7,
+              crossAxisSpacing: 20,
+            ),
+            itemBuilder: (context, index) {
+              // if (_sequentialDates[index].date == _selectedDateTime)
+              //   return _selector(_sequentialDates[index]);
+              return Center(child: _weekDayTitle(index));
+            },
           ),
         ),
         Flexible(child: _calendarBody()),
@@ -269,8 +273,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         },
         child: _selectedDateTime != calendarDate.date
             ? Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
                   children: [
                     Center(
                         child: Text(
@@ -283,10 +286,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                             : colorNeutral2,
                       ),
                     )),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    dot
+                    Container(alignment: Alignment.bottomCenter, child: dot)
                   ],
                 ),
               )
@@ -298,8 +298,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   borderRadius: BorderRadius.circular(50),
                   border: Border.all(color: colorPrimary, width: 2),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(
                         child: Text(
@@ -312,7 +312,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                             : colorNeutral2,
                       ),
                     )),
-                    dot
+                    Container(alignment: Alignment.bottomCenter, child: dot)
                   ],
                 ),
               ));
@@ -346,98 +346,107 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   // show months list
   Widget _showMonthsList() {
-    return Column(
-      children: <Widget>[
-        InkWell(
-          onTap: () => setState(() => _currentView = CalendarViews.year),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              '${_currentDateTime.year}',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white),
+    return Container(
+      decoration: BoxDecoration(
+          color: colorPrimary, borderRadius: BorderRadius.circular(20)),
+      child: Column(
+        children: <Widget>[
+          InkWell(
+            onTap: () => setState(() => _currentView = CalendarViews.year),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                '${_currentDateTime.year}',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white),
+              ),
             ),
           ),
-        ),
-        Divider(
-          color: Colors.white,
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            itemCount: _monthNames.length,
-            itemBuilder: (context, index) => ListTile(
-              onTap: () {
-                _currentDateTime = DateTime(_currentDateTime.year, index + 1);
-                _getCalendar();
-                setState(() => _currentView = CalendarViews.dates);
-              },
-              title: Center(
-                child: Text(
-                  _monthNames[index],
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: (index == _currentDateTime.month - 1)
-                          ? Colors.yellow
-                          : Colors.white),
+          Divider(
+            color: Colors.white,
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: _monthNames.length,
+              itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  _currentDateTime = DateTime(_currentDateTime.year, index + 1);
+                  _getCalendar();
+                  setState(() => _currentView = CalendarViews.dates);
+                },
+                title: Center(
+                  child: Text(
+                    _monthNames[index],
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: (index == _currentDateTime.month - 1)
+                            ? colorSecondaryYellow
+                            : colorBackground),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   // years list views
   Widget _yearsView(int midYear) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            _toggleBtn(false),
-            Spacer(),
-            _toggleBtn(true),
-          ],
-        ),
-        Expanded(
-          child: GridView.builder(
-              shrinkWrap: true,
-              itemCount: 9,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-              ),
-              itemBuilder: (context, index) {
-                int thisYear;
-                if (index < 4) {
-                  thisYear = midYear - (4 - index);
-                } else if (index > 4) {
-                  thisYear = midYear + (index - 4);
-                } else {
-                  thisYear = midYear;
-                }
-                return ListTile(
-                  onTap: () {
-                    _currentDateTime =
-                        DateTime(thisYear, _currentDateTime.month);
-                    _getCalendar();
-                    setState(() => _currentView = CalendarViews.months);
-                  },
-                  title: Text(
-                    '$thisYear',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: (thisYear == _currentDateTime.year)
-                            ? Colors.yellow
-                            : Colors.white),
-                  ),
-                );
-              }),
-        ),
-      ],
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              _toggleBtn(false),
+              Spacer(),
+              _toggleBtn(true),
+            ],
+          ),
+          Expanded(
+            child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: 9,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                ),
+                itemBuilder: (context, index) {
+                  int thisYear;
+                  if (index < 4) {
+                    thisYear = midYear - (4 - index);
+                  } else if (index > 4) {
+                    thisYear = midYear + (index - 4);
+                  } else {
+                    thisYear = midYear;
+                  }
+                  return ListTile(
+                    onTap: () {
+                      _currentDateTime =
+                          DateTime(thisYear, _currentDateTime.month);
+                      _getCalendar();
+                      setState(() => _currentView = CalendarViews.months);
+                    },
+                    title: Container(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        '$thisYear',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: (thisYear == _currentDateTime.year)
+                                ? colorSecondaryYellow
+                                : colorPrimary),
+                      ),
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/second_click.dart';
 import 'package:zukses_app_1/third_click.dart';
@@ -34,6 +35,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var dayOfWeek = 1;
   DateTime date = DateTime.now();
+  DateFormat dayName = DateFormat('E');
 
   DateTime findFirstDateOfTheWeek(DateTime dateTime) {
     return dateTime.subtract(Duration(days: dateTime.weekday - 1));
@@ -49,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
     print(date.weekday);
+    print(dayName.format(date));
     print(findFirstDateOfTheWeek(date));
   }
 

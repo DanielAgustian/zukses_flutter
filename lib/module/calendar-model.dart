@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 class Calendar {
   final DateTime date;
   int week;
+  DateTime firstWeekDate;
   final bool thisMonth;
   final bool prevMonth;
   final bool nextMonth;
@@ -11,7 +12,8 @@ class Calendar {
       this.thisMonth = false,
       this.prevMonth = false,
       this.nextMonth = false,
-      this.week});
+      this.week,
+      this.firstWeekDate});
 }
 
 enum StartWeekDay { sunday, monday }
@@ -32,6 +34,13 @@ class CustomCalendar {
     return false;
   }
 
+  /// Find the first date of the week which contains the provided date.
+  /// First Day will be monday
+  DateTime findFirstDateOfTheWeek(DateTime dateTime) {
+    return dateTime.subtract(Duration(days: dateTime.weekday - 1));
+  }
+
+  // Return on what number of week the day depend on index
   int numberOfWeek(int index) {
     int week = 1;
     if (index < 14 && index >= 7) {
@@ -154,11 +163,12 @@ class CustomCalendar {
       int week = numberOfWeek(i);
 
       // handle for day in early month
-      if (week == 1 && calendar[i].date.day >= 20)
-        week = 0;
+      if (week == 1 && calendar[i].date.day >= 20) week = 0;
+      // handle for day in last month month
       else if ((week == 5 || week == 6) && calendar[i].date.day <= 6) week = 0;
+      
       calendar[i].week = week;
- 
+      calendar[i].firstWeekDate = findFirstDateOfTheWeek(calendar[i].date);
     }
 
     return calendar;
