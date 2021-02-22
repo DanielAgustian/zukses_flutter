@@ -26,6 +26,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   final getDayNumber = DateFormat('d');
   final getMonthName = DateFormat('MMMM');
   final getYearNumber = DateFormat('y');
+  final getFormatListDate = DateFormat.yMMMMd();
   List<AbsenceTime> absensi = dummy;
   AbsenceTime selected;
   DateTime _currentDate = DateTime.now();
@@ -101,173 +102,194 @@ class _AttendanceScreen extends State<AttendanceScreen> {
           ],
         ),
         body: Container(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: monthly
-                ? Column(
-                    children: [
-                      Container(
-                        width: size.width,
-                        height: size.height * 0.5,
-                        child: CalendarWidget(
-                          onSelectDate: (date, absence) {
-                            selectDate(date, absence);
-                          },
-                          data: dummy,
-                        ),
+          padding: EdgeInsets.all(20),
+          child: monthly
+              ? Column(
+                  children: [
+                    Container(
+                      width: size.width,
+                      height: size.height * 0.5,
+                      child: CalendarWidget(
+                        onSelectDate: (date, absence) {
+                          selectDate(date, absence);
+                        },
+                        data: dummy,
                       ),
+                    ),
 
-                      // SingleChildScrollView(
-                      //   child: Column(
-                      //     children: [
-                      //       Container(
-                      //         margin: EdgeInsets.symmetric(horizontal: 20),
-                      //         child: CalendarCarousel<Event>(
-                      //           onDayPressed: (DateTime date, List<Event> events) {
-                      //             selectDate(date, events);
-                      //           },
-                      //           markedDatesMap: _markedDateMap,
-                      //           height: 420.0,
-                      //           customDayBuilder: (
-                      //             bool isSelectable,
-                      //             int index,
-                      //             bool isSelectedDay,
-                      //             bool isToday,
-                      //             bool isPrevMonthDay,
-                      //             TextStyle textStyle,
-                      //             bool isNextMonthDay,
-                      //             bool isThisMonthDay,
-                      //             DateTime day,
-                      //           ) {
-                      //             // if (day.day == 15) {
-                      //             //   return Center(
-                      //             //     child: Icon(Icons.local_airport),
-                      //             //   );
-                      //             // } else {
-                      //             //   return null;
-                      //             // }
-                      //             return null;
-                      //           },
-                      //           //Formating header
-                      //           headerTextStyle: TextStyle(
-                      //               color: colorPrimary,
-                      //               fontWeight: FontWeight.bold,
-                      //               fontSize: 20),
-                      //           iconColor: colorPrimary,
-                      //           //Formating weekend date
-                      //           weekendTextStyle:
-                      //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                      //           //Formating today
-                      //           todayBorderColor: colorPrimary,
-                      //           todayButtonColor: colorBackground,
-                      //           todayTextStyle: TextStyle(
-                      //             color: colorPrimary,
-                      //             fontWeight: FontWeight.bold,
-                      //           ),
-                      //           //Formating selected day
-                      //           selectedDateTime: _currentDate,
-                      //           selectedDayTextStyle: TextStyle(
-                      //               color: colorBackground, fontWeight: FontWeight.bold),
-                      //           selectedDayButtonColor: colorPrimary,
-                      //           //Formating day
-                      //           daysTextStyle:
-                      //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-                      //           //Formating name of day in Week
-                      //           weekFormat: false,
-                      //           weekDayBackgroundColor: colorPrimary,
-                      //           weekdayTextStyle: TextStyle(color: colorBackground, height: 2),
-                      //           weekDayFormat: WeekdayFormat.narrow,
-                      //         ),
-                      //       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        alignment: Alignment.centerLeft,
-                        child: RichText(
-                          text: TextSpan(
-                            text: '${getDayName.format(_currentDate)}, ',
-                            style: TextStyle(color: colorPrimary, fontSize: 20),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: '${getDayNumber.format(_currentDate)} ',
-                              ),
-                              TextSpan(
-                                text: '${getMonthName.format(_currentDate)} ',
-                              ),
-                              TextSpan(
-                                text: '${getYearNumber.format(_currentDate)} ',
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      TimeBox(selected: selected),
-                      SizedBox(height: 15),
-                      Container(
-                          child: Text(
-                        "Overtime : 0 hrs",
-                        style: TextStyle(color: colorPrimary, fontSize: 20),
-                      ))
-                    ],
-                  )
-                : Column(
-                    children: [
-                      Container(
-                        width: size.width,
-                        height: size.height * 0.5,
-                        child: WeekLyCanlendarWidget(
-                          onChangeWeek: (WeeklyCalendar val) {
-                            print("Week");
-                            print(CustomCalendar()
-                                .findFirstDateOfTheWeek(dummy[0].date));
-                            print(dummy[0].date);
-                            print(val.firstWeekDate);
-                            print(val.firstWeekDate.isAtSameMomentAs(
-                                CustomCalendar()
-                                    .findFirstDateOfTheWeek(dummy[0].date)));
-                            setState(() {
-                              _selectedWeek = val;
-                              absensiList = dummy
-                                  .where((data) => _selectedWeek.firstWeekDate
-                                      .isAtSameMomentAs(CustomCalendar()
-                                          .findFirstDateOfTheWeek(data.date)))
-                                  .toList();
-                            });
-                          },
-                          // data: dummy,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      absensiList.length == 0
-                          ? Container()
-                          : Container(
-                              child: Text("AAAAAAAAAAAAAAAAAAAAAA"),
+                    // SingleChildScrollView(
+                    //   child: Column(
+                    //     children: [
+                    //       Container(
+                    //         margin: EdgeInsets.symmetric(horizontal: 20),
+                    //         child: CalendarCarousel<Event>(
+                    //           onDayPressed: (DateTime date, List<Event> events) {
+                    //             selectDate(date, events);
+                    //           },
+                    //           markedDatesMap: _markedDateMap,
+                    //           height: 420.0,
+                    //           customDayBuilder: (
+                    //             bool isSelectable,
+                    //             int index,
+                    //             bool isSelectedDay,
+                    //             bool isToday,
+                    //             bool isPrevMonthDay,
+                    //             TextStyle textStyle,
+                    //             bool isNextMonthDay,
+                    //             bool isThisMonthDay,
+                    //             DateTime day,
+                    //           ) {
+                    //             // if (day.day == 15) {
+                    //             //   return Center(
+                    //             //     child: Icon(Icons.local_airport),
+                    //             //   );
+                    //             // } else {
+                    //             //   return null;
+                    //             // }
+                    //             return null;
+                    //           },
+                    //           //Formating header
+                    //           headerTextStyle: TextStyle(
+                    //               color: colorPrimary,
+                    //               fontWeight: FontWeight.bold,
+                    //               fontSize: 20),
+                    //           iconColor: colorPrimary,
+                    //           //Formating weekend date
+                    //           weekendTextStyle:
+                    //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+                    //           //Formating today
+                    //           todayBorderColor: colorPrimary,
+                    //           todayButtonColor: colorBackground,
+                    //           todayTextStyle: TextStyle(
+                    //             color: colorPrimary,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //           //Formating selected day
+                    //           selectedDateTime: _currentDate,
+                    //           selectedDayTextStyle: TextStyle(
+                    //               color: colorBackground, fontWeight: FontWeight.bold),
+                    //           selectedDayButtonColor: colorPrimary,
+                    //           //Formating day
+                    //           daysTextStyle:
+                    //               TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+                    //           //Formating name of day in Week
+                    //           weekFormat: false,
+                    //           weekDayBackgroundColor: colorPrimary,
+                    //           weekdayTextStyle: TextStyle(color: colorBackground, height: 2),
+                    //           weekDayFormat: WeekdayFormat.narrow,
+                    //         ),
+                    //       ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      alignment: Alignment.centerLeft,
+                      child: RichText(
+                        text: TextSpan(
+                          text: '${getDayName.format(_currentDate)}, ',
+                          style: TextStyle(color: colorPrimary, fontSize: 20),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: '${getDayNumber.format(_currentDate)} ',
+                            ),
+                            TextSpan(
+                              text: '${getMonthName.format(_currentDate)} ',
+                            ),
+                            TextSpan(
+                              text: '${getYearNumber.format(_currentDate)} ',
                             )
-                      // absensiList.map((data) => Container(
-                      //       decoration: BoxDecoration(
-                      //           color: colorBackground,
-                      //           borderRadius: BorderRadius.circular(5),
-                      //           boxShadow: [
-                      //             BoxShadow(
-                      //                 blurRadius: 15,
-                      //                 color: colorNeutral150)
-                      //           ]),
-                      //       child: Row(
-                      //         children: [
-                      //           Column(
-                      //             children: [],
-                      //           ),
-                      //           TimeBox(selected: null)
-                      //         ],
-                      //       ),
-                      //     ))
-                    ],
-                  ),
-          ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    TimeBox(selected: selected),
+                    SizedBox(height: 15),
+                    Container(
+                        child: Text(
+                      "Overtime : 0 hrs",
+                      style: TextStyle(color: colorPrimary, fontSize: 20),
+                    ))
+                  ],
+                )
+              : Column(
+                  children: [
+                    Container(
+                      width: size.width,
+                      height: size.height * 0.06,
+                      child: WeekLyCanlendarWidget(
+                        onChangeWeek: (WeeklyCalendar val) {
+                          print("Week");
+                          print(CustomCalendar()
+                              .findFirstDateOfTheWeek(dummy[0].date));
+                          print(dummy[0].date);
+                          print(val.firstWeekDate);
+                          print(val.firstWeekDate.isAtSameMomentAs(
+                              CustomCalendar()
+                                  .findFirstDateOfTheWeek(dummy[0].date)));
+                          setState(() {
+                            _selectedWeek = val;
+                            absensiList = dummy
+                                .where((data) => _selectedWeek.firstWeekDate
+                                    .isAtSameMomentAs(CustomCalendar()
+                                        .findFirstDateOfTheWeek(data.date)))
+                                .toList();
+                          });
+                        },
+                        // data: dummy,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    absensiList.length == 0
+                        ? Container()
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: absensiList.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(vertical: 5),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: colorBackground,
+                                      borderRadius: BorderRadius.circular(5),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            blurRadius: 15,
+                                            color: colorNeutral150)
+                                      ]),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                              "${getDayName.format(absensiList[index].date)}",
+                                              style: TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: 16)),
+                                          Text(
+                                              "${getFormatListDate.format(absensiList[index].date)}",
+                                              style: TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: 14))
+                                        ],
+                                      ),
+                                      TimeBox(
+                                        selected: absensiList[index],
+                                        space: size.width * 0.01,
+                                        fontSize: 14,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                  ],
+                ),
         ));
   }
 }

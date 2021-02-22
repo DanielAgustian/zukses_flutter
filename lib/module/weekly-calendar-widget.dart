@@ -131,8 +131,6 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   // dates view
   Widget _datesView() {
     return Container(
-      color: colorClear,
-      height: 60,
       child: Column(
         children: <Widget>[
           // header
@@ -174,12 +172,9 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: colorBackground,
-      body: Container(
-        color: colorSecondaryYellow,
-        child: _sequentialWeek != null ? _datesView() : Container(),
-      ),
+    return Container(
+      color: colorBackground,
+      child: _sequentialWeek != null ? _datesView() : Container(),
     );
   }
 }

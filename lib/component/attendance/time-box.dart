@@ -7,9 +7,13 @@ class TimeBox extends StatelessWidget {
   const TimeBox({
     Key key,
     @required this.selected,
+    this.space = 25,
+    this.fontSize = 20,
   }) : super(key: key);
 
   final AbsenceTime selected;
+  final double space;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +23,7 @@ class TimeBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding:
-                EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: colorPrimary, width: 2)),
@@ -29,18 +32,17 @@ class TimeBox extends StatelessWidget {
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.w700,
-                  fontSize: 20),
+                  fontSize: fontSize),
             ),
           ),
-          SizedBox(width: 25),
+          SizedBox(width: space),
           FaIcon(
             FontAwesomeIcons.arrowRight,
             color: colorPrimary,
           ),
-          SizedBox(width: 25),
+          SizedBox(width: space),
           Container(
-            padding:
-                EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: colorPrimary, width: 2)),
@@ -49,7 +51,7 @@ class TimeBox extends StatelessWidget {
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.w700,
-                  fontSize: 20),
+                  fontSize: fontSize),
             ),
           ),
         ],
