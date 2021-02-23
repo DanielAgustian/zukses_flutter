@@ -20,17 +20,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   DateTime _selectedDateTime;
   List<WeeklyCalendar> _sequentialWeek;
   List<Calendar> _sequentialDates;
-  int midYear, week;
-  CalendarViews _currentView = CalendarViews.dates;
-  final List<String> _weekDays = [
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT',
-    'SUN'
-  ];
+  int midYear, week; 
   final List<String> _monthNames = [
     'January',
     'February',
@@ -91,7 +81,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
     var dates = CustomCalendar().getMonthCalendar(
         _currentDateTime.month, _currentDateTime.year,
         startWeekDay: StartWeekDay.monday);
-    _sequentialDates = dates;
+    // _sequentialDates = dates;
     //get week calendar
     _sequentialWeek = CustomCalendar().getWeeklyCalendar(calendar: dates);
     _sequentialWeek.forEach((data) {
