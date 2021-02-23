@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
@@ -34,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     sharedPref();
   }
 
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -49,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) =>
-                        _buildPopupClockOut(context));
+                        _buildPopupClockOut(context, size: size));
               } else {
                 Navigator.push(
                   context,
@@ -261,7 +264,8 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(onPressed: () {
         showDialog(
             context: context,
-            builder: (BuildContext context) => _buildPopupOvertime(context));
+            builder: (BuildContext context) =>
+                _buildPopupOvertime(context, size: size));
       }),
     );
   }
@@ -284,9 +288,13 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 20),
-          RaisedButton(
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop();
+
+          SmallButton(
+            bgColor: colorPrimary,
+            textColor: colorBackground,
+            title: "OK",
+            onClick: () {
+              Navigator.of(context, rootNavigator: true).pop();
 
                 if (dialogText == "Clock Out") {
                   disposeSF();
@@ -296,12 +304,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.of(buildContext1, rootNavigator: true).pop();
                   Navigator.of(buildContext2, rootNavigator: true).pop();
                 }
-              },
-              color: colorPrimary,
-              child: Text(
-                "OK!",
-                style: TextStyle(color: colorBackground),
-              ))
+            },
+          ),
+          // RaisedButton(
+          //     onPressed: () {
+          //       Navigator.of(context, rootNavigator: true).pop();
+          //       if (dialogText == "Clock Out") {
+          //         Navigator.of(buildContext1, rootNavigator: true).pop();
+          //         Navigator.of(buildContext2, rootNavigator: true).pop();
+          //       }
+          //     },
+          //     color: colorPrimary,
+          //     child: Text(
+          //       "OK!",
+          //       style: TextStyle(color: colorBackground),
+          //     ))
         ],
       ),
       actions: <Widget>[],
@@ -310,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 //Clock Out Step 1========================================
   BuildContext buildContext1, buildContext2;
-  Widget _buildPopupClockOut(BuildContext context) {
+  Widget _buildPopupClockOut(BuildContext context, {size}) {
     buildContext1 = context;
     return new AlertDialog(
       //title: const Text('Popup example'),
@@ -326,32 +343,33 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
-            child: RaisedButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupOvertime(context));
-                },
-                color: colorPrimary,
-                child: Text(
-                  "Yes, I need Overtime Pay",
-                  style: TextStyle(
-                      color: colorBackground, fontWeight: FontWeight.bold),
-                )),
+            child: LongButton(
+              size: size,
+              bgColor: colorPrimary,
+              textColor: colorBackground,
+              title: "Yes, I need Overtime Pay",
+              onClick: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupOvertime(context, size: size));
+              },
+            ),
+          ),
+          SizedBox(
+            height: 5,
           ),
           SizedBox(
             width: double.infinity,
-            child: RaisedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                color: colorBackground,
-                child: Text(
-                  "No, I Clocked  Out On Time",
-                  style: TextStyle(
-                      color: colorPrimary, fontWeight: FontWeight.bold),
-                )),
+            child: LongButton(
+              size: size,
+              bgColor: colorBackground,
+              textColor: colorPrimary,
+              title: "No, I Clocked  Out On Time",
+              onClick: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ),
         ],
       ),
@@ -359,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPopupOvertime(BuildContext context) {
+  Widget _buildPopupOvertime(BuildContext context, {size}) {
     buildContext2 = context;
     return new AlertDialog(
       //title: const Text('Popup example'),
@@ -378,15 +396,15 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                   decoration: BoxDecoration(
-                      border: Border.all(color: colorPrimary, width: 3)),
-                  child: Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("18.00",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: colorPrimary)))),
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: colorPrimary, width: 2)),
+                  child: Text("18.00",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: colorPrimary))),
               Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: FaIcon(
@@ -394,16 +412,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: colorPrimary,
                   )),
               Container(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                   decoration: BoxDecoration(
-                      border: Border.all(color: colorSecondaryRed, width: 3)),
-                  child: Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("20.30",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: colorSecondaryRed,
-                            fontWeight: FontWeight.bold,
-                          )))),
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: colorPrimary, width: 2)),
+                  child: Text("19.30",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: colorPrimary))),
             ],
           ),
           SizedBox(
@@ -429,24 +446,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   hintStyle: TextStyle(fontSize: 14, color: colorNeutral1)),
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            width: double.infinity,
-            child: RaisedButton(
-                onPressed: () {
-                  dialogText = "Clock Out";
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupDialog(context));
-                },
-                color: colorPrimary,
-                child: Text(
-                  "Yes, I need Overtime Pay",
-                  style: TextStyle(
-                      color: colorBackground, fontWeight: FontWeight.bold),
-                )),
+          LongButton(
+            size: size,
+            bgColor: colorPrimary,
+            textColor: colorBackground,
+            title: "Yes, I need Overtime Pay",
+            onClick: () {
+              dialogText = "Clock Out";
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      _buildPopupDialog(context));
+            },
           ),
+          // Container(
+          //   padding: EdgeInsets.only(top: 10),
+          //   width: double.infinity,
+          //   child: RaisedButton(
+          //       onPressed: () {
+          //         dialogText = "Clock Out";
+          //         showDialog(
+          //             context: context,
+          //             builder: (BuildContext context) =>
+          //                 _buildPopupDialog(context));
+          //       },
+          //       color: colorPrimary,
+          //       child: Text(
+          //         "Yes, I need Overtime Pay",
+          //         style: TextStyle(
+          //             color: colorBackground, fontWeight: FontWeight.bold),
+          //       )),
+          // ),
         ],
       ),
       actions: <Widget>[],

@@ -16,21 +16,9 @@ class WeekLyCanlendarWidget extends StatefulWidget {
 enum CalendarViews { dates, months, year }
 
 class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
-  DateTime _currentDateTime;
-  DateTime _selectedDateTime;
-  List<WeeklyCalendar> _sequentialWeek;
-  List<Calendar> _sequentialDates;
-  int midYear, week;
-  CalendarViews _currentView = CalendarViews.dates;
-  final List<String> _weekDays = [
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT',
-    'SUN'
-  ];
+  DateTime _currentDateTime; 
+  List<WeeklyCalendar> _sequentialWeek; 
+  int midYear, week; 
   final List<String> _monthNames = [
     'January',
     'February',
@@ -50,8 +38,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   void initState() {
     super.initState();
     final date = DateTime.now();
-    _currentDateTime = DateTime(date.year, date.month);
-    _selectedDateTime = DateTime(date.year, date.month, date.day);
+    _currentDateTime = DateTime(date.year, date.month); 
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());
@@ -91,7 +78,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
     var dates = CustomCalendar().getMonthCalendar(
         _currentDateTime.month, _currentDateTime.year,
         startWeekDay: StartWeekDay.monday);
-    _sequentialDates = dates;
+    // _sequentialDates = dates;
     //get week calendar
     _sequentialWeek = CustomCalendar().getWeeklyCalendar(calendar: dates);
     _sequentialWeek.forEach((data) {

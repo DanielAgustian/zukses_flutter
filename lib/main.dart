@@ -18,7 +18,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(fontFamily: 'Lato'),
+      theme: ThemeData(
+        fontFamily: 'Lato',
+      ),
       locale: DevicePreview.locale(context), // Add the locale here
       builder: DevicePreview.appBuilder, // Add the builder here
       home: MyHomePage(title: 'Flutter Demo Home Page'),
@@ -53,9 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(date.weekday);
-    print(dayName.format(date));
-    print(findFirstDateOfTheWeek(date));
+    // print(date.weekday);
+    // print(dayName.format(date));
+    // print(findFirstDateOfTheWeek(date));
   }
 
   @override

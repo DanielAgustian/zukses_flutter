@@ -25,10 +25,7 @@ dependencies:
     sdk: flutter
   google_fonts:
   font_awesome_flutter:
-  intl: 
-  flutter_calendar_carousel:
-  week_of_year:
-  table_calendar:
+  intl:  
   esys_flutter_share: 
   image_picker: 
   # The following adds the Cupertino Icons font to your application.
