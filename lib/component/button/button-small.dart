@@ -21,7 +21,7 @@ class SmallButton extends StatelessWidget {
     return InkWell(
       onTap: onClick,
       child: Container(
-        width: 100,
+        width: size,
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(10)),
         child: Center(

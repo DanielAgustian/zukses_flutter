@@ -3,8 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
-import 'package:zukses_app_1/constant/constant.dart'; 
-import 'package:zukses_app_1/model/dummy-model.dart'; 
+import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
@@ -44,7 +44,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   @override
   void initState() {
-    super.initState(); 
+    super.initState();
   }
 
   @override
@@ -102,11 +102,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       currentDate: _currentDate,
                     ),
                     SizedBox(
-                      height: size.width <= 569 ? 20 : 25,
+                      height: size.height <= 569 ? 20 : 25,
                     ),
                     TimeBox(
                       selected: selected,
-                      fontSize: size.width <= 569 ? textSizeSmall18 : 18,
+                      fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                     ),
                     SizedBox(height: 15),
                     Container(
@@ -124,7 +124,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       width: size.width,
                       height: size.height * 0.06,
                       child: WeekLyCanlendarWidget(
-                        fontSize: size.width <= 569 ? textSizeSmall18 : 18,
+                        fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                         onChangeWeek: (WeeklyCalendar val) {
                           setState(() {
                             _selectedWeek = val;
