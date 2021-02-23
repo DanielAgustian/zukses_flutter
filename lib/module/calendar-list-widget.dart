@@ -6,14 +6,12 @@ import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarListWidget extends StatefulWidget {
-  const CalendarListWidget(
-      {Key key, this.onSelectDate, this.data, this.fontSize = 14})
+  const CalendarListWidget({Key key, this.onSelectDate, this.fontSize = 14})
       : super(key: key);
 
   @override
   _CalendarListWidgetState createState() => _CalendarListWidgetState();
   final Function onSelectDate;
-  final List data;
   final double fontSize;
 }
 
@@ -193,8 +191,6 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
         itemCount: _sequentialDates.length,
         itemBuilder: (context, index) {
           // if (_sequentialDates[index].date == _selectedDateTime)
@@ -227,12 +223,13 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
         },
         child: _selectedDateTime != calendarDate.date
             ? Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('${getDayName.format(calendarDate.date)}',
                         style: TextStyle(
                           fontSize: widget.fontSize,
-                          fontWeight: FontWeight.bold,
                           color: (calendarDate.thisMonth)
                               ? colorPrimary
                               : colorNeutral2,
@@ -242,7 +239,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
                     ),
                     Text('${calendarDate.date.day}',
                         style: TextStyle(
-                          fontSize: widget.fontSize,
+                          fontSize: widget.fontSize + 4,
                           fontWeight: FontWeight.bold,
                           color: (calendarDate.thisMonth)
                               ? colorPrimary
@@ -252,12 +249,13 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
                 ),
               )
             : Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: colorPrimary,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('${getDayName.format(calendarDate.date)}',
                         style: TextStyle(
@@ -272,7 +270,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
                     ),
                     Text('${calendarDate.date.day}',
                         style: TextStyle(
-                          fontSize: widget.fontSize,
+                          fontSize: widget.fontSize + 4,
                           fontWeight: FontWeight.bold,
                           color: (calendarDate.thisMonth)
                               ? colorBackground

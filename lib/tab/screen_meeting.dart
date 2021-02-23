@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/component/schedule/schedule-item.dart';
+import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
@@ -36,10 +39,18 @@ class _MeetingScreenState extends State<MeetingScreen>
 
   void selectDate(DateTime date) {
     setState(() {
-      _currentDate = date;
+      _selectedDate = date;
       // selected = absence;
       // kata = "$_currentDate";
     });
+    print(_selectedDate);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectedDate = _currentDate;
   }
 
   @override
@@ -99,10 +110,12 @@ class _MeetingScreenState extends State<MeetingScreen>
                 child: Column(
                   children: [
                     Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       width: size.width,
-                      height: size.width <= 569
+                      height: size.height <= 569
                           ? size.height * 0.45
-                          : size.height * 0.5,
+                          : size.height * 0.4,
                       child: CalendarWidget(
                         fontSize: size.width <= 569 ? textSizeSmall14 : 12,
                         onSelectDate: (date, absence) {
@@ -111,14 +124,34 @@ class _MeetingScreenState extends State<MeetingScreen>
                         data: dummy,
                       ),
                     ),
-                    Center(
-                      child: Text(week == null ? "" : 'Week $week'),
+                    TitleDayFormatted(
+                      currentDate: _selectedDate,
                     ),
-                    Center(
-                      child: Text(_selectedDate == null
-                          ? 'This is Tab Meeting'
-                          : "${_selectedDate.day}"),
-                    ),
+                    ...absensiList
+                        .map((item) => ScheduleItem(
+                              size: size,
+                              title: "Schedule",
+                              time1: "10.00",
+                              time2: "11.30",
+                            ))
+                        .toList()
+                    // Expanded(
+                    //   child: Container(
+                    //     child: ListView.builder(
+                    //       shrinkWrap: true,
+                    //       physics: const NeverScrollableScrollPhysics(),
+                    //       itemCount: 5,
+                    //       itemBuilder: (context, index) {
+                    //         return ScheduleItem(
+                    //           size: size,
+                    //           title: "Schedule",
+                    //           time1: "10.00",
+                    //           time2: "11.30",
+                    //         );
+                    //       },
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ))
@@ -127,25 +160,31 @@ class _MeetingScreenState extends State<MeetingScreen>
                 children: [
                   Container(
                     width: size.width,
-                    height: size.width <= 569
-                        ? size.height * 0.45
-                        : size.height * 0.5,
+                    height: size.height <= 569
+                        ? size.height * 0.21
+                        : size.height * 0.17,
                     child: CalendarListWidget(
-                      fontSize: size.width <= 569 ? textSizeSmall14 : 12,
-                      onSelectDate: (date, absence) {
+                      fontSize: size.height <= 569 ? textSizeSmall14 : 16,
+                      onSelectDate: (date) {
                         selectDate(date);
                       },
-                      data: dummy,
                     ),
                   ),
-                  Center(
-                    child: Text(week == null ? "" : 'Week $week'),
-                  ),
-                  Center(
-                    child: Text(_selectedDate == null
-                        ? 'This is Tab Meeting'
-                        : "${_selectedDate.day}"),
-                  ),
+                  Expanded(
+                    child: Container(
+                      child: ListView.builder(
+                        itemCount: 5,
+                        itemBuilder: (context, index) {
+                          return ScheduleItem(
+                            size: size,
+                            title: "Schedule",
+                            time1: "10.00",
+                            time2: "11.30",
+                          );
+                        },
+                      ),
+                    ),
+                  )
                 ],
               )));
   }
