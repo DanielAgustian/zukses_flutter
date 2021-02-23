@@ -8,6 +8,9 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/util/util.dart';
+import 'package:intl/intl.dart';
+import 'package:timer_builder/timer_builder.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -72,14 +75,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                      Text(
-                        "14.00",
-                        style: GoogleFonts.lato(
-                            textStyle: TextStyle(
-                                color: Colors.white, letterSpacing: 1.5),
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      TimerBuilder.periodic(Duration(seconds: 1),
+                          builder: (context) {
+                        //print("${getSystemTime()}");
+                        return Text(
+                          getSystemTime(),
+                          style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                                  color: Colors.white, letterSpacing: 1.5),
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold),
+                        );
+                      }),
                       Text(
                         stringTap,
                         style: GoogleFonts.lato(
@@ -288,10 +295,15 @@ class _HomeScreenState extends State<HomeScreen> {
             title: "OK",
             onClick: () {
               Navigator.of(context, rootNavigator: true).pop();
-              if (dialogText == "Clock Out") {
-                Navigator.of(buildContext1, rootNavigator: true).pop();
-                Navigator.of(buildContext2, rootNavigator: true).pop();
-              }
+
+                if (dialogText == "Clock Out") {
+                  disposeSF();
+                  dialogText = "Clock In";
+                  String timeClockOut = getHourNow();
+                  print(timeClockOut);
+                  Navigator.of(buildContext1, rootNavigator: true).pop();
+                  Navigator.of(buildContext2, rootNavigator: true).pop();
+                }
             },
           ),
           // RaisedButton(
@@ -471,6 +483,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void disposeSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(key, 0);
+    clockIn = 0;
+  }
+
   void sharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -479,6 +497,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (clockIn == 1) {
       print("Clock in Success");
       stringTap = "Tap Here to Clock Out";
+      String timeClockIn = getHourNow();
+      print("Clock In Pegawai:" + timeClockIn);
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showDialog<String>(
             context: context,
@@ -489,5 +509,17 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       print("Not Clock In Yet");
     }
+  }
+
+  String getHourNow() {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat.Hm();
+    final String formatted = formatter.format(now);
+    return formatted;
+  }
+
+  String getSystemTime() {
+    var now = new DateTime.now();
+    return new DateFormat("H:m").format(now);
   }
 }
