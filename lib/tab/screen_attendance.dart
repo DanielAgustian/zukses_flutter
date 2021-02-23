@@ -4,8 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart'; 
-import 'package:zukses_app_1/model/dummy-model.dart';
-import 'package:week_of_year/week_of_year.dart';
+import 'package:zukses_app_1/model/dummy-model.dart'; 
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
@@ -45,10 +44,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   @override
   void initState() {
-    super.initState();
-    print("week of year ${_date.weekOfYear}");
-    print("week of year ${_date.ordinalDate}");
-    print("week of year ${_date.isLeapYear}");
+    super.initState(); 
   }
 
   @override
