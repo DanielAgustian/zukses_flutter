@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:zukses_app_1/constant/constant.dart'; 
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarListWidget extends StatefulWidget {

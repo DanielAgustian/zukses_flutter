@@ -11,14 +11,7 @@ import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/screen/schedule/screen-add-schedule.dart';
 
-// Example holidays
-final Map<DateTime, List> _holidays = {
-  DateTime(2020, 1, 1): ['New Year\'s Day'],
-  DateTime(2020, 1, 6): ['Epiphany'],
-  DateTime(2020, 2, 14): ['Valentine\'s Day'],
-  DateTime(2020, 4, 21): ['Easter Sunday'],
-  DateTime(2020, 4, 22): ['Easter Monday'],
-};
+ 
 
 class MeetingScreen extends StatefulWidget {
   MeetingScreen({Key key, this.title}) : super(key: key);

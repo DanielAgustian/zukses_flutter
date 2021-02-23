@@ -16,10 +16,8 @@ class WeekLyCanlendarWidget extends StatefulWidget {
 enum CalendarViews { dates, months, year }
 
 class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
-  DateTime _currentDateTime;
-  DateTime _selectedDateTime;
-  List<WeeklyCalendar> _sequentialWeek;
-  List<Calendar> _sequentialDates;
+  DateTime _currentDateTime; 
+  List<WeeklyCalendar> _sequentialWeek; 
   int midYear, week; 
   final List<String> _monthNames = [
     'January',
@@ -40,8 +38,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   void initState() {
     super.initState();
     final date = DateTime.now();
-    _currentDateTime = DateTime(date.year, date.month);
-    _selectedDateTime = DateTime(date.year, date.month, date.day);
+    _currentDateTime = DateTime(date.year, date.month); 
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());

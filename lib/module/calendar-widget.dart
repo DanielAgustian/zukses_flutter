@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart'; 
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
@@ -322,32 +321,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   ],
                 ),
               ));
-  }
-
-  // date selector
-  Widget _selector(Calendar calendarDate) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: colorPrimary, width: 2),
-      ),
-      // child: Column(
-      //   children: [
-      //     Container(
-      //       child: Center(
-      //         child: Text(
-      //           '${calendarDate.date.day}',
-      //           style:
-      //               TextStyle(color: colorPrimary, fontWeight: FontWeight.w700),
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
-    );
   }
 
   // show months list
