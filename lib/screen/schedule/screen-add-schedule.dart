@@ -14,16 +14,11 @@ class AddScheduleScreen extends StatefulWidget {
 class _AddScheduleScreenState extends State<AddScheduleScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController textTitle = new TextEditingController();
-  TextEditingController textSearch = new TextEditingController();
-
-  TextEditingController textDescription = new TextEditingController();
-
-  final DateFormat formater = DateFormat.yMMMMEEEEd();
-
-  bool _titleValidator = false;
-
-  bool _descriptionValidator = false;
-
+  TextEditingController textSearch = new TextEditingController(); 
+  TextEditingController textDescription = new TextEditingController(); 
+  final DateFormat formater = DateFormat.yMMMMEEEEd(); 
+  bool _titleValidator = false; 
+  bool _descriptionValidator = false; 
   DateTime date = DateTime.now();
 
   // Dragable scroll controller
@@ -293,10 +288,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           ),
                           Container(
                             // height: 50,
-                            decoration: BoxDecoration(
-                                border: _titleValidator
-                                    ? Border.all(color: colorError)
-                                    : Border.all(color: Colors.transparent),
+                            decoration: BoxDecoration( 
                                 color: colorBackground,
                                 boxShadow: [
                                   BoxShadow(
@@ -309,7 +301,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.streetAddress,
                               onChanged: (val) {},
-                              controller: textTitle,
+                              controller: textSearch,
                               decoration: InputDecoration(
                                   contentPadding:
                                       EdgeInsets.symmetric(vertical: 20),
