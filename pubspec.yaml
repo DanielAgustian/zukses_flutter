@@ -39,7 +39,7 @@ dependencies:
   path: 
   shared_preferences:
   device_preview:
-
+  timer_builder: 
 dev_dependencies:
   flutter_test:
     sdk: flutter
