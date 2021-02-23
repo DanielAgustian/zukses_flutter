@@ -7,8 +7,8 @@ import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
-import 'package:zukses_app_1/module/calendar-list-widget.dart'; 
-import 'package:zukses_app_1/module/calendar-widget.dart'; 
+import 'package:zukses_app_1/module/calendar-list-widget.dart';
+import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/screen/schedule/screen-add-schedule.dart';
 
 // Example holidays
@@ -35,7 +35,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   int week;
   DateTime _currentDate = DateTime.now();
   bool grid = true;
-
+  bool removeBackgroundDialog = false;
   // Dragable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
@@ -150,7 +150,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                     time2: "11.30",
                                   ),
                                 ))
-                            .toList() 
+                            .toList()
                       ],
                     ),
                   ))
@@ -197,149 +197,157 @@ class _MeetingScreenState extends State<MeetingScreen>
             SizedBox.expand(
               child: SlideTransition(
                 position: _tween.animate(_controller),
-                child: DraggableScrollableSheet(
-                  maxChildSize: 0.8,
-                  initialChildSize: 0.8,
-                  minChildSize: 0.3,
-                  builder: (BuildContext context,
-                      ScrollController scrollController) {
-                    return Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                      decoration: BoxDecoration(
-                          boxShadow: [BoxShadow(blurRadius: 15)],
-                          color: colorBackground,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20))),
-                      child: Stack(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top: size.height * 0.26),
-                            child: ListView(
-                              controller: scrollController,
-                              children: [
-                                Column(
-                                  children: [
-                                    ...dummy.map((item) => Container(
-                                          padding:
-                                              EdgeInsets.symmetric(vertical: 6),
-                                          child: Row(
-                                            children: [
-                                              UserAvatar(
-                                                avatarRadius: size.height <= 570
-                                                    ? 15
-                                                    : 20,
-                                                dotSize:
-                                                    size.height <= 570 ? 8 : 10,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                "User (status)",
-                                                style: TextStyle(
-                                                  fontSize: size.height <= 570
-                                                      ? 14
-                                                      : 16,
-                                                  color: colorPrimary,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                LongButton(
-                                  size: size,
-                                  bgColor: colorPrimary,
-                                  textColor: colorBackground,
-                                  title: "Accept",
-                                  onClick: () {},
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                LongButtonOutline(
-                                  outlineColor: colorError,
-                                  size: size,
-                                  bgColor: colorBackground,
-                                  textColor: colorError,
-                                  title: "Reject",
-                                  onClick: () {},
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: size.height * 0.25,
+                child: Container(
+                  child: DraggableScrollableSheet(
+                    maxChildSize: 0.8,
+                    initialChildSize: 0.8,
+                    minChildSize: 0.6,
+                    builder: (BuildContext context,
+                        ScrollController scrollController) {
+                      return Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                        decoration: BoxDecoration(
+                            boxShadow: [BoxShadow(blurRadius: 15)],
                             color: colorBackground,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Schedule",
-                                      style: TextStyle(
-                                          fontSize:
-                                              size.height <= 570 ? 18 : 20,
-                                          color: colorPrimary,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.times,
-                                        color: colorPrimary,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20))),
+                        child: Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(top: size.height * 0.26),
+                              child: ListView(
+                                controller: scrollController,
+                                children: [
+                                  Column(
+                                    children: [
+                                      ...dummy.map((item) => Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            child: Row(
+                                              children: [
+                                                UserAvatar(
+                                                  avatarRadius:
+                                                      size.height <= 570
+                                                          ? 15
+                                                          : 20,
+                                                  dotSize: size.height <= 570
+                                                      ? 8
+                                                      : 10,
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "User (status)",
+                                                  style: TextStyle(
+                                                    fontSize: size.height <= 570
+                                                        ? 14
+                                                        : 16,
+                                                    color: colorPrimary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  LongButton(
+                                    size: size,
+                                    bgColor: colorPrimary,
+                                    textColor: colorBackground,
+                                    title: "Accept",
+                                    onClick: () {},
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  LongButtonOutline(
+                                    outlineColor: colorError,
+                                    size: size,
+                                    bgColor: colorBackground,
+                                    textColor: colorError,
+                                    title: "Reject",
+                                    onClick: () {},
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: size.height * 0.25,
+                              color: colorBackground,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Schedule",
+                                        style: TextStyle(
+                                            fontSize:
+                                                size.height <= 570 ? 18 : 20,
+                                            color: colorPrimary,
+                                            fontWeight: FontWeight.w700),
                                       ),
-                                      onPressed: () {
-                                        _controller.reverse();
-                                      },
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height <= 570 ? 2 : 5,
-                                ),
-                                Text(
-                                  "09.00 - 10.00",
-                                  style: TextStyle(
-                                    fontSize: size.height <= 570 ? 12 : 14,
-                                    color: colorPrimary50,
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.times,
+                                          color: colorPrimary,
+                                        ),
+                                        onPressed: () {
+                                          _controller.reverse();
+                                          setState(() {
+                                            removeBackgroundDialog =
+                                                !removeBackgroundDialog;
+                                          });
+                                        },
+                                      )
+                                    ],
                                   ),
-                                ),
-                                SizedBox(
-                                  height: size.height <= 570 ? 6 : 10,
-                                ),
-                                Text(
-                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
-                                  style: TextStyle(
-                                    fontSize: size.height <= 570 ? 12 : 14,
-                                    color: colorPrimary,
+                                  SizedBox(
+                                    height: size.height <= 570 ? 2 : 5,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: size.height <= 570 ? 10 : 20,
-                                ),
-                                Text(
-                                  "Assigned to",
-                                  style: TextStyle(
+                                  Text(
+                                    "09.00 - 10.00",
+                                    style: TextStyle(
+                                      fontSize: size.height <= 570 ? 12 : 14,
+                                      color: colorPrimary50,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: size.height <= 570 ? 6 : 10,
+                                  ),
+                                  Text(
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
+                                    style: TextStyle(
                                       fontSize: size.height <= 570 ? 12 : 14,
                                       color: colorPrimary,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: size.height <= 570 ? 10 : 20,
+                                  ),
+                                  Text(
+                                    "Assigned to",
+                                    style: TextStyle(
+                                        fontSize: size.height <= 570 ? 12 : 14,
+                                        color: colorPrimary,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
