@@ -65,15 +65,17 @@ class _MeetingScreenState extends State<MeetingScreen>
           title: Text(
             "Schedule",
             style: TextStyle(
-                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
+                color: colorPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: size.height <= 569 ? 20 : 25),
           ),
           actions: [
             IconButton(
               splashColor: Colors.transparent,
               icon: FaIcon(
-                grid ? FontAwesomeIcons.columns : FontAwesomeIcons.box,
-                color: colorPrimary,
-              ),
+                  grid ? FontAwesomeIcons.columns : FontAwesomeIcons.box,
+                  color: colorPrimary,
+                  size: size.height <= 569 ? 16 : 20),
               onPressed: () {
                 setState(() {
                   grid = !grid;
@@ -85,15 +87,14 @@ class _MeetingScreenState extends State<MeetingScreen>
               icon: FaIcon(
                 FontAwesomeIcons.search,
                 color: colorPrimary,
+                size: size.height <= 569 ? 16 : 20,
               ),
               onPressed: () {},
             ),
             IconButton(
               splashColor: Colors.transparent,
-              icon: FaIcon(
-                FontAwesomeIcons.plusCircle,
-                color: colorPrimary,
-              ),
+              icon: FaIcon(FontAwesomeIcons.plusCircle,
+                  color: colorPrimary, size: size.height <= 569 ? 16 : 20),
               onPressed: () {
                 Navigator.push(
                   context,

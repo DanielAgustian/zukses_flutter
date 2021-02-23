@@ -67,7 +67,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
           title: Text(
             "Attendance Detail",
             style: TextStyle(
-                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
+                color: colorPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: size.height <= 569 ? 20 : 25),
           ),
           actions: [
             IconButton(
@@ -75,6 +77,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               icon: FaIcon(
                 monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
                 color: colorPrimary,
+                size: size.height <= 569 ? 16 : 20,
               ),
               onPressed: () {
                 setState(() {
@@ -95,7 +98,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                           ? size.height * 0.45
                           : size.height * 0.5,
                       child: CalendarWidget(
-                        fontSize: size.width <= 569 ? textSizeSmall14 : 12,
+                        fontSize: size.height <= 569 ? textSizeSmall14 : 12,
                         onSelectDate: (date, absence) {
                           selectDate(date, absence);
                         },

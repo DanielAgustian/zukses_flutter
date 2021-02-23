@@ -6,10 +6,11 @@ class AddScheduleRow extends StatelessWidget {
   const AddScheduleRow({
     Key key,
     this.title,
-    this.textItem,
+    this.textItem, this.fontSize,
   }) : super(key: key);
 
   final String title, textItem;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +21,14 @@ class AddScheduleRow extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 16, color: colorPrimary),
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
           ),
           Row(
             children: [
               Text(
                 textItem,
                 style: TextStyle(
-                    fontSize: 16,
+                    fontSize: fontSize,
                     color: colorPrimary,
                     fontWeight: FontWeight.w700),
               ),

@@ -53,9 +53,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         ),
         centerTitle: true,
         title: Text(
-          "Attendance Detail",
+          "Add Schedule",
           style: TextStyle(
-              color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
+              color: colorPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: size.height <= 569 ? 20 : 25),
         ),
         actions: [
           Center(
@@ -68,7 +70,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                 child: Text(
                   "Done",
                   style: TextStyle(
-                      fontSize: 18,
+                      fontSize: size.height <= 569 ? 15 : 18,
                       color: colorPrimary,
                       fontWeight: FontWeight.bold),
                 ),
@@ -156,14 +158,17 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       height: 20,
                     ),
                     AddScheduleRow(
+                      fontSize: size.height <= 569 ? 14 : 16,
                       title: "Date",
                       textItem: "${formater.format(date)}",
                     ),
                     AddScheduleRow(
+                      fontSize: size.height <= 569 ? 14 : 16,
                       title: "Time",
                       textItem: "09.00 - 09.30",
                     ),
                     AddScheduleRow(
+                      fontSize: size.height <= 569 ? 14 : 16,
                       title: "Repeat",
                       textItem: "Never",
                     ),
@@ -174,7 +179,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Invite",
-                        style: TextStyle(fontSize: 16, color: colorPrimary),
+                        style: TextStyle(
+                            fontSize: size.height <= 569 ? 14 : 16,
+                            color: colorPrimary),
                       ),
                     ),
                     SizedBox(
@@ -210,7 +217,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                             children: [
                               CircleAvatar(
                                 backgroundColor: colorSecondaryRed,
-                                radius: 30,
+                                radius: size.height <= 569 ? 20 : 30,
                               ),
                               Text(
                                 "Done",
