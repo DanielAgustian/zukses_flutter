@@ -7,11 +7,8 @@ import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
-import 'package:zukses_app_1/module/calendar-list-widget.dart';
-import 'package:zukses_app_1/module/calendar-model.dart';
-import 'package:zukses_app_1/module/calendar-widget.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
+import 'package:zukses_app_1/module/calendar-list-widget.dart'; 
+import 'package:zukses_app_1/module/calendar-widget.dart'; 
 import 'package:zukses_app_1/screen/schedule/screen-add-schedule.dart';
 
 // Example holidays
@@ -153,24 +150,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                     time2: "11.30",
                                   ),
                                 ))
-                            .toList()
-                        // Expanded(
-                        //   child: Container(
-                        //     child: ListView.builder(
-                        //       shrinkWrap: true,
-                        //       physics: const NeverScrollableScrollPhysics(),
-                        //       itemCount: 5,
-                        //       itemBuilder: (context, index) {
-                        //         return ScheduleItem(
-                        //           size: size,
-                        //           title: "Schedule",
-                        //           time1: "10.00",
-                        //           time2: "11.30",
-                        //         );
-                        //       },
-                        //     ),
-                        //   ),
-                        // )
+                            .toList() 
                       ],
                     ),
                   ))
