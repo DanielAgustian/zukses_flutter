@@ -26,8 +26,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   final getFormatListDate = DateFormat.yMMMMd();
   List<AbsenceTime> absensi = dummy;
   AbsenceTime selected;
-  DateTime _currentDate = DateTime.now();
-  DateTime _date = DateTime.parse("2021-01-02");
+  DateTime _currentDate = DateTime.now(); 
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
   List<AbsenceTime> absensiList;

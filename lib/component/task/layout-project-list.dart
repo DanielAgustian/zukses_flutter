@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/task/list-project.dart';
-import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/screen/task/screen-task-detail.dart'; 
 
 class LayoutProjectList extends StatelessWidget {
   LayoutProjectList(
@@ -22,7 +21,6 @@ class LayoutProjectList extends StatelessWidget {
   final String time;
   //DateFormat dateFormat = DateFormat.yMMMMd();
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         Padding(
