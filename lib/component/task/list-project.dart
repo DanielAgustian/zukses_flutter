@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
@@ -49,6 +49,9 @@ class ListProject extends StatelessWidget {
                             color: colorPrimary,
                             fontWeight: FontWeight.bold),
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     Text(
                       detail,

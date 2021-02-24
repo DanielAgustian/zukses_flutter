@@ -11,9 +11,11 @@ class LayoutProjectList extends StatelessWidget {
       this.projectName,
       this.projectDetail,
       this.projectTask,
-      this.time})
+      this.time,
+      this.fontSize = 22})
       : super(key: key);
 
+  final double fontSize;
   final int count;
   final List<String> projectName, projectDetail;
   final List<int> projectTask;
@@ -27,7 +29,9 @@ class LayoutProjectList extends StatelessWidget {
           child: Text(
             "You've got " + count.toString() + " tasks " + time,
             style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 24, color: colorPrimary),
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+                color: colorPrimary),
           ),
         ),
         ListView.builder(
