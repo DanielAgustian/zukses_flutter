@@ -15,6 +15,11 @@ class _AddTaskScreen extends State<AddTaskScreen> {
   DateTime selectedDate = DateTime.now();
   TextEditingController textDueDate = new TextEditingController();
   TextEditingController textTime = new TextEditingController();
+  TextEditingController textUsername = new TextEditingController();
+  TextEditingController textDescription = new TextEditingController();
+  TextEditingController textAssignedTo = new TextEditingController();
+  TextEditingController textPriority = new TextEditingController();
+  TextEditingController textNotes = new TextEditingController();
   int count = 4;
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     ],
                     borderRadius: BorderRadius.circular(5)),
                 child: TextFormField(
+                  controller: textUsername,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
@@ -79,6 +85,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       ],
                       borderRadius: BorderRadius.circular(5)),
                   child: TextFormField(
+                    controller: textDescription,
                     keyboardType: TextInputType.multiline,
                     minLines: 4,
                     maxLines: 5,
@@ -104,6 +111,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     ],
                     borderRadius: BorderRadius.circular(5)),
                 child: TextFormField(
+                  controller: textAssignedTo,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
@@ -130,6 +138,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     ],
                     borderRadius: BorderRadius.circular(5)),
                 child: TextFormField(
+                  controller: textPriority,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
@@ -248,6 +257,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       ],
                       borderRadius: BorderRadius.circular(5)),
                   child: TextFormField(
+                    controller: textNotes,
                     keyboardType: TextInputType.multiline,
                     minLines: 3,
                     maxLines: 3,

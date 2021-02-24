@@ -30,6 +30,10 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
           backgroundColor: colorBackground,
           automaticallyImplyLeading: false,
           centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: colorPrimary),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           title: Text(
             widget.projectName,
             style: TextStyle(

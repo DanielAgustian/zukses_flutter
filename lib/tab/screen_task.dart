@@ -23,6 +23,7 @@ class _TaskScreen extends State<TaskScreen>
     "Project 4: Liar"
   ];
   TabController tabController;
+  TextEditingController textSearch = new TextEditingController();
   var projectTask = [1, 5, 2, 0];
   int count = 4;
   int tab = 0;
@@ -80,6 +81,7 @@ class _TaskScreen extends State<TaskScreen>
                     ],
                     borderRadius: BorderRadius.circular(5)),
                 child: TextFormField(
+                  controller: textSearch,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
@@ -88,7 +90,9 @@ class _TaskScreen extends State<TaskScreen>
                         icon: FaIcon(FontAwesomeIcons.search,
                             color: colorPrimary),
                         onPressed: () {
-                          setState(() {});
+                          setState(() {
+                            searchTask(textSearch.text);
+                          });
                         },
                       ),
                       contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 0),
@@ -161,4 +165,6 @@ class _TaskScreen extends State<TaskScreen>
           ],
         )));
   }
+
+  void searchTask(String word) {}
 }
