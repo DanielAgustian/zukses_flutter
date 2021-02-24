@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/constant/constant.dart'; 
-import 'package:zukses_app_1/component/task/layout-project-list.dart'; 
+import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/component/task/layout-project-list.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -57,6 +57,7 @@ class _TaskScreen extends State<TaskScreen>
               icon: FaIcon(
                 FontAwesomeIcons.bars,
                 color: colorPrimary,
+                size: size.height < 570 ? 20 : 25,
               ),
               onPressed: () {},
             ),
