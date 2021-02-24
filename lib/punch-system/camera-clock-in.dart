@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
@@ -73,22 +74,22 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    RaisedButton(
-                      onPressed: () {
+                    SmallButton(
+                      size: 120,
+                      title: "Continue",
+                      bgColor: colorPrimary,
+                      textColor: colorBackground,
+                      onClick: () {
                         pushtoScreenTab();
                       },
-                      child: Text("Continue",
-                          style: TextStyle(
-                              color: colorBackground,
-                              fontWeight: FontWeight.bold)),
-                      color: colorPrimary,
-                    ),
+                    ), 
                     SizedBox(width: 10),
-                    RaisedButton(
-                      onPressed: () {},
-                      child: Text("Cancel",
-                          style: TextStyle(color: colorBackground)),
-                      color: Colors.red,
+                    SmallButton(
+                      size: 120,
+                      title: "Cancel",
+                      bgColor: colorError,
+                      textColor: colorBackground,
+                      onClick: () {},
                     )
                   ],
                 ),

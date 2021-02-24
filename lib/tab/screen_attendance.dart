@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zukses_app_1/component/attendance/time-box.dart';
+import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/classes/event_list.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
-import 'package:week_of_year/week_of_year.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
@@ -33,7 +30,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   DateTime _date = DateTime.parse("2021-01-02");
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
-  List<AbsenceTime> absensiList; 
+  List<AbsenceTime> absensiList;
 
   void selectDate(DateTime date, AbsenceTime absence) {
     setState(() {
@@ -46,11 +43,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   bool monthly = true;
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
-    print("week of year ${_date.weekOfYear}");
-    print("week of year ${_date.ordinalDate}");
-    print("week of year ${_date.isLeapYear}");
   }
 
   @override
@@ -66,7 +60,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
           title: Text(
             "Attendance Detail",
             style: TextStyle(
-                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 25),
+                color: colorPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: size.height <= 569 ? 20 : 25),
           ),
           actions: [
             IconButton(
@@ -74,6 +70,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               icon: FaIcon(
                 monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
                 color: colorPrimary,
+                size: size.height <= 569 ? 16 : 20,
               ),
               onPressed: () {
                 setState(() {
@@ -94,43 +91,22 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                           ? size.height * 0.45
                           : size.height * 0.5,
                       child: CalendarWidget(
-                        fontSize: size.width <= 569 ? textSizeSmall14 : 12,
+                        fontSize: size.height <= 569 ? textSizeSmall14 : 12,
                         onSelectDate: (date, absence) {
                           selectDate(date, absence);
                         },
                         data: dummy,
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      alignment: Alignment.centerLeft,
-                      child: RichText(
-                        text: TextSpan(
-                          text: '${getDayName.format(_currentDate)}, ',
-                          style: TextStyle(
-                              color: colorPrimary,
-                              fontSize:
-                                  size.width <= 569 ? textSizeSmall18 : 18),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: '${getDayNumber.format(_currentDate)} ',
-                            ),
-                            TextSpan(
-                              text: '${getMonthName.format(_currentDate)} ',
-                            ),
-                            TextSpan(
-                              text: '${getYearNumber.format(_currentDate)} ',
-                            )
-                          ],
-                        ),
-                      ),
+                    TitleDayFormatted(
+                      currentDate: _currentDate,
                     ),
                     SizedBox(
-                      height: size.width <= 569 ? 20 : 25,
+                      height: size.height <= 569 ? 20 : 25,
                     ),
                     TimeBox(
                       selected: selected,
-                      fontSize: size.width <= 569 ? textSizeSmall18 : 18,
+                      fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                     ),
                     SizedBox(height: 15),
                     Container(
@@ -148,8 +124,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       width: size.width,
                       height: size.height * 0.06,
                       child: WeekLyCanlendarWidget(
-                        fontSize: size.width <= 569 ? textSizeSmall18 : 18,
-                        onChangeWeek: (WeeklyCalendar val) { 
+                        fontSize: size.height <= 569 ? textSizeSmall18 : 18,
+                        onChangeWeek: (WeeklyCalendar val) {
                           setState(() {
                             _selectedWeek = val;
                             absensiList = dummy
