@@ -162,8 +162,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+  Widget build(BuildContext context) { 
     return Container(
       child:
           _sequentialWeek != null ? Center(child: _datesView()) : Container(),

@@ -8,6 +8,7 @@ import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
+import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class AddScheduleScreen extends StatefulWidget {
@@ -24,6 +25,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   bool _titleValidator = false;
   bool _descriptionValidator = false;
   DateTime date = DateTime.now();
+  TimeOfDay time1 = TimeOfDay.now();
+  TimeOfDay time2;
+  List<String> items = ["Never", "Once", "1 Day Before"];
+  String repeat = "Never";
 
   // Dragable scroll controller
   AnimationController _controller;
@@ -133,15 +138,71 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         false;
   }
 
+// get calendar function
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(3500),
+    );
+    if (picked != null && picked != date)
+      setState(() {
+        date = picked;
+      });
+  }
+
+  void pickTime(BuildContext context, {int index = 1}) async {
+    TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: index == 1 ? TimeOfDay.now() : time2,
+    );
+
+    if (picked.minute == 60) {
+      picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+    }
+
+    if (picked != null) {
+      if (index == 1) {
+        setState(() {
+          time1 = picked;
+          time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
+        });
+      } else {
+        setState(() {
+          time2 = picked;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: _duration);
+
+    int h, m;
+    m = time1.minute >= 30 ? (time1.minute + 30) - 60 : (time1.minute + 30);
+    h = time1.minute >= 30
+        ? time1.hour >= 23
+            ? 00
+            : time1.hour + 1
+        : time1.hour;
+
+    time2 = TimeOfDay(hour: h, minute: m);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    String h1 = (time1.hour <= 9) ? "0${time1.hour}" : time1.hour.toString();
+    String m1 =
+        (time1.minute <= 9) ? "0${time1.minute}" : time1.minute.toString();
+    String h2 = (time2.hour <= 9) ? "0${time2.hour}" : time2.hour.toString();
+    String m2 =
+        (time2.minute <= 9) ? "0${time2.minute}" : time2.minute.toString();
+
     return WillPopScope(
       onWillPop: () {
         if (textDescription.text != "" || textTitle.text != "")
@@ -271,20 +332,38 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       SizedBox(
                         height: 20,
                       ),
-                      AddScheduleRow(
-                        fontSize: size.height <= 569 ? 14 : 16,
-                        title: "Date",
-                        textItem: "${formater.format(date)}",
+                      InkWell(
+                        onTap: () {
+                          _selectDate(this.context);
+                        },
+                        child: AddScheduleRow(
+                          fontSize: size.height <= 569 ? 14 : 16,
+                          title: "Date",
+                          textItem: "${formater.format(date)}",
+                        ),
                       ),
-                      AddScheduleRow(
-                        fontSize: size.height <= 569 ? 14 : 16,
-                        title: "Time",
-                        textItem: "09.00 - 09.30",
+                      InkWell(
+                        onTap: () {
+                          pickTime(this.context, index: 2);
+                          pickTime(this.context);
+                        },
+                        child: AddScheduleRow(
+                          fontSize: size.height <= 569 ? 14 : 16,
+                          title: "Time",
+                          textItem: "$h1.$m1 - $h2.$m2",
+                        ),
                       ),
-                      AddScheduleRow(
+                      AddScheduleRow2(
                         fontSize: size.height <= 569 ? 14 : 16,
                         title: "Repeat",
-                        textItem: "Never",
+                        textItem: repeat,
+                        items: items,
+                        onSelectedItem: (val) {
+                          print(val);
+                          setState(() {
+                            repeat = val;
+                          });
+                        },
                       ),
                       SizedBox(
                         height: 20,
@@ -351,147 +430,123 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                   ),
                 ),
               ),
-              SizedBox.expand(
-                child: SlideTransition(
-                  position: _tween.animate(_controller),
-                  child: DraggableScrollableSheet(
-                    maxChildSize: 0.8,
-                    initialChildSize: 0.7,
-                    minChildSize: 0.3,
-                    builder: (BuildContext context,
-                        ScrollController scrollController) {
-                      return Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            boxShadow: [BoxShadow(blurRadius: 15)],
-                            color: colorBackground,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20))),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    _controller.reverse();
-                                  },
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                        fontSize: 16, color: colorPrimary),
-                                  ),
-                                ),
-                                Text(
-                                  "Add Invitation",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: colorPrimary,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    _controller.reverse();
-                                  },
-                                  child: Text(
-                                    "Done",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: colorPrimary,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              // height: 50,
-                              decoration: BoxDecoration(
-                                  color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: TextFormField(
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.streetAddress,
-                                onChanged: (val) {},
-                                controller: textSearch,
-                                decoration: InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.symmetric(vertical: 20),
-                                    prefixIcon: Icon(
-                                      Icons.search,
-                                      color: colorNeutral1,
-                                    ),
-                                    hintText: "Search",
-                                    hintStyle: TextStyle(
-                                      color: colorNeutral1,
-                                    ),
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                controller: scrollController,
-                                itemCount: 5,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    padding: EdgeInsets.symmetric(vertical: 6),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundColor:
-                                                    colorSecondaryRed,
-                                                radius: 25,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                "Done",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: colorPrimary,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          child: Checkbox(
-                                              value: false,
-                                              activeColor: colorClear,
-                                              checkColor: Colors.white,
-                                              onChanged: (value) {}),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              scrollerSheet(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget scrollerSheet() {
+    bool temp = false;
+    return SizedBox.expand(
+      child: SlideTransition(
+        position: _tween.animate(_controller),
+        child: DraggableScrollableSheet(
+          maxChildSize: 0.8,
+          initialChildSize: 0.7,
+          minChildSize: 0.4,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  boxShadow: [BoxShadow(blurRadius: 15)],
+                  color: colorBackground,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          _controller.reverse();
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(fontSize: 16, color: colorPrimary),
+                        ),
+                      ),
+                      Text(
+                        "Add Invitation",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _controller.reverse();
+                        },
+                        child: Text(
+                          "Done",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    // height: 50,
+                    decoration: BoxDecoration(
+                        color: colorBackground,
+                        boxShadow: [
+                          BoxShadow(
+                              offset: Offset(0, 0),
+                              color: Color.fromRGBO(240, 239, 242, 1),
+                              blurRadius: 15),
+                        ],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: TextFormField(
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.streetAddress,
+                      onChanged: (val) {},
+                      controller: textSearch,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 20),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: colorNeutral1,
+                          ),
+                          hintText: "Search",
+                          hintStyle: TextStyle(
+                            color: colorNeutral1,
+                          ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: 5,
+                      itemBuilder: (BuildContext context, int index) {
+                        return UserInvitationItem(
+                          val: temp,
+                          title: "User $index",
+                          checkboxCallback: (val) {
+                            print(val);
+                            temp = val;
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

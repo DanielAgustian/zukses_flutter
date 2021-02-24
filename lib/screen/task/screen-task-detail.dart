@@ -23,6 +23,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
   int count = 4;
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: AppBar(
@@ -37,7 +39,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
           title: Text(
             widget.projectName,
             style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 24, color: colorPrimary),
+                fontWeight: FontWeight.bold,
+                fontSize: size.height < 570 ? 22 : 25,
+                color: colorPrimary),
           ),
           actions: [
             IconButton(
@@ -46,6 +50,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
               icon: FaIcon(
                 FontAwesomeIcons.plus,
                 color: colorPrimary,
+                size: size.height < 570 ? 20 : 25,
               ),
               onPressed: () {
                 Navigator.push(

@@ -65,8 +65,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+  Widget build(BuildContext context) { 
     return Scaffold(
       body: Center(
         child: Container(
