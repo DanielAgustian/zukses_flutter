@@ -28,7 +28,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
       body: Container(
         width: size.width,
         padding: EdgeInsets.all(20),
-        color: colorSecondaryYellow,
+        color: colorBackground,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,

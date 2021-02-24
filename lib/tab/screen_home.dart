@@ -180,11 +180,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
             decoration: BoxDecoration(boxShadow: [
               BoxShadow(
                 color: colorNeutral150,
-                blurRadius: 5,
+                blurRadius: 1,
               )
             ]),
             child: ListView.builder(
@@ -234,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )),
           Container(
-            padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
             decoration: BoxDecoration(boxShadow: [
               BoxShadow(
                 color: colorNeutral2.withOpacity(0.2),
@@ -409,12 +409,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: colorPrimary, width: 2)),
+                      border: Border.all(color: colorSecondaryRed, width: 2)),
                   child: Text("19.30",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: colorPrimary))),
+                          color: colorSecondaryRed))),
             ],
           ),
           SizedBox(
@@ -440,6 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   hintStyle: TextStyle(fontSize: 14, color: colorNeutral1)),
             ),
           ),
+          SizedBox(height: 10),
           LongButton(
             size: size,
             bgColor: colorPrimary,

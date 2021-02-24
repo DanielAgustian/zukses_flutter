@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class AddTaskScreen extends StatefulWidget {
   AddTaskScreen({Key key, this.title}) : super(key: key);
@@ -11,7 +12,9 @@ class AddTaskScreen extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _AddTaskScreen extends State<AddTaskScreen> {
-  var projectTask = [1, 5, 2, 0];
+  DateTime selectedDate = DateTime.now();
+  TextEditingController textDueDate = new TextEditingController();
+  TextEditingController textTime = new TextEditingController();
   int count = 4;
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,10 @@ class _AddTaskScreen extends State<AddTaskScreen> {
           backgroundColor: colorBackground,
           automaticallyImplyLeading: false,
           centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: colorPrimary),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           title: Text(
             "Add Schedule",
             style: TextStyle(
@@ -142,7 +149,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                   padding: EdgeInsets.fromLTRB(0, 15, 10, 0),
                   child: Container(
                     height: 50,
-                    width: MediaQuery.of(context).size.width * 0.45,
+                    width: MediaQuery.of(context).size.width * 0.55,
                     decoration: BoxDecoration(
                         color: colorBackground,
                         boxShadow: [
@@ -153,6 +160,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                         ],
                         borderRadius: BorderRadius.circular(5)),
                     child: TextFormField(
+                      controller: textDueDate,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.text,
                       onChanged: (val) {},
@@ -161,6 +169,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                             icon: FaIcon(FontAwesomeIcons.arrowDown,
                                 color: colorPrimary),
                             onPressed: () {
+                              _selectDate(context);
                               setState(() {});
                             },
                           ),
@@ -176,7 +185,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                   padding: EdgeInsets.fromLTRB(10, 15, 0, 0),
                   child: Container(
                     height: 50,
-                    width: MediaQuery.of(context).size.width * 0.45,
+                    width: MediaQuery.of(context).size.width * 0.35,
                     decoration: BoxDecoration(
                         color: colorBackground,
                         boxShadow: [
@@ -187,6 +196,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                         ],
                         borderRadius: BorderRadius.circular(5)),
                     child: TextFormField(
+                      controller: textTime,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.text,
                       onChanged: (val) {},
@@ -195,7 +205,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                             icon: FaIcon(FontAwesomeIcons.clock,
                                 color: colorPrimary),
                             onPressed: () {
-                              setState(() {});
+                              _selectTime();
                             },
                           ),
                           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 0),
@@ -262,5 +272,43 @@ class _AddTaskScreen extends State<AddTaskScreen> {
             )
           ],
         )));
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2050));
+    if (picked != null)
+      setState(() {
+        selectedDate = picked;
+        DateFormat formatter = DateFormat('yyyy-MM-dd');
+        String formatted = formatter.format(selectedDate);
+        textDueDate.text = formatted;
+      });
+  }
+
+  TimeOfDay _time = TimeOfDay.now();
+  void _selectTime() async {
+    TimeOfDay newTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child,
+        );
+      },
+    );
+    if (newTime != null) {
+      setState(() {
+        _time = newTime;
+        String data = _time.format(context);
+        DateTime date = DateFormat.jm().parse(data);
+        String finalTime = DateFormat("HH:mm").format(date);
+        textTime.text = finalTime;
+      });
+    }
   }
 }

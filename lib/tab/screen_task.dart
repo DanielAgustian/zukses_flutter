@@ -36,6 +36,7 @@ class _TaskScreen extends State<TaskScreen>
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: AppBar(
@@ -112,8 +113,9 @@ class _TaskScreen extends State<TaskScreen>
                               controller: tabController,
                               labelColor: colorBackground,
                               unselectedLabelColor: colorPrimary,
-                              labelStyle:
-                                  TextStyle(fontWeight: FontWeight.bold),
+                              labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: size.height <= 569 ? 14 : 16),
                               indicator: BoxDecoration(
                                   color: colorPrimary,
                                   borderRadius: BorderRadius.circular(5)),
@@ -156,39 +158,6 @@ class _TaskScreen extends State<TaskScreen>
                         ])),
               ),
             ),
-            /*Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "You've got " + count.toString() + " tasks today",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    color: colorPrimary),
-              ),
-            ),
-            ListView.builder(
-              itemCount: projectName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                    onTap: () {
-                      print(projectName[index]);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TaskDetailScreen(
-                                  projectName: projectName[index],
-                                )),
-                      );
-                    },
-                    child: ListProject(
-                      title: projectName[index],
-                      detail: projectDetail[index],
-                      jumlahTask: projectTask[index].toInt(),
-                    ));
-              },
-            ),*/
           ],
         )));
   }

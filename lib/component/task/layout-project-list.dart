@@ -20,6 +20,7 @@ class LayoutProjectList extends StatelessWidget {
   final String time;
   //DateFormat dateFormat = DateFormat.yMMMMd();
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         Padding(
@@ -27,7 +28,9 @@ class LayoutProjectList extends StatelessWidget {
           child: Text(
             "You've got " + count.toString() + " tasks " + time,
             style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 24, color: colorPrimary),
+                fontWeight: FontWeight.bold,
+                fontSize: size.height <= 569 ? 22 : 24,
+                color: colorPrimary),
           ),
         ),
         ListView.builder(
