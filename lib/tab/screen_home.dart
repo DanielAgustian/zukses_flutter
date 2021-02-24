@@ -180,26 +180,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: colorNeutral150,
-                blurRadius: 5,
-              )
-            ]),
-            child: ListView.builder(
-              itemCount: taskName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListViewBox(
-                  title: taskName[index],
-                  detail: taskDetail[index],
-                  viewType: "task",
-                );
-              },
-            ),
-          ),
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              decoration: BoxDecoration(color: colorBackground, boxShadow: [
+                BoxShadow(
+                  color: colorNeutral1.withOpacity(1),
+                  blurRadius: 10,
+                )
+              ]),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    itemCount: taskName.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListViewBox(
+                        title: taskName[index],
+                        detail: taskDetail[index],
+                        viewType: "task",
+                      );
+                    },
+                  ),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: FlatButton(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          color: colorBackground,
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Show All Task Schedule",
+                                  style: TextStyle(color: colorPrimary)),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: colorPrimary,
+                              )
+                            ],
+                          )))
+                ],
+              )),
           Padding(
             padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
             child: Align(
@@ -234,28 +254,48 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )),
           Container(
-            padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: colorNeutral2.withOpacity(0.2),
-                spreadRadius: 4,
-                blurRadius: 10,
-                offset: Offset(0, 3),
-              )
-            ]),
-            child: ListView.builder(
-              itemCount: taskName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListViewBox(
-                  title: meetName[index],
-                  detail: meetTime[index],
-                  viewType: "meeting",
-                );
-              },
-            ),
-          ),
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                  color: colorNeutral2.withOpacity(0.2),
+                  spreadRadius: 4,
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                )
+              ]),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    itemCount: taskName.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListViewBox(
+                        title: meetName[index],
+                        detail: meetTime[index],
+                        viewType: "meeting",
+                      );
+                    },
+                  ),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: FlatButton(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          color: colorBackground,
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Show All Task Schedule",
+                                  style: TextStyle(color: colorPrimary)),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: colorPrimary,
+                              )
+                            ],
+                          )))
+                ],
+              )),
           SizedBox(
             height: 20,
           )
@@ -409,12 +449,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: colorPrimary, width: 2)),
+                      border: Border.all(color: colorSecondaryRed, width: 2)),
                   child: Text("19.30",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: colorPrimary))),
+                          color: colorSecondaryRed))),
             ],
           ),
           SizedBox(
@@ -440,6 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   hintStyle: TextStyle(fontSize: 14, color: colorNeutral1)),
             ),
           ),
+          SizedBox(height: 10),
           LongButton(
             size: size,
             bgColor: colorPrimary,

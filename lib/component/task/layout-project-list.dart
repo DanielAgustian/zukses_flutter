@@ -22,6 +22,7 @@ class LayoutProjectList extends StatelessWidget {
   final String time;
   //DateFormat dateFormat = DateFormat.yMMMMd();
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         Padding(

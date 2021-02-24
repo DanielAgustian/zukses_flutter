@@ -23,6 +23,7 @@ class _TaskScreen extends State<TaskScreen>
     "Project 4: Liar"
   ];
   TabController tabController;
+  TextEditingController textSearch = new TextEditingController();
   var projectTask = [1, 5, 2, 0];
   int count = 4;
   int tab = 0;
@@ -82,6 +83,7 @@ class _TaskScreen extends State<TaskScreen>
                   borderRadius: BorderRadius.circular(5)),
               child: Center(
                 child: TextFormField(
+                  controller: textSearch,
                   textInputAction: TextInputAction.go,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
@@ -90,7 +92,9 @@ class _TaskScreen extends State<TaskScreen>
                         icon: FaIcon(FontAwesomeIcons.search,
                             color: colorPrimary),
                         onPressed: () {
-                          setState(() {});
+                          setState(() {
+                            searchTask(textSearch.text);
+                          });
                         },
                       ),
                       contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 0),
@@ -173,40 +177,9 @@ class _TaskScreen extends State<TaskScreen>
                 ),
               ),
             ),
-            /*Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "You've got " + count.toString() + " tasks today",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    color: colorPrimary),
-              ),
-            ),
-            ListView.builder(
-              itemCount: projectName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                    onTap: () {
-                      print(projectName[index]);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TaskDetailScreen(
-                                  projectName: projectName[index],
-                                )),
-                      );
-                    },
-                    child: ListProject(
-                      title: projectName[index],
-                      detail: projectDetail[index],
-                      jumlahTask: projectTask[index].toInt(),
-                    ));
-              },
-            ),*/
           ],
         )));
   }
+
+  void searchTask(String word) {}
 }
