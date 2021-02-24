@@ -258,11 +258,6 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       )),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) => _buildPopupOvertime(context));
-      }),
     );
   }
 

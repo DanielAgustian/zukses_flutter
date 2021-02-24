@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/task/list-project.dart';
+import 'package:zukses_app_1/component/task/layout-project-list.dart';
 import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -99,7 +100,7 @@ class _TaskScreen extends State<TaskScreen>
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: 100,
+              height: MediaQuery.of(context).size.height,
               child: DefaultTabController(
                 length: 3,
                 child: Scaffold(
@@ -131,13 +132,31 @@ class _TaskScreen extends State<TaskScreen>
                     body: TabBarView(
                         controller: tabController,
                         children: <Widget>[
-                          Container(color: Colors.red),
-                          Container(color: Colors.green),
-                          Container(color: Colors.blue)
+                          LayoutProjectList(
+                            count: count,
+                            projectName: projectName,
+                            projectDetail: projectDetail,
+                            projectTask: projectTask,
+                            time: "today",
+                          ),
+                          LayoutProjectList(
+                            count: count,
+                            projectName: projectName,
+                            projectDetail: projectDetail,
+                            projectTask: projectTask,
+                            time: "upcoming",
+                          ),
+                          LayoutProjectList(
+                            count: count,
+                            projectName: projectName,
+                            projectDetail: projectDetail,
+                            projectTask: projectTask,
+                            time: "overdue",
+                          )
                         ])),
               ),
             ),
-            Padding(
+            /*Padding(
               padding: EdgeInsets.all(10),
               child: Text(
                 "You've got " + count.toString() + " tasks today",
@@ -169,7 +188,7 @@ class _TaskScreen extends State<TaskScreen>
                       jumlahTask: projectTask[index].toInt(),
                     ));
               },
-            ),
+            ),*/
           ],
         )));
   }

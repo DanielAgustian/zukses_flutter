@@ -4,11 +4,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 
 class BoxHome extends StatelessWidget {
   const BoxHome(
-      {Key key,
-      this.title,
-      this.total,
-      this.numberColor,
-      this.fontSize = 36})
+      {Key key, this.title, this.total, this.numberColor, this.fontSize = 36})
       : super(key: key);
 
   final String title;
@@ -19,6 +15,7 @@ class BoxHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.4,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
           color: Colors.white,
@@ -42,7 +39,7 @@ class BoxHome extends StatelessWidget {
           ),
           SizedBox(height: 5),
           Text(
-            "High Priority Task",
+            title,
             style: TextStyle(
                 color: colorPrimary,
                 fontSize: fontSize - 22,

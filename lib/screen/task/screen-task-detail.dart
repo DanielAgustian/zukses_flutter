@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/task/list-task.dart';
+import 'package:zukses_app_1/component/task/list-task-detail2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 
@@ -16,6 +17,9 @@ class TaskDetailScreen extends StatefulWidget {
 class _TaskDetailScreen extends State<TaskDetailScreen> {
   var taskName = ["task 1", "Task 2", "Task4", "Task 6"];
   var taskDone = ["task 3", "task 5"];
+  var taskDetail = ["Dadada", "nananan", "mamammaa", "lalalla"];
+  var taskDate = ["02/19/2020", "08/19/2020", "12/11/2019", "02/15/2021"];
+  var taskHour = ["19.00", "17.00", "15.00", "16.00"];
   int count = 4;
   @override
   Widget build(BuildContext context) {
@@ -57,7 +61,13 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListTaskDetail(title: taskName[index], status: "");
+                return ListTaskDetail2(
+                  title: taskName[index],
+                  detail: taskDetail[index],
+                  date: taskDate[index],
+                  hour: taskHour[index],
+                  index: index,
+                );
               },
             ),
             Align(
