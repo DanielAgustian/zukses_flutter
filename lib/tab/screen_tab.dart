@@ -39,6 +39,7 @@ class _ScreenTab extends State<ScreenTab> {
       backgroundColor: colorBackground,
       body: screenList[_currentScreenIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: onTabTapped,
         currentIndex:
             _currentScreenIndex, // this will be set when a new tab is tapped
@@ -60,7 +61,7 @@ class _ScreenTab extends State<ScreenTab> {
               icon: FaIcon(FontAwesomeIcons.solidCalendar), label: 'Schedule'),
         ],
         unselectedFontSize: 12,
-        selectedFontSize: 14,
+        selectedFontSize: 12,
         showUnselectedLabels: true,
         selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
         unselectedItemColor: colorPrimary70,

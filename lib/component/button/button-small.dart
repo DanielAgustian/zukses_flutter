@@ -23,7 +23,8 @@ class SmallButton extends StatelessWidget {
       child: Container(
         width: size,
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            color: bgColor, borderRadius: BorderRadius.circular(10)),
         child: Center(
           child: Text(
             title,

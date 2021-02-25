@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -19,6 +19,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   File _image;
   String imagePath;
   String key = "clock in";
+  final picker = ImagePicker();
   void initState() {
     super.initState();
     imagePath = widget.path;
@@ -82,14 +83,31 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                       onClick: () {
                         pushtoScreenTab();
                       },
-                    ), 
+                    ),
                     SizedBox(width: 10),
-                    SmallButton(
-                      size: 120,
-                      title: "Cancel",
-                      bgColor: colorError,
-                      textColor: colorBackground,
-                      onClick: () {},
+                    InkWell(
+                      onTap: () {
+                        retakeButton();
+                      },
+                      child: Container(
+                        width: 120,
+                        height: 35,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                        decoration: BoxDecoration(
+                            color: colorBackground,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(width: 2, color: colorPrimary)),
+                        child: Center(
+                          child: Text(
+                            "Retake",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
                     )
                   ],
                 ),
@@ -99,5 +117,13 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
         ),
       ),
     );
+  }
+
+  void retakeButton() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    String newImage = pickedFile.path;
+    setState(() {
+      _image = File(newImage);
+    });
   }
 }

@@ -4,13 +4,14 @@ import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:timer_builder/timer_builder.dart';
+import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -22,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController textReasonOvertime = new TextEditingController();
+  final picker = ImagePicker();
   String key = "clock in";
   String stringTap = "Click Here to Clock In";
   var taskName = ["Task 1", "task 2"];
@@ -30,10 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   var meetTime = ["14:00-15:00", "19:00-20:00"];
   int clockIn;
   String dialogText = "Clock In ";
+  bool instruction = false;
   @override
   void initState() {
     super.initState();
     sharedPref();
+    sharedPrefInstruction();
   }
 
   @override
@@ -54,17 +58,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (BuildContext context) =>
                         _buildPopupClockOut(context, size: size));
               } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CameraInstruction()),
-                );
+                if (instruction == true) {
+                  pushToCamera();
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CameraInstruction()),
+                  );
+                }
               }
 
               //tapHour();
             },
             child: new Container(
                 width: double.infinity,
-                height: 200,
+                height: size.height * 0.40,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(40),
@@ -92,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: GoogleFonts.lato(
                           textStyle: TextStyle(
                               color: Colors.white, letterSpacing: 1.5),
-                          fontSize: 14,
+                          fontSize: size.height < 569 ? 14 : 18,
                         ),
                       ),
                     ]))),
@@ -583,5 +592,35 @@ class _HomeScreenState extends State<HomeScreen> {
     var now = new DateTime.now();
     //print(now.toString);
     return new DateFormat("H:mm").format(now);
+  }
+
+  void sharedPrefInstruction() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (prefs.getBool("instruction") != null) {
+        instruction = prefs.getBool("instruction");
+        print("Instruction Closed");
+      } else {
+        print("Bool faield");
+      }
+    });
+  }
+
+  void pushToCamera() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        String data = pickedFile.path;
+        //print(data);
+        //_image = File(pickedFile.path);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PreviewCamera(
+                      path: data,
+                    )));
+      });
+    }
   }
 }
