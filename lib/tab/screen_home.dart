@@ -7,6 +7,7 @@ import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 
 import 'package:zukses_app_1/constant/constant.dart';
@@ -63,60 +64,40 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                new GestureDetector(
-                  onTap: () {
-                    print("Container clicked");
-                    if (clockIn == 1) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              _buildPopupClockOut(context, size: size));
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CameraInstruction()),
-                      );
-                    }
-
-                    //tapHour();
-                  },
-                  child: Container(
-                      width: double.infinity,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(40),
-                            bottomLeft: Radius.circular(40)),
-                        color: colorPrimary,
-                      ),
-                      child: Center(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                            TimerBuilder.periodic(Duration(seconds: 1),
-                                builder: (context) {
-                              //print("${getSystemTime()}");
-                              return Text(
-                                getSystemTime(),
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        color: Colors.white,
-                                        letterSpacing: 1.5),
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold),
-                              );
-                            }),
-                            Text(
-                              stringTap,
+                Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(40),
+                          bottomLeft: Radius.circular(40)),
+                      color: colorPrimary,
+                    ),
+                    child: Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                          TimerBuilder.periodic(Duration(seconds: 1),
+                              builder: (context) {
+                            //print("${getSystemTime()}");
+                            return Text(
+                              getSystemTime(),
                               style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                    color: Colors.white, letterSpacing: 1.5),
-                                fontSize: 14,
-                              ),
+                                  textStyle: TextStyle(
+                                      color: Colors.white, letterSpacing: 1.5),
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold),
+                            );
+                          }),
+                          Text(
+                            stringTap,
+                            style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                                  color: Colors.white, letterSpacing: 1.5),
+                              fontSize: 14,
                             ),
-                          ]))),
-                ),
+                          ),
+                        ]))),
                 SizedBox(
                   height: 10,
                 ),
@@ -151,16 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-                        SkeletonAnimation(
-                          shimmerColor: colorNeutral170,
-                          borderRadius: BorderRadius.circular(40),
-                          child: Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                  color: colorNeutral2,
-                                  shape: BoxShape.circle)),
-                        )
+                        SkeletonAvatar()
                       ]),
                 ),
                 Padding(
@@ -200,6 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: size.width <= 569 ? 34 : 36),
                       ],
                     )),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     decoration:
@@ -292,6 +267,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: size.width <= 569 ? 34 : 36),
                       ],
                     )),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     decoration:
@@ -819,24 +797,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildPopupDialog(context));
             },
           ),
-          // Container(
-          //   padding: EdgeInsets.only(top: 10),
-          //   width: double.infinity,
-          //   child: RaisedButton(
-          //       onPressed: () {
-          //         dialogText = "Clock Out";
-          //         showDialog(
-          //             context: context,
-          //             builder: (BuildContext context) =>
-          //                 _buildPopupDialog(context));
-          //       },
-          //       color: colorPrimary,
-          //       child: Text(
-          //         "Yes, I need Overtime Pay",
-          //         style: TextStyle(
-          //             color: colorBackground, fontWeight: FontWeight.bold),
-          //       )),
-          // ),
         ],
       ),
       actions: <Widget>[],

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zukses_app_1/component/attendance/time-box.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
@@ -26,7 +29,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   final getFormatListDate = DateFormat.yMMMMd();
   List<AbsenceTime> absensi = dummy;
   AbsenceTime selected;
-  DateTime _currentDate = DateTime.now(); 
+  DateTime _currentDate = DateTime.now();
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
   List<AbsenceTime> absensiList;
@@ -40,10 +43,21 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   }
 
   bool monthly = true;
+  // FOR SKELETON -------------------------------------------------------------------------
+  bool isLoading = true;
+
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    timer();
   }
 
   @override
@@ -80,7 +94,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
           ],
         ),
         body: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(10),
           child: monthly
               ? Column(
                   children: [
@@ -143,55 +157,69 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     absensiList == null
                         ? Container()
                         : Expanded(
-                            child: ListView.builder(
-                              itemCount: absensiList.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 5),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 15),
-                                  decoration: BoxDecoration(
-                                      color: colorBackground,
-                                      borderRadius: BorderRadius.circular(5),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            blurRadius: 15,
-                                            color: colorNeutral150)
-                                      ]),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Text(
-                                              "${getDayName.format(absensiList[index].date)}",
-                                              style: TextStyle(
-                                                  color: colorPrimary,
-                                                  fontSize: size.width <= 569
-                                                      ? textSizeSmall16
-                                                      : 16)),
-                                          Text(
-                                              "${getFormatListDate.format(absensiList[index].date)}",
-                                              style: TextStyle(
-                                                  color: colorPrimary,
-                                                  fontSize: size.width <= 569
-                                                      ? textSizeSmall14
-                                                      : 14))
-                                        ],
-                                      ),
-                                      TimeBox(
-                                        selected: absensiList[index],
-                                        space: size.width * 0.01,
-                                        fontSize: size.width <= 569
-                                            ? textSizeSmall12
-                                            : 14,
-                                      )
-                                    ],
+                            child: isLoading
+                                ? ListView.builder(
+                                    itemCount: 5,
+                                    itemBuilder: (context, index) =>
+                                        SkeletonLess3(
+                                      size: size,
+                                      col: 2,
+                                      row: 2,
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: absensiList.length,
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 15),
+                                        decoration: BoxDecoration(
+                                            color: colorBackground,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  blurRadius: 15,
+                                                  color: colorNeutral150)
+                                            ]),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                    "${getDayName.format(absensiList[index].date)}",
+                                                    style: TextStyle(
+                                                        color: colorPrimary,
+                                                        fontSize: size.width <=
+                                                                569
+                                                            ? textSizeSmall16
+                                                            : 16)),
+                                                Text(
+                                                    "${getFormatListDate.format(absensiList[index].date)}",
+                                                    style: TextStyle(
+                                                        color: colorPrimary,
+                                                        fontSize: size.width <=
+                                                                569
+                                                            ? textSizeSmall14
+                                                            : 14))
+                                              ],
+                                            ),
+                                            TimeBox(
+                                              selected: absensiList[index],
+                                              space: size.width * 0.01,
+                                              fontSize: size.width <= 569
+                                                  ? textSizeSmall12
+                                                  : 14,
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
-                                );
-                              },
-                            ),
                           )
                   ],
                 ),
