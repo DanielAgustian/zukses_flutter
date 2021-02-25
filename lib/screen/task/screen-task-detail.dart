@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:skeleton_text/skeleton_text.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-3r-2c.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/task/list-task.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
@@ -21,6 +26,25 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
   var taskDate = ["02/19/2020", "08/19/2020", "12/11/2019", "02/15/2021"];
   var taskHour = ["19.00", "17.00", "15.00", "16.00"];
   int count = 4;
+
+  // FOR SKELETON -------------------------------------------------------------------------
+  bool isLoading = true;
+
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    timer();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -65,20 +89,29 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            ListView.builder(
-              itemCount: taskName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTaskDetail2(
-                  title: taskName[index],
-                  detail: taskDetail[index],
-                  date: taskDate[index],
-                  hour: taskHour[index],
-                  index: index,
-                );
-              },
-            ),
+            isLoading
+                ? ListView.builder(
+                    itemCount: 4,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Skeleton3R2C(size: size);
+                    },
+                  )
+                : ListView.builder(
+                    itemCount: taskName.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListTaskDetail2(
+                        title: taskName[index],
+                        detail: taskDetail[index],
+                        date: taskDate[index],
+                        hour: taskHour[index],
+                        index: index,
+                      );
+                    },
+                  ),
             Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
@@ -95,14 +128,28 @@ class _TaskDetailScreen extends State<TaskDetailScreen> {
                                 TextStyle(color: colorBackground, fontSize: 14),
                           ),
                         )))),
-            ListView.builder(
-              itemCount: taskDone.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTaskDetail(title: taskDone[index], status: "done");
-              },
-            ),
+            isLoading
+                ? ListView.builder(
+                    itemCount: 4,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return SkeletonLess3(
+                        size: size,
+                        row: 1,
+                        col: 1,
+                      );
+                    },
+                  )
+                : ListView.builder(
+                    itemCount: taskDone.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListTaskDetail(
+                          title: taskDone[index], status: "done");
+                    },
+                  ),
           ],
         )));
   }

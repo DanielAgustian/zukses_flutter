@@ -37,6 +37,8 @@ dependencies:
   shared_preferences:
   device_preview:
   timer_builder: 
+  skeleton_text:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

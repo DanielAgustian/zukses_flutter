@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/task/layout-project-list.dart';
@@ -26,11 +28,23 @@ class _TaskScreen extends State<TaskScreen>
   int count = 4;
   int tab = 0;
   String text = "";
+
+  bool isLoading = true;
+
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    timer();
   }
 
   @override
@@ -149,14 +163,16 @@ class _TaskScreen extends State<TaskScreen>
                           controller: tabController,
                           children: <Widget>[
                             LayoutProjectList(
-                              count: count,
-                              fontSize: size.height <= 569 ? 18 : 22,
-                              projectName: projectName,
-                              projectDetail: projectDetail,
-                              projectTask: projectTask,
-                              time: "today",
-                            ),
+                                loading: isLoading,
+                                count: count,
+                                fontSize: size.height <= 569 ? 18 : 22,
+                                projectName: projectName,
+                                projectDetail: projectDetail,
+                                projectTask: projectTask,
+                                time: "today",
+                                skeletonWidth: size.height <= 570 ? 200 : 240),
                             LayoutProjectList(
+                              loading: isLoading,
                               count: count,
                               fontSize: size.height <= 569 ? 18 : 22,
                               projectName: projectName,
@@ -165,6 +181,7 @@ class _TaskScreen extends State<TaskScreen>
                               time: "upcoming",
                             ),
                             LayoutProjectList(
+                              loading: isLoading,
                               count: count,
                               fontSize: size.height <= 569 ? 18 : 22,
                               projectName: projectName,
