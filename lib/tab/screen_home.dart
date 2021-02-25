@@ -4,10 +4,11 @@ import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
+
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:timer_builder/timer_builder.dart';
 
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          new GestureDetector(
+          new InkWell(
             onTap: () {
               print("Container clicked");
               if (clockIn == 1) {
@@ -113,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: GoogleFonts.lato(
                               textStyle: TextStyle(
                                   color: colorPrimary, letterSpacing: 0),
-                              fontSize: size.width <= 569 ? 16 : 20,
+                              fontSize: size.width <= 569 ? 20 : 24,
                               fontWeight: FontWeight.bold),
                         ),
                         Align(
@@ -123,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.lato(
                                 textStyle: TextStyle(
                                     color: Colors.grey, letterSpacing: 0),
-                                fontSize: size.width <= 569 ? 10 : 12,
+                                fontSize: size.width <= 569 ? 12 : 14,
                               ),
                             )),
                       ],
@@ -135,24 +136,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                              height: 40,
-                              width: 40,
+                              height: 45,
+                              width: 45,
                               decoration: BoxDecoration(
-                                  color: Color.fromRGBO(20, 43, 111, 0.9),
-                                  shape: BoxShape.circle))
+                                  color: colorPrimary,
+                                  shape: BoxShape.circle,
+                                  image: new DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image:
+                                          Image.asset("assets/images/ava.png")
+                                              .image)))
                         ],
                       ))
                 ]),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, 40, 0, 0),
+            padding: EdgeInsets.fromLTRB(20, 40, 0, 0),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Task List",
                 style: GoogleFonts.lato(
                     textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                    fontSize: size.width <= 569 ? 18 : 20,
+                    fontSize: size.width <= 569 ? 20 : 22,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -178,8 +184,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: size.width <= 569 ? 34 : 36),
                 ],
               )),
+          SizedBox(
+            height: 15,
+          ),
           Container(
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
               decoration: BoxDecoration(color: colorBackground, boxShadow: [
                 BoxShadow(
                   color: colorNeutral1.withOpacity(1),
@@ -189,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   ListView.builder(
+                    padding: EdgeInsets.all(1.0),
                     itemCount: taskName.length,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -210,7 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Show All Task Schedule",
-                                  style: TextStyle(color: colorPrimary)),
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontWeight: FontWeight.bold)),
                               Icon(
                                 Icons.arrow_forward_ios,
                                 color: colorPrimary,
@@ -220,20 +232,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Meeting List",
                 style: GoogleFonts.lato(
                     textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                    fontSize: size.width <= 569 ? 18 : 20,
+                    fontSize: size.width <= 569 ? 20 : 22,
                     fontWeight: FontWeight.bold),
               ),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 15,
           ),
           Container(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -252,19 +264,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: size.width <= 569 ? 34 : 36),
                 ],
               )),
+          SizedBox(
+            height: 15,
+          ),
           Container(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              decoration: BoxDecoration(boxShadow: [
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              decoration: BoxDecoration(color: colorBackground, boxShadow: [
                 BoxShadow(
-                  color: colorNeutral2.withOpacity(0.2),
-                  spreadRadius: 4,
+                  color: colorNeutral1.withOpacity(1),
                   blurRadius: 10,
-                  offset: Offset(0, 3),
                 )
               ]),
               child: Column(
                 children: [
                   ListView.builder(
+                    padding: EdgeInsets.all(1.0),
                     itemCount: taskName.length,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -285,8 +299,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Show All Task Schedule",
-                                  style: TextStyle(color: colorPrimary)),
+                              Text("Show All Meeting Schedule",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontWeight: FontWeight.bold)),
                               Icon(
                                 Icons.arrow_forward_ios,
                                 color: colorPrimary,
@@ -332,10 +348,15 @@ class _HomeScreenState extends State<HomeScreen> {
               if (dialogText == "Clock Out") {
                 disposeSF();
                 dialogText = "Clock In";
+                setState(() {
+                  stringTap = "Tap Here to Clock In";
+                });
                 String timeClockOut = getHourNow();
                 print(timeClockOut);
                 Navigator.of(buildContext1, rootNavigator: true).pop();
-                Navigator.of(buildContext2, rootNavigator: true).pop();
+                if (buildContext2 != null) {
+                  Navigator.of(buildContext2, rootNavigator: true).pop();
+                }
               }
             },
           ),
@@ -390,7 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(
-            height: 5,
+            height: 10,
           ),
           SizedBox(
             width: double.infinity,
@@ -400,7 +421,12 @@ class _HomeScreenState extends State<HomeScreen> {
               textColor: colorPrimary,
               title: "No, I Clocked  Out On Time",
               onClick: () {
-                Navigator.of(context).pop();
+                //Navigator.of(context).pop();
+                dialogText = "Clock Out";
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context));
               },
             ),
           ),
@@ -475,8 +501,9 @@ class _HomeScreenState extends State<HomeScreen> {
               minLines: 4,
               maxLines: 5,
               decoration: new InputDecoration(
+                  contentPadding: EdgeInsets.all(5),
                   hintText: 'Reason for Overtime',
-                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral1)),
+                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
             ),
           ),
           SizedBox(height: 10),
@@ -554,6 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String getSystemTime() {
     var now = new DateTime.now();
-    return new DateFormat("H:m").format(now);
+    //print(now.toString);
+    return new DateFormat("H:mm").format(now);
   }
 }

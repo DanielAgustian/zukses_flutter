@@ -96,18 +96,22 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
             SizedBox(
               height: size.height <= 569 ? 25 : 40,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Checkbox(
-                    value: dontShowAgain, onChanged: _onDontShowAgainChanged),
-                Text("Dont Show Again",
-                    style: TextStyle(
-                        fontSize: size.height <= 569 ? 12 : 14,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.bold)),
-              ],
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                  width: size.width * 0.65,
+                  child: CheckboxListTile(
+                    value: dontShowAgain,
+                    onChanged: _onDontShowAgainChanged,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text("Dont Show Again",
+                        style: TextStyle(
+                            fontSize: size.height <= 569 ? 12 : 14,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.bold)),
+                  )),
             ),
+
             SizedBox(
               height: size.height <= 569 ? 25 : 40,
             ),
