@@ -1,17 +1,20 @@
+import 'dart:async';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/screen/schedule/screen-add-schedule.dart';
-
- 
 
 class MeetingScreen extends StatefulWidget {
   MeetingScreen({Key key, this.title}) : super(key: key);
@@ -29,6 +32,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   DateTime _currentDate = DateTime.now();
   bool grid = true;
   bool removeBackgroundDialog = false;
+
   // Dragable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
@@ -43,12 +47,24 @@ class _MeetingScreenState extends State<MeetingScreen>
     print(_selectedDate);
   }
 
+  // FOR SKELETON -------------------------------------------------------------------------
+  bool isLoading = true;
+
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _selectedDate = _currentDate;
     _controller = AnimationController(vsync: this, duration: _duration);
+    timer();
   }
 
   @override
@@ -128,22 +144,34 @@ class _MeetingScreenState extends State<MeetingScreen>
                         TitleDayFormatted(
                           currentDate: _selectedDate,
                         ),
-                        ...absensiList
-                            .map((item) => InkWell(
-                                  onTap: () {
-                                    if (_controller.isDismissed)
-                                      _controller.forward();
-                                    else if (_controller.isCompleted)
-                                      _controller.reverse();
-                                  },
-                                  child: ScheduleItem(
+                        Container(
+                          width: size.width,
+                          child: isLoading
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: 5,
+                                  itemBuilder: (context, index) =>
+                                      SkeletonLess3WithAvatar(
+                                          size: size, row: 2))
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: absensiList.length,
+                                  itemBuilder: (context, index) => ScheduleItem(
                                     size: size,
                                     title: "Schedule",
                                     time1: "10.00",
                                     time2: "11.30",
+                                    onClick: () {
+                                      if (_controller.isDismissed)
+                                        _controller.forward();
+                                      else if (_controller.isCompleted)
+                                        _controller.reverse();
+                                    },
                                   ),
-                                ))
-                            .toList()
+                                ),
+                        )
                       ],
                     ),
                   ))
@@ -163,28 +191,31 @@ class _MeetingScreenState extends State<MeetingScreen>
                         ),
                       ),
                       Expanded(
-                        child: Container(
-                          child: ListView.builder(
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  if (_controller.isDismissed)
-                                    _controller.forward();
-                                  else if (_controller.isCompleted)
-                                    _controller.reverse();
-                                },
-                                child: ScheduleItem(
+                          child: Container(
+                        width: size.width,
+                        child: isLoading
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: 5,
+                                itemBuilder: (context, index) =>
+                                    SkeletonLess3WithAvatar(size: size, row: 2))
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: absensiList.length,
+                                itemBuilder: (context, index) => ScheduleItem(
                                   size: size,
                                   title: "Schedule",
                                   time1: "10.00",
                                   time2: "11.30",
+                                  onClick: () {
+                                    if (_controller.isDismissed)
+                                      _controller.forward();
+                                    else if (_controller.isCompleted)
+                                      _controller.reverse();
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      )
+                              ),
+                      ))
                     ],
                   )),
             SizedBox.expand(

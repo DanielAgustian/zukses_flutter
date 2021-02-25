@@ -10,9 +10,12 @@ class ListViewBox extends StatelessWidget {
     this.title,
     this.detail,
     this.viewType,
+    this.widget1,
+    this.widget2,
   }) : super(key: key);
 
   final String title, detail, viewType;
+  final Widget widget1, widget2;
 
   DateFormat dateFormat = DateFormat.yMMMMd();
 
