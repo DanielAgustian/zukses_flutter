@@ -7,6 +7,8 @@ import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
+
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -209,20 +211,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                     child: Column(
                       children: [
-                        ListView.builder(
-                          itemCount: taskName.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListViewBox(
-                              title: taskName[index],
-                              detail: taskDetail[index],
-                              viewType: "task",
-                              loading: isLoading,
-                              skeletonSize: size.height <= 570 ? 180 : 230,
-                            );
-                          },
-                        ),
+                        isLoading
+                            ? ListView.builder(
+                                itemCount: 2,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return SkeletonLess3(
+                                    size: size,
+                                    row: 2,
+                                    col: 2,
+                                  );
+                                },
+                              )
+                            : ListView.builder(
+                                itemCount: taskName.length,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return ListViewBox(
+                                    title: taskName[index],
+                                    detail: taskDetail[index],
+                                    viewType: "task",
+                                  );
+                                },
+                              ),
                         Padding(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                             child: FlatButton(
@@ -280,31 +293,41 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     )),
                 Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    decoration: BoxDecoration(boxShadow: [
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    decoration:
+                        BoxDecoration(color: colorBackground, boxShadow: [
                       BoxShadow(
-                        color: colorNeutral2.withOpacity(0.2),
-                        spreadRadius: 4,
+                        color: colorNeutral1.withOpacity(1),
                         blurRadius: 10,
-                        offset: Offset(0, 3),
                       )
                     ]),
                     child: Column(
                       children: [
-                        ListView.builder(
-                          itemCount: taskName.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListViewBox(
-                              title: meetName[index],
-                              detail: meetTime[index],
-                              viewType: "meeting",
-                              loading: isLoading,
-                              skeletonSize: size.height <= 570 ? 180 : 230,
-                            );
-                          },
-                        ),
+                        isLoading
+                            ? ListView.builder(
+                                itemCount: 2,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return SkeletonLess3(
+                                    size: size,
+                                    row: 2,
+                                    col: 1,
+                                  );
+                                },
+                              )
+                            : ListView.builder(
+                                itemCount: taskName.length,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return ListViewBox(
+                                    title: taskName[index],
+                                    detail: taskDetail[index],
+                                    viewType: "meeting",
+                                  );
+                                },
+                              ),
                         Padding(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                             child: FlatButton(
@@ -473,6 +496,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: size.width <= 569 ? 34 : 36),
                       ],
                     )),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     decoration:
@@ -490,7 +516,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
                             return ListViewBox(
-                              loading: isLoading,
                               title: taskName[index],
                               detail: taskDetail[index],
                               viewType: "task",
@@ -507,7 +532,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("Show All Task Schedule",
+                                    Text("Show All Task",
                                         style: TextStyle(color: colorPrimary)),
                                     Icon(
                                       Icons.arrow_forward_ios,
@@ -553,25 +578,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: size.width <= 569 ? 34 : 36),
                       ],
                     )),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    decoration: BoxDecoration(boxShadow: [
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    decoration:
+                        BoxDecoration(color: colorBackground, boxShadow: [
                       BoxShadow(
-                        color: colorNeutral2.withOpacity(0.2),
-                        spreadRadius: 4,
+                        color: colorNeutral1.withOpacity(1),
                         blurRadius: 10,
-                        offset: Offset(0, 3),
                       )
                     ]),
                     child: Column(
                       children: [
                         ListView.builder(
-                          itemCount: taskName.length,
+                          itemCount: meetName.length,
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
                             return ListViewBox(
-                              loading: isLoading,
                               title: meetName[index],
                               detail: meetTime[index],
                               viewType: "meeting",
@@ -588,7 +614,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("Show All Task Schedule",
+                                    Text("Show All Meeting Schedule",
                                         style: TextStyle(color: colorPrimary)),
                                     Icon(
                                       Icons.arrow_forward_ios,
@@ -634,10 +660,15 @@ class _HomeScreenState extends State<HomeScreen> {
               if (dialogText == "Clock Out") {
                 disposeSF();
                 dialogText = "Clock In";
+                setState(() {
+                  stringTap = "Tap Here to Clock In";
+                });
                 String timeClockOut = getHourNow();
                 print(timeClockOut);
                 Navigator.of(buildContext1, rootNavigator: true).pop();
-                Navigator.of(buildContext2, rootNavigator: true).pop();
+                if (buildContext2 != null) {
+                  Navigator.of(buildContext2, rootNavigator: true).pop();
+                }
               }
             },
           ),
@@ -679,7 +710,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(
-            height: 5,
+            height: 10,
           ),
           SizedBox(
             width: double.infinity,
@@ -689,7 +720,12 @@ class _HomeScreenState extends State<HomeScreen> {
               textColor: colorPrimary,
               title: "No, I Clocked  Out On Time",
               onClick: () {
-                Navigator.of(context).pop();
+                //Navigator.of(context).pop();
+                dialogText = "Clock Out";
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context));
               },
             ),
           ),
@@ -764,8 +800,9 @@ class _HomeScreenState extends State<HomeScreen> {
               minLines: 4,
               maxLines: 5,
               decoration: new InputDecoration(
+                  contentPadding: EdgeInsets.all(5),
                   hintText: 'Reason for Overtime',
-                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral1)),
+                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
             ),
           ),
           SizedBox(height: 10),
@@ -843,6 +880,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String getSystemTime() {
     var now = new DateTime.now();
-    return new DateFormat("H:m").format(now);
+    //print(now.toString);
+    return new DateFormat("H:mm").format(now);
   }
 }

@@ -73,8 +73,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                         keyboardType: TextInputType.text,
                         onChanged: (val) {},
                         decoration: InputDecoration(
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 20),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 5),
                             hintText: "Username",
                             hintStyle: TextStyle(),
                             enabledBorder: InputBorder.none,
@@ -103,7 +102,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       maxLines: 5,
                       decoration: new InputDecoration(
                           contentPadding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                           hintText: 'Description Task',
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none),
@@ -129,7 +128,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       keyboardType: TextInputType.text,
                       onChanged: (val) {},
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 5),
                           hintText: "Assigned To..",
                           hintStyle: TextStyle(),
                           enabledBorder: InputBorder.none,
@@ -156,7 +155,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       keyboardType: TextInputType.text,
                       onChanged: (val) {},
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 5),
                           hintText: "Priority",
                           hintStyle: TextStyle(),
                           enabledBorder: InputBorder.none,
@@ -172,7 +171,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       Container(
                         padding:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        width: size.width * 0.40,
+                        width: size.width * 0.45,
                         decoration: BoxDecoration(
                             color: colorBackground,
                             boxShadow: [
@@ -233,7 +232,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                               ),
                               contentPadding:
                                   EdgeInsets.fromLTRB(20, 15, 20, 0),
-                              hintText: "Set Time",
+                              hintText: "Time",
                               hintStyle: TextStyle(),
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none),
@@ -281,7 +280,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                         maxLines: 3,
                         decoration: new InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
+                                horizontal: 5, vertical: 5),
                             hintText: 'Notes',
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
