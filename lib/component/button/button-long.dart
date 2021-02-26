@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 
 class LongButton extends StatelessWidget {
   const LongButton({
@@ -26,7 +26,7 @@ class LongButton extends StatelessWidget {
       shape:
           RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
       child: Container(
-        width: size.width ,
+        width: size.width,
         height: 40,
         child: Center(
           child: Text(

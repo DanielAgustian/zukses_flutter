@@ -24,6 +24,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController textReasonOvertime = new TextEditingController();
   final picker = ImagePicker();
+  String statusLate = "";
+  String statusOvertime = "";
   String key = "clock in";
   String stringTap = "Click Here to Clock In";
   var taskName = ["Task 1", "task 2"];
@@ -86,7 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                       TimerBuilder.periodic(Duration(seconds: 1),
                           builder: (context) {
-                        //print("${getSystemTime()}");
                         return Text(
                           getSystemTime(),
                           style: GoogleFonts.lato(
@@ -346,7 +347,6 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 20),
-
           SmallButton(
             bgColor: colorPrimary,
             textColor: colorBackground,
@@ -360,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {
                   stringTap = "Tap Here to Clock In";
                 });
-                String timeClockOut = getHourNow();
+                String timeClockOut = getSystemTime();
                 print(timeClockOut);
                 Navigator.of(buildContext1, rootNavigator: true).pop();
                 if (buildContext2 != null) {
@@ -369,19 +369,6 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
           ),
-          // RaisedButton(
-          //     onPressed: () {
-          //       Navigator.of(context, rootNavigator: true).pop();
-          //       if (dialogText == "Clock Out") {
-          //         Navigator.of(buildContext1, rootNavigator: true).pop();
-          //         Navigator.of(buildContext2, rootNavigator: true).pop();
-          //       }
-          //     },
-          //     color: colorPrimary,
-          //     child: Text(
-          //       "OK!",
-          //       style: TextStyle(color: colorBackground),
-          //     ))
         ],
       ),
       actions: <Widget>[],
@@ -393,7 +380,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPopupClockOut(BuildContext context, {size}) {
     buildContext1 = context;
     return new AlertDialog(
-      //title: const Text('Popup example'),
       content: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -412,10 +398,19 @@ class _HomeScreenState extends State<HomeScreen> {
               textColor: colorBackground,
               title: "Yes, I need Overtime Pay",
               onClick: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupOvertime(context, size: size));
+                timeCalculation(1);
+                if (statusOvertime != "No") {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _buildPopupOvertime(context, size: size));
+                } else {
+                  dialogText = "Clock Out";
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _buildPopupDialog(context));
+                }
               },
             ),
           ),
@@ -430,7 +425,6 @@ class _HomeScreenState extends State<HomeScreen> {
               textColor: colorPrimary,
               title: "No, I Clocked  Out On Time",
               onClick: () {
-                //Navigator.of(context).pop();
                 dialogText = "Clock Out";
                 showDialog(
                     context: context,
@@ -468,11 +462,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: colorPrimary, width: 2)),
-                  child: Text("18.00",
+                  child: Text("18:00",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: colorPrimary))),
+                          color: colorPrimary,
+                          letterSpacing: 1))),
               Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: FaIcon(
@@ -486,6 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: Border.all(color: colorSecondaryRed, width: 2)),
                   child: Text(getSystemTime(),
                       style: TextStyle(
+                          letterSpacing: 1,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: colorSecondaryRed))),
@@ -507,8 +503,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: TextFormField(
               controller: textReasonOvertime,
               keyboardType: TextInputType.multiline,
-              minLines: 4,
-              maxLines: 5,
+              minLines: 6,
+              maxLines: 6,
               decoration: new InputDecoration(
                   contentPadding: EdgeInsets.all(5),
                   hintText: 'Reason for Overtime',
@@ -522,6 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
             textColor: colorBackground,
             title: "Yes, I need Overtime Pay",
             onClick: () {
+              timeCalculation(1);
               dialogText = "Clock Out";
               showDialog(
                   context: context,
@@ -529,24 +526,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildPopupDialog(context));
             },
           ),
-          // Container(
-          //   padding: EdgeInsets.only(top: 10),
-          //   width: double.infinity,
-          //   child: RaisedButton(
-          //       onPressed: () {
-          //         dialogText = "Clock Out";
-          //         showDialog(
-          //             context: context,
-          //             builder: (BuildContext context) =>
-          //                 _buildPopupDialog(context));
-          //       },
-          //       color: colorPrimary,
-          //       child: Text(
-          //         "Yes, I need Overtime Pay",
-          //         style: TextStyle(
-          //             color: colorBackground, fontWeight: FontWeight.bold),
-          //       )),
-          // ),
         ],
       ),
       actions: <Widget>[],
@@ -566,8 +545,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     if (clockIn == 1) {
       print("Clock in Success");
-      stringTap = "Tap Here to Clock Out";
-      String timeClockIn = getHourNow();
+      setState(() {
+        stringTap = "Tap Here to Clock Out";
+      });
+      timeCalculation(0);
+      String timeClockIn = getSystemTime();
       print("Clock In Pegawai:" + timeClockIn);
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showDialog<String>(
@@ -608,12 +590,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void pushToCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
-
     if (pickedFile != null) {
       setState(() {
         String data = pickedFile.path;
-        //print(data);
-        //_image = File(pickedFile.path);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -621,6 +600,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       path: data,
                     )));
       });
+    }
+  }
+
+  void timeCalculation(int i) {
+    TimeOfDay now = TimeOfDay.now();
+    int minutesTotalNow = (now.hour * 60) + (now.minute);
+    print(now.hour);
+    print(now.minute);
+    if (i == 0) {
+      //Lateness
+      int limitLate = (9 * 60);
+      if (minutesTotalNow <= limitLate) {
+        setState(() {
+          statusLate = "In Time";
+        });
+      } else {
+        setState(() {
+          statusLate = "Late";
+        });
+      }
+      print("Status Late = " + statusLate);
+    } else if (i == 1) {
+      //Overtime
+      int limitOvertime = (10 * 60);
+      if (minutesTotalNow <= limitOvertime) {
+        setState(() {
+          statusOvertime = "No";
+        });
+      } else {
+        setState(() {
+          statusOvertime = "Yes";
+        });
+
+        int duration = minutesTotalNow - limitOvertime;
+        int hour = (duration / 60).floor();
+        int minutes = duration % 60;
+      }
+      print("status Overtime = " + statusOvertime);
     }
   }
 }
