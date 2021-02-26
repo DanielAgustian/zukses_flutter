@@ -6,15 +6,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
-import 'package:zukses_app_1/component/schedule/user-avatar.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
+import 'package:zukses_app_1/component/schedule/user-avatar.dart'; 
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
-import 'package:zukses_app_1/screen/schedule/screen-add-schedule.dart';
+import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart'; 
 
 class MeetingScreen extends StatefulWidget {
   MeetingScreen({Key key, this.title}) : super(key: key);
@@ -87,7 +86,7 @@ class _MeetingScreenState extends State<MeetingScreen>
             IconButton(
               splashColor: Colors.transparent,
               icon: FaIcon(
-                  grid ? FontAwesomeIcons.columns : FontAwesomeIcons.box,
+                  grid ? FontAwesomeIcons.columns : FontAwesomeIcons.thList,
                   color: colorPrimary,
                   size: size.height <= 569 ? 16 : 20),
               onPressed: () {

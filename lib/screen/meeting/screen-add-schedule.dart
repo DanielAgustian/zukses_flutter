@@ -10,6 +10,7 @@ import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   @override
@@ -237,7 +238,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             Center(
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pop();
+                  // Navigator.of(context).pop();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => RequestInbox()));
                 },
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
