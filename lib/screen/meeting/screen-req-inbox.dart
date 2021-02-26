@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,11 +15,22 @@ class _RequestInboxState extends State<RequestInbox>
     with SingleTickerProviderStateMixin {
   TabController tabController;
 
+  bool isLoading = true;
+
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    timer();
   }
 
   @override
@@ -89,9 +102,11 @@ class _RequestInboxState extends State<RequestInbox>
             controller: tabController,
             children: [
               ScreenTabRequest(
+                loading: isLoading,
                 screen: "wait",
               ),
               ScreenTabRequest(
+                loading: isLoading,
                 screen: "accept",
               )
             ],
