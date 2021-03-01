@@ -142,7 +142,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
     //WidgetsFlutterBinding.ensureInitialized();
     //final cameras = await availableCameras();
     /*Navigator.push(
-        context, MaterialPageRoute(builder: (context) => CameraClockIn()));*/
+        context, MaterialPageRoute(builder: (context) => CameraClockIn()));*/ 
     final pickedFile = await picker.getImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
