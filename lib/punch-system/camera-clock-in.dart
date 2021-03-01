@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:zukses_app_1/component/button/button-small.dart';
 
 class PreviewCamera extends StatefulWidget {
   PreviewCamera({Key key, this.title, this.path}) : super(key: key);

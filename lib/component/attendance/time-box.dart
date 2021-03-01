@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TimeBox extends StatelessWidget {
   const TimeBox({

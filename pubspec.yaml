@@ -26,18 +26,19 @@ dependencies:
   google_fonts:
   circular_check_box:
   font_awesome_flutter:
-  intl:  
-  esys_flutter_share: 
-  image_picker: 
+  intl:
+  esys_flutter_share:
+  image_picker:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   path_provider:
-  path: 
+  path:
   shared_preferences:
   device_preview:
-  timer_builder: 
+  timer_builder:
   skeleton_text:
+  flutter_slidable:
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +62,7 @@ flutter:
     - assets/images/
     - icon/google_icon.png
     - icon/facebook_icon.png
-    
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

@@ -1,17 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:zukses_app_1/component/button/button-long.dart';
-import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:zukses_app_1/component/home/box-home.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/home/listviewbox.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/punch-system/camera-instruction.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
+import 'package:skeleton_text/skeleton_text.dart';
+import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/component/home/box-home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:zukses_app_1/punch-system/camera-instruction.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -35,11 +39,26 @@ class _HomeScreenState extends State<HomeScreen> {
   int clockIn;
   String dialogText = "Clock In ";
   bool instruction = false;
+
+  // FOR SKELETON -------------------------------------------------------------------------
+  bool isLoading = true;
+
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     sharedPref();
     sharedPrefInstruction();
+    timer();
   }
 
   @override
@@ -47,285 +66,522 @@ class _HomeScreenState extends State<HomeScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: colorBackground,
-      body: SingleChildScrollView(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          new InkWell(
-            onTap: () {
-              print("Container clicked");
-              if (clockIn == 1) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupClockOut(context, size: size));
-              } else {
-                if (instruction == true) {
-                  pushToCamera();
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CameraInstruction()),
-                  );
-                }
-              }
-
-              //tapHour();
-            },
-            child: new Container(
-                width: double.infinity,
-                height: size.height * 0.40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(40),
-                      bottomLeft: Radius.circular(40)),
-                  color: colorPrimary,
-                ),
-                child: Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                      TimerBuilder.periodic(Duration(seconds: 1),
-                          builder: (context) {
-                        return Text(
-                          getSystemTime(),
-                          style: GoogleFonts.lato(
+      body: isLoading
+          // FOR SKELETON LOADING
+          ? SingleChildScrollView(
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(40),
+                          bottomLeft: Radius.circular(40)),
+                      color: colorPrimary,
+                    ),
+                    child: Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                          TimerBuilder.periodic(Duration(seconds: 1),
+                              builder: (context) {
+                            //print("${getSystemTime()}");
+                            return Text(
+                              getSystemTime(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 1.5,
+                                  fontSize: size.height < 600 ? 56 : 72,
+                                  fontWeight: FontWeight.w500),
+                            );
+                          }),
+                          Text(
+                            stringTap,
+                            style: GoogleFonts.lato(
                               textStyle: TextStyle(
                                   color: Colors.white, letterSpacing: 1.5),
-                              fontSize: size.height < 600 ? 56 : 72,
-                              fontWeight: FontWeight.w500),
-                        );
-                      }),
-                      Text(
-                        stringTap,
-                        style: GoogleFonts.lato(
-                          textStyle: TextStyle(
-                              color: Colors.white, letterSpacing: 1.5),
-                          fontSize: size.height < 600 ? 14 : 18,
-                        ),
-                      ),
-                    ]))),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ]))),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Hi, Finley Khouwira",
-                          style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                  color: colorPrimary, letterSpacing: 0),
-                              fontSize: size.width <= 569 ? 20 : 24,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "WELCOME BACK! ",
-                              style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                    color: Colors.grey, letterSpacing: 0),
-                                fontSize: size.width <= 569 ? 12 : 14,
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SkeletonAnimation(
+                                shimmerColor: colorNeutral170,
+                                child: Container(
+                                  color: colorNeutral2,
+                                  width: size.width * 0.6,
+                                  height: 20,
+                                ),
                               ),
-                            )),
-                      ],
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SkeletonAnimation(
+                                shimmerColor: colorNeutral170,
+                                child: Container(
+                                  color: colorNeutral2,
+                                  width: size.width * 0.6,
+                                  height: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SkeletonAvatar()
+                      ]),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 40, 0, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Task List",
+                      style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(color: colorPrimary, letterSpacing: 0),
+                          fontSize: size.width <= 600 ? 18 : 20,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                  color: colorPrimary,
-                                  shape: BoxShape.circle,
-                                  image: new DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image:
-                                          Image.asset("assets/images/ava.png")
-                                              .image)))
-                        ],
-                      ))
-                ]),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 40, 0, 0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Task List",
-                style: GoogleFonts.lato(
-                    textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                    fontSize: size.width <= 569 ? 20 : 22,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  BoxHome(
-                    title: "High Priority Task",
-                    total: 8,
-                    numberColor: colorSecondaryRed,
-                    fontSize: size.width <= 569 ? 34 : 36,
-                  ),
-                  BoxHome(
-                      title: "Low Priority Task",
-                      total: 8,
-                      numberColor: colorClear,
-                      fontSize: size.width <= 569 ? 34 : 36),
-                ],
-              )),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              decoration: BoxDecoration(color: colorBackground, boxShadow: [
-                BoxShadow(
-                  color: colorNeutral1.withOpacity(1),
-                  blurRadius: 10,
-                )
-              ]),
-              child: Column(
-                children: [
-                  ListView.builder(
-                    padding: EdgeInsets.all(1.0),
-                    itemCount: taskName.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ListViewBox(
-                        title: taskName[index],
-                        detail: taskDetail[index],
-                        viewType: "task",
-                      );
-                    },
-                  ),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: FlatButton(
-                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          color: colorBackground,
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Show All Task Schedule",
-                                  style: TextStyle(
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BoxHome(loading: isLoading),
+                        BoxHome(loading: isLoading),
+                      ],
+                    )),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    decoration:
+                        BoxDecoration(color: colorBackground, boxShadow: [
+                      BoxShadow(
+                        color: colorNeutral1.withOpacity(1),
+                        blurRadius: 10,
+                      )
+                    ]),
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          itemCount: 2,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SkeletonLess3(
+                              size: size,
+                              row: 2,
+                              col: 2,
+                            );
+                          },
+                        ),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                color: colorBackground,
+                                onPressed: () {},
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Show All Task Schedule",
+                                        style: TextStyle(color: colorPrimary)),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
                                       color: colorPrimary,
-                                      fontWeight: FontWeight.bold)),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: colorPrimary,
-                              )
-                            ],
-                          )))
-                ],
-              )),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Meeting List",
-                style: GoogleFonts.lato(
-                    textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                    fontSize: size.width <= 569 ? 20 : 22,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  BoxHome(
-                      title: "Meeting Schedule",
-                      total: 3,
-                      numberColor: colorSecondaryRed,
-                      fontSize: size.width <= 569 ? 34 : 36),
-                  BoxHome(
-                      title: "Meeting Request",
-                      total: 11,
-                      numberColor: colorSecondaryYellow,
-                      fontSize: size.width <= 569 ? 34 : 36),
-                ],
-              )),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              decoration: BoxDecoration(color: colorBackground, boxShadow: [
-                BoxShadow(
-                  color: colorNeutral1.withOpacity(1),
-                  blurRadius: 10,
-                )
-              ]),
-              child: Column(
-                children: [
-                  ListView.builder(
-                    padding: EdgeInsets.all(1.0),
-                    itemCount: taskName.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ListViewBox(
-                        title: meetName[index],
-                        detail: meetTime[index],
-                        viewType: "meeting",
-                      );
-                    },
+                                    )
+                                  ],
+                                )))
+                      ],
+                    )),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Meeting List",
+                      style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(color: colorPrimary, letterSpacing: 0),
+                          fontSize: size.width <= 600 ? 18 : 20,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: FlatButton(
-                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          color: colorBackground,
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Show All Meeting Schedule",
-                                  style: TextStyle(
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BoxHome(loading: isLoading),
+                        BoxHome(loading: isLoading),
+                      ],
+                    )),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    decoration:
+                        BoxDecoration(color: colorBackground, boxShadow: [
+                      BoxShadow(
+                        color: colorNeutral1.withOpacity(1),
+                        blurRadius: 10,
+                      )
+                    ]),
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          itemCount: 2,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SkeletonLess3(
+                              size: size,
+                              row: 2,
+                              col: 1,
+                            );
+                          },
+                        ),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                color: colorBackground,
+                                onPressed: () {},
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Show All Task Schedule",
+                                        style: TextStyle(color: colorPrimary)),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
                                       color: colorPrimary,
-                                      fontWeight: FontWeight.bold)),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: colorPrimary,
-                              )
+                                    )
+                                  ],
+                                )))
+                      ],
+                    )),
+                SizedBox(
+                  height: 20,
+                )
+              ],
+            ))
+          // LIMIT FOR THE REAL COMPONENT
+          : SingleChildScrollView(
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                new InkWell(
+                  onTap: () {
+                    print("Container clicked");
+                    if (clockIn == 1) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPopupClockOut(context, size: size));
+                    } else {
+                      if (instruction == true) {
+                        pushToCamera();
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CameraInstruction()),
+                        );
+                      }
+                    }
+
+                    //tapHour();
+                  },
+                  child: new Container(
+                      width: double.infinity,
+                      height: size.height * 0.40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(40),
+                            bottomLeft: Radius.circular(40)),
+                        color: colorPrimary,
+                      ),
+                      child: Center(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                            TimerBuilder.periodic(Duration(seconds: 1),
+                                builder: (context) {
+                              return Text(
+                                getSystemTime(),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    letterSpacing: 1.5,
+                                    fontSize: size.height < 600 ? 56 : 72,
+                                    fontWeight: FontWeight.w500),
+                              );
+                            }),
+                            Text(
+                              stringTap,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    color: Colors.white, letterSpacing: 1.5),
+                                fontSize: size.height < 600 ? 14 : 18,
+                              ),
+                            ),
+                          ]))),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Hi, Finley Khouwira",
+                                style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                        color: colorPrimary, letterSpacing: 0),
+                                    fontSize: size.width <= 600 ? 20 : 24,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "WELCOME BACK! ",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          color: Colors.grey, letterSpacing: 0),
+                                      fontSize: size.width <= 600 ? 12 : 14,
+                                    ),
+                                  )),
                             ],
-                          )))
-                ],
-              )),
-          SizedBox(
-            height: 20,
-          )
-        ],
-      )),
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                        color: colorPrimary,
+                                        shape: BoxShape.circle,
+                                        image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: Image.asset(
+                                                    "assets/images/ava.png")
+                                                .image)))
+                              ],
+                            ))
+                      ]),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20, 40, 0, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Task List",
+                      style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(color: colorPrimary, letterSpacing: 0),
+                          fontSize: size.width <= 600 ? 20 : 22,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BoxHome(
+                          loading: isLoading,
+                          title: "High Priority Task",
+                          total: 8,
+                          numberColor: colorSecondaryRed,
+                          fontSize: size.width <= 600 ? 34 : 36,
+                        ),
+                        BoxHome(
+                            loading: isLoading,
+                            title: "Low Priority Task",
+                            total: 8,
+                            numberColor: colorClear,
+                            fontSize: size.width <= 600 ? 34 : 36),
+                      ],
+                    )),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    decoration:
+                        BoxDecoration(color: colorBackground, boxShadow: [
+                      BoxShadow(
+                        color: colorNeutral1.withOpacity(1),
+                        blurRadius: 10,
+                      )
+                    ]),
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          padding: EdgeInsets.all(1.0),
+                          itemCount: taskName.length,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return ListViewBox(
+                              title: taskName[index],
+                              detail: taskDetail[index],
+                              viewType: "task",
+                            );
+                          },
+                        ),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                color: colorBackground,
+                                onPressed: () {},
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Show All Task Schedule",
+                                        style: TextStyle(
+                                            color: colorPrimary,
+                                            fontWeight: FontWeight.bold)),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: colorPrimary,
+                                    )
+                                  ],
+                                )))
+                      ],
+                    )),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Meeting List",
+                      style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(color: colorPrimary, letterSpacing: 0),
+                          fontSize: size.width <= 600 ? 20 : 22,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BoxHome(
+                            loading: isLoading,
+                            title: "Meeting Schedule",
+                            total: 3,
+                            numberColor: colorSecondaryRed,
+                            fontSize: size.width <= 600 ? 34 : 36),
+                        BoxHome(
+                            loading: isLoading,
+                            title: "Meeting Request",
+                            total: 11,
+                            numberColor: colorSecondaryYellow,
+                            fontSize: size.width <= 600 ? 34 : 36),
+                      ],
+                    )),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    decoration:
+                        BoxDecoration(color: colorBackground, boxShadow: [
+                      BoxShadow(
+                        color: colorNeutral1.withOpacity(1),
+                        blurRadius: 10,
+                      )
+                    ]),
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          padding: EdgeInsets.all(1.0),
+                          itemCount: taskName.length,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return ListViewBox(
+                              title: meetName[index],
+                              detail: meetTime[index],
+                              viewType: "meeting",
+                            );
+                          },
+                        ),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                color: colorBackground,
+                                onPressed: () {},
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Show All Meeting Schedule",
+                                        style: TextStyle(
+                                            color: colorPrimary,
+                                            fontWeight: FontWeight.bold)),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: colorPrimary,
+                                    )
+                                  ],
+                                )))
+                      ],
+                    )),
+                SizedBox(
+                  height: 20,
+                )
+              ],
+            )),
     );
   }
 

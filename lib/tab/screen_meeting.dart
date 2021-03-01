@@ -6,14 +6,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
-import 'package:zukses_app_1/component/schedule/user-avatar.dart'; 
+import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
-import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart'; 
+import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
+import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
 class MeetingScreen extends StatefulWidget {
   MeetingScreen({Key key, this.title}) : super(key: key);
@@ -51,9 +52,11 @@ class _MeetingScreenState extends State<MeetingScreen>
 
   void timer() {
     Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     });
   }
 
@@ -83,38 +86,116 @@ class _MeetingScreenState extends State<MeetingScreen>
                 fontSize: size.height <= 569 ? 20 : 25),
           ),
           actions: [
-            IconButton(
-              splashColor: Colors.transparent,
+            PopupMenuButton(
               icon: FaIcon(
-                  grid ? FontAwesomeIcons.columns : FontAwesomeIcons.thList,
-                  color: colorPrimary,
-                  size: size.height <= 569 ? 16 : 20),
-              onPressed: () {
-                setState(() {
-                  grid = !grid;
-                });
-              },
-            ),
-            IconButton(
-              splashColor: Colors.transparent,
-              icon: FaIcon(
-                FontAwesomeIcons.search,
+                FontAwesomeIcons.ellipsisH,
                 color: colorPrimary,
-                size: size.height <= 569 ? 16 : 20,
               ),
-              onPressed: () {},
-            ),
-            IconButton(
-              splashColor: Colors.transparent,
-              icon: FaIcon(FontAwesomeIcons.plusCircle,
-                  color: colorPrimary, size: size.height <= 569 ? 16 : 20),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddScheduleScreen()),
-                );
+              elevation: 1.5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              onSelected: (val) {
+                switch (val) {
+
+                  // Move to add schedule screen
+                  case 1:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddScheduleScreen()),
+                    );
+                    break;
+
+                  // Move to request meeting screen
+                  case 2:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RequestInbox()));
+                    break;
+
+                  // Change the calendar view type
+                  case 3:
+                    setState(() {
+                      grid = !grid;
+                    });
+                    break;
+
+                  // Move to search screen
+                  case 4:
+                    break;
+                }
               },
-            )
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                    value: 1,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(FontAwesomeIcons.plusCircle,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        SizedBox(width: 5),
+                        Text(
+                          'Add Schedule',
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 2,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(FontAwesomeIcons.bell,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        SizedBox(width: 5),
+                        Text(
+                          'Request',
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 3,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(
+                            grid
+                                ? FontAwesomeIcons.columns
+                                : FontAwesomeIcons.thLarge,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        SizedBox(width: 5),
+                        Text(
+                          grid ? 'Weekly View' : "Monthly View",
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 4,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(FontAwesomeIcons.search,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        SizedBox(width: 5),
+                        Text(
+                          'Search',
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+              ],
+            ),
           ],
         ),
         body: Stack(
@@ -217,164 +298,159 @@ class _MeetingScreenState extends State<MeetingScreen>
                       ))
                     ],
                   )),
-            SizedBox.expand(
-              child: SlideTransition(
-                position: _tween.animate(_controller),
-                child: Container(
-                  child: DraggableScrollableSheet(
-                    maxChildSize: 0.8,
-                    initialChildSize: 0.8,
-                    minChildSize: 0.6,
-                    builder: (BuildContext context,
-                        ScrollController scrollController) {
-                      return Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                        decoration: BoxDecoration(
-                            boxShadow: [BoxShadow(blurRadius: 15)],
-                            color: colorBackground,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20))),
-                        child: Stack(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: size.height * 0.26),
-                              child: ListView(
-                                controller: scrollController,
-                                children: [
-                                  Column(
-                                    children: [
-                                      ...dummy.map((item) => Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 6),
-                                            child: Row(
-                                              children: [
-                                                UserAvatar(
-                                                  avatarRadius:
-                                                      size.height <= 570
-                                                          ? 15
-                                                          : 20,
-                                                  dotSize: size.height <= 570
-                                                      ? 8
-                                                      : 10,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  "User (status)",
-                                                  style: TextStyle(
-                                                    fontSize: size.height <= 570
-                                                        ? 14
-                                                        : 16,
-                                                    color: colorPrimary,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  LongButton(
-                                    size: size,
-                                    bgColor: colorPrimary,
-                                    textColor: colorBackground,
-                                    title: "Accept",
-                                    onClick: () {},
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  LongButtonOutline(
-                                    outlineColor: colorError,
-                                    size: size,
-                                    bgColor: colorBackground,
-                                    textColor: colorError,
-                                    title: "Reject",
-                                    onClick: () {},
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: size.height * 0.25,
-                              color: colorBackground,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Schedule",
-                                        style: TextStyle(
-                                            fontSize:
-                                                size.height <= 570 ? 18 : 20,
-                                            color: colorPrimary,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.times,
-                                          color: colorPrimary,
-                                        ),
-                                        onPressed: () {
-                                          _controller.reverse();
-                                          setState(() {
-                                            removeBackgroundDialog =
-                                                !removeBackgroundDialog;
-                                          });
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height <= 570 ? 2 : 5,
-                                  ),
-                                  Text(
-                                    "09.00 - 10.00",
-                                    style: TextStyle(
-                                      fontSize: size.height <= 570 ? 12 : 14,
-                                      color: colorPrimary50,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height <= 570 ? 6 : 10,
-                                  ),
-                                  Text(
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
-                                    style: TextStyle(
-                                      fontSize: size.height <= 570 ? 12 : 14,
-                                      color: colorPrimary,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height <= 570 ? 10 : 20,
-                                  ),
-                                  Text(
-                                    "Assigned to",
-                                    style: TextStyle(
-                                        fontSize: size.height <= 570 ? 12 : 14,
-                                        color: colorPrimary,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
+            showDraggableSheet(size),
           ],
         ));
+  }
+
+  // Dragabble Scroll sheet
+  Widget showDraggableSheet(Size size) {
+    return SizedBox.expand(
+      child: SlideTransition(
+        position: _tween.animate(_controller),
+        child: Container(
+          child: DraggableScrollableSheet(
+            maxChildSize: 0.8,
+            initialChildSize: 0.8,
+            minChildSize: 0.6,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                decoration: BoxDecoration(
+                    boxShadow: [BoxShadow(blurRadius: 15)],
+                    color: colorBackground,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                child: Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: size.height * 0.26),
+                      child: ListView(
+                        controller: scrollController,
+                        children: [
+                          Column(
+                            children: [
+                              ...dummy.map((item) => Container(
+                                    padding: EdgeInsets.symmetric(vertical: 6),
+                                    child: Row(
+                                      children: [
+                                        UserAvatar(
+                                          avatarRadius:
+                                              size.height <= 570 ? 15 : 20,
+                                          dotSize: size.height <= 570 ? 8 : 10,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "User (status)",
+                                          style: TextStyle(
+                                            fontSize:
+                                                size.height <= 570 ? 14 : 16,
+                                            color: colorPrimary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          LongButton(
+                            size: size,
+                            bgColor: colorPrimary,
+                            textColor: colorBackground,
+                            title: "Accept",
+                            onClick: () {},
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          LongButtonOutline(
+                            outlineColor: colorError,
+                            size: size,
+                            bgColor: colorBackground,
+                            textColor: colorError,
+                            title: "Reject",
+                            onClick: () {},
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: size.height * 0.25,
+                      color: colorBackground,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Schedule",
+                                style: TextStyle(
+                                    fontSize: size.height <= 570 ? 18 : 20,
+                                    color: colorPrimary,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.times,
+                                  color: colorPrimary,
+                                ),
+                                onPressed: () {
+                                  _controller.reverse();
+                                  setState(() {
+                                    removeBackgroundDialog =
+                                        !removeBackgroundDialog;
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 2 : 5,
+                          ),
+                          Text(
+                            "09.00 - 10.00",
+                            style: TextStyle(
+                              fontSize: size.height <= 570 ? 12 : 14,
+                              color: colorPrimary50,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 6 : 10,
+                          ),
+                          Text(
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
+                            style: TextStyle(
+                              fontSize: size.height <= 570 ? 12 : 14,
+                              color: colorPrimary,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 10 : 20,
+                          ),
+                          Text(
+                            "Assigned to",
+                            style: TextStyle(
+                                fontSize: size.height <= 570 ? 12 : 14,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
