@@ -85,38 +85,100 @@ class _MeetingScreenState extends State<MeetingScreen>
                 fontSize: size.height <= 569 ? 20 : 25),
           ),
           actions: [
-            IconButton(
-              splashColor: Colors.transparent,
-              icon: FaIcon(
-                  grid ? FontAwesomeIcons.columns : FontAwesomeIcons.thList,
-                  color: colorPrimary,
-                  size: size.height <= 569 ? 16 : 20),
-              onPressed: () {
-                setState(() {
-                  grid = !grid;
-                });
-              },
+            // IconButton(
+            //   splashColor: Colors.transparent,
+            //   icon: FaIcon(
+            //       grid ? FontAwesomeIcons.columns : FontAwesomeIcons.thList,
+            //       color: colorPrimary,
+            //       size: size.height <= 569 ? 16 : 20),
+            //   onPressed: () {
+            //     setState(() {
+            //       grid = !grid;
+            //     });
+            //   },
+            // ),
+            PopupMenuButton(
+              elevation: 1.5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              onSelected: (val) {},
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                    value: 1,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(FontAwesomeIcons.plusCircle,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        Text(
+                          'Add Schedule',
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 2,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(FontAwesomeIcons.bell,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        Text(
+                          'Add Schedule',
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 3,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(
+                            grid
+                                ? FontAwesomeIcons.columns
+                                : FontAwesomeIcons.thList,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        Text(
+                          grid ? 'Weekly View' : "Monthly View",
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 4,
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(FontAwesomeIcons.search,
+                            color: colorPrimary,
+                            size: size.height <= 569 ? 16 : 20),
+                        Text(
+                          'Search',
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 600 ? 11 : 13),
+                        )
+                      ],
+                    )),
+              ],
             ),
-            IconButton(
-              splashColor: Colors.transparent,
-              icon: FaIcon(
-                FontAwesomeIcons.search,
-                color: colorPrimary,
-                size: size.height <= 569 ? 16 : 20,
-              ),
-              onPressed: () {},
-            ),
-            IconButton(
-              splashColor: Colors.transparent,
-              icon: FaIcon(FontAwesomeIcons.plusCircle,
-                  color: colorPrimary, size: size.height <= 569 ? 16 : 20),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddScheduleScreen()),
-                );
-              },
-            )
+            // IconButton(
+            //   splashColor: Colors.transparent,
+            //   icon: FaIcon(FontAwesomeIcons.plusCircle,
+            //       color: colorPrimary, size: size.height <= 569 ? 16 : 20),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => AddScheduleScreen()),
+            //     );
+            //   },
+            // )
           ],
         ),
         body: Stack(

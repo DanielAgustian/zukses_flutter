@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
@@ -65,7 +65,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   }
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
@@ -248,15 +248,29 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       {int index, List<AbsenceTime> data}) {
     Widget dot = Container();
     AbsenceTime absence;
+
+    // Make sure absensi list from backend has been sorted ascending
     if (data != null) {
-      for (var d in data) {
-        if (d.date.isAtSameMomentAs(calendarDate.date)) {
-          dot = d.status == "late" ? dotRed : dotGreen;
-          absence = d;
-          break;
+      if (calendarDate.date.day < 15) {
+        for (var d in data) {
+          if (d.date.isAtSameMomentAs(calendarDate.date)) {
+            dot = d.status == "late" ? dotRed : dotGreen;
+            absence = d;
+            break;
+          }
+        }
+      } else {
+        var i = 15;
+        while (i < data.length) {
+          if (data[i].date.isAtSameMomentAs(calendarDate.date)) {
+            dot = data[i].status == "late" ? dotRed : dotGreen;
+            absence = data[i];
+            break;
+          }
         }
       }
     }
+
     return InkWell(
         onTap: () {
           if (_selectedDateTime != calendarDate.date) {
