@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:skeleton_text/skeleton_text.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 
 class SkeletonLess3WithAvatar extends StatelessWidget {
   SkeletonLess3WithAvatar({

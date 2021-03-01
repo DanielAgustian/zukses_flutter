@@ -1,22 +1,21 @@
 import 'dart:async';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:skeleton_text/skeleton_text.dart';
-import 'package:zukses_app_1/component/button/button-long.dart';
-import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:zukses_app_1/component/home/box-home.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:timer_builder/timer_builder.dart';
+import 'package:skeleton_text/skeleton_text.dart';
+import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/component/home/box-home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/component/home/listviewbox.dart';
+import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/punch-system/camera-instruction.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-import 'package:timer_builder/timer_builder.dart';
-import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);

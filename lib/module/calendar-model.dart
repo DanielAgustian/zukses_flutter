@@ -176,36 +176,15 @@ class CustomCalendar {
       }
     }
 
-    // for (int i = 0; i < calendar.length; i++) {
-    //   int week = numberOfWeek(i);
-
-    //   // handle for day in early month
-    //   if (week == 1 && calendar[i].date.day >= 20)
-    //     week = 0;
-    //   // handle for day in last month month
-    //   else if ((week == 5 || week == 6) && calendar[i].date.day <= 6) week = 0;
-
-    //   calendar[i].week = week;
-    //   calendar[i].firstWeekDate = findFirstDateOfTheWeek(calendar[i].date);
-    // }
-
     return calendar;
   }
 
   /// get the month calendar
   /// month is between from 1-12 (1 for January and 12 for December)
-  List<WeeklyCalendar> getWeeklyCalendar({List<Calendar> calendar}) {
-    print("model");
-    print(calendar.length);
+  List<WeeklyCalendar> getWeeklyCalendar({List<Calendar> calendar}) { 
     List<WeeklyCalendar> weekCalendar = [];
     for (int i = 0; i < calendar.length; i = i + 7) {
       int week = numberOfWeek(i);
-
-      // handle for day in early month
-      // if (week == 1 && calendar[i].date.day >= 20)
-      //   week = 0;
-      // handle for day in last month month
-      // else if ((week == 5 || week == 6) && calendar[i].date.day <= 6) week = 0;
 
       weekCalendar.add(WeeklyCalendar(
         date: calendar[i].date,

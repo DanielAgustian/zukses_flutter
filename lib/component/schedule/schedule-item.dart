@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
-import 'package:zukses_app_1/constant/constant.dart';
 
 class ScheduleItem extends StatelessWidget {
   const ScheduleItem({
