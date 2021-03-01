@@ -251,7 +251,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
     // Make sure absensi list from backend has been sorted ascending
     if (data != null) {
-      if (calendarDate.date.day < 15) {
+      // If the date is less than 15
+      // Or it's a date from previous month
+      // Or it's a date from previous year
+      if (calendarDate.date.day < 15 ||
+          calendarDate.date.month - 1 < calendarDate.date.month ||
+          calendarDate.date.year - 1 < calendarDate.date.year) {
         for (var d in data) {
           if (d.date.isAtSameMomentAs(calendarDate.date)) {
             dot = d.status == "late" ? dotRed : dotGreen;
@@ -259,13 +264,26 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             break;
           }
         }
-      } else {
-        var i = 15;
+      }
+
+      // If the date is more than or equal 15
+      // Or it's a date from next month
+      // Or it's a date from next year
+      else {
+        var i = 0;
         while (i < data.length) {
+          // if the data founded
           if (data[i].date.isAtSameMomentAs(calendarDate.date)) {
             dot = data[i].status == "late" ? dotRed : dotGreen;
             absence = data[i];
             break;
+          }
+
+          // if calendar date -15 > 5
+          if (15 - data[i].date.day > 5 && i + 3 < data.length) {
+            i = i + 3;
+          } else {
+            i++;
           }
         }
       }
