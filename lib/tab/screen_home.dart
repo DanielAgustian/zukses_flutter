@@ -60,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: colorBackground,
       body: isLoading
+          // FOR SKELETON LOADING
           ? SingleChildScrollView(
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -157,19 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BoxHome(
-                          loading: isLoading,
-                          title: "High Priority Task",
-                          total: 8,
-                          numberColor: colorSecondaryRed,
-                          fontSize: size.width <= 569 ? 34 : 36,
-                        ),
-                        BoxHome(
-                            loading: isLoading,
-                            title: "Low Priority Task",
-                            total: 8,
-                            numberColor: colorClear,
-                            fontSize: size.width <= 569 ? 34 : 36),
+                        BoxHome(loading: isLoading),
+                        BoxHome(loading: isLoading),
                       ],
                     )),
                 SizedBox(
@@ -186,31 +176,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                     child: Column(
                       children: [
-                        isLoading
-                            ? ListView.builder(
-                                itemCount: 2,
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return SkeletonLess3(
-                                    size: size,
-                                    row: 2,
-                                    col: 2,
-                                  );
-                                },
-                              )
-                            : ListView.builder(
-                                itemCount: taskName.length,
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return ListViewBox(
-                                    title: taskName[index],
-                                    detail: taskDetail[index],
-                                    viewType: "task",
-                                  );
-                                },
-                              ),
+                        ListView.builder(
+                          itemCount: 2,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SkeletonLess3(
+                              size: size,
+                              row: 2,
+                              col: 2,
+                            );
+                          },
+                        ),
                         Padding(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                             child: FlatButton(
@@ -253,18 +230,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BoxHome(
-                            loading: isLoading,
-                            title: "Meeting Schedule",
-                            total: 3,
-                            numberColor: colorSecondaryRed,
-                            fontSize: size.width <= 569 ? 34 : 36),
-                        BoxHome(
-                            loading: isLoading,
-                            title: "Meeting Request",
-                            total: 11,
-                            numberColor: colorSecondaryYellow,
-                            fontSize: size.width <= 569 ? 34 : 36),
+                        BoxHome(loading: isLoading),
+                        BoxHome(loading: isLoading),
                       ],
                     )),
                 SizedBox(
@@ -281,31 +248,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                     child: Column(
                       children: [
-                        isLoading
-                            ? ListView.builder(
-                                itemCount: 2,
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return SkeletonLess3(
-                                    size: size,
-                                    row: 2,
-                                    col: 1,
-                                  );
-                                },
-                              )
-                            : ListView.builder(
-                                itemCount: taskName.length,
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return ListViewBox(
-                                    title: taskName[index],
-                                    detail: taskDetail[index],
-                                    viewType: "meeting",
-                                  );
-                                },
-                              ),
+                        ListView.builder(
+                          itemCount: 2,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SkeletonLess3(
+                              size: size,
+                              row: 2,
+                              col: 1,
+                            );
+                          },
+                        ),
                         Padding(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                             child: FlatButton(
@@ -331,6 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             ))
+          // LIMIT FOR THE REAL COMPONENT
           : SingleChildScrollView(
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

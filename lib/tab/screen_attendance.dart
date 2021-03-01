@@ -48,9 +48,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   void timer() {
     Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     });
   }
 
