@@ -42,7 +42,10 @@ class ListViewBox extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         title,
-                        style: TextStyle(fontSize: 14, color: colorPrimary),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     Text(

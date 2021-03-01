@@ -93,8 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: GoogleFonts.lato(
                               textStyle: TextStyle(
                                   color: Colors.white, letterSpacing: 1.5),
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold),
+                              fontSize: size.height < 600 ? 56 : 72,
+                              fontWeight: FontWeight.w500),
                         );
                       }),
                       Text(
@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: GoogleFonts.lato(
                           textStyle: TextStyle(
                               color: Colors.white, letterSpacing: 1.5),
-                          fontSize: size.height < 569 ? 14 : 18,
+                          fontSize: size.height < 600 ? 14 : 18,
                         ),
                       ),
                     ]))),
