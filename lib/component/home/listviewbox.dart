@@ -43,9 +43,9 @@ class ListViewBox extends StatelessWidget {
                       child: Text(
                         title,
                         style: TextStyle(
-                            fontSize: 14,
-                            color: colorPrimary,
-                            fontWeight: FontWeight.bold),
+                          fontSize: 14,
+                          color: colorPrimary,
+                        ),
                       ),
                     ),
                     Text(
