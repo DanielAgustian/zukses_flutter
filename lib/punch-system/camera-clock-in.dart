@@ -43,6 +43,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   }
 
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Center(
         child: Stack(
@@ -57,15 +58,15 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                         ? Text('No image selected.')
                         : Image.file(
                             _image,
-                            height: 350,
-                            width: 310,
+                            height: size.height < 600 ? 350 : 400,
+                            width: size.height < 600 ? 310 : 360,
                           )),
                 SizedBox(
                   height: 30,
                 ),
                 Text("Are you sure with this picture?",
                     style: TextStyle(
-                        fontSize: 16,
+                        fontSize: size.height < 600 ? 16 : 18,
                         color: colorPrimary,
                         fontWeight: FontWeight.bold)),
                 SizedBox(
