@@ -1,20 +1,19 @@
 import 'dart:async';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/button/button-long-outlined.dart';
-import 'package:zukses_app_1/component/button/button-long.dart';
-import 'package:zukses_app_1/component/schedule/schedule-item.dart';
-import 'package:zukses_app_1/component/schedule/user-avatar.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
-import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
-import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
-import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
+import 'package:zukses_app_1/module/calendar-list-widget.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/component/title-date-formated.dart';
+import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
+import 'package:zukses_app_1/component/schedule/schedule-item.dart';
+import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
+import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 
 class MeetingScreen extends StatefulWidget {
   MeetingScreen({Key key, this.title}) : super(key: key);
@@ -23,7 +22,6 @@ class MeetingScreen extends StatefulWidget {
   _MeetingScreenState createState() => _MeetingScreenState();
 }
 
-/// This is the stateless widget that the main application instantiates.
 class _MeetingScreenState extends State<MeetingScreen>
     with TickerProviderStateMixin {
   DateTime _selectedDate;
@@ -33,7 +31,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   bool grid = true;
   bool removeBackgroundDialog = false;
 
-  // Dragable scroll controller
+  // Draggable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
@@ -91,7 +89,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                 FontAwesomeIcons.ellipsisH,
                 color: colorPrimary,
               ),
-              elevation: 1.5,
+              elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               onSelected: (val) {
@@ -145,19 +143,42 @@ class _MeetingScreenState extends State<MeetingScreen>
                     )),
                 PopupMenuItem(
                     value: 2,
-                    child: Row(
-                      children: <Widget>[
-                        FaIcon(FontAwesomeIcons.bell,
-                            color: colorPrimary,
-                            size: size.height <= 569 ? 16 : 20),
-                        SizedBox(width: 5),
-                        Text(
-                          'Request',
-                          style: TextStyle(
-                              color: colorPrimary,
-                              fontSize: size.height < 600 ? 11 : 13),
-                        )
-                      ],
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              FaIcon(FontAwesomeIcons.bell,
+                                  color: colorPrimary,
+                                  size: size.height <= 569 ? 16 : 20),
+                              SizedBox(width: 5),
+                              Text(
+                                'Request',
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height < 600 ? 11 : 13),
+                              ),
+                            ],
+                          ),
+                          Container(
+                              width: 20,
+                              height: 20,
+                              alignment: Alignment.centerRight,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: colorSecondaryRed),
+                              child: Center(
+                                child: Text(
+                                  '2',
+                                  style: TextStyle(
+                                      color: colorBackground,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: size.height < 600 ? 8 : 10),
+                                ),
+                              ))
+                        ],
+                      ),
                     )),
                 PopupMenuItem(
                     value: 3,
