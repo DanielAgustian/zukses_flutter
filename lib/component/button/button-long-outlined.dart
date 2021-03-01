@@ -26,7 +26,7 @@ class LongButtonOutline extends StatelessWidget {
       onPressed: onClick,
       shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(10.0),
-          side: BorderSide(color: outlineColor, width: 1)),
+          side: BorderSide(color: outlineColor)),
       child: Container(
         width: size.width,
         height: 40,
