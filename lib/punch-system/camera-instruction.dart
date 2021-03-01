@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CameraInstruction extends StatefulWidget {
@@ -18,7 +18,6 @@ class CameraInstruction extends StatefulWidget {
 class _CameraInstructionScreen extends State<CameraInstruction> {
   bool dontShowAgain = false;
   final picker = ImagePicker();
-  File _image;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +129,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
 
   void _onDontShowAgainChanged(bool newValue) => setState(() {
         dontShowAgain = newValue;
-
+        changeSharedPreferences(dontShowAgain);
         if (dontShowAgain) {
           print("I wont show again. Sorry to bother you.");
         } else {
@@ -159,5 +158,13 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                     )));
       });
     }
+  }
+
+  void changeSharedPreferences(value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setBool("instruction", value);
+      print("instruction changed to " + value.toString());
+    });
   }
 }
