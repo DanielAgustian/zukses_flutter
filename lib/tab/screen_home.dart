@@ -91,11 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             //print("${getSystemTime()}");
                             return Text(
                               getSystemTime(),
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      color: Colors.white, letterSpacing: 1.5),
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 1.5,
+                                  fontSize: size.height < 600 ? 56 : 72,
+                                  fontWeight: FontWeight.w500),
                             );
                           }),
                           Text(
@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.lato(
                           textStyle:
                               TextStyle(color: colorPrimary, letterSpacing: 0),
-                          fontSize: size.width <= 569 ? 18 : 20,
+                          fontSize: size.width <= 600 ? 18 : 20,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -225,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.lato(
                           textStyle:
                               TextStyle(color: colorPrimary, letterSpacing: 0),
-                          fontSize: size.width <= 569 ? 18 : 20,
+                          fontSize: size.width <= 600 ? 18 : 20,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -337,12 +337,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) {
                               return Text(
                                 getSystemTime(),
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        color: Colors.white,
-                                        letterSpacing: 1.5),
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    letterSpacing: 1.5,
+                                    fontSize: size.height < 600 ? 56 : 72,
+                                    fontWeight: FontWeight.w500),
                               );
                             }),
                             Text(
@@ -350,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.lato(
                                 textStyle: TextStyle(
                                     color: Colors.white, letterSpacing: 1.5),
-                                fontSize: size.height < 569 ? 14 : 18,
+                                fontSize: size.height < 600 ? 14 : 18,
                               ),
                             ),
                           ]))),
@@ -372,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: GoogleFonts.lato(
                                     textStyle: TextStyle(
                                         color: colorPrimary, letterSpacing: 0),
-                                    fontSize: size.width <= 569 ? 20 : 24,
+                                    fontSize: size.width <= 600 ? 20 : 24,
                                     fontWeight: FontWeight.bold),
                               ),
                               Align(
@@ -382,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: GoogleFonts.lato(
                                       textStyle: TextStyle(
                                           color: Colors.grey, letterSpacing: 0),
-                                      fontSize: size.width <= 569 ? 12 : 14,
+                                      fontSize: size.width <= 600 ? 12 : 14,
                                     ),
                                   )),
                             ],
@@ -417,7 +416,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.lato(
                           textStyle:
                               TextStyle(color: colorPrimary, letterSpacing: 0),
-                          fontSize: size.width <= 569 ? 20 : 22,
+                          fontSize: size.width <= 600 ? 20 : 22,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -435,14 +434,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           title: "High Priority Task",
                           total: 8,
                           numberColor: colorSecondaryRed,
-                          fontSize: size.width <= 569 ? 34 : 36,
+                          fontSize: size.width <= 600 ? 34 : 36,
                         ),
                         BoxHome(
                             loading: isLoading,
                             title: "Low Priority Task",
                             total: 8,
                             numberColor: colorClear,
-                            fontSize: size.width <= 569 ? 34 : 36),
+                            fontSize: size.width <= 600 ? 34 : 36),
                       ],
                     )),
                 SizedBox(
@@ -503,7 +502,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.lato(
                           textStyle:
                               TextStyle(color: colorPrimary, letterSpacing: 0),
-                          fontSize: size.width <= 569 ? 20 : 22,
+                          fontSize: size.width <= 600 ? 20 : 22,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -521,13 +520,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             title: "Meeting Schedule",
                             total: 3,
                             numberColor: colorSecondaryRed,
-                            fontSize: size.width <= 569 ? 34 : 36),
+                            fontSize: size.width <= 600 ? 34 : 36),
                         BoxHome(
                             loading: isLoading,
                             title: "Meeting Request",
                             total: 11,
                             numberColor: colorSecondaryYellow,
-                            fontSize: size.width <= 569 ? 34 : 36),
+                            fontSize: size.width <= 600 ? 34 : 36),
                       ],
                     )),
                 SizedBox(
