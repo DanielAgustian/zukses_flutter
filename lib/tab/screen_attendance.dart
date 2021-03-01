@@ -1,16 +1,15 @@
 import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:zukses_app_1/component/attendance/time-box.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
-import 'package:zukses_app_1/component/title-date-formated.dart';
+import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/component/attendance/time-box.dart';
+import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
+import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 
 class AttendanceScreen extends StatefulWidget {
   AttendanceScreen({Key key, this.title}) : super(key: key);
@@ -48,9 +47,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   void timer() {
     Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     });
   }
 

@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class OnBoardingCard extends StatelessWidget {

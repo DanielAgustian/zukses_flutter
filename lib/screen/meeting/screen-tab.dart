@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:zukses_app_1/component/schedule/schedule-item.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-3r-2c.dart';
+import 'package:zukses_app_1/component/schedule/schedule-item.dart'; 
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 
 class ScreenTabRequest extends StatefulWidget {

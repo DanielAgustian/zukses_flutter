@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-//import 'package:zukses_app_1/screen/screen_login.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/constant/constant.dart';
+import 'package:google_fonts/google_fonts.dart'; 
 import 'package:zukses_app_1/tab/screen_tab.dart';
-import 'package:zukses_app_1/component/button/button-long-icon.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/component/button/button-long-icon.dart';
 
 class ScreenSignUp extends StatefulWidget {
   ScreenSignUp({Key key, this.title}) : super(key: key);
