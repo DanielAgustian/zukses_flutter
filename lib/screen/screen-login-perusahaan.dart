@@ -116,7 +116,14 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                                                           "assets/images/ava.png")
                                                       .image))),
                                       SizedBox(width: 20),
-                                      Text("PT Yokesen Teknologi Indonesia")
+                                      Text(
+                                        "PT Yokesen Teknologi Indonesia",
+                                        style: TextStyle(
+                                            fontSize:
+                                                size.height < 600 ? 14 : 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorPrimary),
+                                      )
                                     ],
                                   )),
                         ),
