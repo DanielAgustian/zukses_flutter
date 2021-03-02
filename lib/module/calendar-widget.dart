@@ -6,14 +6,15 @@ import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarWidget extends StatefulWidget {
   const CalendarWidget(
-      {Key key, this.onSelectDate, this.data, this.fontSize = 14})
+      {Key key, this.onSelectDate, this.data, this.fontSize = 14, this.size})
       : super(key: key);
 
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
   final Function onSelectDate;
-  final List data;
   final double fontSize;
+  final List data;
+  final Size size;
 }
 
 enum CalendarViews { dates, months, year }
@@ -66,22 +67,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-            // margin: EdgeInsets.all(16),
-            height: MediaQuery.of(context).size.height * 0.6,
-            decoration: BoxDecoration(
-              color: colorBackground,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: (_currentView == CalendarViews.dates)
-                ? _datesView()
-                : (_currentView == CalendarViews.months)
-                    ? _showMonthsList()
-                    : _yearsView(midYear ?? _currentDateTime.year)),
-      ),
-    );
+    return Flexible(
+        child: (_currentView == CalendarViews.dates)
+            ? _datesView()
+            : (_currentView == CalendarViews.months)
+                ? _showMonthsList()
+                : _yearsView(midYear ?? _currentDateTime.year));
   }
 
   // get next month calendar
@@ -111,7 +102,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     _sequentialDates = CustomCalendar().getMonthCalendar(
         _currentDateTime.month, _currentDateTime.year,
         startWeekDay: StartWeekDay.monday);
-    print(_sequentialDates.length);
   }
 
   // dates view
@@ -219,11 +209,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       child: GridView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
+        physics: NeverScrollableScrollPhysics(),
         itemCount: _sequentialDates.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 20,
+          mainAxisSpacing: 10,
           crossAxisCount: 7,
-          crossAxisSpacing: 20,
+          crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
           // if (_sequentialDates[index].date == _selectedDateTime)

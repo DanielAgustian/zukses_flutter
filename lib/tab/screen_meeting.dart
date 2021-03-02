@@ -8,7 +8,7 @@ import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
-import 'package:zukses_app_1/component/schedule/user-avatar.dart'; 
+import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
@@ -223,59 +223,59 @@ class _MeetingScreenState extends State<MeetingScreen>
           children: [
             grid
                 ? Container(
+                    margin: EdgeInsets.all(10),
                     child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          width: size.width,
-                          height: size.height <= 569
-                              ? size.height * 0.45
-                              : size.height * 0.4,
-                          child: CalendarWidget(
-                            fontSize: size.width <= 569 ? textSizeSmall14 : 12,
-                            onSelectDate: (date, absence) {
-                              selectDate(date);
-                            },
-                            data: dummy,
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            child: CalendarWidget(
+                              fontSize:
+                                  size.height <= 600 ? textSizeSmall16 : 16,
+                              onSelectDate: (date, absence) {
+                                selectDate(date);
+                              },
+                              data: dummy,
+                              size: size,
+                            ),
                           ),
-                        ),
-                        TitleDayFormatted(
-                          currentDate: _selectedDate,
-                        ),
-                        Container(
-                          width: size.width,
-                          child: isLoading
-                              ? ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: 5,
-                                  itemBuilder: (context, index) =>
-                                      SkeletonLess3WithAvatar(
-                                          size: size, row: 2))
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: absensiList.length,
-                                  itemBuilder: (context, index) => ScheduleItem(
-                                    size: size,
-                                    title: "Schedule",
-                                    time1: "10.00",
-                                    time2: "11.30",
-                                    onClick: () {
-                                      if (_controller.isDismissed)
-                                        _controller.forward();
-                                      else if (_controller.isCompleted)
-                                        _controller.reverse();
-                                    },
+                          SizedBox(height: 30),
+                          TitleDayFormatted(
+                            currentDate: _selectedDate,
+                          ),
+                          Container(
+                            width: size.width,
+                            child: isLoading
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: 5,
+                                    itemBuilder: (context, index) =>
+                                        SkeletonLess3WithAvatar(
+                                            size: size, row: 2))
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: absensiList.length,
+                                    itemBuilder: (context, index) =>
+                                        ScheduleItem(
+                                      size: size,
+                                      title: "Schedule",
+                                      time1: "10.00",
+                                      time2: "11.30",
+                                      onClick: () {
+                                        if (_controller.isDismissed)
+                                          _controller.forward();
+                                        else if (_controller.isCompleted)
+                                          _controller.reverse();
+                                      },
+                                    ),
                                   ),
-                                ),
-                        )
-                      ],
-                    ),
-                  ))
+                          )
+                        ],
+                      ),
+                    ))
                 : Container(
                     child: Column(
                     children: [

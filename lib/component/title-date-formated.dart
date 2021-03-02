@@ -6,7 +6,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 class TitleDayFormatted extends StatelessWidget {
   TitleDayFormatted({
     Key key,
-     this.fontSize = 18,
+    this.fontSize = 18,
     @required this.currentDate,
   }) : super(key: key);
 
@@ -20,14 +20,11 @@ class TitleDayFormatted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
       alignment: Alignment.centerLeft,
       child: RichText(
         text: TextSpan(
           text: '${getDayName.format(currentDate)}, ',
-          style: TextStyle(
-              color: colorPrimary,
-              fontSize: fontSize),
+          style: TextStyle(color: colorPrimary, fontSize: fontSize),
           children: <TextSpan>[
             TextSpan(
               text: '${getDayNumber.format(currentDate)} ',
