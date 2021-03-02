@@ -71,7 +71,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         elevation: 0,
         backgroundColor: colorBackground,
         automaticallyImplyLeading: false,
-        centerTitle: true,
         title: Text(
           "Attendance Detail",
           style: TextStyle(
@@ -85,7 +84,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
             icon: FaIcon(
               monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
               color: colorPrimary,
-              size: size.height <= 569 ? 16 : 20,
+              size: size.height <= 600 ? 16 : 20,
             ),
             onPressed: () {
               setState(() {
@@ -112,40 +111,40 @@ class _AttendanceScreen extends State<AttendanceScreen> {
       body: Container(
         padding: EdgeInsets.all(10),
         child: monthly
-            ? Column(
-                children: [
-                  Container(
-                    width: size.width,
-                    height: size.width <= 569
-                        ? size.height * 0.45
-                        : size.height * 0.5,
-                    child: CalendarWidget(
-                      fontSize: size.height <= 569 ? textSizeSmall14 : 12,
+            ? SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CalendarWidget(
+                      fontSize: size.height <= 600 ? textSizeSmall16 : 16,
                       onSelectDate: (date, absence) {
                         selectDate(date, absence);
                       },
                       data: dummy,
+                      size: size,
                     ),
-                  ),
-                  TitleDayFormatted(
-                    currentDate: _currentDate,
-                  ),
-                  SizedBox(
-                    height: size.height <= 569 ? 20 : 25,
-                  ),
-                  TimeBox(
-                    selected: selected,
-                    fontSize: size.height <= 569 ? textSizeSmall18 : 18,
-                  ),
-                  SizedBox(height: 15),
-                  Container(
-                      child: Text(
-                    "Overtime : 0 hrs",
-                    style: TextStyle(
-                        color: colorPrimary,
-                        fontSize: size.width <= 569 ? textSizeSmall18 : 18),
-                  ))
-                ],
+                    SizedBox(height: 20),
+                    TitleDayFormatted(
+                      currentDate: _currentDate,
+                    ),
+                    SizedBox(
+                      height: size.height <= 569 ? 20 : 25,
+                    ),
+                    TimeBox(
+                      selected: selected,
+                      fontSize: size.height <= 569 ? textSizeSmall18 : 18,
+                    ),
+                    SizedBox(height: 15),
+                    Container(
+                        child: Text(
+                      "Overtime : 0 hrs",
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: size.width <= 569 ? textSizeSmall18 : 18),
+                    ))
+                  ],
+                ),
               )
             : Column(
                 children: [

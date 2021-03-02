@@ -26,15 +26,13 @@ dependencies:
   google_fonts:
   circular_check_box:
   font_awesome_flutter:
-  intl:
-  esys_flutter_share:
+  intl: 
   image_picker:
   autocomplete_textfield:
   flutter_typeahead:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
-  path_provider:
+  cupertino_icons: ^1.0.0 
   path:
   shared_preferences:
   device_preview:

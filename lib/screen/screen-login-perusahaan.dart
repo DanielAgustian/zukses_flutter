@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/screen/screen_login.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:zukses_app_1/constant/constant.dart'; 
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 
