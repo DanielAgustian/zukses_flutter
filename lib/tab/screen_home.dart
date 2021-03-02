@@ -68,230 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: colorBackground,
       body: isLoading
           // FOR SKELETON LOADING
-          ? SingleChildScrollView(
-              child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(40),
-                          bottomLeft: Radius.circular(40)),
-                      color: colorPrimary,
-                    ),
-                    child: Center(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                          TimerBuilder.periodic(Duration(seconds: 1),
-                              builder: (context) {
-                            //print("${getSystemTime()}");
-                            return Text(
-                              getSystemTime(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 1.5,
-                                  fontSize: size.height < 600 ? 56 : 72,
-                                  fontWeight: FontWeight.w500),
-                            );
-                          }),
-                          Text(
-                            stringTap,
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                  color: Colors.white, letterSpacing: 1.5),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ]))),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SkeletonAnimation(
-                                shimmerColor: colorNeutral170,
-                                child: Container(
-                                  color: colorNeutral2,
-                                  width: size.width * 0.6,
-                                  height: 20,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              SkeletonAnimation(
-                                shimmerColor: colorNeutral170,
-                                child: Container(
-                                  color: colorNeutral2,
-                                  width: size.width * 0.6,
-                                  height: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SkeletonAvatar()
-                      ]),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 40, 0, 0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Task List",
-                      style: GoogleFonts.lato(
-                          textStyle:
-                              TextStyle(color: colorPrimary, letterSpacing: 0),
-                          fontSize: size.width <= 600 ? 18 : 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        BoxHome(loading: isLoading),
-                        BoxHome(loading: isLoading),
-                      ],
-                    )),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    decoration:
-                        BoxDecoration(color: colorBackground, boxShadow: [
-                      BoxShadow(
-                        color: colorNeutral1.withOpacity(1),
-                        blurRadius: 10,
-                      )
-                    ]),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          itemCount: 2,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return SkeletonLess3(
-                              size: size,
-                              row: 2,
-                              col: 2,
-                            );
-                          },
-                        ),
-                        Padding(
-                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: FlatButton(
-                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                color: colorBackground,
-                                onPressed: () {},
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Show All Task Schedule",
-                                        style: TextStyle(color: colorPrimary)),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: colorPrimary,
-                                    )
-                                  ],
-                                )))
-                      ],
-                    )),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Meeting List",
-                      style: GoogleFonts.lato(
-                          textStyle:
-                              TextStyle(color: colorPrimary, letterSpacing: 0),
-                          fontSize: size.width <= 600 ? 18 : 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        BoxHome(loading: isLoading),
-                        BoxHome(loading: isLoading),
-                      ],
-                    )),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    decoration:
-                        BoxDecoration(color: colorBackground, boxShadow: [
-                      BoxShadow(
-                        color: colorNeutral1.withOpacity(1),
-                        blurRadius: 10,
-                      )
-                    ]),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          itemCount: 2,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return SkeletonLess3(
-                              size: size,
-                              row: 2,
-                              col: 1,
-                            );
-                          },
-                        ),
-                        Padding(
-                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: FlatButton(
-                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                color: colorBackground,
-                                onPressed: () {},
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Show All Task Schedule",
-                                        style: TextStyle(color: colorPrimary)),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: colorPrimary,
-                                    )
-                                  ],
-                                )))
-                      ],
-                    )),
-                SizedBox(
-                  height: 20,
-                )
-              ],
-            ))
+          ? skeletonSection(size)
           // LIMIT FOR THE REAL COMPONENT
           : SingleChildScrollView(
               child: Column(
@@ -458,6 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.all(1.0),
                           itemCount: taskName.length,
                           scrollDirection: Axis.vertical,
@@ -543,6 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.all(1.0),
                           itemCount: taskName.length,
                           scrollDirection: Axis.vertical,
@@ -583,6 +362,215 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             )),
     );
+  }
+
+  // Widget for skeleton loader
+  Widget skeletonSection(Size size) {
+    return SingleChildScrollView(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(40),
+                  bottomLeft: Radius.circular(40)),
+              color: colorPrimary,
+            ),
+            child: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  TimerBuilder.periodic(Duration(seconds: 1),
+                      builder: (context) {
+                    //print("${getSystemTime()}");
+                    return Text(
+                      getSystemTime(),
+                      style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 1.5,
+                          fontSize: size.height < 600 ? 56 : 72,
+                          fontWeight: FontWeight.w500),
+                    );
+                  }),
+                  Text(
+                    stringTap,
+                    style: GoogleFonts.lato(
+                      textStyle:
+                          TextStyle(color: Colors.white, letterSpacing: 1.5),
+                      fontSize: 14,
+                    ),
+                  ),
+                ]))),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonAnimation(
+                    shimmerColor: colorNeutral170,
+                    child: Container(
+                      color: colorNeutral2,
+                      width: size.width * 0.6,
+                      height: 20,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  SkeletonAnimation(
+                    shimmerColor: colorNeutral170,
+                    child: Container(
+                      color: colorNeutral2,
+                      width: size.width * 0.6,
+                      height: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SkeletonAvatar()
+          ]),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 40, 0, 0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Task List",
+              style: GoogleFonts.lato(
+                  textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
+                  fontSize: size.width <= 600 ? 18 : 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BoxHome(loading: isLoading),
+                BoxHome(loading: isLoading),
+              ],
+            )),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            decoration: BoxDecoration(color: colorBackground, boxShadow: [
+              BoxShadow(
+                color: colorNeutral1.withOpacity(1),
+                blurRadius: 10,
+              )
+            ]),
+            child: Column(
+              children: [
+                // manual loop for skeleton
+                ...taskName.map((item) => SkeletonLess3(
+                      size: size,
+                      row: 2,
+                      col: 1,
+                    )),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: FlatButton(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        color: colorBackground,
+                        onPressed: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Show All Task Schedule",
+                                style: TextStyle(color: colorPrimary)),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: colorPrimary,
+                            )
+                          ],
+                        )))
+              ],
+            )),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Meeting List",
+              style: GoogleFonts.lato(
+                  textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
+                  fontSize: size.width <= 600 ? 18 : 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BoxHome(loading: isLoading),
+                BoxHome(loading: isLoading),
+              ],
+            )),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            decoration: BoxDecoration(color: colorBackground, boxShadow: [
+              BoxShadow(
+                color: colorNeutral1.withOpacity(1),
+                blurRadius: 10,
+              )
+            ]),
+            child: Column(
+              children: [
+                // manual loop for skeleton
+                ...taskName.map((item) => SkeletonLess3(
+                      size: size,
+                      row: 2,
+                      col: 1,
+                    )),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: FlatButton(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        color: colorBackground,
+                        onPressed: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Show All Task Schedule",
+                                style: TextStyle(color: colorPrimary)),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: colorPrimary,
+                            )
+                          ],
+                        )))
+              ],
+            )),
+        SizedBox(
+          height: 20,
+        )
+      ],
+    ));
   }
 
 //Pop Up Dialog for Clock in and Out Confirmation

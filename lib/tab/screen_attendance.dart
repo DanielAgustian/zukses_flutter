@@ -71,7 +71,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         elevation: 0,
         backgroundColor: colorBackground,
         automaticallyImplyLeading: false,
-        centerTitle: true,
         title: Text(
           "Attendance Detail",
           style: TextStyle(
