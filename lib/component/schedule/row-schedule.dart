@@ -8,7 +8,7 @@ class AddScheduleRow extends StatelessWidget {
     Key key,
     this.title,
     this.textItem,
-    this.fontSize,
+    this.fontSize: 16,
   }) : super(key: key);
 
   final String title, textItem;
