@@ -8,7 +8,7 @@ class AddScheduleRow extends StatelessWidget {
     Key key,
     this.title,
     this.textItem,
-    this.fontSize,
+    this.fontSize: 16,
   }) : super(key: key);
 
   final String title, textItem;
@@ -17,7 +17,7 @@ class AddScheduleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -69,7 +69,7 @@ class AddScheduleRow2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -104,27 +104,7 @@ class AddScheduleRow2 extends StatelessWidget {
                 ),
               );
             }).toList(),
-          )
-          // Row(
-          //   children: [
-          //     Text(
-          //       textItem,
-          //       style: TextStyle(
-          //           fontSize: fontSize,
-          //           color: colorPrimary,
-          //           fontWeight: FontWeight.w700),
-          //     ),
-          //     SizedBox(
-          //       width: 10,
-          //     ),
-          //     title != "Time"
-          //         ? FaIcon(
-          //             FontAwesomeIcons.chevronRight,
-          //             color: colorPrimary,
-          //           )
-          //         : Container()
-          //   ],
-          // )
+          ) 
         ],
       ),
     );

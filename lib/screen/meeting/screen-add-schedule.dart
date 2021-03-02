@@ -20,12 +20,16 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   TextEditingController textTitle = new TextEditingController();
   TextEditingController textSearch = new TextEditingController();
   TextEditingController textDescription = new TextEditingController();
-  final DateFormat formater = DateFormat.yMMMMEEEEd();
   bool _titleValidator = false;
   bool _descriptionValidator = false;
+
+  // formater for showing date
+  final DateFormat formater = DateFormat.yMMMMEEEEd();
   DateTime date = DateTime.now();
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
+
+  // Dropdown menu
   List<String> items = ["Never", "Once", "1 Day Before"];
   String repeat = "Never";
 
@@ -34,57 +38,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
 
-  void showConfirmDismiss({size}) {
-    showDialog(
-        context: context,
-        barrierColor: Colors.white.withOpacity(0.5),
-        builder: (BuildContext context) {
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    child: Text(
-                      "Are you sure you want to discard your changes ?",
-                      style: TextStyle(color: colorPrimary, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  LongButton(
-                    size: size,
-                    bgColor: colorPrimary,
-                    textColor: colorBackground,
-                    title: "Keep Editing",
-                    onClick: () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  LongButtonOutline(
-                    outlineColor: colorError,
-                    size: size,
-                    bgColor: colorBackground,
-                    textColor: colorError,
-                    title: "Discard Changes",
-                    onClick: () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
+  // Handle if user click back using button in device not in app (usually for android)
   Future<bool> _onWillPop({size}) async {
     return (await showDialog(
             context: context,
@@ -151,6 +105,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       });
   }
 
+  // pick time function
   void pickTime(BuildContext context, {int index = 1}) async {
     TimeOfDay picked = await showTimePicker(
       context: context,
@@ -180,6 +135,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     super.initState();
     _controller = AnimationController(vsync: this, duration: _duration);
 
+    // Handle view of `time2` on condition auto set 30 minutes after `time1`
+    // if hour = 24, tjhen it should be 00
+    // and if minutes = 60, it should be 00
     int h, m;
     m = time1.minute >= 30 ? (time1.minute + 30) - 60 : (time1.minute + 30);
     h = time1.minute >= 30
@@ -195,6 +153,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    // formater to split the hours,
+    // eg. avoid when 01.01 => 1.1
+    // It should be 01.01
     String h1 = (time1.hour <= 9) ? "0${time1.hour}" : time1.hour.toString();
     String m1 =
         (time1.minute <= 9) ? "0${time1.minute}" : time1.minute.toString();
@@ -219,9 +180,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             ),
             onPressed: () {
               if (textDescription.text != "" || textTitle.text != "")
-                showConfirmDismiss(size: size);
+                _onWillPop(size: size);
               else
-                Navigator.of(context).pop();
+                Navigator.pop(context);
             },
           ),
           centerTitle: true,

@@ -8,7 +8,7 @@ import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
-import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/component/schedule/user-avatar.dart'; 
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
