@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
+import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +17,7 @@ import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
+import 'package:zukses_app_1/screen/member/screen-member.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -174,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     decoration: BoxDecoration(
                                         color: colorPrimary,
                                         shape: BoxShape.circle,
-                                        image: new DecorationImage(
+                                        image: DecorationImage(
                                             fit: BoxFit.fill,
                                             image: Image.asset(
                                                     "assets/images/ava.png")
@@ -183,8 +185,59 @@ class _HomeScreenState extends State<HomeScreen> {
                             ))
                       ]),
                 ),
+                SizedBox(height: 20),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MemberScreen()));
+                  },
+                  child: Container(
+                    width: size.width,
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                        color: colorBackground,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorNeutral1.withOpacity(1),
+                            blurRadius: 15,
+                          )
+                        ]),
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Team Member",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                letterSpacing: 0,
+                                fontSize: size.width <= 600 ? 18 : 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            height: 20,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 10,
+                              itemBuilder: (context, index) => index == 9
+                                  ? UserAvatar(
+                                      value: "+5",
+                                    )
+                                  : UserAvatar(dotSize: 7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(20, 40, 0, 0),
+                  padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(

@@ -26,7 +26,7 @@ class BoxHome extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: colorNeutral150,
