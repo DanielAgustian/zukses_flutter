@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/component/text-seq-vertical.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -19,39 +20,30 @@ class _MemberScreenState extends State<MemberScreen> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: colorBackground,
-        leading: IconButton(
-          icon: FaIcon(
-            FontAwesomeIcons.chevronLeft,
-            color: colorPrimary,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          "Team Member",
-          style: TextStyle(
-              color: colorPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: size.height <= 569 ? 20 : 25),
-        ),
-        actions: [
-          IconButton(
-            padding: EdgeInsets.only(right: 20),
-            splashColor: Colors.transparent,
+      appBar: customAppBar(context,
+          size: size,
+          title: "Team Member",
+          leadingIcon: IconButton(
             icon: FaIcon(
-              FontAwesomeIcons.plusCircle,
+              FontAwesomeIcons.chevronLeft,
               color: colorPrimary,
-              size: size.height < 570 ? 18 : 23,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-        ],
-      ),
+          actionList: <Widget>[
+            IconButton(
+              padding: EdgeInsets.only(right: 20),
+              splashColor: Colors.transparent,
+              icon: FaIcon(
+                FontAwesomeIcons.plusCircle,
+                color: colorPrimary,
+                size: size.height < 570 ? 18 : 23,
+              ),
+              onPressed: () {},
+            ),
+          ]),
       backgroundColor: colorBackground,
       body: Container(
         child: Column(
@@ -112,4 +104,40 @@ class _MemberScreenState extends State<MemberScreen> {
       ),
     );
   }
+
+//   AppBar customAppBar(BuildContext context, Size size) {
+//     return AppBar(
+//       elevation: 0,
+//       backgroundColor: colorBackground,
+//       leading: IconButton(
+//         icon: FaIcon(
+//           FontAwesomeIcons.chevronLeft,
+//           color: colorPrimary,
+//         ),
+//         onPressed: () {
+//           Navigator.pop(context);
+//         },
+//       ),
+//       centerTitle: true,
+//       title: Text(
+//         "Team Member",
+//         style: TextStyle(
+//             color: colorPrimary,
+//             fontWeight: FontWeight.bold,
+//             fontSize: size.height <= 569 ? 20 : 25),
+//       ),
+//       actions: [
+//         IconButton(
+//           padding: EdgeInsets.only(right: 20),
+//           splashColor: Colors.transparent,
+//           icon: FaIcon(
+//             FontAwesomeIcons.plusCircle,
+//             color: colorPrimary,
+//             size: size.height < 570 ? 18 : 23,
+//           ),
+//           onPressed: () {},
+//         ),
+//       ],
+//     );
+//   }
 }
