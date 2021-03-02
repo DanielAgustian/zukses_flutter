@@ -143,7 +143,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
             Navigator.of(context).pop();
           },
           child: Container(
-            padding: EdgeInsets.only(right: 20),
             child: Text(
               "Done",
               style: TextStyle(
