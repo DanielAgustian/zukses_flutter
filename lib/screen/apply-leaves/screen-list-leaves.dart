@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart'; 
-import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart'; 
-import 'package:zukses_app_1/constant/constant.dart'; 
+import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
+import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/leaves/list-leaves.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -32,40 +33,35 @@ class _ScreenListLeaves extends State<ScreenListLeaves> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: colorBackground,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: colorPrimary),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            'Cuti',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 22 : 25,
-                color: colorPrimary),
-          ),
-          actions: [
-            IconButton(
-              padding: EdgeInsets.only(right: 20),
-              splashColor: Colors.transparent,
+        appBar: customAppBar(context,
+            size: size,
+            leadingIcon: IconButton(
               icon: FaIcon(
-                FontAwesomeIcons.plus,
+                FontAwesomeIcons.chevronLeft,
                 color: colorPrimary,
-                size: size.height < 570 ? 20 : 25,
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ApplyLeavesFormScreen()));
+                Navigator.pop(context);
               },
             ),
-          ],
-        ),
+            title: "Leaves",
+            actionList: [
+              IconButton(
+                padding: EdgeInsets.only(right: 20),
+                splashColor: Colors.transparent,
+                icon: FaIcon(
+                  FontAwesomeIcons.plusCircle,
+                  color: colorPrimary,
+                  size: size.height < 570 ? 18 : 23,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ApplyLeavesFormScreen()));
+                },
+              ),
+            ]),
         body: LayoutBuilder(builder: (ctx, constrains) {
           return Column(children: [
             Expanded(
