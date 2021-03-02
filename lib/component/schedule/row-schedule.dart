@@ -104,27 +104,7 @@ class AddScheduleRow2 extends StatelessWidget {
                 ),
               );
             }).toList(),
-          )
-          // Row(
-          //   children: [
-          //     Text(
-          //       textItem,
-          //       style: TextStyle(
-          //           fontSize: fontSize,
-          //           color: colorPrimary,
-          //           fontWeight: FontWeight.w700),
-          //     ),
-          //     SizedBox(
-          //       width: 10,
-          //     ),
-          //     title != "Time"
-          //         ? FaIcon(
-          //             FontAwesomeIcons.chevronRight,
-          //             color: colorPrimary,
-          //           )
-          //         : Container()
-          //   ],
-          // )
+          ) 
         ],
       ),
     );

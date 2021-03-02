@@ -10,7 +10,7 @@ import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
-import 'package:zukses_app_1/screen/leaves/screen-list-leaves.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 
 class AttendanceScreen extends StatefulWidget {
   AttendanceScreen({Key key, this.title}) : super(key: key);
@@ -91,6 +91,20 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               setState(() {
                 monthly = !monthly;
               });
+            },
+          ),
+          IconButton(
+            splashColor: Colors.transparent,
+            icon: FaIcon(
+              FontAwesomeIcons.calendarWeek,
+              color: colorPrimary,
+              size: size.height <= 569 ? 16 : 20,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ScreenListLeaves()),
+              );
             },
           )
         ],
@@ -225,12 +239,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                 ],
               ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ScreenListLeaves()),
-        );
-      }),
     );
   }
 }

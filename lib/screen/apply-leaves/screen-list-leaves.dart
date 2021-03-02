@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/task/list-task.dart';
@@ -60,10 +61,10 @@ class _ScreenListLeaves extends State<ScreenListLeaves> {
                 size: size.height < 570 ? 20 : 25,
               ),
               onPressed: () {
-                //Navigator.push(
-                // context,
-                //MaterialPageRoute(builder: (context) => AddTaskScreen()),
-                //);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ApplyLeavesFormScreen()));
               },
             ),
           ],
