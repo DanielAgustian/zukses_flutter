@@ -32,9 +32,11 @@ class _TaskScreen extends State<TaskScreen>
 
   void timer() {
     Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     });
   }
 

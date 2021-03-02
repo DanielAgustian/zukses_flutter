@@ -111,7 +111,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     _sequentialDates = CustomCalendar().getMonthCalendar(
         _currentDateTime.month, _currentDateTime.year,
         startWeekDay: StartWeekDay.monday);
-    print(_sequentialDates.length);
   }
 
   // dates view
@@ -219,11 +218,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       child: GridView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
+        physics: NeverScrollableScrollPhysics(),
         itemCount: _sequentialDates.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 20,
+          mainAxisSpacing: 10,
           crossAxisCount: 7,
-          crossAxisSpacing: 20,
+          crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
           // if (_sequentialDates[index].date == _selectedDateTime)

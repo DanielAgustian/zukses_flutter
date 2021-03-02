@@ -8,7 +8,7 @@ import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
-import 'package:zukses_app_1/component/schedule/user-avatar.dart'; 
+import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
@@ -231,11 +231,11 @@ class _MeetingScreenState extends State<MeetingScreen>
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
                           width: size.width,
-                          height: size.height <= 569
-                              ? size.height * 0.45
-                              : size.height * 0.4,
+                          height: size.height <= 600
+                              ? size.height * 0.5
+                              : size.height * 0.45,
                           child: CalendarWidget(
-                            fontSize: size.width <= 569 ? textSizeSmall14 : 12,
+                            fontSize: size.height <= 600 ? textSizeSmall16 : 16,
                             onSelectDate: (date, absence) {
                               selectDate(date);
                             },
