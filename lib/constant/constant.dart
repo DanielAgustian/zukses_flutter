@@ -21,7 +21,7 @@ const colorNeutral170 = Color(0xFFEAE8ED);
 const colorNeutral150 = Color(0xFFF0EFF2);
 const colorNeutral130 = Color(0xFFF6F6F8);
 
-const colorNeutral2 = Color(0xFFC4C4C4); 
+const colorNeutral2 = Color(0xFFC4C4C4);
 
 const colorClear = Color(0xFF1BB55C);
 const colorError = Color(0xFFE74C3C);
