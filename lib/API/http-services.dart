@@ -8,7 +8,7 @@ class HttpService {
 
   Future<LoginAPI> createLogin(String email, password) async {
     final response = await http.post(
-      Uri.https('53b6ac02704c.ngrok.io', '/api/login'),
+      Uri.https('9ce5151ea12c.ngrok.io', '/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Charset': 'utf-8'
@@ -16,10 +16,10 @@ class HttpService {
       body: jsonEncode(<String, String>{'email': email, 'password': password}),
     );
     print(response.statusCode.toString());
-    if (response.statusCode == 402) {
+    if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-
+      print(response.body);
       return LoginAPI.fromJson(jsonDecode(response.body));
     } else {
       // If the server did not return a 201 CREATED response,
