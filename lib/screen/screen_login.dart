@@ -78,109 +78,109 @@ class _ScreenLogin extends State<ScreenLogin> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocListener<AuthenticationBloc, AuthenticationState>(
-      listener: (context, state) {
-        if (state is AuthStateSuccessLoad) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ScreenTab()),
-          );
-        } else if (state is AuthStateFailLoad) {
-          setState(() {
-            loading = false;
-          });
-          Util().showToast(
-              context: this.context,
-              msg: "Something Wrong !",
-              color: colorError,
-              txtColor: colorBackground);
-        }
-      },
-      child: Scaffold(
-          backgroundColor: colorBackground,
-          body: SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.all(20),
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: size.height * 0.05,
-                        ),
-                        Text(
-                          "ZUKSES",
-                          style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                  color: colorPrimary, letterSpacing: 1.5),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: size.width * 0.3),
-                        LongButtonIcon(
-                          size: size,
-                          title: "Sign In with Google",
-                          bgColor: colorGoogle,
-                          textColor: colorBackground,
-                          iconWidget: Image.asset(
-                            'icon/google_icon.png',
-                            scale: 0.6,
+        listener: (context, state) {
+          if (state is AuthStateSuccessLoad) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScreenTab()),
+            );
+          } else if (state is AuthStateFailLoad) {
+            setState(() {
+              loading = false;
+            });
+            Util().showToast(
+                context: this.context,
+                msg: "Something Wrong !",
+                color: colorError,
+                txtColor: colorBackground);
+          }
+        },
+        child: Scaffold(
+            backgroundColor: colorBackground,
+            body: SingleChildScrollView(
+                child: Container(
+                    padding: EdgeInsets.all(20),
+                    alignment: Alignment.topCenter,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: size.height * 0.05,
                           ),
-                          onClick: googleLogin,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        LongButtonIcon(
-                          size: size,
-                          title: "Sign In with Google",
-                          bgColor: colorFacebook,
-                          textColor: colorBackground,
-                          iconWidget: Image.asset(
-                            'icon/facebook_icon.png',
-                            scale: 0.6,
+                          Text(
+                            "ZUKSES",
+                            style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    color: colorPrimary, letterSpacing: 1.5),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
                           ),
-                          onClick: () {},
-                        ),
-                        SizedBox(
-                          height: 25,
-                        ),
-                        Text(
-                          "OR",
-                          style:
-                              TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
-                        ),
-                        SizedBox(height: 25),
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                              border: _usernameValidator
-                                  ? Border.all(color: colorError)
-                                  : Border.all(color: Colors.transparent),
-                              color: colorBackground,
-                              boxShadow: [
-                                BoxShadow(
-                                    offset: Offset(0, 0),
-                                    color: Color.fromRGBO(240, 239, 242, 1),
-                                    blurRadius: 15),
-                              ],
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            onChanged: (val) {},
-                            controller: textUsername,
-                            decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 20),
-                                hintText: "Username",
-                                hintStyle: TextStyle(
-                                  color: _usernameValidator
-                                      ? colorError
-                                      : colorNeutral1,
-                                ),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none),
-                          )),
+                          SizedBox(height: size.width * 0.3),
+                          LongButtonIcon(
+                            size: size,
+                            title: "Sign In with Google",
+                            bgColor: colorGoogle,
+                            textColor: colorBackground,
+                            iconWidget: Image.asset(
+                              'icon/google_icon.png',
+                              scale: 0.6,
+                            ),
+                            onClick: googleLogin,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          LongButtonIcon(
+                            size: size,
+                            title: "Sign In with Google",
+                            bgColor: colorFacebook,
+                            textColor: colorBackground,
+                            iconWidget: Image.asset(
+                              'icon/facebook_icon.png',
+                              scale: 0.6,
+                            ),
+                            onClick: () {},
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          Text(
+                            "OR",
+                            style: TextStyle(
+                                fontSize: 16, color: Color(0xFF8793B5)),
+                          ),
+                          SizedBox(height: 25),
+                          Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: _usernameValidator
+                                      ? Border.all(color: colorError)
+                                      : Border.all(color: Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        color: Color.fromRGBO(240, 239, 242, 1),
+                                        blurRadius: 15),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.text,
+                                onChanged: (val) {},
+                                controller: textUsername,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    hintText: "Username",
+                                    hintStyle: TextStyle(
+                                      color: _usernameValidator
+                                          ? colorError
+                                          : colorNeutral1,
+                                    ),
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none),
+                              )),
                           Text(
                             "OR",
                             style: TextStyle(
@@ -289,6 +289,6 @@ class _ScreenLogin extends State<ScreenLogin> {
                             onClick: login,
                             size: size,
                           ),
-                        ]))));
+                        ])))));
   }
 }
