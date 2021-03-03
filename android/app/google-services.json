@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "186217576503",
+    "project_id": "zukses-app",
+    "storage_bucket": "zukses-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186217576503:android:edb2265c6d3ada2d40a7b2",
+        "android_client_info": {
+          "package_name": "com.example.zukses_app_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186217576503-ejl2de1uic00hfe9b3cec0ns0lf2i3sc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zukses_app_1",
+            "certificate_hash": "fd6d22c4782688036cf5b87c914038ecbdfbc803"
+          }
+        },
+        {
+          "client_id": "186217576503-ghv1cm99grphss9v32014ee19e7etujh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5UbrP-3sssYHOpqy6UbLZ9gosxwABvlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186217576503-ghv1cm99grphss9v32014ee19e7etujh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
