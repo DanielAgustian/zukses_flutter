@@ -159,27 +159,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                   SizedBox(height: 30),
-                  _controller.page < 2
-                      ? RawMaterialButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SecondPage()),
-                            );
-                          },
-                          elevation: 2.0,
-                          fillColor: Color.fromRGBO(20, 43, 111, 0.9),
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            child: Icon(Icons.arrow_forward,
-                                size: 35.0, color: Colors.white70),
-                          ),
-                          padding: EdgeInsets.all(15.0),
-                          shape: CircleBorder(),
-                        )
-                      : Container(),
+                  RawMaterialButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SecondPage()),
+                      );
+                    },
+                    elevation: 2.0,
+                    fillColor: Color.fromRGBO(20, 43, 111, 0.9),
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      child: Icon(Icons.arrow_forward,
+                          size: 35.0, color: Colors.white70),
+                    ),
+                    padding: EdgeInsets.all(15.0),
+                    shape: CircleBorder(),
+                  ),
                 ]))));
   }
 }
