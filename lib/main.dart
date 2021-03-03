@@ -1,5 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/repository/auth-repo.dart';
 import 'package:zukses_app_1/third_click.dart';
 import 'package:zukses_app_1/second_click.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +11,10 @@ import 'package:device_preview/device_preview.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = BlocObserver();
+  await Firebase.initializeApp();
   runApp(DevicePreview(builder: (context) => MyApp()));
 }
 
@@ -16,14 +23,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Zukses: Application for Office',
-      theme: ThemeData(
-        fontFamily: 'Lato',
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthenticationBloc>(
+          create: (context) =>
+              AuthenticationBloc(authRepo: AuthenticationRepository()),
+        )
+      ],
+      child: MaterialApp(
+        title: 'Zukses: Application for Office',
+        theme: ThemeData(
+          fontFamily: 'Lato',
+        ),
+        locale: DevicePreview.locale(context), // Add the locale here
+        builder: DevicePreview.appBuilder, // Add the builder here
+        home: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      locale: DevicePreview.locale(context), // Add the locale here
-      builder: DevicePreview.appBuilder, // Add the builder here
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

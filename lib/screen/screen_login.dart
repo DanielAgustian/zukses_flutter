@@ -57,10 +57,18 @@ class _ScreenLogin extends State<ScreenLogin> {
     }
   }
 
+  void googleLogin() {
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventWithGoogle());
+
+    setState(() {
+      loading = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocListener(
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is AuthStateSuccessLoad) {
           Navigator.push(
@@ -108,13 +116,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                             'icon/google_icon.png',
                             scale: 0.6,
                           ),
-                          onClick: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScreenLogin()),
-                            );
-                          },
+                          onClick: googleLogin,
                         ),
                         SizedBox(
                           height: 10,
@@ -128,14 +130,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                             'icon/facebook_icon.png',
                             scale: 0.6,
                           ),
-                          onClick: () {
-                            BlocProvider.of<AuthenticationBloc>(context)
-                                .add(AuthEventWithGoogle());
-
-                            setState(() {
-                              loading = true;
-                            });
-                          },
+                          onClick: () {},
                         ),
                         SizedBox(
                           height: 25,
