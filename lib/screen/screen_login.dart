@@ -34,6 +34,9 @@ class _ScreenLogin extends State<ScreenLogin> {
   bool loading = false;
 
   void login() {
+    setState(() {
+      loading = true;
+    });
     if (textUsername.text == "") {
       setState(() {
         _usernameValidator = true;
@@ -58,11 +61,14 @@ class _ScreenLogin extends State<ScreenLogin> {
         _futureLogin =
             httpService.createLogin(textUsername.text, textPassword.text);
       });
-      /*
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ScreenTab()),
-      );*/
+      _futureLogin.then((data) {
+        if (data != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ScreenTab()),
+          );
+        }
+      });
     }
   }
 
@@ -283,6 +289,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                               )),
                           SizedBox(height: 40),
                           LongButton(
+                            loading: loading,
                             title: "Log In",
                             bgColor: colorPrimary,
                             textColor: colorBackground,
