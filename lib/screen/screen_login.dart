@@ -66,10 +66,18 @@ class _ScreenLogin extends State<ScreenLogin> {
     }
   }
 
+  void googleLogin() {
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventWithGoogle());
+
+    setState(() {
+      loading = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return /*BlocListener(
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is AuthStateSuccessLoad) {
             Navigator.push(
@@ -87,8 +95,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                 txtColor: colorBackground);
           }
         },
-        child:*/
-        Scaffold(
+        child: Scaffold(
             backgroundColor: colorBackground,
             body: SingleChildScrollView(
                 child: Container(
@@ -118,13 +125,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                               'icon/google_icon.png',
                               scale: 0.6,
                             ),
-                            onClick: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ScreenLogin()),
-                              );
-                            },
+                            onClick: googleLogin,
                           ),
                           SizedBox(
                             height: 10,
@@ -138,18 +139,48 @@ class _ScreenLogin extends State<ScreenLogin> {
                               'icon/facebook_icon.png',
                               scale: 0.6,
                             ),
-                            onClick: () {
-                              //BlocProvider.of<AuthenticationBloc>(context)
-                              //  .add(AuthEventWithGoogle());
-
-                              setState(() {
-                                loading = true;
-                              });
-                            },
+                            onClick: () {},
                           ),
                           SizedBox(
                             height: 25,
                           ),
+                          Text(
+                            "OR",
+                            style: TextStyle(
+                                fontSize: 16, color: Color(0xFF8793B5)),
+                          ),
+                          SizedBox(height: 25),
+                          Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: _usernameValidator
+                                      ? Border.all(color: colorError)
+                                      : Border.all(color: Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        color: Color.fromRGBO(240, 239, 242, 1),
+                                        blurRadius: 15),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.text,
+                                onChanged: (val) {},
+                                controller: textUsername,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    hintText: "Username",
+                                    hintStyle: TextStyle(
+                                      color: _usernameValidator
+                                          ? colorError
+                                          : colorNeutral1,
+                                    ),
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none),
+                              )),
                           Text(
                             "OR",
                             style: TextStyle(
@@ -258,6 +289,6 @@ class _ScreenLogin extends State<ScreenLogin> {
                             onClick: login,
                             size: size,
                           ),
-                        ]))));
+                        ])))));
   }
 }
