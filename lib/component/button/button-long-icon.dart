@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 
 class LongButtonIcon extends StatelessWidget {
   const LongButtonIcon({
@@ -10,6 +11,7 @@ class LongButtonIcon extends StatelessWidget {
     this.bgColor,
     this.textColor,
     this.iconWidget,
+    this.loading = false,
   }) : super(key: key);
 
   final Size size;
@@ -17,6 +19,7 @@ class LongButtonIcon extends StatelessWidget {
   final String title;
   final Color bgColor, textColor;
   final Widget iconWidget;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +31,26 @@ class LongButtonIcon extends StatelessWidget {
       shape: new RoundedRectangleBorder(
         borderRadius: new BorderRadius.circular(10.0),
       ),
-      child: Container(
-        width: size.width,
+      child: AnimatedContainer(
+        width: loading ? 100 : size.width,
+        duration: Duration(milliseconds: 700),
+        curve: Curves.fastOutSlowIn,
         height: 40,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          iconWidget,
-          SizedBox(width: 10),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          )
-        ]),
+        child: loading
+            ? CircularProgressIndicator(
+                backgroundColor: textColor,
+                valueColor: AlwaysStoppedAnimation(bgColor),
+              )
+            : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                iconWidget,
+                SizedBox(width: 10),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                )
+              ]),
       ),
     );
   }
