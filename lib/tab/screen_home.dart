@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
+import 'package:zukses_app_1/API/http-services.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
@@ -18,6 +19,7 @@ import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -42,6 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String dialogText = "Clock In ";
   bool instruction = false;
 
+  HttpService _httpService = HttpService();
+
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 
@@ -60,6 +64,27 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     print(token);
+  }
+
+  void clockOut({Size size}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var res = await _httpService.createClockOut(token);
+
+    if (res == 200) {
+      int counter = 2;
+      await prefs.setInt("clock in", counter);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              _buildPopupClockOut(context, size: size));
+    } else {
+      Util().showToast(
+          context: this.context,
+          msg: "Something wrong !",
+          txtColor: colorBackground,
+          color: colorError);
+    }
   }
 
   @override
@@ -87,10 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     print("Container clicked");
                     if (clockIn == 1) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              _buildPopupClockOut(context, size: size));
+                      clockOut(size: size);
                     } else {
                       if (instruction == true) {
                         pushToCamera();

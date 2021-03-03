@@ -44,7 +44,6 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     String token = prefs.getString("token");
     var res = await _httpService.createClockIn(_image, token);
 
-    print(res);
     if (res == 200) {
       addClockInSF();
       //TempLog(namaProses: "Clock In", nilai: true);

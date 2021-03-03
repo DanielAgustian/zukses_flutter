@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 //import 'package:zukses_api_1/API/post-model.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -63,11 +62,14 @@ class HttpService {
     return code;
   }
 
-  Future createClockOut(String token) async {
+  Future<int> createClockOut(String token) async {
     final response = await http.post(
       Uri.https('api-zukses.yokesen.com', '/api/clock-out'),
       headers: <String, String>{'Authorization': 'Bearer $token'},
       body: jsonEncode(<String, dynamic>{}),
     );
+    print(response.statusCode);
+    print(response.body);
+    return response.statusCode;
   }
 }
