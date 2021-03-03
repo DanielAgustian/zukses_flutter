@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 
 class AuthenticationRepository {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<UserModel> signInWithGoogle() async {
+  Future<AuthModel> signInWithGoogle() async {
     GoogleSignInAccount googleSignInAccount;
     try {
       print("jalan");
@@ -37,12 +38,16 @@ class AuthenticationRepository {
         final User currentUser = _firebaseAuth.currentUser;
         assert(user.uid == currentUser.uid);
 
-        UserModel userModel = UserModel(
+        AuthModel userModel = AuthModel(
+          // It should be get token after Login
+          token: "",
+          user: UserModel(
             userID: user.uid,
             email: user.email,
             name: user.displayName,
             imgUrl: user.photoURL,
-            phone: user.phoneNumber);
+          ),
+        );
         print('signInWithGoogle succeeded: $user');
 
         return userModel;

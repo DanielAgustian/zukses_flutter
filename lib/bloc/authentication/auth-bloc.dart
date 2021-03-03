@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/model/user-model.dart';
@@ -12,6 +13,8 @@ class AuthenticationBloc
   StreamSubscription _subscription;
   final AuthenticationRepository _authenticationRepository;
 
+  final AuthServiceHTTP _authenticationService = AuthServiceHTTP();
+
   AuthenticationBloc({@required AuthenticationRepository authRepo})
       : assert(authRepo != null),
         _authenticationRepository = authRepo,
@@ -21,6 +24,21 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapLoginGoogle() async* {
     // return user model
     var res = await _authenticationRepository.signInWithGoogle();
+
+    // directly throw into success load or fail load
+    if (res is UserModel && res != null) {
+      yield AuthStateSuccessLoad(res);
+    } else {
+      yield AuthStateFailLoad();
+    }
+  }
+
+  // BLOC for login manually using email and password
+  Stream<AuthenticationState> mapLoginManual(
+      AuthEventLoginManual event) async* {
+    // return auth model
+    var res =
+        await _authenticationService.createLogin(event.email, event.password);
 
     // directly throw into success load or fail load
     if (res is UserModel && res != null) {
@@ -41,6 +59,8 @@ class AuthenticationBloc
       AuthenticationEvent event) async* {
     if (event is AuthEventWithGoogle) {
       yield* mapLoginGoogle();
+    } else if (event is AuthEventLoginManual) {
+      yield* mapLoginManual(event);
     } else if (event is AuthEventUpdated) {
       yield* mapUpdatingAuthState(event);
     }
