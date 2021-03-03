@@ -63,6 +63,10 @@ class _ScreenLogin extends State<ScreenLogin> {
       });
       _futureLogin.then((data) {
         if (data != null) {
+          if (data.token == null) {
+            print("Token Null");
+          }
+          print("Token: " + data.token);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ScreenTab()),
@@ -187,44 +191,6 @@ class _ScreenLogin extends State<ScreenLogin> {
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none),
                               )),
-                          Text(
-                            "OR",
-                            style: TextStyle(
-                                fontSize: 16, color: Color(0xFF8793B5)),
-                          ),
-                          SizedBox(height: 25),
-                          Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                border: _usernameValidator
-                                    ? Border.all(color: colorError)
-                                    : Border.all(color: Colors.transparent),
-                                color: colorBackground,
-                                boxShadow: [
-                                  BoxShadow(
-                                      offset: Offset(0, 0),
-                                      color: Color.fromRGBO(240, 239, 242, 1),
-                                      blurRadius: 15),
-                                ],
-                                borderRadius: BorderRadius.circular(5)),
-                            child: TextFormField(
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              onChanged: (val) {},
-                              controller: textUsername,
-                              decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 20),
-                                  hintText: "Username",
-                                  hintStyle: TextStyle(
-                                    color: _usernameValidator
-                                        ? colorError
-                                        : colorNeutral1,
-                                  ),
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none),
-                            ),
-                          ),
                           SizedBox(
                             height: 15,
                           ),
