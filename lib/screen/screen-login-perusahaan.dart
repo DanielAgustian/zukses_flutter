@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zukses_app_1/constant/constant.dart'; 
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 
@@ -114,7 +114,14 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                                                           "assets/images/ava.png")
                                                       .image))),
                                       SizedBox(width: 20),
-                                      Text("PT Yokesen Teknologi Indonesia")
+                                      Text(
+                                        "PT Yokesen Teknologi Indonesia",
+                                        style: TextStyle(
+                                            fontSize:
+                                                size.height < 600 ? 14 : 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorPrimary),
+                                      )
                                     ],
                                   )),
                         ),
@@ -128,17 +135,13 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                     textColor: colorBackground,
                     onClick: () {
                       _check ? continueButton() : checkButton();
-
-                      /*Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ScreenLogin()),
-                      );*/
                     },
                     outlineColor: colorPrimary,
                   ),
                 ]))));
   }
 
+  // to check code.
   void checkButton() {
     if (textCompanyCode.text == "") {
       setState(() {
@@ -162,6 +165,7 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
     }
   }
 
+  //to push to next page.
   void continueButton() {
     setState(() {
       _check = false;

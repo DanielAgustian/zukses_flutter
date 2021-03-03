@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zukses_app_1/API/login-api.dart';
+import 'package:zukses_app_1/API/http-services.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
-import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/util/util.dart';
@@ -22,7 +24,9 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLogin extends State<ScreenLogin> {
+  Future<LoginAPI> _futureLogin;
   bool _obscureText = true;
+  HttpService httpService = HttpService();
   TextEditingController textUsername = new TextEditingController();
   TextEditingController textPassword = new TextEditingController();
   bool _usernameValidator = false;
@@ -50,10 +54,15 @@ class _ScreenLogin extends State<ScreenLogin> {
     }
 
     if (!_usernameValidator && !_passValidator) {
+      setState(() {
+        _futureLogin =
+            httpService.createLogin(textUsername.text, textPassword.text);
+      });
+      /*
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ScreenTab()),
-      );
+      );*/
     }
   }
 
@@ -171,79 +180,115 @@ class _ScreenLogin extends State<ScreenLogin> {
                                 ),
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none),
+                          )),
+                          Text(
+                            "OR",
+                            style: TextStyle(
+                                fontSize: 16, color: Color(0xFF8793B5)),
                           ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                              border: _passValidator
-                                  ? Border.all(color: colorError)
-                                  : Border.all(color: Colors.transparent),
-                              color: colorBackground,
-                              boxShadow: [
-                                BoxShadow(
-                                    offset: Offset(0, 0),
-                                    color: Color.fromRGBO(240, 239, 242, 1),
-                                    blurRadius: 15),
-                              ],
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            obscureText: _obscureText,
-                            textInputAction: TextInputAction.go,
-                            onChanged: (val) {},
-                            controller: textPassword,
-                            decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.only(left: 20, top: 15),
-                                hintText: "Password",
-                                hintStyle: TextStyle(
-                                  color: _passValidator
-                                      ? colorError
-                                      : colorNeutral1,
-                                ),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                suffixIcon: IconButton(
-                                  icon: FaIcon(
-                                    _obscureText
-                                        ? FontAwesomeIcons.solidEye
-                                        : FontAwesomeIcons.solidEyeSlash,
-                                    color: colorNeutral2,
+                          SizedBox(height: 25),
+                          Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border: _usernameValidator
+                                    ? Border.all(color: colorError)
+                                    : Border.all(color: Colors.transparent),
+                                color: colorBackground,
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset(0, 0),
+                                      color: Color.fromRGBO(240, 239, 242, 1),
+                                      blurRadius: 15),
+                                ],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              onChanged: (val) {},
+                              controller: textUsername,
+                              decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 20),
+                                  hintText: "Username",
+                                  hintStyle: TextStyle(
+                                    color: _usernameValidator
+                                        ? colorError
+                                        : colorNeutral1,
                                   ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureText = !_obscureText;
-                                    });
-                                  },
-                                )),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Forgot Password?",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                    fontSize: 12,
-                                    color: Color.fromRGBO(20, 43, 111, 0.9),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border: _passValidator
+                                    ? Border.all(color: colorError)
+                                    : Border.all(color: Colors.transparent),
+                                color: colorBackground,
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset(0, 0),
+                                      color: Color.fromRGBO(240, 239, 242, 1),
+                                      blurRadius: 15),
+                                ],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              obscureText: _obscureText,
+                              textInputAction: TextInputAction.go,
+                              onChanged: (val) {},
+                              controller: textPassword,
+                              decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.only(left: 20, top: 15),
+                                  hintText: "Password",
+                                  hintStyle: TextStyle(
+                                    color: _passValidator
+                                        ? colorError
+                                        : colorNeutral1,
                                   ),
-                                  fontWeight: FontWeight.bold),
-                            )),
-                        SizedBox(height: 40),
-                        LongButton(
-                          title: "Log In",
-                          bgColor: colorPrimary,
-                          textColor: colorBackground,
-                          onClick: login,
-                          size: size,
-                        ),
-                      ])))),
-    );
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  suffixIcon: IconButton(
+                                    icon: FaIcon(
+                                      _obscureText
+                                          ? FontAwesomeIcons.solidEye
+                                          : FontAwesomeIcons.solidEyeSlash,
+                                      color: colorNeutral2,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscureText = !_obscureText;
+                                      });
+                                    },
+                                  )),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Forgot Password?",
+                                style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromRGBO(20, 43, 111, 0.9),
+                                    ),
+                                    fontWeight: FontWeight.bold),
+                              )),
+                          SizedBox(height: 40),
+                          LongButton(
+                            title: "Log In",
+                            bgColor: colorPrimary,
+                            textColor: colorBackground,
+                            onClick: login,
+                            size: size,
+                          ),
+                        ]))));
   }
 }

@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: 10,
-                              itemBuilder: (context, index) => index == 9
+                              itemBuilder: (context, index) => index >= 9
                                   ? UserAvatar(
                                       value: "+5",
                                     )
@@ -438,7 +438,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                   TimerBuilder.periodic(Duration(seconds: 1),
                       builder: (context) {
-                    //print("${getSystemTime()}");
                     return Text(
                       getSystemTime(),
                       style: TextStyle(
@@ -900,11 +899,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  //for calculate if someone is late or overtime.
   void timeCalculation(int i) {
     TimeOfDay now = TimeOfDay.now();
     int minutesTotalNow = (now.hour * 60) + (now.minute);
     print(now.hour);
     print(now.minute);
+
     if (i == 0) {
       //Lateness
       int limitLate = (9 * 60);
