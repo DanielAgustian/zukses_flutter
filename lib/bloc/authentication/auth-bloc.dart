@@ -17,9 +17,12 @@ class AuthenticationBloc
         _authenticationRepository = authRepo,
         super(AuthStateLoading());
 
+  // BLOC for login with google
   Stream<AuthenticationState> mapLoginGoogle() async* {
+    // return user model
     var res = await _authenticationRepository.signInWithGoogle();
 
+    // directly throw into success load or fail load
     if (res is UserModel && res != null) {
       yield AuthStateSuccessLoad(res);
     } else {
@@ -27,15 +30,15 @@ class AuthenticationBloc
     }
   }
 
+  // BLOC for update the state when the user doing event
   Stream<AuthenticationState> mapUpdatingAuthState(
       AuthEventUpdated event) async* {
     yield AuthStateSuccessLoad(event.user);
   }
 
   @override
-  Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) {
-    // TODO: implement mapEventToState
-
+  Stream<AuthenticationState> mapEventToState(
+      AuthenticationEvent event) async* {
     if (event is AuthEventWithGoogle) {
       yield* mapLoginGoogle();
     } else if (event is AuthEventUpdated) {
