@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:zukses_app_1/API/http-services.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   String imagePath;
   String key = "clock in";
   final picker = ImagePicker();
+
+  HttpService _httpService = HttpService();
+
   void initState() {
     super.initState();
     imagePath = widget.path;
@@ -36,10 +40,17 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   }
 
   pushtoScreenTab() async {
-    addClockInSF();
-    //TempLog(namaProses: "Clock In", nilai: true);
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ScreenTab()));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var res = await _httpService.createClockIn(_image, token);
+
+    print(res);
+    if (res == 200) {
+      addClockInSF();
+      //TempLog(namaProses: "Clock In", nilai: true);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ScreenTab()));
+    }
   }
 
   Widget build(BuildContext context) {

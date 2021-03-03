@@ -55,12 +55,19 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void getToken() async {
+    timer();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    print(token);
+  }
+
   @override
   void initState() {
     super.initState();
     sharedPref();
     sharedPrefInstruction();
-    timer();
+    getToken();
   }
 
   @override
