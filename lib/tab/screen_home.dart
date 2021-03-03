@@ -73,7 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void confirmClockOut({Size size}) async {
     showDialog(
         context: context,
-        builder: (BuildContext context) => _buildPopupClockOut(context));
+        builder: (BuildContext context) =>
+            _buildPopupClockOut(context, size: size));
   }
 
   void clockOut() async {
@@ -105,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     print("Container clicked");
                     if (clockIn == 1) {
-                      confirmClockOut();
+                      confirmClockOut(size: size);
                     } else {
                       if (instruction == true) {
                         pushToCamera();
@@ -768,10 +769,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupDialog(context));
+                Navigator.pop(context);
+                clockOut();
               },
             ),
           ),

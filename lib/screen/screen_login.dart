@@ -91,6 +91,7 @@ class _ScreenLogin extends State<ScreenLogin> {
           //Success Login
           if (state is AuthStateSuccessLoad) {
             print(state.authUser.user.email);
+            print(state.authUser.token);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),

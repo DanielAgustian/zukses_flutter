@@ -15,10 +15,10 @@ class UserModel {
   }
 
   UserModel.fromJson(Map<String, dynamic> map) {
-    this.userID = map["id"];
+    this.userID = map["id"].toString();
     this.email = map["email"];
     this.name = map["name"];
     this.imgUrl = map["imgUrl"] == null ? "" : map["imgUrl"];
-    this.companyID = map["company_id"];
+    this.companyID = map["company_id"].toString();
   }
 }

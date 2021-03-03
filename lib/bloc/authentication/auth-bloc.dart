@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
-import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
+import 'package:zukses_app_1/model/auth-model.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
@@ -26,7 +26,7 @@ class AuthenticationBloc
     var res = await _authenticationRepository.signInWithGoogle();
 
     // directly throw into success load or fail load
-    if (res is UserModel && res != null) {
+    if (res is AuthModel && res != null) {
       yield AuthStateSuccessLoad(res);
     } else {
       yield AuthStateFailLoad();
@@ -41,7 +41,7 @@ class AuthenticationBloc
         await _authenticationService.createLogin(event.email, event.password);
 
     // directly throw into success load or fail load
-    if (res is UserModel && res != null) {
+    if (res is AuthModel && res != null) {
       yield AuthStateSuccessLoad(res);
     } else {
       yield AuthStateFailLoad();

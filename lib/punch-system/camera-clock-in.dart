@@ -72,7 +72,6 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
-          //TempLog(namaProses: "Clock In", nilai: true);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => ScreenTab()));
         }

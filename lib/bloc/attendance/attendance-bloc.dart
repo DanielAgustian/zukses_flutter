@@ -21,7 +21,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     var res = await _attendanceService.createClockIn(event.image);
 
     // directly throw into success load or fail load
-    if (res is UserModel && res != null) {
+    if (res == 200 && res != null) {
       yield AttendanceStateSuccessClockIn();
     } else {
       yield AttendanceStateFailed();
@@ -35,7 +35,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     var res = await _attendanceService.createClockOut();
 
     // directly throw into success load or fail load
-    if (res is UserModel && res != null) {
+    if (res == 200 && res != null) {
       yield AttendanceStateSuccessClockOut();
     } else {
       yield AttendanceStateFailed();
