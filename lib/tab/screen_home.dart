@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
-import 'package:zukses_app_1/API/http-services.dart';
+import 'package:zukses_app_1/API/attendance-services.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
@@ -44,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String dialogText = "Clock In ";
   bool instruction = false;
 
-  HttpService _httpService = HttpService();
+  AttendanceService _attendanceService = AttendanceService();
 
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
@@ -66,25 +70,15 @@ class _HomeScreenState extends State<HomeScreen> {
     print(token);
   }
 
-  void clockOut({Size size}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
-    var res = await _httpService.createClockOut(token);
+  void confirmClockOut({Size size}) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            _buildPopupClockOut(context, size: size));
+  }
 
-    if (res == 200) {
-      int counter = 2;
-      await prefs.setInt("clock in", counter);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              _buildPopupClockOut(context, size: size));
-    } else {
-      Util().showToast(
-          context: this.context,
-          msg: "Something wrong !",
-          txtColor: colorBackground,
-          color: colorError);
-    }
+  void clockOut() async {
+    BlocProvider.of<AttendanceBloc>(context).add(AttendanceClockOut());
   }
 
   @override
@@ -112,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     print("Container clicked");
                     if (clockIn == 1) {
-                      clockOut(size: size);
+                      confirmClockOut(size: size);
                     } else {
                       if (instruction == true) {
                         pushToCamera();
@@ -127,39 +121,63 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     //tapHour();
                   },
-                  child: new Container(
-                      width: double.infinity,
-                      height: size.height * 0.40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(40),
-                            bottomLeft: Radius.circular(40)),
-                        color: colorPrimary,
-                      ),
-                      child: Center(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                            TimerBuilder.periodic(Duration(seconds: 1),
-                                builder: (context) {
-                              return Text(
-                                getSystemTime(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: 1.5,
-                                    fontSize: size.height < 600 ? 56 : 72,
-                                    fontWeight: FontWeight.w500),
-                              );
-                            }),
-                            Text(
-                              stringTap,
-                              style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                    color: Colors.white, letterSpacing: 1.5),
-                                fontSize: size.height < 600 ? 14 : 18,
+                  // Bloc listener for attendance
+                  child: BlocListener<AttendanceBloc, AttendanceState>(
+                    listener: (context, state) async {
+                      if (state is AttendanceStateFailed) {
+                        Util().showToast(
+                            context: this.context,
+                            msg: "Something Wrong !",
+                            color: colorError,
+                            txtColor: colorBackground);
+                      } else if (state is AttendanceStateSuccessClockOut) {
+                        int counter = 2;
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setInt("clock in", counter);
+
+                        // Show dialog
+
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                _buildPopupDialog(context));
+                      }
+                    },
+                    child: Container(
+                        width: double.infinity,
+                        height: size.height * 0.40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(40),
+                              bottomLeft: Radius.circular(40)),
+                          color: colorPrimary,
+                        ),
+                        child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                              TimerBuilder.periodic(Duration(seconds: 1),
+                                  builder: (context) {
+                                return Text(
+                                  getSystemTime(),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: 1.5,
+                                      fontSize: size.height < 600 ? 56 : 72,
+                                      fontWeight: FontWeight.w500),
+                                );
+                              }),
+                              Text(
+                                stringTap,
+                                style: GoogleFonts.lato(
+                                  textStyle: TextStyle(
+                                      color: Colors.white, letterSpacing: 1.5),
+                                  fontSize: size.height < 600 ? 14 : 18,
+                                ),
                               ),
-                            ),
-                          ]))),
+                            ]))),
+                  ),
                 ),
                 SizedBox(
                   height: 10,
@@ -751,10 +769,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupDialog(context));
+                Navigator.pop(context);
+                clockOut();
               },
             ),
           ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zukses_app_1/API/login-api.dart';
-import 'package:zukses_app_1/API/http-services.dart';
+import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
@@ -24,9 +24,9 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLogin extends State<ScreenLogin> {
-  Future<LoginAPI> _futureLogin;
+  Future<AuthModel> _futureLogin;
   bool _obscureText = true;
-  HttpService httpService = HttpService();
+  AuthServiceHTTP authService = AuthServiceHTTP();
   TextEditingController textUsername = new TextEditingController();
   TextEditingController textPassword = new TextEditingController();
   bool _usernameValidator = false;
@@ -57,22 +57,21 @@ class _ScreenLogin extends State<ScreenLogin> {
     }
 
     if (!_usernameValidator && !_passValidator) {
-      setState(() {
-        _futureLogin =
-            httpService.createLogin(textUsername.text, textPassword.text);
-      });
-      _futureLogin.then((data) {
-        if (data != null) {
-          if (data.token == null) {
-            print("Token Null");
-          }
-          print("Token: " + data.token);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ScreenTab()),
-          );
-        }
-      });
+      BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
+          email: textUsername.text, password: textPassword.text));
+
+      // _futureLogin.then((data) {
+      //   if (data != null) {
+      //     if (data.token == null) {
+      //       print("Token Null");
+      //     }
+      //     print("Token: " + data.token);
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(builder: (context) => ScreenTab()),
+      //     );
+      //   }
+      // });
     }
   }
 
@@ -89,11 +88,16 @@ class _ScreenLogin extends State<ScreenLogin> {
     Size size = MediaQuery.of(context).size;
     return BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
+          //Success Login
           if (state is AuthStateSuccessLoad) {
+            print(state.authUser.user.email);
+            print(state.authUser.token);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),
             );
+
+            //Failed Login
           } else if (state is AuthStateFailLoad) {
             setState(() {
               loading = false;
