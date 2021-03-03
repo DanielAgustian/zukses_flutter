@@ -141,6 +141,7 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                 ]))));
   }
 
+  // to check code.
   void checkButton() {
     if (textCompanyCode.text == "") {
       setState(() {
@@ -164,6 +165,7 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
     }
   }
 
+  //to push to next page.
   void continueButton() {
     setState(() {
       _check = false;
