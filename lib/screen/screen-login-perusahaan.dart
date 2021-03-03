@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zukses_app_1/constant/constant.dart'; 
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 
@@ -135,11 +135,6 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                     textColor: colorBackground,
                     onClick: () {
                       _check ? continueButton() : checkButton();
-
-                      /*Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ScreenLogin()),
-                      );*/
                     },
                     outlineColor: colorPrimary,
                   ),
