@@ -3,7 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
+import 'package:zukses_app_1/screen/screen_login.dart';
+import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:zukses_app_1/third_click.dart';
 import 'package:zukses_app_1/second_click.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,6 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
         .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
   }
 
+  int currentIdx = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -112,9 +118,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(height: 30),
                   Container(
                       width: size.width,
-                      height: size.height * 0.6 + 10,
+                      height: size.height * 0.65,
                       child: PageView.builder(
                         controller: _controller,
+                        onPageChanged: (value) {
+                          setState(() {
+                            currentIdx = value;
+                          });
+                        },
                         itemBuilder: (context, position) {
                           return OnBoardingCard(
                             size: size,
@@ -126,15 +137,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         itemCount: 3, // Can be null
                       )),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   Stack(
                     children: [
                       Container(
                         child: Container(
                           color: Colors.transparent,
                           padding: const EdgeInsets.all(20.0),
-                          child: new Center(
-                            child: new DotsIndicator(
+                          child: Center(
+                            child: DotsIndicator(
                               color: colorPrimary,
                               controller: _controller,
                               itemCount: 3,
@@ -156,11 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ThirdPage()),
-                            );
+                            _controller.animateToPage(2,
+                                duration: Duration(milliseconds: 400),
+                                curve: Curves.linear);
                           },
                           child: Text(
                             "SKIP",
@@ -173,25 +182,62 @@ class _MyHomePageState extends State<MyHomePage> {
                       )
                     ],
                   ),
-                  SizedBox(height: 30),
-                  RawMaterialButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SecondPage()),
-                      );
-                    },
-                    elevation: 2.0,
-                    fillColor: Color.fromRGBO(20, 43, 111, 0.9),
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      child: Icon(Icons.arrow_forward,
-                          size: 35.0, color: Colors.white70),
-                    ),
-                    padding: EdgeInsets.all(15.0),
-                    shape: CircleBorder(),
-                  ),
+                  SizedBox(height: 20),
+                  currentIdx < 2
+                      ? RawMaterialButton(
+                          onPressed: () {
+                            if (currentIdx != 2) {
+                              _controller.animateToPage(currentIdx + 1,
+                                  duration: Duration(milliseconds: 400),
+                                  curve: Curves.linear);
+                            } else {
+                              _controller.animateToPage(2,
+                                  duration: Duration(milliseconds: 400),
+                                  curve: Curves.linear);
+                            }
+                          },
+                          elevation: 2.0,
+                          fillColor: Color.fromRGBO(20, 43, 111, 0.9),
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            child: Icon(Icons.arrow_forward,
+                                size: 35.0, color: Colors.white70),
+                          ),
+                          padding: EdgeInsets.all(15.0),
+                          shape: CircleBorder(),
+                        )
+                      : Column(
+                          children: [
+                            LongButton(
+                                title: "Sign Up",
+                                textColor: colorBackground,
+                                bgColor: colorPrimary,
+                                onClick: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ScreenSignUp()),
+                                  );
+                                },
+                                size: size),
+                            SizedBox(height: 10),
+                            LongButtonOutline(
+                              size: size,
+                              title: "Log In",
+                              bgColor: colorBackground,
+                              textColor: colorPrimary,
+                              onClick: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ScreenLogin()),
+                                );
+                              },
+                              outlineColor: colorPrimary,
+                            ),
+                          ],
+                        )
                 ]))));
   }
 }
