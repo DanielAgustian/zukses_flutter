@@ -106,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     print("Container clicked");
                     if (clockIn == 1) {
+                      clockIn = 0;
                       confirmClockOut(size: size);
                     } else {
                       if (instruction == true) {
@@ -705,6 +706,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
                 String timeClockOut = getSystemTime();
                 print(timeClockOut);
+                clockOut();
                 Navigator.of(buildContext1, rootNavigator: true).pop();
                 if (buildContext2 != null) {
                   Navigator.of(buildContext2, rootNavigator: true).pop();
@@ -742,7 +744,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "Yes, I need Overtime Pay",
               onClick: () {
                 timeCalculation(1);
-                if (statusOvertime != "No") {
+                if (statusOvertime == "No") {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
