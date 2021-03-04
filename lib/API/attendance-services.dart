@@ -41,4 +41,12 @@ class AttendanceService {
     print(response.body);
     return response.statusCode;
   }
+
+  // Get User attendance
+  Future getUserAttendance(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    //LOGIC
+  }
 }
