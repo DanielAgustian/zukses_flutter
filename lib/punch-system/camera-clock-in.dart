@@ -44,7 +44,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     await prefs.setInt(key, counter);
   }
 
-  pushtoScreenTab() async {
+  /*pushtoScreenTab() async {
     var res = await _attendService.createClockIn(_image);
 
     if (res == 200) {
@@ -53,14 +53,20 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ScreenTab()));
     }
-  }
+  }*/
 
   void clockIn() {
     BlocProvider.of<AttendanceBloc>(context)
         .add(AttendanceClockIn(image: _image));
   }
 
+  void closePage() {
+    Navigator.of(mContext).pop();
+  }
+
+  BuildContext mContext;
   Widget build(BuildContext context) {
+    mContext = this.context;
     Size size = MediaQuery.of(context).size;
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) async {
@@ -72,8 +78,8 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
-          Navigator.pop(context);
-          Navigator.pop(context);
+          closePage();
+          //Navigator.pop(context);
           // Navigator.push(
           //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
         }
