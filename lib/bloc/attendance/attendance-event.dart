@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 
@@ -21,5 +22,18 @@ class AttendanceClockIn extends AttendanceEvent {
 // User did clock out
 class AttendanceClockOut extends AttendanceEvent {}
 
-// Usually used when there is change in data
-class AttendanceEventDidUpdated extends AttendanceEvent {}
+// Load all user attendance by month and year
+class LoadUserAttendanceEvent extends AttendanceEvent {
+  final DateTime date;
+
+  LoadUserAttendanceEvent({this.date});
+  List<Object> get props => [date];
+}
+
+// Usually used to updating data when there is any event
+class AttendanceEventDidUpdated extends AttendanceEvent {
+  final List<AttendanceModel> attendanceList;
+
+  AttendanceEventDidUpdated({this.attendanceList});
+  List<Object> get props => [attendanceList];
+}

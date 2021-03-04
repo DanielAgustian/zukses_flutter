@@ -43,6 +43,22 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
   }
 
   // BLOC for update the state when the user doing event
+  Stream<AttendanceState> mapLoadUserAttendanceList(
+      LoadUserAttendanceEvent event) async* {
+    print("jalan !");
+    yield AttendanceStateLoading();
+    // return user model
+    var res = await _attendanceService.getUserAttendaceList(date: event.date);
+    if (res != null) {
+      print("sukses");
+      print(res.length);
+      yield AttendanceStateSuccessLoad(attendanceList: res);
+    } else {
+      yield AttendanceStateFailLoad();
+    }
+  }
+
+  // BLOC for update the state when the user doing event
   Stream<AttendanceState> mapUpdatingAttendanceState(
       AttendanceEventDidUpdated event) async* {
     yield AttendanceStateSuccessLoad();
@@ -55,7 +71,10 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       yield* mapClockIn(event);
     } else if (event is AttendanceClockOut) {
       yield* mapClockOut();
-    } else if (event is AuthEventUpdated) {
+    } else if (event is LoadUserAttendanceEvent) {
+      print("broadcast");
+      yield* mapLoadUserAttendanceList(event);
+    } else if (event is AttendanceEventDidUpdated) {
       yield* mapUpdatingAttendanceState(event);
     }
   }

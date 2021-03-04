@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 
 abstract class AttendanceState extends Equatable {
@@ -27,4 +28,8 @@ class AttendanceStateFailLoad extends AttendanceState {}
 // Handle Success load all attendance user []
 class AttendanceStateSuccessLoad extends AttendanceState {
   // save list of attendance user
+  final List<AttendanceModel> attendanceList;
+
+  AttendanceStateSuccessLoad({this.attendanceList});
+  List<Object> get props => [attendanceList];
 }
