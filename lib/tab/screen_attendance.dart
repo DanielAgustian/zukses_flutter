@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:zukses_app_1/model/attendance-model.dart'; 
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,20 +31,23 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   final getMonthName = DateFormat('MMMM');
   final getYearNumber = DateFormat('y');
   final getFormatListDate = DateFormat.yMMMMd();
-  List<AbsenceTime> absensi = dummy;
-  AbsenceTime selected;
+  List<AttendanceModel> absensi = [];
+  AttendanceModel selected;
   DateTime _currentDate = DateTime.now();
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
-  List<AbsenceTime> absensiList;
+  List<AttendanceModel> absensiList;
 
-  void selectDate(DateTime date, AbsenceTime absence) {
+  void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
       _currentDate = date;
       selected = absence;
       kata = "$_currentDate";
     });
   }
+
+  //INIT ATTENDANCE BLOC
+  AttendanceBloc _attendanceBloc;
 
   bool monthly = true;
   // FOR SKELETON -------------------------------------------------------------------------
@@ -60,11 +67,231 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   void initState() {
     super.initState();
     timer();
+    _attendanceBloc = BlocProvider.of<AttendanceBloc>(context);
+    _attendanceBloc.add(LoadUserAttendanceEvent(date: _currentDate));
+    _selectedWeek = WeeklyCalendar(
+        date: _currentDate,
+        firstWeekDate: CustomCalendar().findFirstDateOfTheWeek(_currentDate));
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    return BlocBuilder<AttendanceBloc, AttendanceState>(
+        builder: (context, state) {
+      if (state is AttendanceStateSuccessLoad) {
+        return Scaffold(
+            backgroundColor: colorBackground,
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: colorBackground,
+              automaticallyImplyLeading: false,
+              title: Text(
+                "Attendance Detail",
+                style: TextStyle(
+                    color: colorPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.height <= 569 ? 20 : 25),
+              ),
+              actions: [
+                IconButton(
+                  splashColor: Colors.transparent,
+                  icon: FaIcon(
+                    monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
+                    color: colorPrimary,
+                    size: size.height <= 600 ? 16 : 20,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      monthly = !monthly;
+                      if (state.attendanceList != null && monthly == false) {
+                        absensiList = state.attendanceList.where((data) {
+                          var day = CustomCalendar()
+                              .findFirstDateOfTheWeek(data.clockIn);
+                          var nowWeek = CustomCalendar()
+                              .findFirstDateOfTheWeek(DateTime.now());
+                          return (nowWeek.day == day.day &&
+                              nowWeek.month == day.month &&
+                              nowWeek.year == day.year);
+                        }).toList();
+                      }
+                    });
+                  },
+                ),
+                IconButton(
+                  splashColor: Colors.transparent,
+                  icon: FaIcon(
+                    FontAwesomeIcons.calendarWeek,
+                    color: colorPrimary,
+                    size: size.height <= 569 ? 16 : 20,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenListLeaves()),
+                    );
+                  },
+                )
+              ],
+            ),
+            body: Container(
+              padding: EdgeInsets.all(10),
+              child: monthly
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CalendarWidget(
+                            fontSize: size.height <= 600 ? textSizeSmall16 : 16,
+                            // When select the date
+                            onSelectDate: (date, absence) {
+                              selectDate(date, absence);
+                            },
+                            // When change the month
+                            onClickToggle: (DateTime val) { 
+                              _attendanceBloc
+                                  .add(LoadUserAttendanceEvent(date: val));
+                            },
+                            data: state.attendanceList,
+                            size: size,
+                          ),
+                          SizedBox(height: 20),
+                          TitleDayFormatted(
+                            currentDate: _currentDate,
+                          ),
+                          SizedBox(
+                            height: size.height <= 569 ? 20 : 25,
+                          ),
+                          TimeBox(
+                            selected: selected,
+                            fontSize: size.height <= 569 ? textSizeSmall18 : 18,
+                          ),
+                          SizedBox(height: 15),
+                          Container(
+                              child: Text(
+                            "Overtime : 0 hrs",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontSize:
+                                    size.width <= 569 ? textSizeSmall18 : 18),
+                          ))
+                        ],
+                      ),
+                    )
+                  : Column(
+                      children: [
+                        Container(
+                          width: size.width,
+                          height: size.height * 0.06,
+                          child: WeekLyCanlendarWidget(
+                            fontSize: size.height <= 569 ? textSizeSmall18 : 18,
+                            onChangeWeek: (WeeklyCalendar val) {
+                              setState(() {
+                                _selectedWeek = val;
+                                absensiList =
+                                    state.attendanceList.where((data) {
+                                  var day = CustomCalendar()
+                                      .findFirstDateOfTheWeek(data.clockIn);
+                                  return (_selectedWeek.firstWeekDate.day ==
+                                          day.day &&
+                                      _selectedWeek.firstWeekDate.month ==
+                                          day.month &&
+                                      _selectedWeek.firstWeekDate.year ==
+                                          day.year);
+                                }).toList();
+                              });
+                            },
+                            data: absensiList,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        absensiList == null
+                            ? Container()
+                            : Expanded(
+                                child: isLoading
+                                    ? ListView.builder(
+                                        itemCount: 5,
+                                        itemBuilder: (context, index) =>
+                                            SkeletonLess3(
+                                          size: size,
+                                          col: 2,
+                                          row: 2,
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        itemCount: absensiList.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 5),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 15),
+                                            decoration: BoxDecoration(
+                                                color: colorBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      blurRadius: 15,
+                                                      color: colorNeutral150)
+                                                ]),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                        "${getDayName.format(absensiList[index].clockIn)}",
+                                                        style: TextStyle(
+                                                            color: colorPrimary,
+                                                            fontSize: size
+                                                                        .width <=
+                                                                    569
+                                                                ? textSizeSmall16
+                                                                : 16)),
+                                                    Text(
+                                                        "${getFormatListDate.format(absensiList[index].clockIn)}",
+                                                        style: TextStyle(
+                                                            color: colorPrimary,
+                                                            fontSize: size
+                                                                        .width <=
+                                                                    569
+                                                                ? textSizeSmall14
+                                                                : 14))
+                                                  ],
+                                                ),
+                                                TimeBox(
+                                                  selected: absensiList[index],
+                                                  space: size.width * 0.01,
+                                                  fontSize: size.width <= 569
+                                                      ? textSizeSmall12
+                                                      : 14,
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                              )
+                      ],
+                    ),
+            ));
+      } else if (state is AttendanceStateFailLoad) {
+        print("Failed load");
+        return noStateLoadSection(size);
+      }
+      return noStateLoadSection(size);
+    });
+  }
+
+  // WIDGET when there is no data loaded
+  Widget noStateLoadSection(Size size) {
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
@@ -121,7 +348,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       onSelectDate: (date, absence) {
                         selectDate(date, absence);
                       },
-                      data: dummy,
                       size: size,
                     ),
                     SizedBox(height: 20),
@@ -156,11 +382,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       onChangeWeek: (WeeklyCalendar val) {
                         setState(() {
                           _selectedWeek = val;
-                          absensiList = dummy
-                              .where((data) => _selectedWeek.firstWeekDate
-                                  .isAtSameMomentAs(CustomCalendar()
-                                      .findFirstDateOfTheWeek(data.date)))
-                              .toList();
                         });
                       },
                       // data: dummy,
@@ -205,7 +426,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                           Column(
                                             children: [
                                               Text(
-                                                  "${getDayName.format(absensiList[index].date)}",
+                                                  "${getDayName.format(absensiList[index].clockIn)}",
                                                   style: TextStyle(
                                                       color: colorPrimary,
                                                       fontSize:
@@ -213,7 +434,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                               ? textSizeSmall16
                                                               : 16)),
                                               Text(
-                                                  "${getFormatListDate.format(absensiList[index].date)}",
+                                                  "${getFormatListDate.format(absensiList[index].clockIn)}",
                                                   style: TextStyle(
                                                       color: colorPrimary,
                                                       fontSize:

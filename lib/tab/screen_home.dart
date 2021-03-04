@@ -48,8 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool instruction = false;
   int clockIn = 0;
   int isClockIn = 0;
-
-  AttendanceService _attendanceService = AttendanceService();
+  DateTime date = DateTime.now();
 
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;

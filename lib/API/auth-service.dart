@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 class AuthServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
+  final fullBaseURI = "https://api-zukses.yokesen.com";
 
   Future<AuthModel> createLogin(String email, password) async {
     final response = await http.post(
@@ -23,7 +24,7 @@ class AuthServiceHTTP {
       print("response.body:" + response.body);
 
       final user = AuthModel.fromJson(jsonDecode(response.body));
-      
+
       // Save token
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
@@ -32,7 +33,8 @@ class AuthServiceHTTP {
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      throw Exception('Failed to login');
+      // throw Exception('Failed to login');
+      return null;
     }
   }
 }

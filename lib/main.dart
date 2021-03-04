@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
@@ -61,7 +62,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var dayOfWeek = 1;
-  DateTime date = DateTime.now();
+  
   DateFormat dayName = DateFormat('E');
 
   PageController _controller;
@@ -78,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int currentIdx = 0;
+  AttendanceService _attendanceService = AttendanceService();
 
   @override
   void initState() {
@@ -89,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(date.weekday);
     // print(dayName.format(date));
     // print(findFirstDateOfTheWeek(date));
+    
   }
 
   @override

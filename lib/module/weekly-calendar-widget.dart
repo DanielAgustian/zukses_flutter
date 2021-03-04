@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class WeekLyCanlendarWidget extends StatefulWidget {
-  const WeekLyCanlendarWidget({Key key, this.onChangeWeek, this.fontSize = 18})
+  const WeekLyCanlendarWidget(
+      {Key key, this.onChangeWeek, this.fontSize = 18, this.data})
       : super(key: key);
 
   @override
   _WeekLyCanlendarWidgetState createState() => _WeekLyCanlendarWidgetState();
   final Function onChangeWeek;
   final double fontSize;
+  final List<AttendanceModel> data;
 }
 
 enum CalendarViews { dates, months, year }
 
 class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
-  DateTime _currentDateTime; 
-  List<WeeklyCalendar> _sequentialWeek; 
-  int midYear, week; 
+  DateTime _currentDateTime;
+  List<WeeklyCalendar> _sequentialWeek;
+  int midYear, week;
   final List<String> _monthNames = [
     'January',
     'February',
@@ -38,7 +41,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   void initState() {
     super.initState();
     final date = DateTime.now();
-    _currentDateTime = DateTime(date.year, date.month); 
+    _currentDateTime = DateTime(date.year, date.month);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());
@@ -104,7 +107,6 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
             week = week + add;
           }
         });
-        print(_sequentialWeek[week - 1].runtimeType);
         widget.onChangeWeek(_sequentialWeek[week - 1]);
       },
       child: Container(
@@ -162,7 +164,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   }
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Container(
       child:
           _sequentialWeek != null ? Center(child: _datesView()) : Container(),

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TimeBox extends StatelessWidget {
@@ -11,7 +11,7 @@ class TimeBox extends StatelessWidget {
     this.fontSize = 20,
   }) : super(key: key);
 
-  final AbsenceTime selected;
+  final AttendanceModel selected;
   final double space;
   final double fontSize;
 
@@ -27,7 +27,11 @@ class TimeBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: colorPrimary, width: 2)),
             child: Text(
-              selected == null ? "--.--" : "${selected.time1}",
+              selected == null
+                  ? "--.--"
+                  : selected.clockIn == null
+                      ? "--.--"
+                      : "${selected.clockIn.hour}.${selected.clockIn.minute}",
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.w700,
@@ -47,7 +51,11 @@ class TimeBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: colorPrimary, width: 2)),
             child: Text(
-              selected == null ? "--.--" : "${selected.time2}",
+              selected == null
+                  ? "--.--"
+                  : selected.clockOut == null
+                      ? "--.--"
+                      : "${selected.clockOut.hour}.${selected.clockOut.minute}",
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.w700,
