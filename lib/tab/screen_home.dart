@@ -44,9 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
   var taskDetail = ["Task 1", "task 2"];
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
-  int clockIn;
   String dialogText = "Clock In ";
   bool instruction = false;
+  int clockIn = 0;
+  int isClockIn = 0;
 
   AttendanceService _attendanceService = AttendanceService();
 
@@ -84,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    sharedPref();
+    // sharedPref();
     sharedPrefInstruction();
     getToken();
   }
@@ -102,48 +103,64 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                new InkWell(
-                  onTap: () {
-                    print("Container clicked");
-                    if (clockIn == 1) {
-                      confirmClockOut(size: size);
-                    } else {
-                      if (instruction == true) {
-                        pushToCamera();
-                      } else {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CameraInstruction()),
-                        );
-                      }
+                BlocListener<AttendanceBloc, AttendanceState>(
+                  listener: (context, state) async {
+                    if (state is AttendanceStateFailed) {
+                      Util().showToast(
+                          context: this.context,
+                          msg: "Something Wrong !",
+                          color: colorError,
+                          txtColor: colorBackground);
+                    } else if (state is AttendanceStateSuccessClockIn) {
+                      // sharedPref();
+                      setState(() {
+                        isClockIn = 1;
+                        stringTap = "Tap Here to Clock Out";
+                      });
+
+                      print("Masuk sini ! $isClockIn");
+                      showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPopupDialog(context));
+                    } else if (state is AttendanceStateSuccessClockOut) {
+                      int counter = 2;
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setInt("clock in", counter);
+
+                      print("Clock out jalan");
+                      setState(() {
+                        isClockIn = 0;
+                        stringTap = "Have a nice day";
+                      });
+                      // Show dialog
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPopupDialog(context));
                     }
-
-                    //tapHour();
                   },
-                  // Bloc listener for attendance
-                  child: BlocListener<AttendanceBloc, AttendanceState>(
-                    listener: (context, state) async {
-                      if (state is AttendanceStateFailed) {
-                        Util().showToast(
-                            context: this.context,
-                            msg: "Something Wrong !",
-                            color: colorError,
-                            txtColor: colorBackground);
-                      } else if (state is AttendanceStateSuccessClockOut) {
-                        int counter = 2;
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        await prefs.setInt("clock in", counter);
-
-                        // Show dialog
-
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                _buildPopupDialog(context));
+                  child: InkWell(
+                    onTap: () {
+                      print("Container clicked $isClockIn");
+                      if (isClockIn == 1) {
+                        confirmClockOut(size: size);
+                      } else {
+                        if (instruction == true) {
+                          pushToCamera();
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CameraInstruction()),
+                          );
+                        }
                       }
+
+                      //tapHour();
                     },
+                    // Bloc listener for attendance
                     child: Container(
                         width: double.infinity,
                         height: size.height * 0.40,
@@ -699,8 +716,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               if (dialogText == "Clock Out") {
                 disposeSF();
-                dialogText = "Clock In";
                 setState(() {
+                  dialogText = "Clock In";
                   stringTap = "Tap Here to Clock In";
                 });
                 String timeClockOut = getSystemTime();
@@ -718,7 +735,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-//Clock Out Step 1========================================
+  // Clock Out Step 1========================================
   BuildContext buildContext1, buildContext2;
   Widget _buildPopupClockOut(BuildContext context, {size}) {
     buildContext1 = context;
@@ -881,27 +898,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void sharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       clockIn = prefs.getInt(key);
     });
-    if (clockIn == 1) {
-      print("Clock in Success");
-      setState(() {
-        stringTap = "Tap Here to Clock Out";
-      });
-      timeCalculation(0);
-      String timeClockIn = getSystemTime();
-      print("Clock In Pegawai:" + timeClockIn);
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => _buildPopupDialog(context));
-      });
-    } else if (clockIn == 0) {
-      print("Init Data");
-    } else {
-      print("Not Clock In Yet");
-    }
+
+    // if (clockIn == 1) {
+    print("Clock in Success $clockIn");
+    setState(() {
+      stringTap = "Tap Here to Clock Out";
+    });
+    timeCalculation(0);
+    String timeClockIn = getSystemTime();
+    print("Clock In Pegawai:" + timeClockIn);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => _buildPopupDialog(context));
+    });
+    // } else if (clockIn == 0) {
+    //   print("Init Data");
+    // } else {
+    //   print("Not Clock In Yet");
+    // }
   }
 
   String getHourNow() {

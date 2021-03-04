@@ -48,7 +48,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     var res = await _attendService.createClockIn(_image);
 
     if (res == 200) {
-      addClockInSF();
+      await addClockInSF();
       //TempLog(namaProses: "Clock In", nilai: true);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ScreenTab()));
@@ -72,8 +72,10 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ScreenTab()));
+          Navigator.pop(context);
+          Navigator.pop(context);
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
         }
       },
       child: Scaffold(
