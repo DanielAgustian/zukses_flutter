@@ -240,7 +240,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       {int index, List<AttendanceModel> data}) {
     Widget dot = Container();
     AttendanceModel absence;
-
     // Make sure absensi list from backend has been sorted ascending
     if (data != null) {
       // If the date is less than 15
@@ -250,7 +249,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           calendarDate.date.month - 1 < calendarDate.date.month ||
           calendarDate.date.year - 1 < calendarDate.date.year) {
         for (var d in data) {
-          if (d.clockIn.isAtSameMomentAs(calendarDate.date)) {
+          if (d.clockIn.day == calendarDate.date.day &&
+              d.clockIn.month == calendarDate.date.month &&
+              d.clockIn.year == calendarDate.date.year) {
             dot = d.isLate == "yes" ? dotRed : dotGreen;
             absence = d;
             break;
@@ -265,7 +266,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         var i = 0;
         while (i < data.length) {
           // if the data founded
-          if (data[i].clockIn.isAtSameMomentAs(calendarDate.date)) {
+          if (data[i].clockIn.day == calendarDate.date.day &&
+              data[i].clockIn.month == calendarDate.date.month &&
+              data[i].clockIn.year == calendarDate.date.year) {
             dot = data[i].isLate == "late" ? dotRed : dotGreen;
             absence = data[i];
             break;

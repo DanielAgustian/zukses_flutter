@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
-import 'package:zukses_app_1/model/user-model.dart';
 
 class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
   StreamSubscription _subscription;
@@ -42,17 +40,17 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     }
   }
 
-  // BLOC for update the state when the user doing event
+  // BLOC for load all user attendance list
   Stream<AttendanceState> mapLoadUserAttendanceList(
       LoadUserAttendanceEvent event) async* {
-    print("jalan !");
     yield AttendanceStateLoading();
     // return user model
     var res = await _attendanceService.getUserAttendaceList(date: event.date);
     if (res != null) {
-      print("sukses");
+      print("Banyak data attendance");
       print(res.length);
       yield AttendanceStateSuccessLoad(attendanceList: res);
+      print(state);
     } else {
       yield AttendanceStateFailLoad();
     }
