@@ -157,8 +157,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                       }
-
-                      //tapHour();
                     },
                     // Bloc listener for attendance
                     child: Container(

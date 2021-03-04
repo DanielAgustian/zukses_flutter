@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,42 +27,47 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   String imagePath;
   String key = "clock in";
   final picker = ImagePicker();
-
+  bool uploading = false;
   AttendanceService _attendService = AttendanceService();
 
   void initState() {
     super.initState();
     imagePath = widget.path;
     _image = File(imagePath);
-
-    //addBoolClockIn();
   }
 
+//For shared preferences clock IN
   addClockInSF() async {
-    //SharedPreferences prefs = await SharedPreferences.getInstance();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int counter = 1;
     await prefs.setInt(key, counter);
   }
 
-  /*pushtoScreenTab() async {
-    var res = await _attendService.createClockIn(_image);
-
-    if (res == 200) {
-      await addClockInSF();
-      //TempLog(namaProses: "Clock In", nilai: true);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ScreenTab()));
-    }
-  }*/
+  void timer(BuildContext contextTimer) {
+    Timer(Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          Navigator.pop(contextTimer);
+          //Navigator.pop(contextTimer);
+        });
+      }
+    });
+  }
 
   void clockIn() {
+    setState(() {
+      uploading = true;
+    });
     BlocProvider.of<AttendanceBloc>(context)
         .add(AttendanceClockIn(image: _image));
   }
 
-  void closePage() {
-    Navigator.of(mContext).pop();
+  void retakeButton() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    String newImage = pickedFile.path;
+    setState(() {
+      _image = File(newImage);
+    });
   }
 
   BuildContext mContext;
@@ -71,6 +77,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) async {
         if (state is AttendanceStateFailed) {
+          uploading = false;
           Util().showToast(
               context: this.context,
               msg: "Something Wrong !",
@@ -78,7 +85,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
-          closePage();
+          _buildPopupDialog(context);
+          timer(mContext);
+          //Navigator.pop(context);
           //Navigator.pop(context);
           // Navigator.push(
           //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
@@ -156,6 +165,20 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   ),
                 ],
               ),
+              uploading
+                  ? Container(
+                      width: size.width,
+                      height: size.height,
+                      color: Colors.black38.withOpacity(0.5),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: colorPrimary70,
+                          // strokeWidth: 0,
+                          valueColor: AlwaysStoppedAnimation(colorBackground),
+                        ),
+                      ),
+                    )
+                  : Container()
             ],
           ),
         ),
@@ -163,11 +186,33 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     );
   }
 
-  void retakeButton() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-    String newImage = pickedFile.path;
-    setState(() {
-      _image = File(newImage);
-    });
+  Widget _buildPopupDialog(BuildContext context) {
+    return new AlertDialog(
+      //title: const Text('Popup example'),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            "assets/images/dummy.png",
+            height: 200,
+            width: 200,
+          ),
+          Text(
+            "Clock In Success!",
+            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          SmallButton(
+              bgColor: colorPrimary,
+              textColor: colorBackground,
+              title: "OK",
+              onClick: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              }),
+        ],
+      ),
+      actions: <Widget>[],
+    );
   }
 }
