@@ -2,20 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/attendance-model.dart';
-import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarWidget extends StatefulWidget {
   const CalendarWidget(
-      {Key key, this.onSelectDate, this.data, this.fontSize = 14, this.size})
+      {Key key,
+      this.onSelectDate,
+      this.data,
+      this.fontSize = 14,
+      this.size,
+      this.onClickToggle})
       : super(key: key);
 
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
-  final Function onSelectDate;
   final double fontSize;
   final List data;
   final Size size;
+
+  // callback function when select date
+  final Function onSelectDate;
+
+  //callback function when change the month
+  final Function onClickToggle;
 }
 
 enum CalendarViews { dates, months, year }
@@ -119,19 +128,13 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             SizedBox(width: 20),
             // month and year
             Container(
-              child: InkWell(
-                onTap: () {
-                  print("click bulan");
-                  setState(() => _currentView = CalendarViews.months);
-                },
-                child: Center(
-                  child: Text(
-                    '${_monthNames[_currentDateTime.month - 1]} ${_currentDateTime.year}',
-                    style: TextStyle(
-                        color: colorPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700),
-                  ),
+              child: Center(
+                child: Text(
+                  '${_monthNames[_currentDateTime.month - 1]} ${_currentDateTime.year}',
+                  style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -184,8 +187,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             midYear =
                 (midYear == null) ? _currentDateTime.year - 9 : midYear - 9;
           }
-          setState(() {});
         }
+        widget.onClickToggle(_currentDateTime);
       },
       child: Container(
         alignment: Alignment.center,

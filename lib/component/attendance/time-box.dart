@@ -17,7 +17,6 @@ class TimeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(selected == null);
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

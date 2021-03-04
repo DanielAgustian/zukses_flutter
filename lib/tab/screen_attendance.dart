@@ -6,8 +6,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/attendance-model.dart';
-import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:zukses_app_1/model/attendance-model.dart'; 
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -40,8 +39,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   List<AttendanceModel> absensiList;
 
   void selectDate(DateTime date, AttendanceModel absence) {
-    print(absence.clockIn);
-    print(absence.clockOut);
     setState(() {
       _currentDate = date;
       selected = absence;
@@ -148,8 +145,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                         children: [
                           CalendarWidget(
                             fontSize: size.height <= 600 ? textSizeSmall16 : 16,
+                            // When select the date
                             onSelectDate: (date, absence) {
                               selectDate(date, absence);
+                            },
+                            // When change the month
+                            onClickToggle: (DateTime val) { 
+                              _attendanceBloc
+                                  .add(LoadUserAttendanceEvent(date: val));
                             },
                             data: state.attendanceList,
                             size: size,
