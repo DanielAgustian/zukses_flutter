@@ -26,7 +26,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   String imagePath;
   String key = "clock in";
   final picker = ImagePicker();
-
+  bool uploading = false;
   AttendanceService _attendService = AttendanceService();
 
   void initState() {
@@ -56,6 +56,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   }
 
   void clockIn() {
+    setState(() {
+      uploading = true;
+    });
     BlocProvider.of<AttendanceBloc>(context)
         .add(AttendanceClockIn(image: _image));
   }
@@ -65,6 +68,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) async {
         if (state is AttendanceStateFailed) {
+          uploading = false;
           Util().showToast(
               context: this.context,
               msg: "Something Wrong !",
@@ -72,8 +76,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.of(this.context).pop();
+          Navigator.of(this.context).pop();
+          // Navigator.pop(context);
           // Navigator.push(
           //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
         }
@@ -150,6 +155,20 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   ),
                 ],
               ),
+              uploading
+                  ? Container(
+                      width: size.width,
+                      height: size.height,
+                      color: Colors.black38.withOpacity(0.5),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: colorPrimary70,
+                          // strokeWidth: 0,
+                          valueColor: AlwaysStoppedAnimation(colorBackground),
+                        ),
+                      ),
+                    )
+                  : Container()
             ],
           ),
         ),
