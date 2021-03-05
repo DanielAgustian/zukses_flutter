@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
         ),
         // locale: DevicePreview.locale(context), // Add the locale here
         // builder: DevicePreview.appBuilder, // Add the builder here
-        home: token == null
+        home: token != null
             ? ScreenTab()
             : MyHomePage(title: 'Flutter Demo Home Page'),
       ),
