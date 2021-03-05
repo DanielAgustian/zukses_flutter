@@ -6,7 +6,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/attendance-model.dart'; 
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -79,6 +79,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     Size size = MediaQuery.of(context).size;
     return BlocBuilder<AttendanceBloc, AttendanceState>(
         builder: (context, state) {
+      // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
         return Scaffold(
             backgroundColor: colorBackground,
@@ -150,7 +151,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                               selectDate(date, absence);
                             },
                             // When change the month
-                            onClickToggle: (DateTime val) { 
+                            onClickToggle: (DateTime val) {
                               _attendanceBloc
                                   .add(LoadUserAttendanceEvent(date: val));
                             },
@@ -180,6 +181,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                         ],
                       ),
                     )
+                  // BLOC when failed load
                   : Column(
                       children: [
                         Container(

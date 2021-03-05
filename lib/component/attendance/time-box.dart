@@ -17,6 +17,32 @@ class TimeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String h1 = " - - ";
+    String h2 = " - - ";
+    String m1 = " - - ";
+    String m2 = " - - ";
+    // formating time
+    if (selected != null) {
+      if (selected.clockIn != null) {
+        //formating time 1
+        selected.clockIn.hour >= 10
+            ? h1 = "${selected.clockIn.hour}"
+            : h1 = "0${selected.clockIn.hour}";
+        selected.clockIn.minute >= 10
+            ? m1 = "${selected.clockIn.minute}"
+            : m1 = "0${selected.clockIn.minute}";
+      }
+
+      if (selected.clockOut != null) {
+        //formating time 1
+        selected.clockOut.hour >= 10
+            ? h2 = "${selected.clockOut.hour}"
+            : h2 = "0${selected.clockOut.hour}";
+        selected.clockOut.minute >= 10
+            ? m2 = "${selected.clockOut.minute}"
+            : m2 = "0${selected.clockOut.minute}";
+      }
+    }
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -27,11 +53,7 @@ class TimeBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: colorPrimary, width: 2)),
             child: Text(
-              selected == null
-                  ? "--.--"
-                  : selected.clockIn == null
-                      ? "--.--"
-                      : "${selected.clockIn.hour}.${selected.clockIn.minute}",
+              "$h1.$m1",
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.w700,
@@ -51,11 +73,7 @@ class TimeBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: colorPrimary, width: 2)),
             child: Text(
-              selected == null
-                  ? "--.--"
-                  : selected.clockOut == null
-                      ? "--.--"
-                      : "${selected.clockOut.hour}.${selected.clockOut.minute}",
+              "$h2.$m2",
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.w700,

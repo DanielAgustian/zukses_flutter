@@ -65,9 +65,11 @@ class AttendanceService {
       var jsonResult = jsonDecode(res.body);
 
       List<AttendanceModel> results = [];
-      jsonResult["attendance"].forEach((data) {
-        results.add(AttendanceModel.fromJson(data));
-      });
+      if (jsonResult["attendance"] != null) {
+        jsonResult["attendance"].forEach((data) {
+          results.add(AttendanceModel.fromJson(data));
+        });
+      }
 
       return results;
     } else {

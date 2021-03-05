@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String dialogText = "Clock In ";
   bool instruction = false;
   int clockIn = 0;
-  int isClockIn = 0;
+  int isClockIn;
 
   AttendanceService _attendanceService = AttendanceService();
   //For Disabling Button ============================//
@@ -73,6 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
     timer();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+    int clockStatus = prefs.getInt("clock in");
+    setState(() {
+      isClockIn = clockStatus;
+
+      if (clockStatus == 1) {
+        stringTap = "Tap Here to Clock Out";
+      }
+    });
     print(token);
   }
 
@@ -129,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
 
                       print("Masuk sini ! $isClockIn");
+                      // show confirm dialog success clock in
                       showDialog<String>(
                           context: context,
                           builder: (BuildContext context) =>
@@ -144,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         isClockIn = 0;
                         stringTap = "Have a nice day";
                       });
-                      // Show dialog
+                      // // show confirm dialog success clock out
                       showDialog(
                           context: context,
                           builder: (BuildContext context) =>
@@ -725,12 +734,9 @@ class _HomeScreenState extends State<HomeScreen> {
               if (dialogText == "Clock Out") {
                 disposeSF();
                 setState(() {
-                  //dialogText = "Clock In";
+                  dialogText = "Clock In";
                   stringTap = "Tap Here to Clock In";
                 });
-                String timeClockOut = getSystemTime();
-                print(timeClockOut);
-                clockOut();
                 //Navigator.of(buildContext1, rootNavigator: true).pop();
                 if (buildContext2 != null) {
                   Navigator.of(buildContext2, rootNavigator: true).pop();
@@ -747,6 +753,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Clock Out Step 1========================================
   BuildContext buildContext1, buildContext2;
   Widget _buildPopupClockOut(BuildContext context, {size}) {
+    print("dialog clock out");
     buildContext1 = context;
     return new AlertDialog(
       content: new Column(
@@ -774,7 +781,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (BuildContext context) =>
                           _buildPopupOvertime(context, size: size));
                 } else {
-                  dialogText = "Clock Out";
+                  setState(() {
+                    dialogText = "Clock Out";
+                  });
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
@@ -795,7 +804,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                //Navigator.pop(context);
+                Navigator.pop(context);
                 clockOut();
               },
             ),
@@ -886,7 +895,9 @@ class _HomeScreenState extends State<HomeScreen> {
             title: "Yes, I need Overtime Pay",
             onClick: () {
               timeCalculation(1);
-              dialogText = "Clock Out";
+              setState(() {
+                dialogText = "Clock Out";
+              });
               showDialog(
                   context: context,
                   builder: (BuildContext context) =>
