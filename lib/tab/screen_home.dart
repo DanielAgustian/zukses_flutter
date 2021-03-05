@@ -82,6 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // String token = prefs.getString("token");
     int checkDate = prefs.getInt("tanggal");
     int clockStatus = prefs.getInt("clock in");
+
+    print("tanggal sama ? $checkDate");
+    print("status apa ? $clockStatus");
     setState(() {
       // is the date in shared pref is same as now ?
       isClockIn = (checkDate == now.day) ? clockStatus : 0;
@@ -157,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       int counter = 2;
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
-                      await prefs.setInt("clock in", counter);
+                      await prefs.setInt(key, counter);
 
                       setState(() {
                         isClockIn = 2;
@@ -176,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (isClockIn == 1) {
                         confirmClockOut(size: size);
                       } else if (isClockIn == 2) {
+                        print("masuk sini");
                         // DO nothing
                         // lock repeatable checkin in the same day
                       } else {
