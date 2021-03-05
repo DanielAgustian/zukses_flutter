@@ -54,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
   AttendanceService _attendanceService = AttendanceService();
   //For Disabling Button ============================//
   bool isDisableHour = true;
+  DateTime date = DateTime.now();
+
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 

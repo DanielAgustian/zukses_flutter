@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
-import 'package:zukses_app_1/model/user-model.dart';
 
 class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
   StreamSubscription _subscription;
@@ -42,6 +40,22 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     }
   }
 
+  // BLOC for load all user attendance list
+  Stream<AttendanceState> mapLoadUserAttendanceList(
+      LoadUserAttendanceEvent event) async* {
+    yield AttendanceStateLoading();
+    // return user model
+    var res = await _attendanceService.getUserAttendaceList(date: event.date);
+    if (res != null) {
+      print("Banyak data attendance");
+      print(res.length);
+      yield AttendanceStateSuccessLoad(attendanceList: res);
+      print(state);
+    } else {
+      yield AttendanceStateFailLoad();
+    }
+  }
+
   // BLOC for update the state when the user doing event
   Stream<AttendanceState> mapUpdatingAttendanceState(
       AttendanceEventDidUpdated event) async* {
@@ -55,7 +69,10 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       yield* mapClockIn(event);
     } else if (event is AttendanceClockOut) {
       yield* mapClockOut();
-    } else if (event is AuthEventUpdated) {
+    } else if (event is LoadUserAttendanceEvent) {
+      print("broadcast");
+      yield* mapLoadUserAttendanceList(event);
+    } else if (event is AttendanceEventDidUpdated) {
       yield* mapUpdatingAttendanceState(event);
     }
   }

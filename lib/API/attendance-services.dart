@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 
 class AttendanceService {
+  final baseURI = "api-zukses.yokesen.com/api";
+  final fullBaseURI = "https://api-zukses.yokesen.com/api";
   // Clock in user
   Future<int> createClockIn(File image) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,5 +43,35 @@ class AttendanceService {
     print(response.statusCode);
     print(response.body);
     return response.statusCode;
+  }
+
+  // Get User attendance list
+  Future<List<AttendanceModel>> getUserAttendaceList({DateTime date}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    var month = date.month;
+    var year = date.year;
+
+    // get data
+    var res = await http.get(fullBaseURI + "/user-attendance/$month/$year",
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        });
+
+    if (res.statusCode == 200) {
+      var jsonResult = jsonDecode(res.body);
+
+      List<AttendanceModel> results = [];
+      jsonResult["attendance"].forEach((data) {
+        results.add(AttendanceModel.fromJson(data));
+      });
+
+      return results;
+    } else {
+      return null;
+    }
   }
 }
