@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
@@ -35,6 +37,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<AttendanceBloc>(
           create: (context) => AttendanceBloc(),
+        ),
+        BlocProvider<UserDataBloc>(
+          create: (context) => UserDataBloc(),
         )
       ],
       child: MaterialApp(

@@ -10,6 +10,8 @@ import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
@@ -50,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int isClockIn = 0;
 
   AttendanceService _attendanceService = AttendanceService();
-
+  //For Disabling Button ============================//
+  bool isDisableHour = true;
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 
@@ -82,12 +85,17 @@ class _HomeScreenState extends State<HomeScreen> {
     BlocProvider.of<AttendanceBloc>(context).add(AttendanceClockOut());
   }
 
+  void getUserProfile() async {
+    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
+  }
+
   @override
   void initState() {
     super.initState();
     // sharedPref();
     sharedPrefInstruction();
     getToken();
+    getUserProfile();
   }
 
   @override
@@ -715,13 +723,13 @@ class _HomeScreenState extends State<HomeScreen> {
               if (dialogText == "Clock Out") {
                 disposeSF();
                 setState(() {
-                  dialogText = "Clock In";
+                  //dialogText = "Clock In";
                   stringTap = "Tap Here to Clock In";
                 });
                 String timeClockOut = getSystemTime();
                 print(timeClockOut);
                 clockOut();
-                Navigator.of(buildContext1, rootNavigator: true).pop();
+                //Navigator.of(buildContext1, rootNavigator: true).pop();
                 if (buildContext2 != null) {
                   Navigator.of(buildContext2, rootNavigator: true).pop();
                 }
@@ -785,7 +793,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                Navigator.pop(context);
+                //Navigator.pop(context);
                 clockOut();
               },
             ),
