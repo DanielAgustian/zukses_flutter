@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
-import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
@@ -28,6 +27,14 @@ import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
 import 'package:zukses_app_1/util/util.dart';
 
+/*
+  ========== IMPORTANT NOTE ==============
+  Check in status :
+    - 0 : reset status or usually for start a new check in in a new day
+    - 1 : user has been clock in in that day
+    - 2 : user has been clock ot in that day and disable a repeat `clock in` at same day
+*/
+
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
   final String title;
@@ -43,19 +50,18 @@ class _HomeScreenState extends State<HomeScreen> {
   String statusOvertime = "";
   String key = "clock in";
   String stringTap = "Click Here to Clock In";
+
+  //For Disabling Button ============================//
+  DateTime now = DateTime.now();
+  String dialogText = "Clock In ";
+  bool instruction = false;
+  int isClockIn;
+
+// Dummy data
   var taskName = ["Task 1", "task 2"];
   var taskDetail = ["Task 1", "task 2"];
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
-  String dialogText = "Clock In ";
-  bool instruction = false;
-  int clockIn = 0;
-  int isClockIn = 0;
-  int stoppingClockOutDialog = 0;
-  AttendanceService _attendanceService = AttendanceService();
-  //For Disabling Button ============================//
-  bool isDisableHour = true;
-  DateTime date = DateTime.now();
 
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
@@ -70,11 +76,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void getToken() async {
+  void checkStatusClock() async {
     timer();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
-    print(token);
+    // String token = prefs.getString("token");
+    int checkDate = prefs.getInt("tanggal");
+    int clockStatus = prefs.getInt("clock in");
+    setState(() {
+      // is the date in shared pref is same as now ?
+      isClockIn = (checkDate == now.day) ? clockStatus : 0;
+
+      if (clockStatus == 1) {
+        stringTap = "Tap Here to Clock Out";
+      } else if (clockStatus == 2) {
+        stringTap = "Have a Nice Day !";
+      }
+    });
+    // print(token);
   }
 
   void confirmClockOut({Size size}) async {
@@ -97,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // sharedPref();
     sharedPrefInstruction();
-    getToken();
+    checkStatusClock();
     getUserProfile();
   }
 
@@ -114,8 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                BlocBuilder<UserDataBloc, UserDataState>(
-                    builder: (context, state) {}),
                 BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) async {
                     if (state is AttendanceStateFailed) {
@@ -132,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
 
                       print("Masuk sini ! $isClockIn");
+                      // show confirm dialog success clock in
                       showDialog<String>(
                           context: context,
                           builder: (BuildContext context) =>
@@ -142,13 +159,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           await SharedPreferences.getInstance();
                       await prefs.setInt("clock in", counter);
 
-                      print("Clock out jalan");
                       setState(() {
-                        isClockIn = 0;
+                        isClockIn = 2;
                         stringTap = "Have a nice day";
                       });
-                      // Show dialog
-                      //Navigator.pop(context);
+                      // // show confirm dialog success clock out
                       showDialog(
                           context: context,
                           builder: (BuildContext context) =>
@@ -160,11 +175,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       print("Container clicked $isClockIn");
                       if (isClockIn == 1) {
                         confirmClockOut(size: size);
+                      } else if (isClockIn == 2) {
+                        // DO nothing
+                        // lock repeatable checkin in the same day
                       } else {
                         if (instruction == true) {
                           pushToCamera();
                         } else {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => CameraInstruction()),
@@ -212,56 +230,192 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 10,
                 ),
                 //======================BlocBuilder===========================
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                BlocBuilder<UserDataBloc, UserDataState>(
+                  builder: (context, state) {
+                    if (state is UserDataStateLoading) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "Hi, Finley Khouwira",
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        color: colorPrimary, letterSpacing: 0),
-                                    fontSize: size.width <= 600 ? 20 : 24,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "WELCOME BACK! ",
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                          color: Colors.grey, letterSpacing: 0),
-                                      fontSize: size.width <= 600 ? 12 : 14,
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 20,
+                                      ),
                                     ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                    height: 45,
-                                    width: 45,
-                                    decoration: BoxDecoration(
-                                        color: colorPrimary,
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: Image.asset(
-                                                    "assets/images/ava.png")
-                                                .image)))
-                              ],
-                            ))
-                      ]),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SkeletonAvatar()
+                            ]),
+                      );
+                    } else if (state is UserDataStateSuccessLoad) {
+                      String name = state.userModel.name == null
+                          ? "Username"
+                          : state.userModel.name;
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Hi, $name",
+                                      style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                              color: colorPrimary,
+                                              letterSpacing: 0),
+                                          fontSize: size.width <= 600 ? 20 : 24,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "WELCOME BACK! ",
+                                          style: GoogleFonts.lato(
+                                            textStyle: TextStyle(
+                                                color: Colors.grey,
+                                                letterSpacing: 0),
+                                            fontSize:
+                                                size.width <= 600 ? 12 : 14,
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                          height: 45,
+                                          width: 45,
+                                          decoration: BoxDecoration(
+                                              color: colorPrimary,
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: Image.asset(
+                                                          "assets/images/ava.png")
+                                                      .image)))
+                                    ],
+                                  ))
+                            ]),
+                      );
+                    } else if (state is UserDataFailLoad) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 20,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SkeletonAvatar()
+                            ]),
+                      );
+                    }
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hi, Finley Khouwira",
+                                    style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                            color: colorPrimary,
+                                            letterSpacing: 0),
+                                        fontSize: size.width <= 600 ? 20 : 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "WELCOME BACK! ",
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                              color: Colors.grey,
+                                              letterSpacing: 0),
+                                          fontSize: size.width <= 600 ? 12 : 14,
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                            color: colorPrimary,
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: Image.asset(
+                                                        "assets/images/ava.png")
+                                                    .image)))
+                                  ],
+                                ))
+                          ]),
+                    );
+                  },
                 ),
+
                 //====================BlocBuilder=================================///
                 SizedBox(height: 20),
                 InkWell(
@@ -752,6 +906,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Clock Out Step 1========================================
   BuildContext buildContext1, buildContext2;
   Widget _buildPopupClockOut(BuildContext context, {size}) {
+    print("dialog clock out");
     buildContext1 = context;
     return new AlertDialog(
       content: new Column(
@@ -779,7 +934,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (BuildContext context) =>
                           _buildPopupOvertime(context, size: size));
                 } else {
-                  dialogText = "Clock Out";
+                  setState(() {
+                    dialogText = "Clock Out";
+                  });
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
@@ -891,7 +1048,9 @@ class _HomeScreenState extends State<HomeScreen> {
             title: "Yes, I need Overtime Pay",
             onClick: () {
               timeCalculation(1);
-              dialogText = "Clock Out";
+              setState(() {
+                dialogText = "Clock Out";
+              });
               showDialog(
                   context: context,
                   builder: (BuildContext context) =>
@@ -907,18 +1066,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void disposeSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt(key, 0);
-    clockIn = 0;
+    isClockIn = 0;
   }
 
   void sharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      clockIn = prefs.getInt(key);
+      isClockIn = prefs.getInt(key);
     });
 
-    // if (clockIn == 1) {
-    print("Clock in Success $clockIn");
+    // if (isClockIn == 1) {
+    print("Clock in Success $isClockIn");
     setState(() {
       stringTap = "Tap Here to Clock Out";
     });

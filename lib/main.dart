@@ -1,7 +1,9 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
@@ -13,20 +15,33 @@ import 'package:zukses_app_1/repository/auth-repo.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = BlocObserver();
   await Firebase.initializeApp();
-  runApp(DevicePreview(builder: (context) => MyApp()));
+
+  // check is user have been login
+  String token;
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  token = prefs.getString("token");
+
+  runApp(DevicePreview(
+      builder: (context) => MyApp(
+            token: token,
+          )));
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+  final String token;
+
+  const MyApp({Key key, this.token}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +63,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Lato',
         ),
-        locale: DevicePreview.locale(context), // Add the locale here
-        builder: DevicePreview.appBuilder, // Add the builder here
-        home: MyHomePage(title: 'Flutter Demo Home Page'),
+        // locale: DevicePreview.locale(context), // Add the locale here
+        // builder: DevicePreview.appBuilder, // Add the builder here
+        home: token != null
+            ? ScreenTab()
+            : MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
@@ -67,7 +84,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var dayOfWeek = 1;
-  
+
   DateFormat dayName = DateFormat('E');
 
   PageController _controller;
@@ -84,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int currentIdx = 0;
-  AttendanceService _attendanceService = AttendanceService();
 
   @override
   void initState() {
@@ -96,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(date.weekday);
     // print(dayName.format(date));
     // print(findFirstDateOfTheWeek(date));
-    
   }
 
   @override

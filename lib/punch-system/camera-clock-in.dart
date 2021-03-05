@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
-import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
@@ -28,7 +26,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   String key = "clock in";
   final picker = ImagePicker();
   bool uploading = false;
-  AttendanceService _attendService = AttendanceService();
+  DateTime now = DateTime.now();
 
   void initState() {
     super.initState();
@@ -42,6 +40,11 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int counter = 1;
     await prefs.setInt(key, counter);
+    // TO CHECKING when start the APP
+    // Is the date is same or not
+    // If id doesn't same, then it should reset `clock in` status into 0
+    // Else keep the `clock in` status
+    await prefs.setInt("tanggal", now.day);
   }
 
   void timer(BuildContext contextTimer) {

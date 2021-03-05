@@ -149,6 +149,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
         String data = pickedFile.path;
         //print(data);
         //_image = File(pickedFile.path);
+        Navigator.pop(context);
         Navigator.push(
             context,
             MaterialPageRoute(

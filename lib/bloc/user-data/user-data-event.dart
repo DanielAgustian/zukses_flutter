@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/auth-model.dart';
+import 'package:equatable/equatable.dart'; 
 import 'package:zukses_app_1/model/user-model.dart';
 
 abstract class UserDataEvent extends Equatable {

@@ -2,8 +2,7 @@ import 'package:zukses_app_1/API/user-data-services.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/model/user-model.dart';
-import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'dart:async'; 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
