@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -859,28 +860,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
 //Pop Up Dialog for Clock in and Out Confirmation
   Widget _buildPopupDialog(BuildContext context) {
-    return new AlertDialog(
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            "assets/images/dummy.png",
-            height: 200,
-            width: 200,
-          ),
-          Text(
-            dialogText + " Success!",
-            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20),
-          SmallButton(
-            bgColor: colorPrimary,
-            textColor: colorBackground,
-            title: "OK",
-            onClick: () {
+    Size sizeDialog = MediaQuery.of(context).size;
+    return new CupertinoAlertDialog(
+      title: new Text(
+        dialogText + " Success!",
+      ),
+      content: new Text("This is my content"),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text("OK"),
+            onPressed: () {
               Navigator.of(context, rootNavigator: true).pop();
-
               if (dialogText == "Clock Out") {
                 disposeSF();
                 setState(() {
@@ -895,12 +885,51 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.of(buildContext2, rootNavigator: true).pop();
                 }
               }
-            },
+            })
+      ],
+    );
+    /*AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            dialogText + " Success!",
+            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 20),
         ],
       ),
-      actions: <Widget>[],
-    );
+      actions: <Widget>[
+        LongButton(
+          size: sizeDialog,
+          bgColor: colorBackground,
+          textColor: colorPrimary,
+          title: "OK",
+          onClick: () {
+            Navigator.of(context, rootNavigator: true).pop();
+
+            if (dialogText == "Clock Out") {
+              disposeSF();
+              setState(() {
+                //dialogText = "Clock In";
+                stringTap = "You have finished workday!";
+              });
+              String timeClockOut = getSystemTime();
+              print(timeClockOut);
+
+              //Navigator.of(buildContext1, rootNavigator: true).pop();
+              if (buildContext2 != null) {
+                Navigator.of(buildContext2, rootNavigator: true).pop();
+              }
+            }
+          },
+        ),
+      ],
+    );*/
   }
 
   // Clock Out Step 1========================================
@@ -1146,6 +1175,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (i == 0) {
       //Lateness
       int limitLate = (9 * 60);
+      int minutesLate = 0;
       if (minutesTotalNow <= limitLate) {
         setState(() {
           statusLate = "In Time";
@@ -1153,6 +1183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         setState(() {
           statusLate = "Late";
+          minutesLate = minutesTotalNow - limitLate;
         });
       }
       print("Status Late = " + statusLate);
@@ -1171,6 +1202,7 @@ class _HomeScreenState extends State<HomeScreen> {
         int duration = minutesTotalNow - limitOvertime;
         int hour = (duration / 60).floor();
         int minutes = duration % 60;
+        String data = hour.toString() + "jam " + minutes.toString() + "menit";
       }
       print("status Overtime = " + statusOvertime);
     }

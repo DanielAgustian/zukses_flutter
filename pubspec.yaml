@@ -47,7 +47,7 @@ dependencies:
   equatable:
   flutter_bloc:
   http_parser: 
-
+  location:
 dev_dependencies:
   flutter_test:
     sdk: flutter
