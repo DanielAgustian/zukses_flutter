@@ -182,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (instruction == true) {
                           pushToCamera();
                         } else {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => CameraInstruction()),
