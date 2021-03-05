@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:zukses_app_1/model/user-model.dart';
 
@@ -8,6 +8,8 @@ class UserDataServiceHTTP {
 
   Future<UserModel> fetchUserProfile() async {
     final response = await http.get(Uri.https(baseURI, 'api/user'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,

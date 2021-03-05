@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool instruction = false;
   int clockIn = 0;
   int isClockIn = 0;
-
+  int stoppingClockOutDialog = 0;
   AttendanceService _attendanceService = AttendanceService();
   //For Disabling Button ============================//
   bool isDisableHour = true;
@@ -145,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         stringTap = "Have a nice day";
                       });
                       // Show dialog
+                      //Navigator.pop(context);
                       showDialog(
                           context: context,
                           builder: (BuildContext context) =>
@@ -700,7 +701,6 @@ class _HomeScreenState extends State<HomeScreen> {
 //Pop Up Dialog for Clock in and Out Confirmation
   Widget _buildPopupDialog(BuildContext context) {
     return new AlertDialog(
-      //title: const Text('Popup example'),
       content: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -726,11 +726,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 disposeSF();
                 setState(() {
                   //dialogText = "Clock In";
-                  stringTap = "Tap Here to Clock In";
+                  stringTap = "You have finished workday!";
                 });
                 String timeClockOut = getSystemTime();
                 print(timeClockOut);
-                clockOut();
+
                 //Navigator.of(buildContext1, rootNavigator: true).pop();
                 if (buildContext2 != null) {
                   Navigator.of(buildContext2, rootNavigator: true).pop();
@@ -795,7 +795,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                //Navigator.pop(context);
+                Navigator.pop(this.context);
                 clockOut();
               },
             ),
