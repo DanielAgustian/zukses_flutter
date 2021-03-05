@@ -19,7 +19,7 @@ class UserDataServiceHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      return UserModel.fromJson(jsonDecode(res.body));
+      return UserModel.fromJson(jsonDecode(res.body)["user"]);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
