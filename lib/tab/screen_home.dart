@@ -21,7 +21,6 @@ import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
