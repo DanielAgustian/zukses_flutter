@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -29,9 +30,10 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
 
-  runApp(MyApp(
-    token: token,
-  ));
+  runApp(DevicePreview(
+      builder: (context) => MyApp(
+            token: token,
+          )));
 }
 
 class MyApp extends StatelessWidget {
@@ -98,8 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
   }
 
-  int currentIdx = 0;
-  AttendanceService _attendanceService = AttendanceService();
+  int currentIdx = 0; 
 
   @override
   void initState() {
