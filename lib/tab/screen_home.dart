@@ -268,6 +268,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ]),
                       );
                     } else if (state is UserDataStateSuccessLoad) {
+                      String name = state.userModel.name == null
+                          ? "Username"
+                          : state.userModel.name;
                       return Container(
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
@@ -278,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Hi, ${state.userModel.name}",
+                                      "Hi, $name",
                                       style: GoogleFonts.lato(
                                           textStyle: TextStyle(
                                               color: colorPrimary,
@@ -314,17 +317,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               shape: BoxShape.circle,
                                               image: DecorationImage(
                                                   fit: BoxFit.fill,
-                                                  image: (state.userModel
-                                                                  .imgUrl ==
-                                                              null ||
-                                                          state.userModel
-                                                                  .imgUrl ==
-                                                              "")
-                                                      ? Image.asset(
+                                                  image: Image.asset(
                                                           "assets/images/ava.png")
-                                                      : Image.network(state
-                                                              .userModel.imgUrl)
-                                                          .image)))
+                                                      .image)))
                                     ],
                                   ))
                             ]),
