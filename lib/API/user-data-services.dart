@@ -7,14 +7,19 @@ class UserDataServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
 
   Future<UserModel> fetchUserProfile() async {
-    final response = await http.get(Uri.https(baseURI, 'api/user'));
+    //final response = await http.get(Uri.https(baseURI, 'api/user'));
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-
-    if (response.statusCode == 200) {
+    var res = await http
+        .get(Uri.https(baseURI, 'api/user'), headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+      'Authorization': 'Bearer $token'
+    });
+    if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      return UserModel.fromJson(jsonDecode(response.body));
+      return UserModel.fromJson(jsonDecode(res.body));
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

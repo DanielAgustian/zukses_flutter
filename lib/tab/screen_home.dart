@@ -12,6 +12,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
@@ -113,6 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                BlocBuilder<UserDataBloc, UserDataState>(
+                    builder: (context, state) {}),
                 BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) async {
                     if (state is AttendanceStateFailed) {
@@ -208,6 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 10,
                 ),
+                //======================BlocBuilder===========================
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -258,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ))
                       ]),
                 ),
+                //====================BlocBuilder=================================///
                 SizedBox(height: 20),
                 InkWell(
                   onTap: () {
