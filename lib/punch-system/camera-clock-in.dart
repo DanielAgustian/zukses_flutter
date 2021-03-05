@@ -81,17 +81,22 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) async {
         if (state is AttendanceStateFailed) {
-          uploading = false;
+          setState(() {
+            uploading = false;
+          });
           Util().showToast(
               context: this.context,
               msg: "Something Wrong !",
               color: colorError,
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
+          setState(() {
+            uploading = false;
+          });
           addClockInSF();
           _buildPopupDialog(context);
           timer(mContext);
-          //Navigator.pop(context);
+          Navigator.pop(context);
           //Navigator.pop(context);
           // Navigator.push(
           //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
