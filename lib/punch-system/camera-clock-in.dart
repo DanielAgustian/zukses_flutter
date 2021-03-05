@@ -34,6 +34,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     super.initState();
     imagePath = widget.path;
     _image = File(imagePath);
+    print(imagePath);
   }
 
 //For shared preferences clock IN

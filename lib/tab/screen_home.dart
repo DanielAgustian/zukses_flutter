@@ -12,6 +12,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/home/box-home.dart';
@@ -121,6 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                BlocBuilder<UserDataBloc, UserDataState>(
+                    builder: (context, state) {}),
                 BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) async {
                     if (state is AttendanceStateFailed) {
@@ -216,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 10,
                 ),
+                //======================BlocBuilder===========================
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -266,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ))
                       ]),
                 ),
+                //====================BlocBuilder=================================///
                 SizedBox(height: 20),
                 InkWell(
                   onTap: () {
@@ -709,7 +714,6 @@ class _HomeScreenState extends State<HomeScreen> {
 //Pop Up Dialog for Clock in and Out Confirmation
   Widget _buildPopupDialog(BuildContext context) {
     return new AlertDialog(
-      //title: const Text('Popup example'),
       content: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -734,9 +738,12 @@ class _HomeScreenState extends State<HomeScreen> {
               if (dialogText == "Clock Out") {
                 disposeSF();
                 setState(() {
-                  dialogText = "Clock In";
-                  stringTap = "Tap Here to Clock In";
+                  //dialogText = "Clock In";
+                  stringTap = "You have finished workday!";
                 });
+                String timeClockOut = getSystemTime();
+                print(timeClockOut);
+
                 //Navigator.of(buildContext1, rootNavigator: true).pop();
                 if (buildContext2 != null) {
                   Navigator.of(buildContext2, rootNavigator: true).pop();
@@ -804,7 +811,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                Navigator.pop(context);
+                Navigator.pop(this.context);
                 clockOut();
               },
             ),
