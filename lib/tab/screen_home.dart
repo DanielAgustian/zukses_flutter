@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
-import 'package:zukses_app_1/API/attendance-services.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
@@ -28,6 +27,14 @@ import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
 import 'package:zukses_app_1/util/util.dart';
 
+/*
+  ========== IMPORTANT NOTE ==============
+  Check in status :
+    - 0 : reset status or usually for start a new check in in a new day
+    - 1 : user has been clock in in that day
+    - 2 : user has been clock ot in that day and disable a repeat `clock in` at same day
+*/
+
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
   final String title;
@@ -43,19 +50,18 @@ class _HomeScreenState extends State<HomeScreen> {
   String statusOvertime = "";
   String key = "clock in";
   String stringTap = "Click Here to Clock In";
+
+  //For Disabling Button ============================//
+  DateTime now = DateTime.now();
+  String dialogText = "Clock In ";
+  bool instruction = false;
+  int isClockIn;
+
+// Dummy data
   var taskName = ["Task 1", "task 2"];
   var taskDetail = ["Task 1", "task 2"];
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
-  String dialogText = "Clock In ";
-  bool instruction = false;
-  int clockIn = 0;
-  int isClockIn;
-
-  AttendanceService _attendanceService = AttendanceService();
-  //For Disabling Button ============================//
-  bool isDisableHour = true;
-  DateTime date = DateTime.now();
 
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
@@ -70,19 +76,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void getToken() async {
+  void checkStatusClock() async {
     timer();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+    // String token = prefs.getString("token");
+    int checkDate = prefs.getInt("tanggal");
     int clockStatus = prefs.getInt("clock in");
     setState(() {
-      isClockIn = clockStatus;
+      // is the date in shared pref is same as now ?
+      isClockIn = (checkDate == now.day) ? clockStatus : 0;
 
       if (clockStatus == 1) {
         stringTap = "Tap Here to Clock Out";
+      } else if (clockStatus == 2) {
+        stringTap = "Have a Nice Day !";
       }
     });
-    print(token);
+    // print(token);
   }
 
   void confirmClockOut({Size size}) async {
@@ -105,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // sharedPref();
     sharedPrefInstruction();
-    getToken();
+    checkStatusClock();
     getUserProfile();
   }
 
@@ -149,9 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           await SharedPreferences.getInstance();
                       await prefs.setInt("clock in", counter);
 
-                      print("Clock out jalan");
                       setState(() {
-                        isClockIn = 0;
+                        isClockIn = 2;
                         stringTap = "Have a nice day";
                       });
                       // // show confirm dialog success clock out
@@ -166,6 +175,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       print("Container clicked $isClockIn");
                       if (isClockIn == 1) {
                         confirmClockOut(size: size);
+                      } else if (isClockIn == 2) {
+                        // DO nothing
+                        // lock repeatable checkin in the same day
                       } else {
                         if (instruction == true) {
                           pushToCamera();
@@ -1059,18 +1071,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void disposeSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt(key, 0);
-    clockIn = 0;
+    isClockIn = 0;
   }
 
   void sharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      clockIn = prefs.getInt(key);
+      isClockIn = prefs.getInt(key);
     });
 
-    // if (clockIn == 1) {
-    print("Clock in Success $clockIn");
+    // if (isClockIn == 1) {
+    print("Clock in Success $isClockIn");
     setState(() {
       stringTap = "Tap Here to Clock Out";
     });

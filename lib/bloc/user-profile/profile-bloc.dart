@@ -1,16 +1,10 @@
 import 'dart:async';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/API/auth-service.dart';
-import 'package:zukses_app_1/API/user-service.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+ 
+import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:zukses_app_1/API/user-service.dart'; 
 import 'package:zukses_app_1/bloc/user-profile/profile-event.dart';
 import 'package:zukses_app_1/bloc/user-profile/profile-state.dart';
-import 'package:zukses_app_1/model/user-model.dart';
-import 'package:zukses_app_1/repository/auth-repo.dart';
-import 'package:zukses_app_1/model/auth-model.dart';
+import 'package:zukses_app_1/model/user-model.dart'; 
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   StreamSubscription _subscription;

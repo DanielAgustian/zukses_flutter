@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:zukses_app_1/constant/constant.dart';
+import 'package:flutter/cupertino.dart'; 
 
 class LongButton extends StatelessWidget {
   const LongButton(
