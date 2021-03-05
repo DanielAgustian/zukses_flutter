@@ -122,8 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                BlocBuilder<UserDataBloc, UserDataState>(
-                    builder: (context, state) {}),
                 BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) async {
                     if (state is AttendanceStateFailed) {
@@ -220,56 +218,197 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 10,
                 ),
                 //======================BlocBuilder===========================
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                BlocBuilder<UserDataBloc, UserDataState>(
+                  builder: (context, state) {
+                    if (state is UserDataStateLoading) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "Hi, Finley Khouwira",
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        color: colorPrimary, letterSpacing: 0),
-                                    fontSize: size.width <= 600 ? 20 : 24,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "WELCOME BACK! ",
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                          color: Colors.grey, letterSpacing: 0),
-                                      fontSize: size.width <= 600 ? 12 : 14,
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 20,
+                                      ),
                                     ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                    height: 45,
-                                    width: 45,
-                                    decoration: BoxDecoration(
-                                        color: colorPrimary,
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: Image.asset(
-                                                    "assets/images/ava.png")
-                                                .image)))
-                              ],
-                            ))
-                      ]),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SkeletonAvatar()
+                            ]),
+                      );
+                    } else if (state is UserDataStateSuccessLoad) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Hi, ${state.userModel.name}",
+                                      style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                              color: colorPrimary,
+                                              letterSpacing: 0),
+                                          fontSize: size.width <= 600 ? 20 : 24,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "WELCOME BACK! ",
+                                          style: GoogleFonts.lato(
+                                            textStyle: TextStyle(
+                                                color: Colors.grey,
+                                                letterSpacing: 0),
+                                            fontSize:
+                                                size.width <= 600 ? 12 : 14,
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                          height: 45,
+                                          width: 45,
+                                          decoration: BoxDecoration(
+                                              color: colorPrimary,
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: (state.userModel
+                                                                  .imgUrl ==
+                                                              null ||
+                                                          state.userModel
+                                                                  .imgUrl ==
+                                                              "")
+                                                      ? Image.asset(
+                                                          "assets/images/ava.png")
+                                                      : Image.network(state
+                                                              .userModel.imgUrl)
+                                                          .image)))
+                                    ],
+                                  ))
+                            ]),
+                      );
+                    } else if (state is UserDataFailLoad) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 20,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    SkeletonAnimation(
+                                      shimmerColor: colorNeutral170,
+                                      child: Container(
+                                        color: colorNeutral2,
+                                        width: size.width * 0.6,
+                                        height: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SkeletonAvatar()
+                            ]),
+                      );
+                    }
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hi, Finley Khouwira",
+                                    style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                            color: colorPrimary,
+                                            letterSpacing: 0),
+                                        fontSize: size.width <= 600 ? 20 : 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "WELCOME BACK! ",
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                              color: Colors.grey,
+                                              letterSpacing: 0),
+                                          fontSize: size.width <= 600 ? 12 : 14,
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                            color: colorPrimary,
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: Image.asset(
+                                                        "assets/images/ava.png")
+                                                    .image)))
+                                  ],
+                                ))
+                          ]),
+                    );
+                  },
                 ),
+
                 //====================BlocBuilder=================================///
                 SizedBox(height: 20),
                 InkWell(
