@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
   }
 
-  int currentIdx = 0; 
+  int currentIdx = 0;
 
   @override
   void initState() {
