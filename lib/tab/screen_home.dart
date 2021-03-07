@@ -21,7 +21,6 @@ import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
@@ -83,6 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // String token = prefs.getString("token");
     int checkDate = prefs.getInt("tanggal");
     int clockStatus = prefs.getInt("clock in");
+
+    print("tanggal sama ? $checkDate");
+    print("status apa ? $clockStatus");
     setState(() {
       // is the date in shared pref is same as now ?
       isClockIn = (checkDate == now.day) ? clockStatus : 0;
@@ -149,16 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
 
                       print("Masuk sini ! $isClockIn");
-                      // show confirm dialog success clock in
-                      showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              _buildPopupDialog(context));
                     } else if (state is AttendanceStateSuccessClockOut) {
+                      print("clock out");
                       int counter = 2;
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
-                      await prefs.setInt("clock in", counter);
+                      await prefs.setInt(key, counter);
 
                       setState(() {
                         isClockIn = 2;
@@ -177,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (isClockIn == 1) {
                         confirmClockOut(size: size);
                       } else if (isClockIn == 2) {
+                        print("masuk sini");
                         // DO nothing
                         // lock repeatable checkin in the same day
                       } else {
@@ -246,7 +245,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 20,
                                       ),
@@ -257,7 +260,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 10,
                                       ),
@@ -338,7 +345,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 20,
                                       ),
@@ -349,7 +360,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 10,
                                       ),
@@ -703,7 +718,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   SkeletonAnimation(
                     shimmerColor: colorNeutral170,
                     child: Container(
-                      color: colorNeutral2,
+                      decoration: BoxDecoration(
+                        color: colorNeutral2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       width: size.width * 0.6,
                       height: 20,
                     ),
@@ -714,7 +732,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   SkeletonAnimation(
                     shimmerColor: colorNeutral170,
                     child: Container(
-                      color: colorNeutral2,
+                      decoration: BoxDecoration(
+                        color: colorNeutral2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       width: size.width * 0.6,
                       height: 10,
                     ),
@@ -863,73 +884,26 @@ class _HomeScreenState extends State<HomeScreen> {
     Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
-        dialogText + " Success!",
+        "Clock Out Success!",
       ),
       content: new Text("This is my content"),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text("OK"),
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-              if (dialogText == "Clock Out") {
-                disposeSF();
-                setState(() {
-                  //dialogText = "Clock In";
-                  stringTap = "You have finished workday!";
-                });
-                String timeClockOut = getSystemTime();
-                print(timeClockOut);
-
-                //Navigator.of(buildContext1, rootNavigator: true).pop();
-                if (buildContext2 != null) {
-                  Navigator.of(buildContext2, rootNavigator: true).pop();
-                }
-              }
-            })
-      ],
-    );
-    /*AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            dialogText + " Success!",
-            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20),
-        ],
-      ),
-      actions: <Widget>[
-        LongButton(
-          size: sizeDialog,
-          bgColor: colorBackground,
-          textColor: colorPrimary,
-          title: "OK",
-          onClick: () {
-            Navigator.of(context, rootNavigator: true).pop();
-
-            if (dialogText == "Clock Out") {
+              Navigator.pop(context);
+              // if (dialogText == "Clock Out") {
               disposeSF();
               setState(() {
                 //dialogText = "Clock In";
-                stringTap = "You have finished workday!";
+                stringTap = "Have a nice day !";
               });
               String timeClockOut = getSystemTime();
               print(timeClockOut);
-
-              //Navigator.of(buildContext1, rootNavigator: true).pop();
-              if (buildContext2 != null) {
-                Navigator.of(buildContext2, rootNavigator: true).pop();
-              }
-            }
-          },
-        ),
+              // }
+            })
       ],
-    );*/
+    );
   }
 
   // Clock Out Step 1========================================
@@ -986,7 +960,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                Navigator.pop(this.context);
+                Navigator.pop(context);
                 clockOut();
               },
             ),
@@ -1113,11 +1087,11 @@ class _HomeScreenState extends State<HomeScreen> {
     timeCalculation(0);
     String timeClockIn = getSystemTime();
     print("Clock In Pegawai:" + timeClockIn);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => _buildPopupDialog(context));
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   await showDialog<String>(
+    //       context: context,
+    //       builder: (BuildContext context) => _buildPopupDialog(context));
+    // });
     // } else if (clockIn == 0) {
     //   print("Init Data");
     // } else {

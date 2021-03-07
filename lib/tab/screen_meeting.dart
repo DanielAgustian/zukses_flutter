@@ -25,7 +25,7 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen>
     with TickerProviderStateMixin {
   DateTime _selectedDate;
-  List<AbsenceTime> absensiList = dummy;
+  // List<AbsenceTime> absensiList = dummy;
   int week;
   DateTime _currentDate = DateTime.now();
   bool grid = true;
@@ -236,7 +236,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                               onSelectDate: (date, absence) {
                                 selectDate(date);
                               },
-                              data: dummy,
+                              // data: List of `attendance model`,
                               size: size,
                             ),
                           ),
@@ -257,7 +257,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                 : ListView.builder(
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
-                                    itemCount: absensiList.length,
+                                    itemCount: 5,
                                     itemBuilder: (context, index) =>
                                         ScheduleItem(
                                       size: size,
@@ -302,7 +302,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                     SkeletonLess3WithAvatar(size: size, row: 2))
                             : ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: absensiList.length,
+                                itemCount: 5,
                                 itemBuilder: (context, index) => ScheduleItem(
                                   size: size,
                                   title: "Schedule",

@@ -164,6 +164,7 @@ class _TaskScreen extends State<TaskScreen>
                           controller: tabController,
                           children: <Widget>[
                             LayoutProjectList(
+                                size: size,
                                 loading: isLoading,
                                 count: count,
                                 fontSize: size.height <= 569 ? 18 : 22,
@@ -173,6 +174,7 @@ class _TaskScreen extends State<TaskScreen>
                                 time: "today",
                                 skeletonWidth: size.height <= 570 ? 200 : 240),
                             LayoutProjectList(
+                              size: size,
                               loading: isLoading,
                               count: count,
                               fontSize: size.height <= 569 ? 18 : 22,
@@ -182,6 +184,7 @@ class _TaskScreen extends State<TaskScreen>
                               time: "upcoming",
                             ),
                             LayoutProjectList(
+                              size: size,
                               loading: isLoading,
                               count: count,
                               fontSize: size.height <= 569 ? 18 : 22,

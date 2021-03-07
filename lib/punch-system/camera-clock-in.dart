@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class PreviewCamera extends StatefulWidget {
@@ -81,20 +83,26 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) async {
         if (state is AttendanceStateFailed) {
-          uploading = false;
+          setState(() {
+            uploading = false;
+          });
           Util().showToast(
               context: this.context,
               msg: "Something Wrong !",
               color: colorError,
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
-          addClockInSF();
-          _buildPopupDialog(context);
-          timer(mContext);
+          setState(() {
+            uploading = false;
+          });
+          addClockInSF(); 
+          showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => _buildPopupDialog(context));
+          // timer(mContext);
+          // Navigator.pop(context);
           //Navigator.pop(context);
-          //Navigator.pop(context);
-          // Navigator.push(
-          //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
+
         }
       },
       child: Scaffold(
@@ -191,32 +199,21 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   }
 
   Widget _buildPopupDialog(BuildContext context) {
-    return new AlertDialog(
-      //title: const Text('Popup example'),
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            "assets/images/dummy.png",
-            height: 200,
-            width: 200,
-          ),
-          Text(
-            "Clock In Success!",
-            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20),
-          SmallButton(
-              bgColor: colorPrimary,
-              textColor: colorBackground,
-              title: "OK",
-              onClick: () {
-                Navigator.of(context, rootNavigator: true).pop();
-              }),
-        ],
+    return new CupertinoAlertDialog(
+      title: Text(
+        "Clock In Success!",
+        style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
       ),
-      actions: <Widget>[],
+      content: new Text("This is my content"),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text("OK"),
+            onPressed: () {
+              print("PUSH");
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ScreenTab()));
+            })
+      ],
     );
   }
 }

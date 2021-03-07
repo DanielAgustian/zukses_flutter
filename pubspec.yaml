@@ -46,8 +46,8 @@ dependencies:
   google_sign_in:
   equatable:
   flutter_bloc:
-  http_parser: 
-  location:
+  http_parser:  
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
