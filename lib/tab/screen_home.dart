@@ -245,7 +245,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 20,
                                       ),
@@ -256,7 +260,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 10,
                                       ),
@@ -337,7 +345,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 20,
                                       ),
@@ -348,7 +360,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SkeletonAnimation(
                                       shimmerColor: colorNeutral170,
                                       child: Container(
-                                        color: colorNeutral2,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         width: size.width * 0.6,
                                         height: 10,
                                       ),
@@ -702,7 +718,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   SkeletonAnimation(
                     shimmerColor: colorNeutral170,
                     child: Container(
-                      color: colorNeutral2,
+                      decoration: BoxDecoration(
+                        color: colorNeutral2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       width: size.width * 0.6,
                       height: 20,
                     ),
@@ -713,7 +732,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   SkeletonAnimation(
                     shimmerColor: colorNeutral170,
                     child: Container(
-                      color: colorNeutral2,
+                      decoration: BoxDecoration(
+                        color: colorNeutral2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       width: size.width * 0.6,
                       height: 10,
                     ),
