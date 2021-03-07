@@ -95,8 +95,10 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
           setState(() {
             uploading = false;
           });
-          addClockInSF();
-          _buildPopupDialog(context);
+          addClockInSF(); 
+          showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => _buildPopupDialog(context));
           // timer(mContext);
           // Navigator.pop(context);
           //Navigator.pop(context);
@@ -207,6 +209,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
         CupertinoDialogAction(
             child: Text("OK"),
             onPressed: () {
+              print("PUSH");
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => ScreenTab()));
             })

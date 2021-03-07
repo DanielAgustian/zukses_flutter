@@ -151,12 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
 
                       print("Masuk sini ! $isClockIn");
-                      // show confirm dialog success clock in
-                      showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              _buildPopupDialog(context));
                     } else if (state is AttendanceStateSuccessClockOut) {
+                      print("clock out");
                       int counter = 2;
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
@@ -866,73 +862,26 @@ class _HomeScreenState extends State<HomeScreen> {
     Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
-        dialogText + " Success!",
+        "Clock Out Success!",
       ),
       content: new Text("This is my content"),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text("OK"),
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-              if (dialogText == "Clock Out") {
-                disposeSF();
-                setState(() {
-                  //dialogText = "Clock In";
-                  stringTap = "You have finished workday!";
-                });
-                String timeClockOut = getSystemTime();
-                print(timeClockOut);
-
-                //Navigator.of(buildContext1, rootNavigator: true).pop();
-                if (buildContext2 != null) {
-                  Navigator.of(buildContext2, rootNavigator: true).pop();
-                }
-              }
-            })
-      ],
-    );
-    /*AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            dialogText + " Success!",
-            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20),
-        ],
-      ),
-      actions: <Widget>[
-        LongButton(
-          size: sizeDialog,
-          bgColor: colorBackground,
-          textColor: colorPrimary,
-          title: "OK",
-          onClick: () {
-            Navigator.of(context, rootNavigator: true).pop();
-
-            if (dialogText == "Clock Out") {
+              Navigator.pop(context);
+              // if (dialogText == "Clock Out") {
               disposeSF();
               setState(() {
                 //dialogText = "Clock In";
-                stringTap = "You have finished workday!";
+                stringTap = "Have a nice day !";
               });
               String timeClockOut = getSystemTime();
               print(timeClockOut);
-
-              //Navigator.of(buildContext1, rootNavigator: true).pop();
-              if (buildContext2 != null) {
-                Navigator.of(buildContext2, rootNavigator: true).pop();
-              }
-            }
-          },
-        ),
+              // }
+            })
       ],
-    );*/
+    );
   }
 
   // Clock Out Step 1========================================
@@ -989,7 +938,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "No, I Clocked  Out On Time",
               onClick: () {
                 dialogText = "Clock Out";
-                Navigator.pop(this.context);
+                Navigator.pop(context);
                 clockOut();
               },
             ),
@@ -1116,11 +1065,11 @@ class _HomeScreenState extends State<HomeScreen> {
     timeCalculation(0);
     String timeClockIn = getSystemTime();
     print("Clock In Pegawai:" + timeClockIn);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => _buildPopupDialog(context));
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   await showDialog<String>(
+    //       context: context,
+    //       builder: (BuildContext context) => _buildPopupDialog(context));
+    // });
     // } else if (clockIn == 0) {
     //   print("Init Data");
     // } else {
