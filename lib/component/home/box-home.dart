@@ -21,8 +21,10 @@ class BoxHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    double padding = size.width * 0.07;
     return Container(
-      width: (MediaQuery.of(context).size.width) / 2 - 30,
+      width: (MediaQuery.of(context).size.width) / 2.21 - padding,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
           color: Colors.white,

@@ -7,13 +7,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class ListTaskDetail2 extends StatelessWidget {
   ListTaskDetail2({
     Key key,
+    @required this.size,
     this.title,
     this.detail,
     this.date,
     this.hour,
-    this.index,
+    this.index = 1,
   }) : super(key: key);
-
+  final Size size;
   final String title, detail, date, hour;
   final int index;
 
@@ -22,6 +23,7 @@ class ListTaskDetail2 extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: Container(
+            width: size.width * 0.8,
             padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
             decoration: BoxDecoration(
                 color: colorBackground,
@@ -62,14 +64,12 @@ class ListTaskDetail2 extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: colorPrimary),
                         ),
-                        index < 1
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 3),
-                                child: Text(detail,
-                                    style: TextStyle(
-                                        fontSize: 11, color: colorPrimary50)),
-                              )
-                            : Container(),
+                        Padding(
+                          padding: EdgeInsets.only(top: 3),
+                          child: Text(detail,
+                              style: TextStyle(
+                                  fontSize: 11, color: colorPrimary50)),
+                        ),
                         SizedBox(
                           height: 10,
                         ),

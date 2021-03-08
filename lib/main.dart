@@ -62,6 +62,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Zukses: Application for Office',
         theme: ThemeData(
+          scaffoldBackgroundColor: colorBackground,
           fontFamily: 'Lato',
         ),
         // locale: DevicePreview.locale(context), // Add the locale here
