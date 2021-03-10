@@ -43,7 +43,7 @@ class UserInvitationItem extends StatelessWidget {
           ),
           Container(
             child: Checkbox(
-                value: true,
+                value: val,
                 activeColor: colorClear,
                 checkColor: Colors.white,
                 onChanged: (value) {

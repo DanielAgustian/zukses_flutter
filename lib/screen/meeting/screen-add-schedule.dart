@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/API/meeting-services.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,6 +10,7 @@ import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   @override
@@ -28,9 +30,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   DateTime date = DateTime.now();
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
-
+  List<UserModel> listUser = [];
   // Dropdown menu
-  List<String> items = ["Never", "Once", "1 Day Before"];
+  List<String> items = [
+    "Never",
+    "Everyday",
+    "Weekly",
+    "Every Two Weeks",
+    "Every Year"
+  ];
   String repeat = "Never";
 
   // Dragable scroll controller
@@ -130,9 +138,16 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     }
   }
 
+  Future<void> getListUser() async {
+    listUser = await MeetingServicesHTTP().fetchUserData();
+    print(listUser.length);
+  }
+
   @override
   void initState() {
     super.initState();
+
+    getListUser();
     _controller = AnimationController(vsync: this, duration: _duration);
 
     // Handle view of `time2` on condition auto set 30 minutes after `time1`
@@ -399,7 +414,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   }
 
   Widget scrollerSheet() {
-    bool temp = false;
+    bool temp = true;
     return SizedBox.expand(
       child: SlideTransition(
         position: _tween.animate(_controller),
@@ -490,14 +505,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                   Expanded(
                     child: ListView.builder(
                       controller: scrollController,
-                      itemCount: 5,
+                      itemCount: listUser.length,
                       itemBuilder: (BuildContext context, int index) {
                         return UserInvitationItem(
                           val: temp,
-                          title: "User $index",
+                          title: listUser[index].name,
                           checkboxCallback: (val) {
+                            val = !val;
+                            temp = !temp;
                             print(val);
-                            temp = val;
                           },
                         );
                       },
