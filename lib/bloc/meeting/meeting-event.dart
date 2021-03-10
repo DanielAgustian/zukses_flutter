@@ -17,8 +17,8 @@ class AddMeetingEvent extends MeetingEvent {
 // Load all Meeting data
 class LoadAllMeetingEvent extends MeetingEvent {
   // get meeting data by user id ? or token ?
-  final String id;
-  LoadAllMeetingEvent({this.id});
+  final String token;
+  LoadAllMeetingEvent({this.token});
   List<Object> get props => [];
 }
 

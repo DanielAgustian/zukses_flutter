@@ -1,3 +1,5 @@
+import 'package:zukses_app_1/model/user-model.dart';
+
 class ScheduleModel {
   String meetingID,
       title,
@@ -7,6 +9,7 @@ class ScheduleModel {
       accepted,
       reason;
   DateTime date;
+  List<UserModel> members;
   List<String> userID;
   //String status;
   ScheduleModel(
@@ -31,6 +34,7 @@ class ScheduleModel {
     map["userID"] = schedule.userID;
     map["accepted"] = schedule.accepted;
     map["rejectedReason"] = schedule.reason;
+    map["members"] = schedule.members;
     return map;
   }
 
@@ -44,5 +48,6 @@ class ScheduleModel {
     this.userID = map["userID"];
     this.accepted = map["accepted"];
     this.reason = map["rejectedReason"];
+    this.members = map["members"];
   }
 }

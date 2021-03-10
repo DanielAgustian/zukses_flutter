@@ -70,9 +70,9 @@ class _MeetingScreenState extends State<MeetingScreen>
   }
 
   void postHTTPdemo() async {
-    List<ScheduleModel> scheduleModel =
+    ScheduleModel scheduleModel =
         await MeetingServicesHTTP().fetchScheduleDetail("3");
-    print(scheduleModel[0].title);
+    print(scheduleModel.title);
   }
 
   @override
