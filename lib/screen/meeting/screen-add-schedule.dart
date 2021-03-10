@@ -8,6 +8,9 @@ import 'package:zukses_app_1/API/user-data-services.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,7 +18,9 @@ import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   @override
@@ -36,7 +41,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
   List<UserModel> listUser = [];
-  List choosedUser = [];
+  List<String> choosedUser = [];
 
   // Dropdown menu
   List<String> items = [
@@ -148,12 +153,38 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     }
   }
 
-  Future<void> getListUser() async {
-    listUser = await UserDataServiceHTTP().fetchEmployeeData();
-    // for (var i = 0; i < listUser.length; i++) {
-    //   checklist.add(false);
-    // }
-    print(listUser.length);
+  void addMeeting() {
+    if (textTitle.text == "") {
+      setState(() {
+        _titleValidator = true;
+      });
+    } else {
+      setState(() {
+        _titleValidator = false;
+      });
+    }
+    if (textDescription.text == "") {
+      setState(() {
+        _descriptionValidator = true;
+      });
+    } else {
+      setState(() {
+        _descriptionValidator = false;
+      });
+    }
+
+    if (!_descriptionValidator && !_titleValidator) {
+      ScheduleModel meeting = ScheduleModel(
+          title: textTitle.text,
+          description: textDescription.text,
+          date: date,
+          repeat: repeat,
+          userID: choosedUser);
+
+      // call event to add meeting
+      BlocProvider.of<MeetingBloc>(context)
+          .add(AddMeetingEvent(model: meeting));
+    }
   }
 
   @override
@@ -228,9 +259,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           actions: [
             Center(
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
+                onTap: addMeeting,
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
@@ -246,185 +275,215 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           ],
         ),
         backgroundColor: colorBackground,
-        body: SizedBox.expand(
-          child: Stack(
-            children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                color: colorBackground,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            border: _titleValidator
-                                ? Border.all(color: colorError)
-                                : Border.all(color: Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.streetAddress,
-                          onChanged: (val) {},
-                          controller: textTitle,
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 20),
-                              hintText: "Title",
-                              hintStyle: TextStyle(
-                                color: _titleValidator
-                                    ? colorError
-                                    : colorNeutral1,
-                              ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
+        body: Stack(
+          children: [
+            // Listener for success add meeting
+            BlocListener<MeetingBloc, MeetingState>(
+              listener: (context, state) {
+                if (state is MeetingStateSuccess) {
+                  Navigator.pop(context);
+                } else if (state is MeetingStateFail) {
+                  Util().showToast(
+                      msg: "Something Wrong !",
+                      color: colorError,
+                      context: this.context,
+                      txtColor: colorBackground);
+                }
+              },
+              child: Container(),
+            ),
+            //
+            Container(
+              padding: EdgeInsets.all(20),
+              color: colorBackground,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                          border: _titleValidator
+                              ? Border.all(color: colorError)
+                              : Border.all(color: Colors.transparent),
+                          color: colorBackground,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 0),
+                                color: Color.fromRGBO(240, 239, 242, 1),
+                                blurRadius: 15),
+                          ],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: TextFormField(
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.streetAddress,
+                        onChanged: (val) {},
+                        controller: textTitle,
+                        decoration: InputDecoration(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 20),
+                            hintText: "Title",
+                            hintStyle: TextStyle(
+                              color:
+                                  _titleValidator ? colorError : colorNeutral1,
+                            ),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none),
                       ),
-                      SizedBox(
-                        height: 10,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: _descriptionValidator
+                              ? Border.all(color: colorError)
+                              : Border.all(color: Colors.transparent),
+                          color: colorBackground,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 0),
+                                color: Color.fromRGBO(240, 239, 242, 1),
+                                blurRadius: 15),
+                          ],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: TextFormField(
+                        maxLines: 8,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.text,
+                        onChanged: (val) {},
+                        controller: textDescription,
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(20),
+                            hintText: "Description",
+                            hintStyle: TextStyle(
+                              color: _descriptionValidator
+                                  ? colorError
+                                  : colorNeutral1,
+                            ),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: _descriptionValidator
-                                ? Border.all(color: colorError)
-                                : Border.all(color: Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          maxLines: 8,
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {},
-                          controller: textDescription,
-                          decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(20),
-                              hintText: "Description",
-                              hintStyle: TextStyle(
-                                color: _descriptionValidator
-                                    ? colorError
-                                    : colorNeutral1,
-                              ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          _selectDate(this.context);
-                        },
-                        child: AddScheduleRow(
-                          fontSize: size.height <= 569 ? 14 : 16,
-                          title: "Date",
-                          textItem: "${formater.format(date)}",
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          pickTime(this.context, index: 2);
-                          pickTime(this.context);
-                        },
-                        child: AddScheduleRow(
-                          fontSize: size.height <= 569 ? 14 : 16,
-                          title: "Time",
-                          textItem: "$h1.$m1 - $h2.$m2",
-                        ),
-                      ),
-                      AddScheduleRow2(
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _selectDate(this.context);
+                      },
+                      child: AddScheduleRow(
                         fontSize: size.height <= 569 ? 14 : 16,
-                        title: "Repeat",
-                        textItem: repeat,
-                        items: items,
-                        onSelectedItem: (val) {
-                          print(val);
-                          setState(() {
-                            repeat = val;
-                          });
-                        },
+                        title: "Date",
+                        textItem: "${formater.format(date)}",
                       ),
-                      SizedBox(
-                        height: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        pickTime(this.context, index: 2);
+                        pickTime(this.context);
+                      },
+                      child: AddScheduleRow(
+                        fontSize: size.height <= 569 ? 14 : 16,
+                        title: "Time",
+                        textItem: "$h1.$m1 - $h2.$m2",
                       ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Invite",
-                          style: TextStyle(
-                              fontSize: size.height <= 569 ? 14 : 16,
-                              color: colorPrimary),
-                        ),
+                    ),
+                    AddScheduleRow2(
+                      fontSize: size.height <= 569 ? 14 : 16,
+                      title: "Repeat",
+                      textItem: repeat,
+                      items: items,
+                      onSelectedItem: (val) {
+                        print(val);
+                        setState(() {
+                          repeat = val;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Invite",
+                        style: TextStyle(
+                            fontSize: size.height <= 569 ? 14 : 16,
+                            color: colorPrimary),
                       ),
-                      SizedBox(
-                        height: 10,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    LongButtonIcon(
+                      size: size,
+                      title: "Add Invitation",
+                      bgColor: colorBackground,
+                      textColor: colorPrimary,
+                      iconWidget: FaIcon(
+                        FontAwesomeIcons.plusCircle,
+                        color: colorPrimary,
                       ),
-                      LongButtonIcon(
-                        size: size,
-                        title: "Add Invitation",
-                        bgColor: colorBackground,
-                        textColor: colorPrimary,
-                        iconWidget: FaIcon(
-                          FontAwesomeIcons.plusCircle,
-                          color: colorPrimary,
-                        ),
-                        onClick: () {
-                          if (_controller.isDismissed)
-                            _controller.forward();
-                          else if (_controller.isCompleted)
-                            _controller.reverse();
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: 8,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                          ),
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: colorSecondaryRed,
-                                  radius: size.height <= 569 ? 20 : 30,
-                                ),
-                                Text(
-                                  "Done",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: colorPrimary,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                      onClick: () {
+                        if (_controller.isDismissed)
+                          _controller.forward();
+                        else if (_controller.isCompleted) _controller.reverse();
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    BlocBuilder<EmployeeBloc, EmployeeState>(
+                      builder: (context, state) {
+                        if (state is EmployeeStateSuccessLoad) {
+                          return Container(
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: state.employees.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                              ),
+                              itemBuilder: (context, index) {
+                                // If user has been choos attendance
+
+                                if (choosedUser.length != 0) {
+                                  for (var i = 0; i < choosedUser.length; i++) {
+                                    if (state.employees[index].userID ==
+                                        choosedUser[i]) {
+                                      return Column(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor: colorSecondaryRed,
+                                            radius:
+                                                size.height <= 569 ? 20 : 30,
+                                          ),
+                                          Text(
+                                            "Done",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: colorPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  }
+                                }
+                                return SizedBox();
+                              },
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    )
+                  ],
                 ),
               ),
-              scrollerSheet(),
-            ],
-          ),
+            ),
+            scrollerSheet(),
+          ],
         ),
       ),
     );
