@@ -931,7 +931,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "Yes, I need Overtime Pay",
               onClick: () {
                 timeCalculation(1);
-                if (statusOvertime == "No") {
+                Navigator.pop(context);
+                if (statusOvertime != "No") {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
@@ -940,6 +941,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     dialogText = "Clock Out";
                   });
+
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
@@ -1054,10 +1056,8 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 dialogText = "Clock Out";
               });
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      _buildPopupDialog(context));
+              clockOut();
+              Navigator.pop(context);
             },
           ),
         ],

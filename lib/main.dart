@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/API/attendance-services.dart';
+
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
@@ -61,6 +61,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Zukses: Application for Office',
         theme: ThemeData(
+          scaffoldBackgroundColor: colorBackground,
           fontFamily: 'Lato',
         ),
         // locale: DevicePreview.locale(context), // Add the locale here

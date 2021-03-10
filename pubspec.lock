@@ -7,14 +7,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
-  autocomplete_textfield:
-    dependency: "direct main"
-    description:
-      name: autocomplete_textfield
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.7.3"
+    version: "2.5.0-nullsafety.1"
   bloc:
     dependency: transitive
     description:
@@ -112,7 +105,18 @@ packages:
       name: device_preview
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "0.4.7"
+=======
+    version: "0.5.5"
+  drag_and_drop_lists:
+    dependency: "direct main"
+    description:
+      name: drag_and_drop_lists
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.10"
+>>>>>>> 6c3401c8f0e0d320ac67bf8b3509d3581f008e15
   equatable:
     dependency: "direct main"
     description:
