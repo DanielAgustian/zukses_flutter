@@ -32,7 +32,7 @@ class UserInvitationItem extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  title,
+                  "$title",
                   style: TextStyle(
                     fontSize: 16,
                     color: colorPrimary,

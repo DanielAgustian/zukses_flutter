@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
@@ -24,7 +26,7 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = BlocObserver();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
 
   // check is user have been login
   String token;
@@ -57,7 +59,13 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<UserDataBloc>(
           create: (context) => UserDataBloc(),
-        )
+        ),
+        BlocProvider<EmployeeBloc>(
+          create: (context) => EmployeeBloc(),
+        ),
+        BlocProvider<MeetingBloc>(
+          create: (context) => MeetingBloc(),
+        ),
       ],
       child: MaterialApp(
         title: 'Zukses: Application for Office',
@@ -65,8 +73,8 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: colorBackground,
           fontFamily: 'Lato',
         ),
-        // locale: DevicePreview.locale(context), // Add the locale here
-        // builder: DevicePreview.appBuilder, // Add the builder here
+        locale: DevicePreview.locale(context), // Add the locale here
+        builder: DevicePreview.appBuilder, // Add the builder here
         home: token != null
             ? ScreenTab()
             : MyHomePage(title: 'Flutter Demo Home Page'),

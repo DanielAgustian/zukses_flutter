@@ -2,11 +2,11 @@ class ScheduleModel {
   String meetingID,
       title,
       description,
-      date,
       repeat,
       meetingEndTime,
       accepted,
       reason;
+  DateTime date;
   List<String> userID;
   //String status;
   ScheduleModel(
@@ -38,7 +38,7 @@ class ScheduleModel {
     this.meetingID = map["scheduleId"].toString();
     this.title = map["title"];
     this.description = map["description"];
-    this.date = map["date"].toString();
+    this.date = map["date"];
     this.meetingEndTime = map["meetingEndTime"].toString();
     this.repeat = map["repeat"];
     this.userID = map["userID"];
