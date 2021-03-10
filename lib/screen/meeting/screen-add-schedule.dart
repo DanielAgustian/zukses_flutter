@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/API/meeting-services.dart';
+import 'package:zukses_app_1/API/user-data-services.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,6 +32,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
   List<UserModel> listUser = [];
+
+  // handle for checklist user
+  List<bool> checklist = [];
   // Dropdown menu
   List<String> items = [
     "Never",
@@ -139,7 +143,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   }
 
   Future<void> getListUser() async {
-    listUser = await MeetingServicesHTTP().fetchUserData();
+    listUser = await UserDataServiceHTTP().fetchEmployeeData();
+    for (var i = 0; i < listUser.length; i++) {
+      checklist.add(false);
+    }
     print(listUser.length);
   }
 
@@ -508,12 +515,13 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       itemCount: listUser.length,
                       itemBuilder: (BuildContext context, int index) {
                         return UserInvitationItem(
-                          val: temp,
+                          val: checklist[index],
                           title: listUser[index].name,
                           checkboxCallback: (val) {
-                            val = !val;
-                            temp = !temp;
-                            print(val);
+                            setState(() {
+                              checklist[index] = !checklist[index];
+                            });
+                            print(checklist[index]);
                           },
                         );
                       },

@@ -31,9 +31,10 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
 
-  runApp(MyApp(
-    token: token,
-  ));
+  runApp(DevicePreview(
+      builder: (context) => MyApp(
+            token: token,
+          )));
 }
 
 class MyApp extends StatelessWidget {
@@ -64,8 +65,8 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: colorBackground,
           fontFamily: 'Lato',
         ),
-        // locale: DevicePreview.locale(context), // Add the locale here
-        // builder: DevicePreview.appBuilder, // Add the builder here
+        locale: DevicePreview.locale(context), // Add the locale here
+        builder: DevicePreview.appBuilder, // Add the builder here
         home: token != null
             ? ScreenTab()
             : MyHomePage(title: 'Flutter Demo Home Page'),

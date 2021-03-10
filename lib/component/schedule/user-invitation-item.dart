@@ -16,6 +16,7 @@ class UserInvitationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(title);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -32,7 +33,7 @@ class UserInvitationItem extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  title,
+                  "$title",
                   style: TextStyle(
                     fontSize: 16,
                     color: colorPrimary,
