@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
@@ -57,7 +58,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<UserDataBloc>(
           create: (context) => UserDataBloc(),
-        )
+        ),
+        BlocProvider<EmployeeBloc>(
+          create: (context) => EmployeeBloc(),
+        ),
       ],
       child: MaterialApp(
         title: 'Zukses: Application for Office',

@@ -1,9 +1,13 @@
 import 'dart:ui';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/API/meeting-services.dart';
 import 'package:zukses_app_1/API/user-data-services.dart';
+import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
+import 'package:zukses_app_1/bloc/employee/employee-event.dart';
+import 'package:zukses_app_1/bloc/employee/employee-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -32,9 +36,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
   List<UserModel> listUser = [];
+  List choosedUser = [];
 
-  // handle for checklist user
-  List<bool> checklist = [];
   // Dropdown menu
   List<String> items = [
     "Never",
@@ -49,6 +52,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
+
+  //INIT Employee BLOC
+  EmployeeBloc _employeeBloc;
 
   // Handle if user click back using button in device not in app (usually for android)
   Future<bool> _onWillPop({size}) async {
@@ -144,9 +150,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
 
   Future<void> getListUser() async {
     listUser = await UserDataServiceHTTP().fetchEmployeeData();
-    for (var i = 0; i < listUser.length; i++) {
-      checklist.add(false);
-    }
+    // for (var i = 0; i < listUser.length; i++) {
+    //   checklist.add(false);
+    // }
     print(listUser.length);
   }
 
@@ -154,7 +160,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   void initState() {
     super.initState();
 
-    getListUser();
+    // getListUser();
+    // init employee bloc
+    _employeeBloc = BlocProvider.of<EmployeeBloc>(context);
+    _employeeBloc.add(LoadAllEmployeeEvent());
+
     _controller = AnimationController(vsync: this, duration: _duration);
 
     // Handle view of `time2` on condition auto set 30 minutes after `time1`
@@ -509,23 +519,39 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                   SizedBox(
                     height: 10,
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: listUser.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return UserInvitationItem(
-                          val: checklist[index],
-                          title: listUser[index].name,
-                          checkboxCallback: (val) {
-                            setState(() {
-                              checklist[index] = !checklist[index];
-                            });
-                            print(checklist[index]);
-                          },
+                  BlocBuilder<EmployeeBloc, EmployeeState>(
+                    builder: (context, state) {
+                      if (state is EmployeeStateSuccessLoad) {
+                        return Expanded(
+                          child: ListView.builder(
+                            controller: scrollController,
+                            itemCount: state.employees.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return UserInvitationItem(
+                                val: state.checklist[index],
+                                title: state.employees[index].name,
+                                checkboxCallback: (val) {
+                                  setState(() {
+                                    state.checklist[index] =
+                                        !state.checklist[index];
+
+                                    if (state.checklist[index]) {
+                                      choosedUser
+                                          .add(state.employees[index].userID);
+                                    } else {
+                                      choosedUser.remove(
+                                          state.employees[index].userID);
+                                    }
+                                  });
+                                  print(choosedUser.length);
+                                },
+                              );
+                            },
+                          ),
                         );
-                      },
-                    ),
+                      } else {}
+                      return Container();
+                    },
                   ),
                 ],
               ),

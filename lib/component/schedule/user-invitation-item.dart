@@ -16,7 +16,6 @@ class UserInvitationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(title);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 6),
       child: Row(
