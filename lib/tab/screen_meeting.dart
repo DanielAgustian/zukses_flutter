@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/API/meeting-services.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
@@ -67,10 +69,21 @@ class _MeetingScreenState extends State<MeetingScreen>
     timer();
   }
 
+  void postHTTPdemo() async {
+    List<ScheduleModel> scheduleModel =
+        await MeetingServicesHTTP().fetchScheduleDetail("3");
+    print(scheduleModel[0].title);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            postHTTPdemo();
+          },
+        ),
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
