@@ -47,8 +47,6 @@ class MeetingServicesHTTP {
       'userId': userID
     };
 
-    print(jsonEncode(data));
-
     final response = await http.post(
       Uri.https(baseURI, '/api/schedule/create'),
       headers: <String, String>{
