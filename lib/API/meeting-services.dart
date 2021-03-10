@@ -50,7 +50,7 @@ class MeetingServicesHTTP {
         'description': description,
         'date': date.toString(),
         'repeat': repeat,
-        'userId': userID.toString()
+        'userId': jsonEncode(userID)
       }),
     );
     print(response.statusCode.toString());
