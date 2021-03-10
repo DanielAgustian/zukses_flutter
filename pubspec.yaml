@@ -36,7 +36,7 @@ dependencies:
   path:
   toast:
   shared_preferences:
-  device_preview:
+  device_preview: ^0.6.2-beta
   timer_builder:
   skeleton_text:
   flutter_slidable:
