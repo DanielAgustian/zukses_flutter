@@ -32,6 +32,7 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen>
     with TickerProviderStateMixin {
   DateTime _selectedDate;
+  ScheduleModel scheduleClick = ScheduleModel();
   // List<AbsenceTime> absensiList = dummy;
   int week;
   DateTime _currentDate = DateTime.now();
@@ -75,6 +76,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
+    //scheduleClick.title = "";
     _meetingBloc = BlocProvider.of<MeetingBloc>(context);
     _meetingBloc.add(LoadAllMeetingEvent());
     _selectedDate = _currentDate;
@@ -290,15 +292,17 @@ class _MeetingScreenState extends State<MeetingScreen>
                                               state.meetings[index].date),
                                           time2: util.hourFormat(state
                                               .meetings[index].meetingEndTime),
+                                          meetingId:
+                                              state.meetings[index].meetingID,
                                           onClick: () {
                                             if (_controller.isDismissed) {
                                               setState(() {
                                                 meetingID = state
                                                     .meetings[index].meetingID;
+                                                scheduleClick =
+                                                    state.meetings[index];
                                               });
-                                              _meetingBloc.add(
-                                                  LoadDetailMeetingEvent(
-                                                      meetingID: meetingID));
+
                                               _controller.forward();
                                             } else if (_controller.isCompleted)
                                               _controller.reverse();
@@ -351,10 +355,10 @@ class _MeetingScreenState extends State<MeetingScreen>
                                           setState(() {
                                             meetingID =
                                                 state.meetings[index].meetingID;
+                                            scheduleClick =
+                                                state.meetings[index];
                                           });
-                                          _meetingBloc.add(
-                                              LoadDetailMeetingEvent(
-                                                  meetingID: meetingID));
+
                                           _controller.forward();
                                         } else if (_controller.isCompleted)
                                           _controller.reverse();
@@ -364,7 +368,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                           ))
                         ],
                       )),
-                showDraggableSheet(size),
+                showDraggableSheet(size, scheduleClick),
               ],
             );
           } else if (state is MeetingStateFailLoad) {
@@ -376,166 +380,160 @@ class _MeetingScreenState extends State<MeetingScreen>
   }
 
   // Dragabble Scroll sheet
-  Widget showDraggableSheet(Size size) {
-    return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
-      if (state is MeetingStateDetailSuccessLoad) {
-        return SizedBox.expand(
-          child: SlideTransition(
-            position: _tween.animate(_controller),
-            child: Container(
-              child: DraggableScrollableSheet(
-                maxChildSize: 0.8,
-                initialChildSize: 0.8,
-                minChildSize: 0.6,
-                builder:
-                    (BuildContext context, ScrollController scrollController) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                    decoration: BoxDecoration(
-                        boxShadow: [BoxShadow(blurRadius: 15)],
-                        color: colorBackground,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    child: Stack(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: size.height * 0.26),
-                          child: ListView(
-                            controller: scrollController,
+  Widget showDraggableSheet(Size size, ScheduleModel scheduleModel) {
+    return SizedBox.expand(
+      child: SlideTransition(
+        position: _tween.animate(_controller),
+        child: Container(
+          child: DraggableScrollableSheet(
+            maxChildSize: 0.8,
+            initialChildSize: 0.8,
+            minChildSize: 0.6,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                decoration: BoxDecoration(
+                    boxShadow: [BoxShadow(blurRadius: 15)],
+                    color: colorBackground,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                child: Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: size.height * 0.26),
+                      child: ListView(
+                        controller: scrollController,
+                        children: [
+                          Column(
                             children: [
-                              Column(
-                                children: [
-                                  ...dummy.map((item) => Container(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 6),
-                                        child: Row(
-                                          children: [
-                                            UserAvatar(
-                                              avatarRadius:
-                                                  size.height <= 570 ? 15 : 20,
-                                              dotSize:
-                                                  size.height <= 570 ? 8 : 10,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              "User (status)",
-                                              style: TextStyle(
-                                                fontSize: size.height <= 570
-                                                    ? 14
-                                                    : 16,
-                                                color: colorPrimary,
-                                              ),
-                                            ),
-                                          ],
+                              ...dummy.map((item) => Container(
+                                    padding: EdgeInsets.symmetric(vertical: 6),
+                                    child: Row(
+                                      children: [
+                                        UserAvatar(
+                                          avatarRadius:
+                                              size.height <= 570 ? 15 : 20,
+                                          dotSize: size.height <= 570 ? 8 : 10,
                                         ),
-                                      )),
-                                ],
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "User (status)",
+                                          style: TextStyle(
+                                            fontSize:
+                                                size.height <= 570 ? 14 : 16,
+                                            color: colorPrimary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          LongButton(
+                            size: size,
+                            bgColor: colorPrimary,
+                            textColor: colorBackground,
+                            title: "Accept",
+                            onClick: () {},
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          LongButtonOutline(
+                            outlineColor: colorError,
+                            size: size,
+                            bgColor: colorBackground,
+                            textColor: colorError,
+                            title: "Reject",
+                            onClick: () {},
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: size.height * 0.25,
+                      color: colorBackground,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                scheduleModel.title == null
+                                    ? "Schedule Not Get"
+                                    : scheduleModel.title,
+                                style: TextStyle(
+                                    fontSize: size.height <= 570 ? 18 : 20,
+                                    color: colorPrimary,
+                                    fontWeight: FontWeight.w700),
                               ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              LongButton(
-                                size: size,
-                                bgColor: colorPrimary,
-                                textColor: colorBackground,
-                                title: "Accept",
-                                onClick: () {},
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              LongButtonOutline(
-                                outlineColor: colorError,
-                                size: size,
-                                bgColor: colorBackground,
-                                textColor: colorError,
-                                title: "Reject",
-                                onClick: () {},
+                              IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.times,
+                                  color: colorPrimary,
+                                ),
+                                onPressed: () {
+                                  _controller.reverse();
+                                  setState(() {
+                                    removeBackgroundDialog =
+                                        !removeBackgroundDialog;
+                                  });
+                                },
                               )
                             ],
                           ),
-                        ),
-                        Container(
-                          height: size.height * 0.25,
-                          color: colorBackground,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Schedule",
-                                    style: TextStyle(
-                                        fontSize: size.height <= 570 ? 18 : 20,
-                                        color: colorPrimary,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.times,
-                                      color: colorPrimary,
-                                    ),
-                                    onPressed: () {
-                                      _controller.reverse();
-                                      setState(() {
-                                        removeBackgroundDialog =
-                                            !removeBackgroundDialog;
-                                      });
-                                    },
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: size.height <= 570 ? 2 : 5,
-                              ),
-                              Text(
-                                "09.00 - 10.00",
-                                style: TextStyle(
-                                  fontSize: size.height <= 570 ? 12 : 14,
-                                  color: colorPrimary50,
-                                ),
-                              ),
-                              SizedBox(
-                                height: size.height <= 570 ? 6 : 10,
-                              ),
-                              Text(
-                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
-                                style: TextStyle(
-                                  fontSize: size.height <= 570 ? 12 : 14,
-                                  color: colorPrimary,
-                                ),
-                              ),
-                              SizedBox(
-                                height: size.height <= 570 ? 10 : 20,
-                              ),
-                              Text(
-                                "Assigned to",
-                                style: TextStyle(
-                                    fontSize: size.height <= 570 ? 12 : 14,
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                          SizedBox(
+                            height: size.height <= 570 ? 2 : 5,
                           ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
+                          Text(
+                            "09.00 - 10.00",
+                            style: TextStyle(
+                              fontSize: size.height <= 570 ? 12 : 14,
+                              color: colorPrimary50,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 6 : 10,
+                          ),
+                          Text(
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
+                            style: TextStyle(
+                              fontSize: size.height <= 570 ? 12 : 14,
+                              color: colorPrimary,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 10 : 20,
+                          ),
+                          Text(
+                            "Assigned to",
+                            style: TextStyle(
+                                fontSize: size.height <= 570 ? 12 : 14,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
           ),
-        );
-      } else if (state is MeetingStateLoading) {
-        return Text("Loading....");
-      } else {
-        return Text("Not Yet");
-      }
-    });
-  }
+        ),
+      ),
+    );
+    //} else if (state is MeetingStateLoading) {
+    //return Text("Loading....");
+    // } else {
+    // return Text("Not Yet");
+    //}
+  } //);
 }

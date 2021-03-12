@@ -31,6 +31,20 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
     }
   }
 
+  Stream<MeetingState> mapDeleteMeeting(DeleteMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    // return list user model
+    var res = await _meetingServicesHTTP.postDeleteSchedule(event.meetingID);
+    print("MapDeleteMeeting Here");
+    print("Delete Meeting Status" + res.toString());
+    // directly throw into success load or fail add
+    if (res == 200) {
+      yield MeetingStateSuccess();
+    } else {
+      yield MeetingStateFail();
+    }
+  }
+
   Stream<MeetingState> mapLoadAllMeeting(LoadAllMeetingEvent event) async* {
     yield MeetingStateLoading();
     var res = await _meetingServicesHTTP.fetchScheduleData();
@@ -70,6 +84,8 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       yield* mapLoadAllMeeting(event);
     } else if (event is LoadDetailMeetingEvent) {
       yield* mapLoadDetailMeeting(event);
+    } else if (event is DeleteMeetingEvent) {
+      yield* mapDeleteMeeting(event);
     }
   }
 }

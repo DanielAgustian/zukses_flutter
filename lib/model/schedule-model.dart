@@ -39,8 +39,8 @@ class ScheduleModel {
     this.description = map["description"];
     this.date = DateTime.parse(map["date"]);
 
+    //this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
     this.meetingEndTime = DateTime.now();
-
     this.repeat = map["repeat"];
     this.userID = map["userID"];
     this.accepted = map["accepted"];

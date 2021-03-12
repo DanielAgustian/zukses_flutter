@@ -36,3 +36,10 @@ class MeetingEventDidUpdated extends MeetingEvent {
   @override
   List<Object> get props => [meeting];
 }
+
+//To delete meeting
+class DeleteMeetingEvent extends MeetingEvent {
+  final String meetingID;
+  DeleteMeetingEvent({this.meetingID});
+  List<Object> get props => [meetingID];
+}

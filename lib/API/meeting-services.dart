@@ -45,7 +45,8 @@ class MeetingServicesHTTP {
       'description': description,
       'date': date.toString(),
       'repeat': repeat,
-      'userId': userID
+      'userId': userID,
+      'endTime': meetingEndTime.toString()
     };
 
     final response = await http.post(
@@ -104,6 +105,7 @@ class MeetingServicesHTTP {
   Future<int> postDeleteSchedule(String meetingID) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+    print(token);
     final response = await http.post(
       Uri.https(baseURI, '/api/schedule/delete'),
       headers: <String, String>{
@@ -115,20 +117,19 @@ class MeetingServicesHTTP {
         'meetingId': meetingID,
       }),
     );
-    print(response.statusCode.toString());
+    print("Meeting ID: " + meetingID.toString());
+    print("postDeleteSchedule: " + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       print("response.body:" + response.body);
-
-      //final schedule = ScheduleModel.fromJson(jsonDecode(response.body));
-      // Save token
       return response.statusCode;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       // throw Exception('Failed to login');
+      print("Data Error");
       return null;
     }
   }
@@ -176,6 +177,7 @@ class MeetingServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
+    print(token);
     print(res.body);
     print(res.statusCode);
     if (res.statusCode == 200) {

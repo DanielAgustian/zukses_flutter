@@ -142,7 +142,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       });
   }
 
-  // pick time function
+  // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
   void pickTime(BuildContext context, {int index = 1}) async {
     TimeOfDay picked = await showTimePicker(
       context: context,
@@ -451,6 +451,16 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         else if (_controller.isCompleted) _controller.reverse();
                       },
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    LongButtonOutline(
+                        size: size,
+                        title: "Delete Meeting",
+                        bgColor: colorBackground,
+                        textColor: colorError,
+                        outlineColor: colorError,
+                        onClick: () {}),
                     SizedBox(
                       height: 10,
                     ),

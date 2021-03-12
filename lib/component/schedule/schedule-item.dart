@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ScheduleItem extends StatelessWidget {
-  const ScheduleItem({
-    Key key,
-    @required this.size,
-    this.title,
-    this.time1,
-    this.time2,
-    this.onClick,
-  }) : super(key: key);
+  const ScheduleItem(
+      {Key key,
+      @required this.size,
+      this.title,
+      this.time1,
+      this.time2,
+      this.onClick,
+      this.meetingId})
+      : super(key: key);
 
   final Size size;
-  final String title;
+  final String title, meetingId;
   final String time1, time2;
   final Function onClick;
 
@@ -100,43 +106,73 @@ class ScheduleItem extends StatelessWidget {
     );
   }
 
+  void deleteData(BuildContext context) {
+    BlocProvider.of<MeetingBloc>(context)
+        .add(DeleteMeetingEvent(meetingID: meetingId));
+  }
+
   Widget _buildPopupClockOut(BuildContext context, {size}) {
-    return new AlertDialog(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            "Are you sure to delete this schedule ?",
-            style: TextStyle(
-                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
-            textAlign: TextAlign.center,
+    return BlocListener<MeetingBloc, MeetingState>(
+        listener: (context, state) {
+          if (state is MeetingStateSuccess) {
+            Util().showToast(
+                context: context,
+                msg: "Data has been deleted",
+                duration: 3,
+                txtColor: colorPrimary,
+                color: colorNeutral1);
+            return Container();
+          } else {
+            Util().showToast(
+                context: context,
+                msg: "Failed to be Deleted",
+                duration: 3,
+                txtColor: colorError,
+                color: colorNeutral1);
+            return Container();
+          }
+        },
+        child: new AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Are you sure to delete this schedule ?",
+                style: TextStyle(
+                    color: colorPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              LongButton(
+                size: size,
+                bgColor: colorPrimary,
+                textColor: colorBackground,
+                title: "Yes ",
+                onClick: () {
+                  //LOGIC
+                  print(meetingId);
+                  deleteData(context);
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              LongButtonOutline(
+                size: size,
+                bgColor: colorBackground,
+                textColor: colorPrimary,
+                outlineColor: colorPrimary,
+                title: "No",
+                onClick: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
-          SizedBox(height: 20),
-          LongButton(
-            size: size,
-            bgColor: colorPrimary,
-            textColor: colorBackground,
-            title: "Yes ",
-            onClick: () {
-              //LOGIC
-            },
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          LongButtonOutline(
-            size: size,
-            bgColor: colorBackground,
-            textColor: colorPrimary,
-            outlineColor: colorPrimary,
-            title: "No",
-            onClick: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }
