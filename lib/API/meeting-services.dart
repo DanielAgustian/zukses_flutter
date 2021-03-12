@@ -164,7 +164,7 @@ class MeetingServicesHTTP {
     }
   }
 
-  Future<List<ScheduleModel>> fetchScheduleDetail(String meetingID) async {
+  Future<ScheduleModel> fetchScheduleDetail(String meetingID) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     var res = await http.get(
@@ -180,9 +180,7 @@ class MeetingServicesHTTP {
       // then parse the JSON.
       print(res.body);
       var responseJson = jsonDecode(res.body);
-      return (responseJson['data'] as List)
-          .map((p) => ScheduleModel.fromJson(p))
-          .toList();
+      return ScheduleModel.fromJson(responseJson['data']);
       //return AllUserModel.fromJson(jsonDecode(res.body)["user"]);
     } else {
       // If the server did not return a 200 OK response,
