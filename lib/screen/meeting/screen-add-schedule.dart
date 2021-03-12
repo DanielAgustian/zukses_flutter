@@ -30,10 +30,13 @@ class AddScheduleScreen extends StatefulWidget {
 class _AddScheduleScreenState extends State<AddScheduleScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController textTitle = new TextEditingController();
-  TextEditingController textSearch = new TextEditingController();
   TextEditingController textDescription = new TextEditingController();
   bool _titleValidator = false;
   bool _descriptionValidator = false;
+
+  // Search controlerr
+  TextEditingController textSearch = new TextEditingController();
+  String searchQuery = "";
 
   // formater for showing date
   final DateFormat formater = DateFormat.yMMMMEEEEd();
@@ -42,6 +45,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   TimeOfDay time2;
   List<UserModel> listUser = [];
   List<String> choosedUser = [];
+
+  // time 1 and time 2
+  DateTime startMeeting;
+  DateTime endMeeting;
 
   // Dropdown menu
   List<String> items = [
@@ -60,6 +67,13 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
 
   //INIT Employee BLOC
   EmployeeBloc _employeeBloc;
+
+  // Search Function
+  void searchFunction(String q) {
+    setState(() {
+      searchQuery = q;
+    });
+  }
 
   // Handle if user click back using button in device not in app (usually for android)
   Future<bool> _onWillPop({size}) async {
@@ -140,16 +154,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     }
 
     if (picked != null) {
-      if (index == 1) {
-        setState(() {
+      setState(() {
+        if (index == 1) {
           time1 = picked;
           time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
-        });
-      } else {
-        setState(() {
+        } else {
           time2 = picked;
-        });
-      }
+        }
+
+        startMeeting =
+            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+        endMeeting =
+            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+      });
     }
   }
 
@@ -173,12 +190,16 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       });
     }
 
-    if (!_descriptionValidator && !_titleValidator) {
+    if (!_descriptionValidator &&
+        !_titleValidator &&
+        startMeeting != null &&
+        endMeeting != null) {
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,
-          date: date,
-          repeat: repeat,
+          date: startMeeting,
+          meetingEndTime: endMeeting,
+          repeat: repeat.toLowerCase(),
           userID: choosedUser);
 
       // call event to add meeting
@@ -439,18 +460,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           return Container(
                             child: GridView.builder(
                               shrinkWrap: true,
-                              itemCount: state.employees.length,
+                              itemCount: choosedUser.length,
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 4,
                               ),
                               itemBuilder: (context, index) {
                                 // If user has been choos attendance
-
                                 if (choosedUser.length != 0) {
-                                  for (var i = 0; i < choosedUser.length; i++) {
-                                    if (state.employees[index].userID ==
-                                        choosedUser[i]) {
+                                  for (var i = 0;
+                                      i < state.employees.length;
+                                      i++) {
+                                    if (state.employees[i].userID ==
+                                        choosedUser[index]) {
                                       return Column(
                                         children: [
                                           CircleAvatar(
@@ -459,7 +481,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                                 size.height <= 569 ? 20 : 30,
                                           ),
                                           Text(
-                                            "Done",
+                                            "${state.employees[i].name}",
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: colorPrimary,
@@ -489,8 +511,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     );
   }
 
+  // Scroller invvitation function
   Widget scrollerSheet() {
-    bool temp = true;
     return SizedBox.expand(
       child: SlideTransition(
         position: _tween.animate(_controller),
@@ -557,9 +579,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         ],
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
-                      textInputAction: TextInputAction.next,
+                      textInputAction: TextInputAction.search,
                       keyboardType: TextInputType.streetAddress,
-                      onChanged: (val) {},
+                      onChanged: (val) {
+                        searchFunction(val);
+                      },
                       controller: textSearch,
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 20),
@@ -581,33 +605,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                   BlocBuilder<EmployeeBloc, EmployeeState>(
                     builder: (context, state) {
                       if (state is EmployeeStateSuccessLoad) {
-                        return Expanded(
-                          child: ListView.builder(
-                            controller: scrollController,
-                            itemCount: state.employees.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return UserInvitationItem(
-                                val: state.checklist[index],
-                                title: state.employees[index].name,
-                                checkboxCallback: (val) {
-                                  setState(() {
-                                    state.checklist[index] =
-                                        !state.checklist[index];
-
-                                    if (state.checklist[index]) {
-                                      choosedUser
-                                          .add(state.employees[index].userID);
-                                    } else {
-                                      choosedUser.remove(
-                                          state.employees[index].userID);
-                                    }
-                                  });
-                                  print(choosedUser.length);
-                                },
-                              );
-                            },
-                          ),
-                        );
+                        return showMember(scrollController, state,
+                            query: searchQuery);
                       } else {}
                       return Container();
                     },
@@ -617,6 +616,66 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             );
           },
         ),
+      ),
+    );
+  }
+
+  // List to show the member
+  Widget showMember(
+      ScrollController scrollController, EmployeeStateSuccessLoad state,
+      {String query}) {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        itemCount: state.employees.length,
+        itemBuilder: (BuildContext context, int index) {
+          if (textSearch.text == "" || textSearch.text == null) {
+            return UserInvitationItem(
+              val: state.checklist[index],
+              title: state.employees[index].name,
+              checkboxCallback: (val) {
+                setState(() {
+                  state.checklist[index] = !state.checklist[index];
+
+                  // If user is checked, add to list choosed User
+                  if (state.checklist[index]) {
+                    choosedUser.add(state.employees[index].userID);
+
+                    // If uncheck, remove from the list
+                  } else {
+                    choosedUser.remove(state.employees[index].userID);
+                  }
+                });
+              },
+            );
+          } else {
+            // Handle for search function
+            if (state.employees[index].name
+                .toLowerCase()
+                .contains(query.toLowerCase())) {
+              return UserInvitationItem(
+                val: state.checklist[index],
+                title: state.employees[index].name,
+                checkboxCallback: (val) {
+                  setState(() {
+                    state.checklist[index] = !state.checklist[index];
+
+                    // If user is checked, add to list choosed User
+                    if (state.checklist[index]) {
+                      choosedUser.add(state.employees[index].userID);
+
+                      // If uncheck, remove from the list
+                    } else {
+                      choosedUser.remove(state.employees[index].userID);
+                    }
+                  });
+                },
+              );
+            }
+          }
+
+          return Container();
+        },
       ),
     );
   }
