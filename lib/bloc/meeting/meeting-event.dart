@@ -22,6 +22,13 @@ class LoadAllMeetingEvent extends MeetingEvent {
   List<Object> get props => [];
 }
 
+class LoadDetailMeetingEvent extends MeetingEvent {
+  final String meetingID;
+
+  LoadDetailMeetingEvent({this.meetingID});
+  List<Object> get props => [];
+}
+
 class MeetingEventDidUpdated extends MeetingEvent {
   final List<ScheduleModel> meeting;
   const MeetingEventDidUpdated(this.meeting);

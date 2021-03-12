@@ -11,6 +11,7 @@ class MeetingServicesHTTP {
   Future<List<UserModel>> fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+
     var res = await http
         .get(Uri.https(baseURI, 'api/all-user'), headers: <String, String>{
       'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ class MeetingServicesHTTP {
   }
 
   Future createSchedule(String title, String description, DateTime date,
-      String repeat, List<String> userID) async {
+      String repeat, List<String> userID, DateTime meetingEndTime) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
 
@@ -86,7 +87,8 @@ class MeetingServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(res.body);
+      //print(res.body);
+      //print(token);
       var responseJson = jsonDecode(res.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
@@ -174,17 +176,19 @@ class MeetingServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
+    print(res.body);
     print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(res.body);
+
       var responseJson = jsonDecode(res.body);
       return ScheduleModel.fromJson(responseJson['data']);
       //return AllUserModel.fromJson(jsonDecode(res.body)["user"]);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
+      print("Failed TO Load Alubm");
       throw Exception('Failed to load album');
     }
   }

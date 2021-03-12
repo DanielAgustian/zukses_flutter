@@ -10,6 +10,17 @@ class Util {
     return formatted;
   }
 
+  String hourFormat(DateTime date) {
+    //var now = new DateTime.now();
+    //print(now.toString);
+    String hour = "";
+    if (date == null) {
+      hour = DateFormat("HH:mm").format(DateTime.now());
+    } else {
+      hour = DateFormat("HH:mm").format(date);
+    }
+    return hour;
+  }
   // void getLocationData() async {
   //   Location location = new Location();
 

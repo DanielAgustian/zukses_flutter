@@ -29,3 +29,16 @@ class MeetingStateSuccessLoad extends MeetingState {
     return 'Data : { Meeting List: $meetings }';
   }
 }
+
+class MeetingStateDetailSuccessLoad extends MeetingState {
+  final ScheduleModel meeting;
+
+  MeetingStateDetailSuccessLoad({this.meeting});
+
+  List<Object> get props => [meeting];
+
+  @override
+  String toString() {
+    return 'Data : { Meeting List: $meeting }';
+  }
+}

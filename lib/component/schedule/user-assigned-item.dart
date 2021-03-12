@@ -18,7 +18,6 @@ class UserAssignedItem extends StatelessWidget {
   final int index;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
         child: Row(

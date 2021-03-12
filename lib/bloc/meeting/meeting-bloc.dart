@@ -20,7 +20,8 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
         event.model.description,
         event.model.date,
         event.model.repeat,
-        event.model.userID);
+        event.model.userID,
+        event.model.meetingEndTime);
 
     // directly throw into success load or fail add
     if (res == 200) {
@@ -30,17 +31,44 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
     }
   }
 
+  Stream<MeetingState> mapLoadAllMeeting(LoadAllMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    var res = await _meetingServicesHTTP.fetchScheduleData();
+
+    if (res != null && res.length > 0) {
+      yield MeetingStateSuccessLoad(meetings: res);
+    } else {
+      yield MeetingStateFailLoad();
+    }
+  }
+
+  Stream<MeetingState> mapLoadDetailMeeting(
+      LoadDetailMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    var res = await _meetingServicesHTTP.fetchScheduleDetail(event.meetingID);
+    print(res);
+    if (res != null) {
+      yield MeetingStateDetailSuccessLoad(meeting: res);
+    } else {
+      yield MeetingStateFailLoad();
+    }
+  }
+
   Stream<MeetingState> mapUpdatingMeetingState(
       MeetingEventDidUpdated event) async* {
     yield MeetingStateSuccessLoad(meetings: event.meeting);
   }
- 
+
   @override
   Stream<MeetingState> mapEventToState(MeetingEvent event) async* {
     if (event is AddMeetingEvent) {
       yield* mapAddMeeting(event);
     } else if (event is MeetingEventDidUpdated) {
       yield* mapUpdatingMeetingState(event);
+    } else if (event is LoadAllMeetingEvent) {
+      yield* mapLoadAllMeeting(event);
+    } else if (event is LoadDetailMeetingEvent) {
+      yield* mapLoadDetailMeeting(event);
     }
   }
 }

@@ -1,14 +1,8 @@
 import 'package:zukses_app_1/model/user-model.dart';
 
 class ScheduleModel {
-  String meetingID,
-      title,
-      description,
-      repeat,
-      meetingEndTime,
-      accepted,
-      reason;
-  DateTime date;
+  String meetingID, title, description, repeat, accepted, reason;
+  DateTime date, meetingEndTime;
   List<UserModel> members;
   List<String> userID;
   //String status;
@@ -42,12 +36,26 @@ class ScheduleModel {
     this.meetingID = map["scheduleId"].toString();
     this.title = map["title"];
     this.description = map["description"];
-    this.date = map["date"];
-    this.meetingEndTime = map["meetingEndTime"].toString();
+    this.date = DateTime.parse(map["date"]);
+
+    this.meetingEndTime = DateTime.now();
+
     this.repeat = map["repeat"];
     this.userID = map["userID"];
     this.accepted = map["accepted"];
     this.reason = map["rejectedReason"];
-    this.members = map["members"];
+
+    this.members = _convertMembers(map["members"]); //List<UserModel>
+  }
+  List<UserModel> _convertMembers(List membersMap) {
+    if (membersMap == null) {
+      return null;
+    }
+    List<UserModel> user = [];
+    membersMap.forEach((value) {
+      user.add(UserModel.fromJson(value));
+    });
+
+    return user;
   }
 }
