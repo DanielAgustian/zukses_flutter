@@ -5,6 +5,7 @@ class ScheduleModel {
   DateTime date, meetingEndTime;
   List<UserModel> members;
   List<String> userID;
+
   //String status;
   ScheduleModel(
       {this.meetingID,
@@ -24,7 +25,7 @@ class ScheduleModel {
     map["description"] = schedule.description;
     map["date"] = schedule.date;
     map["repeat"] = schedule.repeat;
-    map["meetingEndTime"] = schedule.meetingEndTime;
+    map["endTime"] = schedule.meetingEndTime;
     map["userID"] = schedule.userID;
     map["accepted"] = schedule.accepted;
     map["rejectedReason"] = schedule.reason;

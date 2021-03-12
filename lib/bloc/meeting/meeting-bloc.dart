@@ -46,8 +46,9 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       LoadDetailMeetingEvent event) async* {
     yield MeetingStateLoading();
     var res = await _meetingServicesHTTP.fetchScheduleDetail(event.meetingID);
-    print(res);
+
     if (res != null) {
+      print("MeetingStateDetailSuccessLoad");
       yield MeetingStateDetailSuccessLoad(meeting: res);
     } else {
       yield MeetingStateFailLoad();

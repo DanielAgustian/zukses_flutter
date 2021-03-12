@@ -93,7 +93,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
-
+          uploading = false;
           showDialog(
               context: context,
               builder: (BuildContext context) => _buildPopupDialog(mContext));

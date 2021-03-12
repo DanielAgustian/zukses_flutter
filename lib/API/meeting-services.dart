@@ -66,7 +66,7 @@ class MeetingServicesHTTP {
       // Save token
       return response.statusCode;
     } else {
-      // If the server did not return a 201 CREATED response,
+      // If the server did not return a 200 CREATED response,
       // then throw an exception.
       // throw Exception('Failed to login');
       print(response.body);

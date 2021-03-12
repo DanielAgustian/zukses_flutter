@@ -348,15 +348,14 @@ class _MeetingScreenState extends State<MeetingScreen>
                                           state.meetings[index].meetingEndTime),
                                       onClick: () {
                                         if (_controller.isDismissed) {
-                                          _controller.forward();
-
                                           setState(() {
                                             meetingID =
                                                 state.meetings[index].meetingID;
                                           });
-                                          /*_meetingBloc.add(
+                                          _meetingBloc.add(
                                               LoadDetailMeetingEvent(
-                                                  meetingID: meetingID));*/
+                                                  meetingID: meetingID));
+                                          _controller.forward();
                                         } else if (_controller.isCompleted)
                                           _controller.reverse();
                                       },
