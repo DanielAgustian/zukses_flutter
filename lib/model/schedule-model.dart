@@ -1,12 +1,6 @@
 class ScheduleModel {
-  String meetingID,
-      title,
-      description,
-      repeat,
-      meetingEndTime,
-      accepted,
-      reason;
-  DateTime date;
+  String meetingID, title, description, repeat, accepted, reason;
+  DateTime date, meetingEndTime;
   List<String> userID;
   //String status;
   ScheduleModel(
@@ -27,7 +21,7 @@ class ScheduleModel {
     map["description"] = schedule.description;
     map["date"] = schedule.date;
     map["repeat"] = schedule.repeat;
-    map["meetingEndTime"] = schedule.meetingEndTime;
+    map["endTime"] = schedule.meetingEndTime;
     map["userID"] = schedule.userID;
     map["accepted"] = schedule.accepted;
     map["rejectedReason"] = schedule.reason;
@@ -39,7 +33,7 @@ class ScheduleModel {
     this.title = map["title"];
     this.description = map["description"];
     this.date = map["date"];
-    this.meetingEndTime = map["meetingEndTime"].toString();
+    this.meetingEndTime = map["endTime"];
     this.repeat = map["repeat"];
     this.userID = map["userID"];
     this.accepted = map["accepted"];

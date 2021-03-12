@@ -46,6 +46,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   List<UserModel> listUser = [];
   List<String> choosedUser = [];
 
+  // time 1 and time 2
+  DateTime startMeeting;
+  DateTime endMeeting;
+
   // Dropdown menu
   List<String> items = [
     "Never",
@@ -150,16 +154,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     }
 
     if (picked != null) {
-      if (index == 1) {
-        setState(() {
+      setState(() {
+        if (index == 1) {
           time1 = picked;
           time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
-        });
-      } else {
-        setState(() {
+        } else {
           time2 = picked;
-        });
-      }
+        }
+
+        startMeeting =
+            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+        endMeeting =
+            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+      });
     }
   }
 
@@ -183,12 +190,16 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       });
     }
 
-    if (!_descriptionValidator && !_titleValidator) {
+    if (!_descriptionValidator &&
+        !_titleValidator &&
+        startMeeting != null &&
+        endMeeting != null) {
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,
-          date: date,
-          repeat: repeat,
+          date: startMeeting,
+          meetingEndTime: endMeeting,
+          repeat: repeat.toLowerCase(),
           userID: choosedUser);
 
       // call event to add meeting
