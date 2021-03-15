@@ -1,7 +1,13 @@
 class UserModel {
   String userID, name, email, phone, imgUrl, companyID;
-
-  UserModel({this.userID, this.name, this.email, this.imgUrl, this.companyID});
+  int accepted;
+  UserModel(
+      {this.userID,
+      this.name,
+      this.email,
+      this.imgUrl,
+      this.companyID,
+      this.accepted});
 
   Map<String, dynamic> toJson(UserModel user) {
     var map = Map<String, dynamic>();
@@ -10,7 +16,7 @@ class UserModel {
     map["name"] = user.name;
     map["company_id"] = user.companyID;
     map["imgUrl"] = user.imgUrl;
-
+    map["accepted"] = user.accepted;
     return map;
   }
 
@@ -20,5 +26,6 @@ class UserModel {
     this.name = map["name"];
     this.imgUrl = map["imgUrl"] == null ? "" : map["imgUrl"];
     this.companyID = map["company_id"].toString();
+    this.accepted = map["accepted"] == null ? 100 : map["accepted"];
   }
 }

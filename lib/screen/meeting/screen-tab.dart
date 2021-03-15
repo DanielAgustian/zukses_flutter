@@ -1,14 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/button/button-small-outlined.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ScreenTabRequest extends StatefulWidget {
   const ScreenTabRequest({Key key, this.screen, this.loading = true})
@@ -23,48 +30,73 @@ class ScreenTabRequest extends StatefulWidget {
 
 class _ScreenTabRequestState extends State<ScreenTabRequest>
     with SingleTickerProviderStateMixin {
+  TextEditingController _textReasonReject = TextEditingController();
   // Dragable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
-
+  Util util = Util();
+  ScheduleModel model = ScheduleModel();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    BlocProvider.of<MeetingBloc>(context).add(GetUnresponseMeetingEvent());
     _controller = AnimationController(vsync: this, duration: _duration);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Stack(
-      children: [
-        Container(
-            child: widget.loading
-                ? ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) => SkeletonLess3WithAvatar(
-                          size: size,
-                          row: 2,
-                        ))
-                : ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) => ScheduleItem(
-                        size: size,
-                        onClick: () {
-                          if (_controller.isDismissed)
-                            _controller.forward();
-                          else if (_controller.isCompleted)
-                            _controller.reverse();
-                        },
-                        time1: "08.00",
-                        time2: "09.00",
-                        title: "Schedule title"))),
-        scrollerSheet()
-      ],
-    );
+    return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
+      if (state is MeetingStateSuccessLoad) {
+        int panjang = state.meetings.length;
+        return panjang >= 1
+            ? Stack(
+                children: [
+                  Container(
+                      child: widget.loading
+                          ? ListView.builder(
+                              itemCount: state.meetings.length,
+                              itemBuilder: (context, index) =>
+                                  SkeletonLess3WithAvatar(
+                                    size: size,
+                                    row: 2,
+                                  ))
+                          : ListView.builder(
+                              itemCount: state.meetings.length,
+                              itemBuilder: (context, index) =>
+                                  ScheduleItemRequest(
+                                      date: util.yearFormat(
+                                          state.meetings[index].date),
+                                      size: size,
+                                      onClick: () {
+                                        if (_controller.isDismissed) {
+                                          _controller.forward();
+                                          setState(() {
+                                            model = state.meetings[index];
+                                          });
+                                        } else if (_controller.isCompleted)
+                                          _controller.reverse();
+                                      },
+                                      time1: util.hourFormat(
+                                          state.meetings[index].date),
+                                      time2: util.hourFormat(
+                                          state.meetings[index].meetingEndTime),
+                                      title: state.meetings[index].title))),
+                  scrollerSheet()
+                ],
+              )
+            : Center(
+                child: Text("N0 Meeting For Now"),
+              );
+      } else {
+        return Container();
+      }
+    });
   }
+
+  
 
   Widget scrollerSheet() {
     bool temp = false;
@@ -90,7 +122,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Schedule Title",
+                    model.title,
                     style: TextStyle(
                         fontSize: 20,
                         color: colorPrimary,
@@ -99,7 +131,10 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   SizedBox(
                     height: 5,
                   ),
-                  Text("08.00-09.00",
+                  Text(
+                      util.hourFormat(model.date) +
+                          " - " +
+                          util.hourFormat(model.meetingEndTime),
                       style: TextStyle(
                         fontSize: 16,
                         color: colorNeutral2,
@@ -108,7 +143,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                     height: 10,
                   ),
                   Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ",
+                    model.description,
                     style: TextStyle(
                         fontSize: 14,
                         color: colorPrimary,
@@ -128,10 +163,13 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   Expanded(
                     child: ListView.builder(
                       controller: scrollController,
-                      itemCount: 5,
+                      itemCount: model.members.length,
                       itemBuilder: (BuildContext context, int index) {
                         return UserAssignedItem(
-                            size: size, index: index, status: "Success");
+                            size: size,
+                            name: model.members[index].name,
+                            status:
+                                util.acceptancePrint(model.members[index].accepted));
                       },
                     ),
                   ),
@@ -143,7 +181,13 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                     bgColor: colorPrimary,
                     textColor: colorBackground,
                     title: "Accept",
-                    onClick: () {},
+                    onClick: () {
+                      BlocProvider.of<MeetingBloc>(context).add(
+                          PostAcceptanceMeetingEvent(
+                              meetingId: model.meetingID,
+                              accept: "1",
+                              reason: ""));
+                    },
                   ),
                   SizedBox(
                     height: 5,
@@ -201,7 +245,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
             ]),
             width: double.infinity,
             child: TextFormField(
-              //controller: textReasonOvertime,
+              controller: _textReasonReject,
               keyboardType: TextInputType.multiline,
               minLines: 6,
               maxLines: 6,
@@ -235,7 +279,14 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   textColor: colorPrimary,
                   borderColor: colorPrimary,
                   title: "Confirm",
-                  onClick: () {},
+                  onClick: () {
+                    BlocProvider.of<MeetingBloc>(context).add(
+                        PostAcceptanceMeetingEvent(
+                            meetingId: model.meetingID,
+                            accept: "0",
+                            reason: _textReasonReject.text));
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),

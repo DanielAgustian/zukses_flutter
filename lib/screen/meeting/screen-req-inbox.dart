@@ -1,9 +1,10 @@
-import 'dart:async'; 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/meeting/screen-tab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/screen/meeting/screen-tab2.dart';
 
 class RequestInbox extends StatefulWidget {
   @override
@@ -89,7 +90,7 @@ class _RequestInboxState extends State<RequestInbox>
                   Tab(
                     child: Container(
                       child: Center(
-                        child: Text("Accepted"),
+                        child: Text("Rejected"),
                       ),
                     ),
                   ),
@@ -104,9 +105,9 @@ class _RequestInboxState extends State<RequestInbox>
                 loading: isLoading,
                 screen: "wait",
               ),
-              ScreenTabRequest(
+              ScreenTabRequest2(
                 loading: isLoading,
-                screen: "accept",
+                screen: "reject",
               )
             ],
           ),

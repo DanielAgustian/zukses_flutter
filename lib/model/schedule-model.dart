@@ -34,16 +34,18 @@ class ScheduleModel {
   }
 
   ScheduleModel.fromJson(Map<String, dynamic> map) {
-    this.meetingID = map["scheduleId"].toString();
+    this.meetingID = map["scheduleId"].toString() == null
+        ? map["sheduleId"].toString()
+        : map["scheduleId"].toString();
     this.title = map["title"];
     this.description = map["description"];
     this.date = DateTime.parse(map["date"]);
 
-    //this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
-    this.meetingEndTime = DateTime.now();
+    this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
+
     this.repeat = map["repeat"];
     this.userID = map["userID"];
-    this.accepted = map["accepted"];
+    this.accepted = map["accepted"].toString();
     this.reason = map["rejectedReason"];
 
     this.members = _convertMembers(map["members"]); //List<UserModel>

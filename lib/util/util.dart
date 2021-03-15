@@ -21,6 +21,30 @@ class Util {
     }
     return hour;
   }
+
+  String yearFormat(DateTime date) {
+    //var now = new DateTime.now();
+    //print(now.toString);
+    String year = "";
+    if (date == null) {
+      year = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    } else {
+      year = DateFormat("yyyy-MM-dd").format(date);
+    }
+    return year;
+  }
+
+  String acceptancePrint(int num) {
+    if (num == 100) {
+      return "pending";
+    } else if (num == 0) {
+      return "reject";
+    } else if (num == 1) {
+      return "accept";
+    } else {
+      return "Error";
+    }
+  }
   // void getLocationData() async {
   //   Location location = new Location();
 

@@ -74,6 +74,58 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
     yield MeetingStateSuccessLoad(meetings: event.meeting);
   }
 
+  Stream<MeetingState> mapLoadUnresponseMeeting(
+      GetUnresponseMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    var res = await _meetingServicesHTTP.fetchUnresponseScheduleData();
+
+    if (res != null) {
+      print("MeetingStateDetailSuccessLoad");
+      yield MeetingStateSuccessLoad(meetings: res);
+    } else {
+      yield MeetingStateFailLoad();
+    }
+  }
+
+  Stream<MeetingState> mapLoadRejectedMeeting(
+      GetRejectedMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    var res = await _meetingServicesHTTP.fetchRejectedScheduleData();
+
+    if (res != null) {
+      yield MeetingStateSuccessLoad(meetings: res);
+    } else {
+      yield MeetingStateFailLoad();
+    }
+  }
+
+  Stream<MeetingState> mapPostAcceptanceMeeting(
+      PostAcceptanceMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    // return list user model
+    var res = await _meetingServicesHTTP.postAcceptance(
+        event.meetingId, event.accept, event.reason);
+
+    // directly throw into success load or fail add
+    if (res == 200) {
+      yield MeetingStateSuccess();
+    } else {
+      yield MeetingStateFail();
+    }
+  }
+
+  Stream<MeetingState> mapLoadAcceptedMeeting(
+      GetAcceptedMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    var res = await _meetingServicesHTTP.fetchAcceptedScheduleData();
+
+    if (res != null) {
+      yield MeetingStateSuccessLoad(meetings: res);
+    } else {
+      yield MeetingStateFailLoad();
+    }
+  }
+
   @override
   Stream<MeetingState> mapEventToState(MeetingEvent event) async* {
     if (event is AddMeetingEvent) {
@@ -86,6 +138,14 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       yield* mapLoadDetailMeeting(event);
     } else if (event is DeleteMeetingEvent) {
       yield* mapDeleteMeeting(event);
+    } else if (event is GetUnresponseMeetingEvent) {
+      yield* mapLoadUnresponseMeeting(event);
+    } else if (event is GetRejectedMeetingEvent) {
+      yield* mapLoadRejectedMeeting(event);
+    } else if (event is PostAcceptanceMeetingEvent) {
+      yield* mapPostAcceptanceMeeting(event);
+    } else if (event is GetAcceptedMeetingEvent) {
+      yield* mapLoadAcceptedMeeting(event);
     }
   }
 }

@@ -3,19 +3,20 @@ import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class UserAssignedItem extends StatelessWidget {
-  const UserAssignedItem({
-    Key key,
-    @required this.size,
-    this.status,
-    //this.onClick,
-    this.index,
-  }) : super(key: key);
+  const UserAssignedItem(
+      {Key key,
+      @required this.size,
+      this.status,
+      //this.onClick,
+      //this.index,
+      this.name})
+      : super(key: key);
 
   final Size size;
-  final String status;
+  final String status, name;
 
   //final Function onClick;
-  final int index;
+  //final int index;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,7 +29,7 @@ class UserAssignedItem extends StatelessWidget {
             ),
             SizedBox(width: 10),
             Text(
-              "User $index ($status)",
+              "User $name : ($status)",
               style: TextStyle(
                   color: colorPrimary, fontSize: size.height <= 570 ? 14 : 16),
             )

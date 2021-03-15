@@ -6,6 +6,7 @@ import 'package:zukses_app_1/API/meeting-services.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
+import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/dummy-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -76,10 +77,12 @@ class _MeetingScreenState extends State<MeetingScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
+
     //scheduleClick.title = "";
     _meetingBloc = BlocProvider.of<MeetingBloc>(context);
-    _meetingBloc.add(LoadAllMeetingEvent());
+    _meetingBloc.add(GetAcceptedMeetingEvent());
     _selectedDate = _currentDate;
+
     util = Util();
     _controller = AnimationController(vsync: this, duration: _duration);
     timer();
@@ -284,31 +287,39 @@ class _MeetingScreenState extends State<MeetingScreen>
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
                                         itemCount: state.meetings.length,
-                                        itemBuilder: (context, index) =>
-                                            ScheduleItem(
-                                          size: size,
-                                          title: state.meetings[index].title,
-                                          time1: util.hourFormat(
-                                              state.meetings[index].date),
-                                          time2: util.hourFormat(state
-                                              .meetings[index].meetingEndTime),
-                                          meetingId:
-                                              state.meetings[index].meetingID,
-                                          onClick: () {
-                                            if (_controller.isDismissed) {
-                                              setState(() {
-                                                meetingID = state
-                                                    .meetings[index].meetingID;
-                                                scheduleClick =
-                                                    state.meetings[index];
-                                              });
+                                        itemBuilder: (context, index) => util
+                                                    .yearFormat(
+                                                        _selectedDate) ==
+                                                util.yearFormat(
+                                                    state.meetings[index].date)
+                                            ? ScheduleItem(
+                                                size: size,
+                                                title:
+                                                    state.meetings[index].title,
+                                                time1: util.hourFormat(
+                                                    state.meetings[index].date),
+                                                time2: util.hourFormat(state
+                                                    .meetings[index]
+                                                    .meetingEndTime),
+                                                meetingId: state
+                                                    .meetings[index].meetingID,
+                                                onClick: () {
+                                                  if (_controller.isDismissed) {
+                                                    setState(() {
+                                                      meetingID = state
+                                                          .meetings[index]
+                                                          .meetingID;
+                                                      scheduleClick =
+                                                          state.meetings[index];
+                                                    });
 
-                                              _controller.forward();
-                                            } else if (_controller.isCompleted)
-                                              _controller.reverse();
-                                          },
-                                        ),
-                                      ),
+                                                    _controller.forward();
+                                                  } else if (_controller
+                                                      .isCompleted)
+                                                    _controller.reverse();
+                                                },
+                                              )
+                                            : Container()),
                               )
                             ],
                           ),
@@ -407,7 +418,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                         children: [
                           Column(
                             children: [
-                              ...dummy.map((item) => Container(
+                              ...scheduleModel.members.map((item) => Container(
                                     padding: EdgeInsets.symmetric(vertical: 6),
                                     child: Row(
                                       children: [
@@ -420,7 +431,12 @@ class _MeetingScreenState extends State<MeetingScreen>
                                           width: 10,
                                         ),
                                         Text(
-                                          "User (status)",
+                                          "User " +
+                                              item.name +
+                                              " (" +
+                                              util.acceptancePrint(
+                                                  item.accepted) +
+                                              ") ",
                                           style: TextStyle(
                                             fontSize:
                                                 size.height <= 570 ? 14 : 16,
@@ -503,7 +519,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                             height: size.height <= 570 ? 6 : 10,
                           ),
                           Text(
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tellus adipiscing fusce egestas fames diam velit, vulputate.",
+                            scheduleModel.description,
                             style: TextStyle(
                               fontSize: size.height <= 570 ? 12 : 14,
                               color: colorPrimary,
