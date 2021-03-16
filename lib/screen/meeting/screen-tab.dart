@@ -67,6 +67,8 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                               itemCount: state.meetings.length,
                               itemBuilder: (context, index) =>
                                   ScheduleItemRequest(
+                                      count:
+                                          state.meetings[index].members.length,
                                       date: util.yearFormat(
                                           state.meetings[index].date),
                                       size: size,
@@ -96,7 +98,9 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
     });
   }
 
-  
+  void loadBeginningData() {
+    BlocProvider.of<MeetingBloc>(context).add(GetUnresponseMeetingEvent());
+  }
 
   Widget scrollerSheet() {
     bool temp = false;
@@ -168,8 +172,8 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                         return UserAssignedItem(
                             size: size,
                             name: model.members[index].name,
-                            status:
-                                util.acceptancePrint(model.members[index].accepted));
+                            status: util.acceptancePrint(
+                                model.members[index].accepted));
                       },
                     ),
                   ),
@@ -187,6 +191,8 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                               meetingId: model.meetingID,
                               accept: "1",
                               reason: ""));
+                      _controller.reverse();
+                      loadBeginningData();
                     },
                   ),
                   SizedBox(
@@ -269,6 +275,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   title: "Cancel",
                   onClick: () {
                     Navigator.pop(context);
+                    loadBeginningData();
                   },
                 ),
                 SizedBox(
@@ -286,6 +293,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                             accept: "0",
                             reason: _textReasonReject.text));
                     Navigator.pop(context);
+                    loadBeginningData();
                   },
                 ),
               ],

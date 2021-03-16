@@ -63,6 +63,7 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                     : ListView.builder(
                         itemCount: state.meetings.length,
                         itemBuilder: (context, index) => ScheduleItemRequest(
+                            count: state.meetings[index].members.length,
                             size: size,
                             onClick: () {
                               if (_controller.isDismissed) {

@@ -21,6 +21,7 @@ import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
+import 'package:zukses_app_1/screen/meeting/screen-search.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class MeetingScreen extends StatefulWidget {
@@ -148,6 +149,10 @@ class _MeetingScreenState extends State<MeetingScreen>
 
                   // Move to search screen
                   case 4:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchSchedule()));
                     break;
                 }
               },
@@ -279,7 +284,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                     ? ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
-                                        itemCount: 5,
+                                        itemCount: state.meetings.length,
                                         itemBuilder: (context, index) =>
                                             SkeletonLess3WithAvatar(
                                                 size: size, row: 2))
@@ -293,6 +298,8 @@ class _MeetingScreenState extends State<MeetingScreen>
                                                 util.yearFormat(
                                                     state.meetings[index].date)
                                             ? ScheduleItem(
+                                                count: state.meetings[index]
+                                                    .members.length,
                                                 size: size,
                                                 title:
                                                     state.meetings[index].title,
@@ -346,36 +353,44 @@ class _MeetingScreenState extends State<MeetingScreen>
                             child: isLoading
                                 ? ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: 5,
+                                    itemCount: state.meetings.length,
                                     itemBuilder: (context, index) =>
                                         SkeletonLess3WithAvatar(
                                             size: size, row: 2))
                                 : ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: state.meetings.length,
-                                    itemBuilder: (context, index) =>
-                                        ScheduleItem(
-                                      size: size,
-                                      title: state.meetings[index].title,
-                                      time1: util.hourFormat(
-                                          state.meetings[index].date),
-                                      time2: util.hourFormat(
-                                          state.meetings[index].meetingEndTime),
-                                      onClick: () {
-                                        if (_controller.isDismissed) {
-                                          setState(() {
-                                            meetingID =
-                                                state.meetings[index].meetingID;
-                                            scheduleClick =
-                                                state.meetings[index];
-                                          });
+                                    itemBuilder: (context, index) => util
+                                                .yearFormat(_selectedDate) ==
+                                            util.yearFormat(
+                                                state.meetings[index].date)
+                                        ? ScheduleItem(
+                                            count: state
+                                                .meetings[index].members.length,
+                                            size: size,
+                                            title: state.meetings[index].title,
+                                            time1: util.hourFormat(
+                                                state.meetings[index].date),
+                                            time2: util.hourFormat(state
+                                                .meetings[index]
+                                                .meetingEndTime),
+                                            onClick: () {
+                                              if (_controller.isDismissed) {
+                                                setState(() {
+                                                  meetingID = state
+                                                      .meetings[index]
+                                                      .meetingID;
+                                                  scheduleClick =
+                                                      state.meetings[index];
+                                                });
 
-                                          _controller.forward();
-                                        } else if (_controller.isCompleted)
-                                          _controller.reverse();
-                                      },
-                                    ),
-                                  ),
+                                                _controller.forward();
+                                              } else if (_controller
+                                                  .isCompleted)
+                                                _controller.reverse();
+                                            },
+                                          )
+                                        : Container()),
                           ))
                         ],
                       )),
@@ -384,8 +399,11 @@ class _MeetingScreenState extends State<MeetingScreen>
             );
           } else if (state is MeetingStateFailLoad) {
             return Text("GetData Error");
+          } else if (state is MeetingStateSuccess) {
+            _meetingBloc.add(GetAcceptedMeetingEvent());
+            return Container();
           } else {
-            return Text("GetData Error Waiting");
+            return Center(child: CircularProgressIndicator());
           }
         }));
   }
@@ -412,7 +430,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                 child: Stack(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.height * 0.26),
+                      margin: EdgeInsets.only(top: size.height * 0.23),
                       child: ListView(
                         controller: scrollController,
                         children: [
@@ -451,29 +469,11 @@ class _MeetingScreenState extends State<MeetingScreen>
                           SizedBox(
                             height: 15,
                           ),
-                          LongButton(
-                            size: size,
-                            bgColor: colorPrimary,
-                            textColor: colorBackground,
-                            title: "Accept",
-                            onClick: () {},
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          LongButtonOutline(
-                            outlineColor: colorError,
-                            size: size,
-                            bgColor: colorBackground,
-                            textColor: colorError,
-                            title: "Reject",
-                            onClick: () {},
-                          )
                         ],
                       ),
                     ),
                     Container(
-                      height: size.height * 0.25,
+                      height: size.height * 0.20,
                       color: colorBackground,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

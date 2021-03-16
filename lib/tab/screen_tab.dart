@@ -7,9 +7,9 @@ import 'package:zukses_app_1/tab/screen_attendance.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ScreenTab extends StatefulWidget {
-  ScreenTab({Key key, this.title}) : super(key: key);
+  ScreenTab({Key key, this.title, this.index}) : super(key: key);
   final String title;
-
+  final int index;
   @override
   _ScreenTab createState() => _ScreenTab();
 }
@@ -21,7 +21,12 @@ class _ScreenTab extends State<ScreenTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _currentScreenIndex = 0;
+    if (widget.index != null) {
+      _currentScreenIndex = widget.index;
+    }else{
+      _currentScreenIndex = 0;
+    }
+    
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
     screenList.add(TaskScreen());

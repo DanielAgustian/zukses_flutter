@@ -5,6 +5,8 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/meeting/screen-tab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/meeting/screen-tab2.dart';
+import 'package:zukses_app_1/tab/screen_meeting.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 
 class RequestInbox extends StatefulWidget {
   @override
@@ -54,7 +56,10 @@ class _RequestInboxState extends State<RequestInbox>
             color: colorPrimary,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => (ScreenTab(index: 3))));
           },
         ),
       ),

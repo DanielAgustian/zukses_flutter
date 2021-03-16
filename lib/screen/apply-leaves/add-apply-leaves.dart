@@ -22,6 +22,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   bool _reasonValidator = false;
 
   // Dropdown menu
+  List<String> itemsLeave = ["Never", "Seldom", "Often", "Always"];
   List<String> items = ["Single Day", "Multiple Day", "Half Day"];
   String repeat = "Single Day";
 
@@ -43,65 +44,73 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
             child: Stack(
               children: [
                 customAppBar(context, size),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 60),
-                      AddScheduleRow2(
-                        fontSize: size.height <= 569 ? 14 : 16,
-                        title: items[0],
-                        textItem: repeat,
-                        items: items,
-                        onSelectedItem: (val) {
-                          print(val);
-                          setState(() {
-                            repeat = val;
-                          });
-                        },
-                      ),
-                      AddScheduleRow(
-                        title: "Date",
-                        textItem: "${formater.format(date)}",
-                        fontSize: size.height <= 569 ? 14 : 16,
-                      ),
-                      AddScheduleRow(
-                        title: "Leave Type",
-                        textItem: "Never",
-                        fontSize: size.height <= 569 ? 14 : 16,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: _reasonValidator
-                                ? Border.all(color: colorError)
-                                : Border.all(color: Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          maxLines: 8,
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {},
-                          controller: textReason,
-                          decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(20),
-                              hintText: "Description",
-                              hintStyle: TextStyle(
-                                color: _reasonValidator
-                                    ? colorError
-                                    : colorNeutral1,
-                              ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
+                SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 60),
+                        AddScheduleRow2(
+                          fontSize: size.height <= 569 ? 14 : 16,
+                          title: items[0],
+                          textItem: repeat,
+                          items: items,
+                          onSelectedItem: (val) {
+                            print(val);
+                            setState(() {
+                              repeat = val;
+                            });
+                          },
                         ),
-                      ),
-                    ],
+                        InkWell(
+                          onTap: () {
+                            _selectDate(context);
+                          },
+                          child: AddScheduleRow(
+                            title: "Date",
+                            textItem: "${formater.format(date)}",
+                            fontSize: size.height <= 569 ? 14 : 16,
+                          ),
+                        ),
+                        AddScheduleRow2(
+                          items: itemsLeave,
+                          title: "Leave Type",
+                          textItem: "Never",
+                          fontSize: size.height <= 569 ? 14 : 16,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: _reasonValidator
+                                  ? Border.all(color: colorError)
+                                  : Border.all(color: Colors.transparent),
+                              color: colorBackground,
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(0, 0),
+                                    color: Color.fromRGBO(240, 239, 242, 1),
+                                    blurRadius: 15),
+                              ],
+                              borderRadius: BorderRadius.circular(5)),
+                          child: TextFormField(
+                            maxLines: 8,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.text,
+                            onChanged: (val) {},
+                            controller: textReason,
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(20),
+                                hintText: "Description",
+                                hintStyle: TextStyle(
+                                  color: _reasonValidator
+                                      ? colorError
+                                      : colorNeutral1,
+                                ),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -207,5 +216,18 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               );
             })) ??
         false;
+  }
+
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(3500),
+    );
+    if (picked != null && picked != date)
+      setState(() {
+        date = picked;
+      });
   }
 }

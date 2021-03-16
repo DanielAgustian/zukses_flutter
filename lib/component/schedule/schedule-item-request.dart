@@ -21,14 +21,15 @@ class ScheduleItemRequest extends StatelessWidget {
       this.time2,
       this.onClick,
       this.date,
-      this.meetingId})
+      this.meetingId,
+      this.count})
       : super(key: key);
 
   final Size size;
   final String title, meetingId;
   final String time1, time2, date;
   final Function onClick;
-
+  final int count;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -77,7 +78,7 @@ class ScheduleItemRequest extends StatelessWidget {
                   height: 20,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 5,
+                    itemCount: count,
                     itemBuilder: (context, index) {
                       return UserAvatar();
                     },

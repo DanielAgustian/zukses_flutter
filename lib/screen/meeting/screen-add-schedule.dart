@@ -20,6 +20,7 @@ import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class AddScheduleScreen extends StatefulWidget {
@@ -117,7 +118,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         title: "Discard Changes",
                         onClick: () {
                           Navigator.of(context, rootNavigator: true).pop();
-                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 3))));
                         },
                       )
                     ],
@@ -148,9 +153,12 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       context: context,
       initialTime: index == 1 ? TimeOfDay.now() : time2,
     );
-
-    if (picked.minute == 60) {
-      picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+    try {
+      if (picked.minute == 60) {
+        picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+      }
+    } catch (error) {
+      print(error);
     }
 
     if (picked != null) {
@@ -266,7 +274,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
               if (textDescription.text != "" || textTitle.text != "")
                 _onWillPop(size: size);
               else
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            (ScreenTab(index: 3))));
             },
           ),
           centerTitle: true,

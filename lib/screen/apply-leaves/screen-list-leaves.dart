@@ -4,6 +4,7 @@ import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/leaves/list-leaves.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-tab-leaves.dart';
 
 class ScreenListLeaves extends StatefulWidget {
   ScreenListLeaves({Key key, this.title}) : super(key: key);
@@ -14,7 +15,8 @@ class ScreenListLeaves extends StatefulWidget {
   _ScreenListLeaves createState() => _ScreenListLeaves();
 }
 
-class _ScreenListLeaves extends State<ScreenListLeaves> {
+class _ScreenListLeaves extends State<ScreenListLeaves>
+    with SingleTickerProviderStateMixin {
   var leavesTitle = ["Schedule 1", "SChedule 2", "Schedule 3", "Schedule 4"];
   var leavesDate = [
     "14 Jan 2021 - 19 Jan 2021",
@@ -22,12 +24,21 @@ class _ScreenListLeaves extends State<ScreenListLeaves> {
     "4 Mar 2021- 6 Mar 2021",
     "9 Apr 2021 - 10 Apr 2021"
   ];
+  TabController tabController;
   var status = [0, 1, 2, 1];
   var statusString = [];
   //0=> pending, 1 => accepted , 2 => Rejected
+  int activeIndex = 0;
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: 2, vsync: this);
+    tabController.addListener(() {});
+  }
+
+  _getTabIndex() {
+    activeIndex = tabController.index;
+    print(activeIndex);
   }
 
   Widget build(BuildContext context) {
@@ -62,7 +73,57 @@ class _ScreenListLeaves extends State<ScreenListLeaves> {
                 },
               ),
             ]),
-        body: LayoutBuilder(builder: (ctx, constrains) {
+        body: DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              backgroundColor: colorBackground,
+              appBar: AppBar(
+                backgroundColor: colorBackground,
+                automaticallyImplyLeading: false,
+                elevation: 0,
+                flexibleSpace: Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: colorNeutral150,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: TabBar(
+                    controller: tabController,
+                    labelColor: colorBackground,
+                    unselectedLabelColor: colorPrimary,
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                    indicator: BoxDecoration(
+                        color: colorPrimary,
+                        borderRadius: BorderRadius.circular(5)),
+                    tabs: [
+                      Tab(
+                        child: Container(
+                          child: Center(
+                            child: Text("Leaves"),
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Container(
+                          child: Center(
+                            child: Text("Overtime"),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              body: TabBarView(
+                controller: tabController,
+                children: [
+                  ScreenTabLeaves(
+                    tab: "leaves",
+                  ),
+                  ScreenTabLeaves(tab: "overtime")
+                ],
+              ),
+
+              /*LayoutBuilder(builder: (ctx, constrains) {
           return Column(children: [
             Expanded(
               child: SingleChildScrollView(
@@ -85,6 +146,8 @@ class _ScreenListLeaves extends State<ScreenListLeaves> {
               ])),
             ),
           ]);
-        }));
+        }
+        )*/
+            )));
   }
 }

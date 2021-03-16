@@ -4,14 +4,10 @@ import 'package:zukses_app_1/constant/constant.dart';
 
 // ignore: must_be_immutable
 class ListLeavesInside extends StatelessWidget {
-  ListLeavesInside({
-    Key key,
-    this.title,
-    this.detail,
-    this.status,
-  }) : super(key: key);
+  ListLeavesInside({Key key, this.title, this.detail, this.status, this.screen})
+      : super(key: key);
 
-  final String title, detail;
+  final String title, detail, screen;
   final int status;
   DateFormat dateFormat = DateFormat.yMMMMd();
 
@@ -53,7 +49,7 @@ class ListLeavesInside extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(5, 6, 5, 10),
+                          padding: EdgeInsets.fromLTRB(5, 6, 5, 5),
                           child: Text(
                             detail,
                             style: TextStyle(
@@ -61,7 +57,19 @@ class ListLeavesInside extends StatelessWidget {
                               fontSize: 14,
                             ),
                           ),
-                        )
+                        ),
+                        screen == "leaves"
+                            ? Padding(
+                                padding: EdgeInsets.fromLTRB(5, 6, 5, 5),
+                                child: Text(
+                                  "19.00-20.00",
+                                  style: TextStyle(
+                                    color: colorPrimary50,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              )
+                            : Container()
                       ],
                     ),
                   ],

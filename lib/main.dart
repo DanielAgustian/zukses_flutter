@@ -72,6 +72,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           scaffoldBackgroundColor: colorBackground,
           fontFamily: 'Lato',
+          accentColor: colorPrimary
         ),
         locale: DevicePreview.locale(context), // Add the locale here
         builder: DevicePreview.appBuilder, // Add the builder here
