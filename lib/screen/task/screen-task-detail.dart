@@ -1,17 +1,11 @@
 import 'dart:async';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
-import 'package:flutter/material.dart';
-import 'package:zukses_app_1/component/button/button-long-outlined.dart';
-import 'package:zukses_app_1/component/button/button-long.dart';
-import 'package:zukses_app_1/component/task/comment-box.dart';
-import 'package:zukses_app_1/component/task/layout-project-list.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/component/task/list-task.dart';
+import 'package:flutter/material.dart'; 
+import 'package:zukses_app_1/component/task/comment-box.dart'; 
+import 'package:zukses_app_1/constant/constant.dart'; 
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/task/list-task-detail2.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-3r-2c.dart';
-import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
+import 'package:zukses_app_1/component/task/list-task-detail2.dart'; 
 
 class InnerList {
   final String name;
