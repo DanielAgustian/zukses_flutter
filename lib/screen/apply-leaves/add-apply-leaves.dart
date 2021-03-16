@@ -15,8 +15,10 @@ class ApplyLeavesFormScreen extends StatefulWidget {
 class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   // formater for showing date
   final DateFormat formater = DateFormat.yMMMMEEEEd();
-  DateTime date = DateTime.now();
-
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay endTime = TimeOfDay.now();
   // Text field controller
   TextEditingController textReason = new TextEditingController();
   bool _reasonValidator = false;
@@ -37,83 +39,164 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         return Future.value(true);
       },
       child: Scaffold(
-        backgroundColor: colorBackground,
-        body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.all(20),
-            child: Stack(
-              children: [
-                customAppBar(context, size),
-                SingleChildScrollView(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: colorBackground,
+          leadingWidth: 70,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: InkWell(
+                onTap: () {
+                  if (textReason.text != "")
+                    _onWillPop(size: size);
+                  else
+                    Navigator.pop(context);
+                },
+                child: Center(
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(
+                        fontSize: size.height <= 569 ? 15 : 18,
+                        color: colorPrimary,
+                        fontWeight: FontWeight.w500),
+                  ),
+                )),
+          ),
+          title: Text(
+            "Apply Leaves",
+            style: TextStyle(
+                color: colorPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: size.height <= 569 ? 20 : 25),
+          ),
+          actions: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
                   child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 60),
-                        AddScheduleRow2(
-                          fontSize: size.height <= 569 ? 14 : 16,
-                          title: items[0],
-                          textItem: repeat,
-                          items: items,
-                          onSelectedItem: (val) {
-                            print(val);
-                            setState(() {
-                              repeat = val;
-                            });
-                          },
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _selectDate(context);
-                          },
-                          child: AddScheduleRow(
-                            title: "Date",
-                            textItem: "${formater.format(date)}",
-                            fontSize: size.height <= 569 ? 14 : 16,
-                          ),
-                        ),
-                        AddScheduleRow2(
-                          items: itemsLeave,
-                          title: "Leave Type",
-                          textItem: "Never",
-                          fontSize: size.height <= 569 ? 14 : 16,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: _reasonValidator
-                                  ? Border.all(color: colorError)
-                                  : Border.all(color: Colors.transparent),
-                              color: colorBackground,
-                              boxShadow: [
-                                BoxShadow(
-                                    offset: Offset(0, 0),
-                                    color: Color.fromRGBO(240, 239, 242, 1),
-                                    blurRadius: 15),
-                              ],
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            maxLines: 8,
-                            textInputAction: TextInputAction.done,
-                            keyboardType: TextInputType.text,
-                            onChanged: (val) {},
-                            controller: textReason,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(20),
-                                hintText: "Description",
-                                hintStyle: TextStyle(
-                                  color: _reasonValidator
-                                      ? colorError
-                                      : colorNeutral1,
-                                ),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      "Done",
+                      style: TextStyle(
+                          fontSize: size.height <= 569 ? 15 : 18,
+                          color: colorPrimary,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                )
-              ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: colorBackground,
+        body: Container(
+          padding: EdgeInsets.all(20),
+          //color: colorSecondaryYellow70,
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  //SizedBox(height: 20),
+                  AddScheduleRow2(
+                    fontSize: size.height <= 569 ? 14 : 16,
+                    title: items[0],
+                    textItem: repeat,
+                    items: items,
+                    onSelectedItem: (val) {
+                      print(val);
+                      setState(() {
+                        repeat = val;
+                      });
+                    },
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _selectDate(context, 0);
+                    },
+                    child: AddScheduleRow(
+                      title: repeat == "Multiple Day" ? "Start Date" : "Date",
+                      textItem: "${formater.format(startDate)}",
+                      fontSize: size.height <= 569 ? 14 : 16,
+                    ),
+                  ),
+                  repeat == "Multiple Day"
+                      ? InkWell(
+                          onTap: () {
+                            _selectDate(context, 1);
+                          },
+                          child: AddScheduleRow(
+                            title: "End Date",
+                            textItem: "${formater.format(endDate)}",
+                            fontSize: size.height <= 569 ? 14 : 16,
+                          ),
+                        )
+                      : Container(),
+                  repeat == "Half Day"
+                      ? InkWell(
+                          onTap: () {
+                            pickTime(context, 0);
+                          },
+                          child: AddScheduleRow(
+                            title: "Start Time",
+                            textItem: "$startTime",
+                            fontSize: size.height <= 569 ? 14 : 16,
+                          ),
+                        )
+                      : Container(),
+                  repeat == "Half Day"
+                      ? InkWell(
+                          onTap: () {
+                            pickTime(context, 1);
+                          },
+                          child: AddScheduleRow(
+                            title: "End Time",
+                            textItem: "$endTime",
+                            fontSize: size.height <= 569 ? 14 : 16,
+                          ),
+                        )
+                      : Container(),
+                  AddScheduleRow2(
+                    items: itemsLeave,
+                    title: "Leave Type",
+                    textItem: "Never",
+                    fontSize: size.height <= 569 ? 14 : 16,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: _reasonValidator
+                            ? Border.all(color: colorError)
+                            : Border.all(color: Colors.transparent),
+                        color: colorBackground,
+                        boxShadow: [
+                          BoxShadow(
+                              offset: Offset(0, 0),
+                              color: Color.fromRGBO(240, 239, 242, 1),
+                              blurRadius: 15),
+                        ],
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      maxLines: 8,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
+                      onChanged: (val) {},
+                      controller: textReason,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(20),
+                          hintText: "Description",
+                          hintStyle: TextStyle(
+                            color:
+                                _reasonValidator ? colorError : colorNeutral1,
+                          ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -218,16 +301,61 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         false;
   }
 
-  _selectDate(BuildContext context) async {
+  //Method to Pick Date
+  _selectDate(BuildContext context, int choose) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: date,
+      initialDate: startDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(3500),
     );
-    if (picked != null && picked != date)
-      setState(() {
-        date = picked;
-      });
+
+    if (picked != null && picked != startDate && picked != endDate) {
+      if (choose == 0) {
+        setState(() {
+          startDate = picked;
+        });
+      } else if (choose == 1) {
+        setState(() {
+          endDate = picked;
+        });
+      }
+    }
+  }
+
+  //Method to PickTime.
+  pickTime(BuildContext context, int index) async {
+    TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: index == 0 ? TimeOfDay.now() : startTime,
+    );
+    try {
+      if (picked.minute == 60) {
+        picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+      }
+    } catch (error) {
+      print(error);
+    }
+
+    if (picked != null) {
+      if (index == 0) {
+        setState(() {
+          startTime = picked;
+        });
+        //time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
+      } else if (index == 1) {
+        setState(() {
+          endTime = picked;
+        });
+      } else {
+        print("GetDataError");
+      }
+
+      /*startMeeting =
+            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+        endMeeting =
+            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);*/
+
+    }
   }
 }
