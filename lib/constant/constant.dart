@@ -47,6 +47,12 @@ Widget dotRed = Container(
     decoration: BoxDecoration(
         color: colorSecondaryRed, borderRadius: BorderRadius.circular(10)));
 
+Widget dotBlue = Container(
+    width: 5,
+    height: 5,
+    decoration: BoxDecoration(
+        color: colorPrimary, borderRadius: BorderRadius.circular(10)));
+
 double textSizeSmall20 = 18;
 double textSizeSmall18 = 16;
 double textSizeSmall16 = 14;
