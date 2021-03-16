@@ -41,8 +41,10 @@ class ScheduleModel {
     this.description = map["description"];
     this.date = DateTime.parse(map["date"]);
 
-    this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
-
+    // TODO : Delete after database which is null is gone
+    if (map["meetingEndTime"] != null) {
+      this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
+    }
     this.repeat = map["repeat"];
     this.userID = map["userID"];
     this.accepted = map["accepted"].toString();

@@ -91,6 +91,7 @@ class MeetingServicesHTTP {
       //print(res.body);
       //print(token);
       var responseJson = jsonDecode(res.body);
+      print(responseJson);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
           .toList();
@@ -211,7 +212,6 @@ class MeetingServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(res.body);
       var responseJson = jsonDecode(res.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
@@ -237,7 +237,6 @@ class MeetingServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(res.body);
       var responseJson = jsonDecode(res.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
@@ -262,7 +261,6 @@ class MeetingServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(res.body);
       var responseJson = jsonDecode(res.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
