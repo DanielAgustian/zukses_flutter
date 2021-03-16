@@ -312,7 +312,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           if (d.date.day == calendarDate.date.day &&
               d.date.month == calendarDate.date.month &&
               d.date.year == calendarDate.date.year) {
-            dot = dotGreen;
+            dot = dotBlue;
             break;
           }
         }
@@ -323,7 +323,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           if (data2[i].date.day == calendarDate.date.day &&
               data2[i].date.month == calendarDate.date.month &&
               data2[i].date.year == calendarDate.date.year) {
-            dot = dotGreen;
+            dot = dotBlue;
             break;
           }
 
