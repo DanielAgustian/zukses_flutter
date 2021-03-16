@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/task/layout-project-list.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
 import 'package:zukses_app_1/screen/task/screen-add-project.dart';
 import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 

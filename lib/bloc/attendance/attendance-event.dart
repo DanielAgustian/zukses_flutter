@@ -1,9 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/attendance-model.dart';
-import 'package:zukses_app_1/model/auth-model.dart';
-import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/model/attendance-model.dart'; 
 
 abstract class AttendanceEvent extends Equatable {
   const AttendanceEvent();
