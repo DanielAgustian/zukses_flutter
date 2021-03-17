@@ -1,11 +1,25 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:zukses_app_1/API/leave-type-services.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
+import 'package:zukses_app_1/bloc/leave-type/leave-type-event.dart';
+import 'package:zukses_app_1/bloc/leave-type/leave-type-state.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/leave-model.dart';
+import 'package:zukses_app_1/model/leave-type-model.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ApplyLeavesFormScreen extends StatefulWidget {
   @override
@@ -17,16 +31,27 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   final DateFormat formater = DateFormat.yMMMMEEEEd();
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
-  TimeOfDay startTime = TimeOfDay.now();
-  TimeOfDay endTime = TimeOfDay.now();
+  TimeOfDay startTime = TimeOfDay(hour: 8, minute: 30);
+  TimeOfDay endTime = TimeOfDay(hour: 12, minute: 0);
+  int idLeaveType;
   // Text field controller
   TextEditingController textReason = new TextEditingController();
   bool _reasonValidator = false;
 
   // Dropdown menu
   List<String> itemsLeave = ["Never", "Seldom", "Often", "Always"];
+  List<String> itemsLeaveName = [];
+  List<int> itemLeaveNameID = [];
+  List<LeaveTypeModel> dataLeaveType = [];
   List<String> items = ["Single Day", "Multiple Day", "Half Day"];
   String repeat = "Single Day";
+  String leaveType = "";
+  bool isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<LeaveTypeBloc>(context).add(LoadAllLeaveTypeEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +64,9 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         return Future.value(true);
       },
       child: Scaffold(
+        /*floatingActionButton: FloatingActionButton(onPressed: () {
+          temp();
+        }),*/
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: colorBackground,
@@ -75,7 +103,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 padding: const EdgeInsets.only(right: 10),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).pop();
+                    _createLeaves();
+                    //Navigator.of(context).pop();
                   },
                   child: Container(
                     child: Text(
@@ -100,6 +129,23 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  BlocListener<LeaveBloc, LeaveState>(
+                      listener: (context, state) {
+                        if (state is LeaveStateSuccess) {
+                          Util().showToast(
+                              context: this.context,
+                              msg: "Leave Created",
+                              color: colorPrimary,
+                              txtColor: colorBackground);
+                        } else {
+                          Util().showToast(
+                              context: this.context,
+                              msg: "Something Wrong !",
+                              color: colorError,
+                              txtColor: colorBackground);
+                        }
+                      },
+                      child: Container()),
                   //SizedBox(height: 20),
                   AddScheduleRow2(
                     fontSize: size.height <= 569 ? 14 : 16,
@@ -142,7 +188,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           },
                           child: AddScheduleRow(
                             title: "Start Time",
-                            textItem: "$startTime",
+                            textItem: Util().changeTimeToString(startTime),
                             fontSize: size.height <= 569 ? 14 : 16,
                           ),
                         )
@@ -154,17 +200,48 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           },
                           child: AddScheduleRow(
                             title: "End Time",
-                            textItem: "$endTime",
+                            textItem: Util().changeTimeToString(endTime),
                             fontSize: size.height <= 569 ? 14 : 16,
                           ),
                         )
                       : Container(),
-                  AddScheduleRow2(
-                    items: itemsLeave,
-                    title: "Leave Type",
-                    textItem: "Never",
-                    fontSize: size.height <= 569 ? 14 : 16,
+                  BlocListener<LeaveTypeBloc, LeaveTypeState>(
+                    listener: (context, state) {
+                      if (state is LeaveTypeStateSuccessLoad) {
+                        itemsLeaveName.clear();
+                        dataLeaveType.clear();
+                        //itemLeaveNameID.clear();
+                        state.leaveType.forEach((element) {
+                          setState(() {
+                            itemLeaveNameID.add(element.id);
+
+                            itemsLeaveName.add(element.typeName);
+                          });
+                        });
+                        setState(() {
+                          dataLeaveType.addAll(state.leaveType);
+                          isLoading = true;
+                        });
+                      }
+                    },
+                    child: Container(),
                   ),
+                  isLoading
+                      ? AddScheduleRow2(
+                          onSelectedItem: (val) {
+                            print(val);
+                            setState(() {
+                              leaveType = val;
+                            });
+                            _changeLeave();
+                          },
+                          items: itemsLeaveName,
+                          title: "Leave Type",
+                          textItem: itemsLeaveName[0],
+                          fontSize: size.height <= 569 ? 14 : 16,
+                        )
+                      : Container(),
+
                   Container(
                     decoration: BoxDecoration(
                         border: _reasonValidator
@@ -201,50 +278,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  // APP BAR
-  Widget customAppBar(BuildContext context, Size size) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InkWell(
-            onTap: () {
-              if (textReason.text != "")
-                _onWillPop(size: size);
-              else
-                Navigator.pop(context);
-            },
-            child: Text(
-              "Cancel",
-              style: TextStyle(
-                  fontSize: size.height <= 569 ? 15 : 18,
-                  color: colorPrimary,
-                  fontWeight: FontWeight.w500),
-            )),
-        Text(
-          "Apply Leaves",
-          style: TextStyle(
-              color: colorPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: size.height <= 569 ? 20 : 25),
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            child: Text(
-              "Done",
-              style: TextStyle(
-                  fontSize: size.height <= 569 ? 15 : 18,
-                  color: colorPrimary,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -327,7 +360,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   pickTime(BuildContext context, int index) async {
     TimeOfDay picked = await showTimePicker(
       context: context,
-      initialTime: index == 0 ? TimeOfDay.now() : startTime,
+      initialTime: index == 0 ? TimeOfDay(hour: 8, minute: 00) : startTime,
     );
     try {
       if (picked.minute == 60) {
@@ -357,5 +390,26 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
             DateTime(date.year, date.month, date.day, time2.hour, time2.minute);*/
 
     }
+  }
+
+  _changeLeave() {
+    dataLeaveType.forEach((element) {
+      if (element.typeName == leaveType) {
+        setState(() {
+          idLeaveType = element.id;
+        });
+      }
+    });
+  }
+
+  void _createLeaves() {
+    LeaveModel sentLeave = LeaveModel(
+        duration: repeat,
+        leaveDate: Util().yearFormat(startDate),
+        startTime: Util().changeTimeToString(startTime) + ":00",
+        endTime: Util().changeTimeToString(endTime) + ":00",
+        reason: textReason.text);
+    BlocProvider.of<LeaveBloc>(context)
+        .add(AddLeaveEvent(leaveModel: sentLeave, leaveId: idLeaveType));
   }
 }

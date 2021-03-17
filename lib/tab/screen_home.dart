@@ -10,6 +10,9 @@ import 'package:skeleton_text/skeleton_text.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
@@ -932,6 +935,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onClick: () {
                 timeCalculation(1);
                 Navigator.pop(context);
+                clockOut();
                 if (statusOvertime != "No") {
                   showDialog(
                       context: context,
@@ -1056,10 +1060,29 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 dialogText = "Clock Out";
               });
-              clockOut();
+              //BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(overtimeModel:));
+              //clockOut();
               Navigator.pop(context);
             },
           ),
+          BlocListener<OvertimeBloc, OvertimeState>(
+            listener: (context, state) async {
+              if (state is OvertimeStateSuccess) {
+                Util().showToast(
+                    context: this.context,
+                    msg: "Overtime Created !",
+                    color: Colors.blueAccent,
+                    txtColor: colorBackground);
+              } else {
+                Util().showToast(
+                    context: this.context,
+                    msg: "Overtime Failed !",
+                    color: colorError,
+                    txtColor: colorBackground);
+              }
+            },
+            child: Container(),
+          )
         ],
       ),
       actions: <Widget>[],
@@ -1087,16 +1110,6 @@ class _HomeScreenState extends State<HomeScreen> {
     timeCalculation(0);
     String timeClockIn = getSystemTime();
     print("Clock In Pegawai:" + timeClockIn);
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   await showDialog<String>(
-    //       context: context,
-    //       builder: (BuildContext context) => _buildPopupDialog(context));
-    // });
-    // } else if (clockIn == 0) {
-    //   print("Init Data");
-    // } else {
-    //   print("Not Clock In Yet");
-    // }
   }
 
   String getHourNow() {

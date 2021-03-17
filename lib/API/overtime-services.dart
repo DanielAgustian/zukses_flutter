@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/model/overtime-model.dart';
 
-class OverworkServiceHTTP {
+class OvertimeServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
 
-  Future<int> postOvertime(String attendanceId, project, reason) async {
+  Future<int> postOvertime(int attendanceId, String project, reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     final response = await http.post(
@@ -17,7 +18,7 @@ class OverworkServiceHTTP {
         'Charset': 'utf-8',
         'Authorization': 'Bearer $token'
       },
-      body: jsonEncode(<String, String>{'attendanceId': attendanceId, 'project': project, 'reason':reason}),
+      body: jsonEncode(<String, String>{'attendanceId': attendanceId.toString(), 'project': project, 'reason':reason}),
     );
     print(response.statusCode.toString());
 
@@ -36,7 +37,7 @@ class OverworkServiceHTTP {
       return null;
     }
   }
-  Future<int> getOvertime() async {
+  Future<List<OvertimeModel>> fetchOvertime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     final response = await http.get(
@@ -55,8 +56,11 @@ class OverworkServiceHTTP {
       print("response.body:" + response.body);
 
       // Save token
-
-      return response.statusCode;
+      var responseJson = jsonDecode(response.body);
+      print(responseJson);
+      return (responseJson['data'] as List)
+          .map((p) => OvertimeModel.fromJson(p))
+          .toList();
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.

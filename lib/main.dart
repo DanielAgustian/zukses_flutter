@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
+import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 
@@ -22,6 +23,9 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+
+import 'bloc/leaves/leave-bloc.dart';
+import 'bloc/overtime/overtime-bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,14 +70,22 @@ class MyApp extends StatelessWidget {
         BlocProvider<MeetingBloc>(
           create: (context) => MeetingBloc(),
         ),
+        BlocProvider<LeaveTypeBloc>(
+          create: (context) => LeaveTypeBloc(),
+        ),
+        BlocProvider<LeaveBloc>(
+          create: (context) => LeaveBloc(),
+        ),
+        BlocProvider<OvertimeBloc>(
+          create: (context) => OvertimeBloc(),
+        ),
       ],
       child: MaterialApp(
         title: 'Zukses: Application for Office',
         theme: ThemeData(
-          scaffoldBackgroundColor: colorBackground,
-          fontFamily: 'Lato',
-          accentColor: colorPrimary
-        ),
+            scaffoldBackgroundColor: colorBackground,
+            fontFamily: 'Lato',
+            accentColor: colorPrimary),
         locale: DevicePreview.locale(context), // Add the locale here
         builder: DevicePreview.appBuilder, // Add the builder here
         home: token != null

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/API/overtime-services.dart';
+
+import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
 import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/component/leaves/list-leaves.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-tab-leaves.dart';
 
@@ -41,9 +46,18 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
     print(activeIndex);
   }
 
+  void debug() {
+    OvertimeServiceHTTP().fetchOvertime();
+  }
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            debug();
+          },
+        ),
         appBar: customAppBar(context,
             size: size,
             leadingIcon: IconButton(
@@ -122,32 +136,6 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                   ScreenTabLeaves(tab: "overtime")
                 ],
               ),
-
-              /*LayoutBuilder(builder: (ctx, constrains) {
-          return Column(children: [
-            Expanded(
-              child: SingleChildScrollView(
-                  child: Column(children: [
-                SizedBox(
-                  width: size.width,
-                  height: size.height,
-                  child: ListView.builder(
-                    itemCount: leavesTitle.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ListLeavesInside(
-                          title: leavesTitle[index],
-                          detail: leavesDate[index],
-                          status: status[index]);
-                    },
-                  ),
-                )
-              ])),
-            ),
-          ]);
-        }
-        )*/
             )));
   }
 }

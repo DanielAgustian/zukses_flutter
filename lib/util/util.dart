@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 
@@ -35,6 +36,7 @@ class Util {
   }
 
   String acceptancePrint(int num) {
+    //num=100 merupakan NULL di DB
     if (num == 100) {
       return "pending";
     } else if (num == 0) {
@@ -44,6 +46,21 @@ class Util {
     } else {
       return "Error";
     }
+  }
+
+  String changeTimeToString(TimeOfDay time) {
+    String hour = "", minutes = "";
+    if (time.hour < 10) {
+      hour = "0" + time.hour.toString();
+    } else {
+      hour = time.hour.toString();
+    }
+    if (time.minute < 10) {
+      minutes = "0" + time.minute.toString();
+    } else {
+      minutes = time.minute.toString();
+    }
+    return hour + ":" + minutes;
   }
   // void getLocationData() async {
   //   Location location = new Location();
