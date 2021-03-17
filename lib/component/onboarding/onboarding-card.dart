@@ -34,7 +34,9 @@ class OnBoardingCard extends StatelessWidget {
           CircleAvatar(
               backgroundColor: colorPrimary,
               radius: size.width * 0.35,
-              child: image),
+              //backgroundImage: Image.asset("assets/images/onboarding.png"),
+              child: image
+              ),
           SizedBox(height: 40),
           Align(
               alignment: Alignment.centerLeft,

@@ -180,7 +180,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             title: "LOREM IPSUM",
                             description:
                                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis facilisis neque. Aliquam ",
-                            image: Image.asset("assets/images/ava.png"),
+                            image: Image.asset(
+                              "assets/images/onboarding.png",
+                              fit: BoxFit.fill,
+                            ),
                           );
                         },
                         itemCount: 3, // Can be null
