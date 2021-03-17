@@ -77,7 +77,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                         return ListLeavesInside(
                             title: state.overtime[index].project,
                             detail: state.overtime[index].clockOut.toString(),
-                            status: "pending",
+                            status: state.overtime[index].status,
                             date: "1996-01-01");
                       },
                     ),

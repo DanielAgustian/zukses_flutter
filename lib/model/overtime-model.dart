@@ -1,6 +1,6 @@
 class OvertimeModel {
   DateTime clockIn, clockOut;
-  String workingFrom, late, halfDay, project, reason;
+  String workingFrom, late, halfDay, project, reason, status;
   int attendanceId;
 
   OvertimeModel(
@@ -11,7 +11,8 @@ class OvertimeModel {
       this.halfDay,
       this.attendanceId,
       this.project,
-      this.reason});
+      this.reason,
+      this.status});
 
   OvertimeModel.fromJson(Map<String, dynamic> map) {
     this.clockIn = DateTime.parse(map["clock_in_time"]);
@@ -22,5 +23,6 @@ class OvertimeModel {
     this.attendanceId = map["attendanceId"];
     this.project = map["project"];
     this.reason = map["reason"];
+    this.status = map["status"];
   }
 }

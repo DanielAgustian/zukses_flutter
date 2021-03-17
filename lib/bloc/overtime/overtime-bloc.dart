@@ -29,13 +29,16 @@ class OvertimeBloc extends Bloc<OvertimeEvent, OvertimeState> {
   Stream<OvertimeState> mapAddOvertime(AddOvertimeEvent event) async* {
     yield OvertimeStateLoading();
     // return list user model
-    var res = await _overtimeServiceHTTP.postOvertime(event.attendanceId, event.overtimeModel.project, event.overtimeModel.reason);
+    var res = await _overtimeServiceHTTP.postOvertime(
+        event.attendanceId, event.project, event.reason);
     print("MapDeleteOvertime Here");
-    print("Delete Overtime Status" + res.toString());
+    print("Delete Overtime Status " + res.toString());
     // directly throw into success load or fail add
     if (res == 200) {
+      print("OvertimeStateSuccess");
       yield OvertimeStateSuccess();
     } else {
+      print("OvertimeStateFail");
       yield OvertimeStateFail();
     }
   }

@@ -69,7 +69,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                 Navigator.pop(context);
               },
             ),
-            title: "Leaves",
+            title: "Permission",
             actionList: [
               IconButton(
                 padding: EdgeInsets.only(right: 20),

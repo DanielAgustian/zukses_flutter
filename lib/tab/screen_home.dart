@@ -11,6 +11,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
@@ -1061,7 +1062,10 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 dialogText = "Clock Out";
               });
-              //BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(overtimeModel:));
+              BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+                  attendanceId: attendanceID,
+                  project: "Testing Data",
+                  reason: textReasonOvertime.text));
               //clockOut();
               Navigator.pop(context);
             },
