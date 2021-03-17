@@ -42,7 +42,13 @@ class AttendanceService {
     );
     print(response.statusCode);
     print(response.body);
-    return response.statusCode;
+
+    // if success pas the attendance id
+    if (response.statusCode == 200) {
+      var res = jsonDecode(response.body);
+      return res["id"];
+    }
+    return null;
   }
 
   // Get User attendance list

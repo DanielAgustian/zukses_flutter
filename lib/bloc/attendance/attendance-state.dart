@@ -1,6 +1,5 @@
- 
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/attendance-model.dart'; 
+import 'package:zukses_app_1/model/attendance-model.dart';
 
 abstract class AttendanceState extends Equatable {
   const AttendanceState();
@@ -15,7 +14,14 @@ class AttendanceStateLoading extends AttendanceState {}
 class AttendanceStateSuccessClockIn extends AttendanceState {}
 
 // Handle state user success clock out
-class AttendanceStateSuccessClockOut extends AttendanceState {}
+class AttendanceStateSuccessClockOut extends AttendanceState {
+  // save list of attendance user
+  final int attendanceID;
+
+  AttendanceStateSuccessClockOut({this.attendanceID});
+
+  List<Object> get props => [attendanceID];
+}
 
 // Handle state user fail to clock in or out
 class AttendanceStateFailed extends AttendanceState {}

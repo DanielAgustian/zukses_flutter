@@ -11,7 +11,6 @@ import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
@@ -59,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String dialogText = "Clock In ";
   bool instruction = false;
   int isClockIn;
+  int attendanceID;
 
 // Dummy data
   var taskName = ["Task 1", "task 2"];
@@ -163,6 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       setState(() {
                         isClockIn = 2;
+                        attendanceID = state.attendanceID;
                         stringTap = "Have a nice day";
                       });
                       // // show confirm dialog success clock out
