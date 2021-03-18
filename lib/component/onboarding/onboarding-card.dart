@@ -32,11 +32,10 @@ class OnBoardingCard extends StatelessWidget {
         children: [
           SizedBox(height: 30),
           CircleAvatar(
-              backgroundColor: colorPrimary,
+              backgroundColor: colorBackground,
               radius: size.width * 0.35,
               //backgroundImage: Image.asset("assets/images/onboarding.png"),
-              child: image
-              ),
+              child: image),
           SizedBox(height: 40),
           Align(
               alignment: Alignment.centerLeft,
