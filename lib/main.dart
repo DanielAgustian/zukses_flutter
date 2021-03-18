@@ -26,6 +26,7 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 
 import 'bloc/leaves/leave-bloc.dart';
 import 'bloc/overtime/overtime-bloc.dart';
+import 'bloc/team/team-bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,6 +79,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<OvertimeBloc>(
           create: (context) => OvertimeBloc(),
+        ),
+        BlocProvider<TeamBloc>(
+          create: (context) => TeamBloc(),
         ),
       ],
       child: MaterialApp(

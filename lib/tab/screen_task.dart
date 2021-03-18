@@ -57,13 +57,10 @@ class _TaskScreen extends State<TaskScreen>
     timer();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -82,7 +79,7 @@ class _TaskScreen extends State<TaskScreen>
               padding: EdgeInsets.only(right: 20),
               splashColor: Colors.transparent,
               icon: FaIcon(
-                FontAwesomeIcons.plus,
+                FontAwesomeIcons.plusCircle,
                 color: colorPrimary,
                 size: size.height < 570 ? 20 : 25,
               ),
@@ -162,7 +159,6 @@ class _TaskScreen extends State<TaskScreen>
                     ));
               },
             ),
-            
           ],
         )));
   }

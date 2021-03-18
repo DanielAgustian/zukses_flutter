@@ -10,7 +10,7 @@ class LeaveServiceHTTP {
 
   Future<int> createLeave(
       int leaveTypeId, String duration, String leaveDate, String reason,
-      [String startTime, String endTime]) async {
+      [String startTime, String endTime, String leaveDateEnd]) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String token = prefs.getString("token");
@@ -19,8 +19,9 @@ class LeaveServiceHTTP {
       'duration': duration,
       'leaveDate': leaveDate,
       'reason': reason,
-      'startTime': startTime,
-      'endTime': endTime
+      'startTime': startTime == null?"":startTime,
+      'endTime': endTime == null?"":endTime,
+      'leaveDateEnd':leaveDateEnd == null?"":leaveDateEnd
     };
     final response = await http.post(
       Uri.https(baseURI, '/api/leave'),

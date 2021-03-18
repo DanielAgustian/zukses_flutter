@@ -19,6 +19,7 @@ import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/leave-type-model.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ApplyLeavesFormScreen extends StatefulWidget {
@@ -105,6 +106,11 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   onTap: () {
                     _createLeaves();
                     //Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                (ScreenTab(index: 2))));
                   },
                   child: Container(
                     child: Text(
@@ -250,9 +256,9 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         color: colorBackground,
                         boxShadow: [
                           BoxShadow(
-                              offset: Offset(0, 0),
-                              color: Color.fromRGBO(240, 239, 242, 1),
-                              blurRadius: 15),
+                            color: colorNeutral1.withOpacity(1),
+                            blurRadius: 15,
+                          )
                         ],
                         borderRadius: BorderRadius.circular(5)),
                     child: TextFormField(

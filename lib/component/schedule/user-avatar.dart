@@ -21,7 +21,7 @@ class UserAvatar extends StatelessWidget {
           ? Stack(
               children: [
                 CircleAvatar(
-                  backgroundColor: colorSecondaryRed,
+                  backgroundColor: colorPrimary30,
                   radius: avatarRadius,
                 ),
                 Positioned(

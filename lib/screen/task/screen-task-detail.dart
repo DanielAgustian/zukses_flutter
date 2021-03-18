@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
-import 'package:flutter/material.dart'; 
-import 'package:zukses_app_1/component/task/comment-box.dart'; 
-import 'package:zukses_app_1/constant/constant.dart'; 
+import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/task/comment-box.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/task/list-task-detail2.dart'; 
+import 'package:zukses_app_1/component/task/list-task-detail2.dart';
 
 class InnerList {
   final String name;
@@ -73,7 +73,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           backgroundColor: colorPrimary,
           child: FaIcon(
             FontAwesomeIcons.plus,
@@ -86,7 +86,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               MaterialPageRoute(builder: (context) => AddTaskScreen()),
             );
           },
-        ),
+        ),*/
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -109,7 +109,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               padding: EdgeInsets.only(right: 20),
               splashColor: Colors.transparent,
               icon: FaIcon(
-                FontAwesomeIcons.plus,
+                FontAwesomeIcons.plusCircle,
                 color: colorPrimary,
                 size: size.height < 570 ? 20 : 25,
               ),

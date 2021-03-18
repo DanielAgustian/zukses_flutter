@@ -28,6 +28,7 @@ import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 /*
@@ -223,8 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 stringTap,
                                 style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      color: Colors.white, letterSpacing: 1.5),
+                                  textStyle: TextStyle(color: Colors.white),
                                   fontSize: size.height < 600 ? 14 : 18,
                                 ),
                               ),
@@ -678,7 +678,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Container(
             width: double.infinity,
-            height: 200,
+            height: size.height * 0.40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(40),
@@ -703,9 +703,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     stringTap,
                     style: GoogleFonts.lato(
-                      textStyle:
-                          TextStyle(color: Colors.white, letterSpacing: 1.5),
-                      fontSize: 14,
+                      textStyle: TextStyle(color: Colors.white),
+                      fontSize: size.height < 600 ? 14 : 18,
                     ),
                   ),
                 ]))),
@@ -800,7 +799,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: FlatButton(
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         color: colorBackground,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 3))));
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -863,7 +868,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: FlatButton(
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         color: colorBackground,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 2))));
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1033,10 +1044,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             decoration: BoxDecoration(color: colorBackground, boxShadow: [
               BoxShadow(
-                color: colorNeutral2.withOpacity(0.7),
-                spreadRadius: 4,
-                blurRadius: 10,
-                offset: Offset(0, 3),
+                color: colorNeutral1.withOpacity(1),
+                blurRadius: 15,
               )
             ]),
             width: double.infinity,
@@ -1046,6 +1055,8 @@ class _HomeScreenState extends State<HomeScreen> {
               minLines: 6,
               maxLines: 6,
               decoration: new InputDecoration(
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.all(5),
                   hintText: 'Reason for Overtime',
                   hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),

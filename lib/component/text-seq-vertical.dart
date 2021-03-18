@@ -21,12 +21,12 @@ class TextSequentialVertical extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Start Time",
+            text1,
             style: TextStyle(
                 color: colorPrimary70, fontSize: size.height <= 600 ? 12 : 14),
           ),
           Text(
-            "08.23",
+            text2,
             style: TextStyle(
                 color: colorPrimary, fontSize: size.height <= 600 ? 12 : 14),
           ),

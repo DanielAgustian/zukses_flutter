@@ -247,6 +247,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                         "${getDayName.format(absensiList[index].clockIn)}",

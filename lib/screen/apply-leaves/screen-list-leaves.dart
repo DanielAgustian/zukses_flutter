@@ -46,45 +46,43 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
     print(activeIndex);
   }
 
-  void debug() {
-    OvertimeServiceHTTP().fetchOvertime();
-  }
-
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            debug();
-          },
-        ),
+        backgroundColor: colorBackground,
         appBar: customAppBar(context,
             size: size,
-            leadingIcon: IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.chevronLeft,
-                color: colorPrimary,
+            leadingIcon: Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.chevronLeft,
+                  color: colorPrimary,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
             ),
             title: "Permission",
             actionList: [
-              IconButton(
-                padding: EdgeInsets.only(right: 20),
-                splashColor: Colors.transparent,
-                icon: FaIcon(
-                  FontAwesomeIcons.plusCircle,
-                  color: colorPrimary,
-                  size: size.height < 570 ? 18 : 23,
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: IconButton(
+                  padding: EdgeInsets.only(right: 20),
+                  splashColor: Colors.transparent,
+                  icon: FaIcon(
+                    FontAwesomeIcons.plusCircle,
+                    color: colorPrimary,
+                    size: size.height < 570 ? 18 : 23,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ApplyLeavesFormScreen()));
+                  },
                 ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ApplyLeavesFormScreen()));
-                },
               ),
             ]),
         body: DefaultTabController(

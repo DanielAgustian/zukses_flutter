@@ -74,11 +74,14 @@ class ListReviseProject extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         Text(
                           detail,
                           style: TextStyle(fontSize: 12, color: colorPrimary50),
+                        ),
+                        SizedBox(
+                          height: 2,
                         )
                       ],
                     )
