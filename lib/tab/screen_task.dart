@@ -96,17 +96,20 @@ class _TaskScreen extends State<TaskScreen>
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 10,
+            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               height: 50,
               //width: MediaQuery.of(context).size.width * 0.45,
               decoration: BoxDecoration(
-                  color: colorNeutral150,
+                  color: colorBackground,
                   boxShadow: [
                     BoxShadow(
-                        offset: Offset(0, 0),
-                        color: Color.fromRGBO(240, 239, 242, 1),
-                        blurRadius: 15),
+                      color: colorNeutral1.withOpacity(1),
+                      blurRadius: 15,
+                    ),
                   ],
                   borderRadius: BorderRadius.circular(5)),
               child: Center(

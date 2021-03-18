@@ -38,11 +38,16 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
-    tabController.addListener(() {});
+    tabController.addListener(() {
+      _getTabIndex();
+    });
   }
 
   _getTabIndex() {
-    activeIndex = tabController.index;
+    setState(() {
+          activeIndex = tabController.index;
+        });
+    
     print(activeIndex);
   }
 

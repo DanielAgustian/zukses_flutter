@@ -13,6 +13,9 @@ import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/bloc/team/team-bloc.dart';
+import 'package:zukses_app_1/bloc/team/team-event.dart';
+import 'package:zukses_app_1/bloc/team/team-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
@@ -118,10 +121,15 @@ class _HomeScreenState extends State<HomeScreen> {
     BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
   }
 
+  void getMember() async {
+    BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
+  }
+
   @override
   void initState() {
     super.initState();
     // sharedPref();
+    getMember();
     sharedPrefInstruction();
     checkStatusClock();
     getUserProfile();
@@ -446,47 +454,57 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                             builder: (context) => MemberScreen()));
                   },
-                  child: Container(
-                    width: size.width,
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.symmetric(horizontal: 15),
-                    decoration: BoxDecoration(
-                        color: colorBackground,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorNeutral1.withOpacity(1),
-                            blurRadius: 15,
-                          )
-                        ]),
-                    child: Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Team Member",
-                            style: TextStyle(
-                                color: colorPrimary,
-                                letterSpacing: 0,
-                                fontSize: size.width <= 600 ? 18 : 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            height: 20,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 10,
-                              itemBuilder: (context, index) => index >= 9
-                                  ? UserAvatar(
-                                      value: "+5",
-                                    )
-                                  : UserAvatar(dotSize: 7),
+                  child: BlocBuilder<TeamBloc, TeamState>(
+                    builder: (context, state) {
+                      if (state is TeamStateSuccessLoad) {
+                        return Container(
+                          width: size.width,
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorNeutral1.withOpacity(1),
+                                  blurRadius: 15,
+                                )
+                              ]),
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Team Member",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      letterSpacing: 0,
+                                      fontSize: size.width <= 600 ? 18 : 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  height: 20,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: state.team.length,
+                                    itemBuilder: (context, index) => index >= 9
+                                        ? UserAvatar(
+                                            value: "+" +
+                                                (state.team.length - 9)
+                                                    .toString(),
+                                          )
+                                        : UserAvatar(dotSize: 7),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
                   ),
                 ),
                 Padding(

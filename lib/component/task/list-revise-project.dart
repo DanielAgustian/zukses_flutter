@@ -28,10 +28,8 @@ class ListReviseProject extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 boxShadow: [
                   BoxShadow(
-                    color: colorNeutral2.withOpacity(0.2),
-                    spreadRadius: 4,
-                    blurRadius: 10,
-                    offset: Offset(0, 3),
+                    color: colorNeutral1.withOpacity(1),
+                    blurRadius: 15,
                   )
                 ]),
             child: Row(
