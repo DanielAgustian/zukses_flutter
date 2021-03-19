@@ -2,13 +2,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-event.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-state.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
-import 'package:zukses_app_1/bloc/leaves/leave-state.dart'; 
+import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
@@ -69,10 +69,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         },
         child: widget.index == 0
             ? Scaffold(
-                /*floatingActionButton: FloatingActionButton(onPressed: () {
-          temp();
-        }),*/
                 appBar: AppBar(
+                  elevation: 0,
                   centerTitle: true,
                   backgroundColor: colorBackground,
                   leadingWidth: 70,
@@ -89,7 +87,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           child: Text(
                             "Cancel",
                             style: TextStyle(
-                                fontSize: size.height <= 569 ? 15 : 18,
+                                fontSize: size.height <= 600 ? 14 : 16,
                                 color: colorPrimary,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -100,7 +98,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     style: TextStyle(
                         color: colorPrimary,
                         fontWeight: FontWeight.bold,
-                        fontSize: size.height <= 569 ? 20 : 25),
+                        fontSize: size.height <= 600 ? 20 : 22),
                   ),
                   actions: [
                     Center(
@@ -120,7 +118,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             child: Text(
                               "Done",
                               style: TextStyle(
-                                  fontSize: size.height <= 569 ? 15 : 18,
+                                  fontSize: size.height <= 600 ? 14 : 16,
                                   color: colorPrimary,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -158,7 +156,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                               child: Container()),
                           //SizedBox(height: 20),
                           AddScheduleRow2(
-                            fontSize: size.height <= 569 ? 14 : 16,
+                            fontSize: size.height <= 600 ? 14 : 16,
                             title: items[0],
                             textItem: repeat,
                             items: items,
@@ -178,7 +176,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                   ? "Start Date"
                                   : "Date",
                               textItem: "${formater.format(startDate)}",
-                              fontSize: size.height <= 569 ? 14 : 16,
+                              fontSize: size.height <= 600 ? 14 : 16,
                             ),
                           ),
                           repeat == "Multiple Day"
@@ -189,7 +187,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                   child: AddScheduleRow(
                                     title: "End Date",
                                     textItem: "${formater.format(endDate)}",
-                                    fontSize: size.height <= 569 ? 14 : 16,
+                                    fontSize: size.height <= 600 ? 14 : 16,
                                   ),
                                 )
                               : Container(),
@@ -202,7 +200,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                     title: "Start Time",
                                     textItem:
                                         Util().changeTimeToString(startTime),
-                                    fontSize: size.height <= 569 ? 14 : 16,
+                                    fontSize: size.height <= 600 ? 14 : 16,
                                   ),
                                 )
                               : Container(),
@@ -215,7 +213,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                     title: "End Time",
                                     textItem:
                                         Util().changeTimeToString(endTime),
-                                    fontSize: size.height <= 569 ? 14 : 16,
+                                    fontSize: size.height <= 600 ? 14 : 16,
                                   ),
                                 )
                               : Container(),
@@ -259,7 +257,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                   items: itemsLeaveName,
                                   title: "Leave Type",
                                   textItem: leaveType,
-                                  fontSize: size.height <= 569 ? 14 : 16,
+                                  fontSize: size.height <= 600 ? 14 : 16,
                                 )
                               : Container(),
 
@@ -380,7 +378,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 child: Text(
                   "Cancel",
                   style: TextStyle(
-                      fontSize: size.height <= 569 ? 15 : 18,
+                      fontSize: size.height <= 600 ? 15 : 18,
                       color: colorPrimary,
                       fontWeight: FontWeight.w500),
                 ),
@@ -391,7 +389,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
-              fontSize: size.height <= 569 ? 20 : 25),
+              fontSize: size.height <= 600 ? 20 : 25),
         ),
         actions: [
           Center(
@@ -411,7 +409,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   child: Text(
                     "Done",
                     style: TextStyle(
-                        fontSize: size.height <= 569 ? 15 : 18,
+                        fontSize: size.height <= 600 ? 15 : 18,
                         color: colorPrimary,
                         fontWeight: FontWeight.bold),
                   ),
@@ -432,7 +430,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               children: [
                 //SizedBox(height: 20),
                 /*AddScheduleRow2(
-                  fontSize: size.height <= 569 ? 14 : 16,
+                  fontSize: size.height <= 600 ? 14 : 16,
                   title: items[0],
                   textItem: repeat,
                   items: items,
@@ -450,17 +448,17 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   child: AddScheduleRow(
                     title: repeat == "Multiple Day" ? "Start Date" : "Date",
                     textItem: "${formater.format(startDate)}",
-                    fontSize: size.height <= 569 ? 14 : 16,
+                    fontSize: size.height <= 600 ? 14 : 16,
                   ),
                 ),
                 AddScheduleRow(
                   arrowRight: "false",
                   title: "Duration",
                   textItem: "00:00",
-                  fontSize: size.height <= 569 ? 14 : 16,
+                  fontSize: size.height <= 600 ? 14 : 16,
                 ),
                 AddScheduleRow2(
-                    fontSize: size.height <= 569 ? 14 : 16,
+                    fontSize: size.height <= 600 ? 14 : 16,
                     title: "Project",
                     textItem: project,
                     items: projectList,
@@ -471,7 +469,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                       });
                     }),
                 AddScheduleRow2(
-                    fontSize: size.height <= 569 ? 14 : 16,
+                    fontSize: size.height <= 600 ? 14 : 16,
                     title: "Task",
                     textItem: task,
                     items: taskList,

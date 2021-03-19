@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart'; 
+import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -560,13 +560,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         },
                         child: Text(
                           "Cancel",
-                          style: TextStyle(fontSize: 16, color: colorPrimary),
+                          style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.height < 600
+                                  ? 14
+                                  : 16,
+                              color: colorPrimary),
                         ),
                       ),
                       Text(
                         "Add Invitation",
                         style: TextStyle(
-                            fontSize: 20,
+                            fontSize: MediaQuery.of(context).size.height < 600
+                                ? 18
+                                : 20,
                             color: colorPrimary,
                             fontWeight: FontWeight.w700),
                       ),
@@ -577,7 +583,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         child: Text(
                           "Done",
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: MediaQuery.of(context).size.height < 600
+                                  ? 14
+                                  : 16,
                               color: colorPrimary,
                               fontWeight: FontWeight.w700),
                         ),
