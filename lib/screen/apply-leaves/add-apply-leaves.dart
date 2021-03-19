@@ -9,17 +9,20 @@ import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:intl/intl.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-event.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-state.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/leave-type-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
@@ -45,7 +48,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   // Text field controller
   TextEditingController textReason = new TextEditingController();
   bool _reasonValidator = false;
-
+  String durationOvertime = "";
   // Dropdown menu
   List<String> itemsLeaveName = [];
   List<int> itemLeaveNameID = [];
@@ -60,7 +63,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   List<String> taskList = ["Front End", "Back End", "Design"];
   String dateDisplay;
   List<String> dateDisplayList = [];
-  List<String> dateDisplayId = [];
+  List<AttendanceModel> userModel = [];
+  String attendanceId = "";
   bool isLoading2 = false;
   @override
   void initState() {
@@ -419,6 +423,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               child: InkWell(
                 onTap: () {
                   //_createLeaves();
+                  _createOvertime();
                   //Navigator.of(context).pop();
                   Navigator.pushReplacement(
                       context,
@@ -453,11 +458,11 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   listener: (context, state) {
                     if (state is AttendanceStateSuccessLoad) {
                       dateDisplayList.clear();
-                      dateDisplayId.clear();
+                      userModel.addAll(state.attendanceList);
                       int i = 0;
                       state.attendanceList.forEach((element) {
                         dateDisplayList.add(element.clockOut.toString());
-                        dateDisplayId.add(element.id);
+
                         if (i < 1) {
                           dateDisplay = element.clockOut.toString();
                         }
@@ -478,17 +483,22 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         items: dateDisplayList,
                         onSelectedItem: (val) {
                           print(val);
+                          _changeDate();
                           setState(() {
                             dateDisplay = val;
                           });
                         })
                     : CircularProgressIndicator(),
-                AddScheduleRow(
-                  arrowRight: "false",
-                  title: "Duration",
-                  textItem: "00:00",
-                  fontSize: size.height <= 569 ? 14 : 16,
-                ),
+                isLoading2
+                    ? AddScheduleRow(
+                        arrowRight: "false",
+                        title: "Duration",
+                        textItem: durationOvertime == ""
+                            ? "00:00:00"
+                            : durationOvertime,
+                        fontSize: size.height <= 569 ? 14 : 16,
+                      )
+                    : CircularProgressIndicator(),
                 AddScheduleRow2(
                     fontSize: size.height <= 569 ? 14 : 16,
                     title: "Project",
@@ -612,6 +622,26 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         });
       }
     });
+  }
+
+  _changeDate() {
+    userModel.forEach((element) {
+      if (element.clockOut.toString() == dateDisplay) {
+        setState(() {
+          attendanceId = element.id;
+          durationOvertime = element.overtime == null ? "" : element.overtime;
+
+          print("duration : " + durationOvertime);
+        });
+      }
+    });
+  }
+
+  _createOvertime() {
+    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+        attendanceId: int.parse(attendanceId),
+        project: project,
+        reason: textReason.text));
   }
 
   void _createLeaves() {

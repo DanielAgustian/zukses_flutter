@@ -23,14 +23,14 @@ class AuthenticationBloc
   // BLOC for login with google
   Stream<AuthenticationState> mapLoginGoogle() async* {
     // return user model
-    var res = await _authenticationRepository.signInWithGoogle();
+    // var res = await _authenticationRepository.signInWithGoogle();
 
-    // directly throw into success load or fail load
-    if (res is AuthModel && res != null) {
-      yield AuthStateSuccessLoad(res);
-    } else {
-      yield AuthStateFailLoad();
-    }
+    // // directly throw into success load or fail load
+    // if (res is AuthModel && res != null) {
+    //   yield AuthStateSuccessLoad(res);
+    // } else {
+    //   yield AuthStateFailLoad();
+    // }
   }
 
   // BLOC for login manually using email and password

@@ -145,6 +145,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             backgroundColor: colorBackground,
                             flexibleSpace: Container(
                                 color: colorNeutral150,
+                                height: 30,
                                 child: TabBar(
                                     onTap: (index) {
                                       _onTapIndex(index);
@@ -160,7 +161,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         borderRadius: BorderRadius.circular(5)),
                                     tabs: [
                                       Tab(
-                                        text: "To DO",
+                                        text: "ToDo",
                                       ),
                                       Tab(
                                         text: "In Progress",
@@ -419,12 +420,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                     SizedBox(
                       height: 5,
                     ),
-                    Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Senectus in nascetur massa aliquam sollicitudin tellus. Tincidunt tellus a hac aliquam pharetra, massa laoreet. Varius adipiscing at neque venenatis quam mattis dui odio mi. Vitae euismod blandit. (Note)",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorNeutral3,
-                        )),
+                    Container(
+                      child: Text(
+                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Senectus in nascetur massa aliquam sollicitudin tellus. Tincidunt tellus a hac aliquam pharetra, massa laoreet. Varius adipiscing at neque venenatis quam mattis dui odio mi. Vitae euismod blandit. (Note)",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorNeutral3,
+                          )),
+                    ),
                     SizedBox(
                       height: 10,
                     ),
@@ -758,7 +761,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       ],
                     ),
                     SizedBox(
-                      height: 5,
+                      height: 10,
                     ),
                     ListView.builder(
                       padding: EdgeInsets.all(0),
@@ -767,7 +770,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         return CommentBox(
-                            comment: "Lorem ipsum dolor sit amet, c",
+                            size: size,
+                            comment:
+                                "Lorem ipsum dolor sit amet, cboboa sl anapisna pna pindo aoad n[oa k doa a[ da[on a[oa [aomd [omfn lk  kh ahbd la[ß",
                             user: "Finley Khowira",
                             date: "14 Jan 2021");
                       },

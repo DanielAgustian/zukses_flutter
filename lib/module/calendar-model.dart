@@ -81,7 +81,7 @@ class CustomCalendar {
     // validate
     if (year == null || month == null || month < 1 || month > 12)
       throw ArgumentError('Invalid year or month');
-    List<Calendar> calendar = List<Calendar>();
+    List<Calendar> calendar = [];
     // get no. of days in the month
     // month-1 because _monthDays starts from index 0
     // and month starts from 1
@@ -181,7 +181,7 @@ class CustomCalendar {
 
   /// get the month calendar
   /// month is between from 1-12 (1 for January and 12 for December)
-  List<WeeklyCalendar> getWeeklyCalendar({List<Calendar> calendar}) { 
+  List<WeeklyCalendar> getWeeklyCalendar({List<Calendar> calendar}) {
     List<WeeklyCalendar> weekCalendar = [];
     for (int i = 0; i < calendar.length; i = i + 7) {
       int week = numberOfWeek(i);

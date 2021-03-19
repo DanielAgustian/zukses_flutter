@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/constant/constant.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/constant/constant.dart'; 
 
 // ignore: must_be_immutable
 class ListTaskDetail2 extends StatelessWidget {
@@ -27,7 +26,8 @@ class ListTaskDetail2 extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
           child: Container(
               width: size.width * 0.8,
-              height: size.height * 0.075,
+              height:
+                  size.height < 600 ? size.height * 0.1 : size.height * 0.075,
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
               decoration: BoxDecoration(
                   color: colorBackground,
@@ -85,7 +85,7 @@ class ListTaskDetail2 extends StatelessWidget {
                         child: Text(" Front End  ",
                             style: TextStyle(
                                 color: colorBackground,
-                                fontSize: 12,
+                                fontSize: size.height < 600 ? 10 : 12,
                                 fontWeight: FontWeight.w500)),
                       ),
                     ),
