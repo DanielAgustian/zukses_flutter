@@ -23,6 +23,9 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ApplyLeavesFormScreen extends StatefulWidget {
+  ApplyLeavesFormScreen({Key key, this.title, this.index});
+  final String title;
+  final int index;
   @override
   _ApplyLeavesFormScreenState createState() => _ApplyLeavesFormScreenState();
 }
@@ -48,6 +51,10 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   String repeat = "Single Day";
   String leaveType = "";
   bool isLoading = false;
+  String project = "Agerabot";
+  List<String> projectList = ["Agerabot", "WGM", "Bayer"];
+  String task = "Front End";
+  List<String> taskList = ["Front End", "Back End", "Design"];
   @override
   void initState() {
     super.initState();
@@ -59,232 +66,245 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     Size size = MediaQuery.of(context).size;
 
     return WillPopScope(
-      onWillPop: () {
-        // if user press back button on device not the app
-        if (textReason.text != "") return _onWillPop(size: size);
-        return Future.value(true);
-      },
-      child: Scaffold(
-        /*floatingActionButton: FloatingActionButton(onPressed: () {
+        onWillPop: () {
+          // if user press back button on device not the app
+          if (textReason.text != "") return _onWillPop(size: size);
+          return Future.value(true);
+        },
+        child: widget.index == 0
+            ? Scaffold(
+                /*floatingActionButton: FloatingActionButton(onPressed: () {
           temp();
         }),*/
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: colorBackground,
-          leadingWidth: 70,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: InkWell(
-                onTap: () {
-                  if (textReason.text != "")
-                    _onWillPop(size: size);
-                  else
-                    Navigator.pop(context);
-                },
-                child: Center(
-                  child: Text(
-                    "Cancel",
-                    style: TextStyle(
-                        fontSize: size.height <= 569 ? 15 : 18,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w500),
+                appBar: AppBar(
+                  centerTitle: true,
+                  backgroundColor: colorBackground,
+                  leadingWidth: 70,
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: InkWell(
+                        onTap: () {
+                          if (textReason.text != "")
+                            _onWillPop(size: size);
+                          else
+                            Navigator.pop(context);
+                        },
+                        child: Center(
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                                fontSize: size.height <= 569 ? 15 : 18,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        )),
                   ),
-                )),
-          ),
-          title: Text(
-            "Apply Leaves",
-            style: TextStyle(
-                color: colorPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 20 : 25),
-          ),
-          actions: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: InkWell(
-                  onTap: () {
-                    _createLeaves();
-                    //Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                (ScreenTab(index: 2))));
-                  },
-                  child: Container(
-                    child: Text(
-                      "Done",
-                      style: TextStyle(
-                          fontSize: size.height <= 569 ? 15 : 18,
-                          color: colorPrimary,
-                          fontWeight: FontWeight.bold),
+                  title: Text(
+                    "Apply Leaves",
+                    style: TextStyle(
+                        color: colorPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: size.height <= 569 ? 20 : 25),
+                  ),
+                  actions: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: InkWell(
+                          onTap: () {
+                            _createLeaves();
+                            //Navigator.of(context).pop();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        (ScreenTab(index: 1))));
+                          },
+                          child: Container(
+                            child: Text(
+                              "Done",
+                              style: TextStyle(
+                                  fontSize: size.height <= 569 ? 15 : 18,
+                                  color: colorPrimary,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: colorBackground,
+                body: Container(
+                  padding: EdgeInsets.all(20),
+                  //color: colorSecondaryYellow70,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          BlocListener<LeaveBloc, LeaveState>(
+                              listener: (context, state) {
+                                if (state is LeaveStateSuccess) {
+                                  Util().showToast(
+                                      context: this.context,
+                                      msg: "Leave Created",
+                                      color: colorPrimary,
+                                      txtColor: colorBackground);
+                                } else {
+                                  Util().showToast(
+                                      context: this.context,
+                                      msg: "Something Wrong !",
+                                      color: colorError,
+                                      txtColor: colorBackground);
+                                }
+                              },
+                              child: Container()),
+                          //SizedBox(height: 20),
+                          AddScheduleRow2(
+                            fontSize: size.height <= 569 ? 14 : 16,
+                            title: items[0],
+                            textItem: repeat,
+                            items: items,
+                            onSelectedItem: (val) {
+                              print(val);
+                              setState(() {
+                                repeat = val;
+                              });
+                            },
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _selectDate(context, 0);
+                            },
+                            child: AddScheduleRow(
+                              title: repeat == "Multiple Day"
+                                  ? "Start Date"
+                                  : "Date",
+                              textItem: "${formater.format(startDate)}",
+                              fontSize: size.height <= 569 ? 14 : 16,
+                            ),
+                          ),
+                          repeat == "Multiple Day"
+                              ? InkWell(
+                                  onTap: () {
+                                    _selectDate(context, 1);
+                                  },
+                                  child: AddScheduleRow(
+                                    title: "End Date",
+                                    textItem: "${formater.format(endDate)}",
+                                    fontSize: size.height <= 569 ? 14 : 16,
+                                  ),
+                                )
+                              : Container(),
+                          repeat == "Half Day"
+                              ? InkWell(
+                                  onTap: () {
+                                    pickTime(context, 0);
+                                  },
+                                  child: AddScheduleRow(
+                                    title: "Start Time",
+                                    textItem:
+                                        Util().changeTimeToString(startTime),
+                                    fontSize: size.height <= 569 ? 14 : 16,
+                                  ),
+                                )
+                              : Container(),
+                          repeat == "Half Day"
+                              ? InkWell(
+                                  onTap: () {
+                                    pickTime(context, 1);
+                                  },
+                                  child: AddScheduleRow(
+                                    title: "End Time",
+                                    textItem:
+                                        Util().changeTimeToString(endTime),
+                                    fontSize: size.height <= 569 ? 14 : 16,
+                                  ),
+                                )
+                              : Container(),
+                          BlocListener<LeaveTypeBloc, LeaveTypeState>(
+                            listener: (context, state) {
+                              if (state is LeaveTypeStateSuccessLoad) {
+                                itemsLeaveName.clear();
+                                dataLeaveType.clear();
+                                //itemLeaveNameID.clear();
+                                int i = 0;
+                                state.leaveType.forEach((element) {
+                                  if (i < 1) {
+                                    setState(() {
+                                      leaveType = element.typeName;
+                                      i++;
+                                    });
+                                  }
+                                  setState(() {
+                                    itemLeaveNameID.add(element.id);
+
+                                    itemsLeaveName.add(element.typeName);
+                                  });
+                                });
+                                setState(() {
+                                  dataLeaveType.addAll(state.leaveType);
+                                  isLoading = true;
+                                });
+                              }
+                            },
+                            child: Container(),
+                          ),
+                          isLoading
+                              ? AddScheduleRow2(
+                                  onSelectedItem: (val) {
+                                    print(val);
+                                    setState(() {
+                                      leaveType = val;
+                                    });
+                                    _changeLeave();
+                                  },
+                                  items: itemsLeaveName,
+                                  title: "Leave Type",
+                                  textItem: leaveType,
+                                  fontSize: size.height <= 569 ? 14 : 16,
+                                )
+                              : Container(),
+
+                          Container(
+                            decoration: BoxDecoration(
+                                border: _reasonValidator
+                                    ? Border.all(color: colorError)
+                                    : Border.all(color: Colors.transparent),
+                                color: colorBackground,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colorNeutral1.withOpacity(1),
+                                    blurRadius: 15,
+                                  )
+                                ],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              maxLines: 8,
+                              textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.text,
+                              onChanged: (val) {},
+                              controller: textReason,
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(20),
+                                  hintText: "Description",
+                                  hintStyle: TextStyle(
+                                    color: _reasonValidator
+                                        ? colorError
+                                        : colorNeutral1,
+                                  ),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: colorBackground,
-        body: Container(
-          padding: EdgeInsets.all(20),
-          //color: colorSecondaryYellow70,
-          child: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  BlocListener<LeaveBloc, LeaveState>(
-                      listener: (context, state) {
-                        if (state is LeaveStateSuccess) {
-                          Util().showToast(
-                              context: this.context,
-                              msg: "Leave Created",
-                              color: colorPrimary,
-                              txtColor: colorBackground);
-                        } else {
-                          Util().showToast(
-                              context: this.context,
-                              msg: "Something Wrong !",
-                              color: colorError,
-                              txtColor: colorBackground);
-                        }
-                      },
-                      child: Container()),
-                  //SizedBox(height: 20),
-                  AddScheduleRow2(
-                    fontSize: size.height <= 569 ? 14 : 16,
-                    title: items[0],
-                    textItem: repeat,
-                    items: items,
-                    onSelectedItem: (val) {
-                      print(val);
-                      setState(() {
-                        repeat = val;
-                      });
-                    },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _selectDate(context, 0);
-                    },
-                    child: AddScheduleRow(
-                      title: repeat == "Multiple Day" ? "Start Date" : "Date",
-                      textItem: "${formater.format(startDate)}",
-                      fontSize: size.height <= 569 ? 14 : 16,
-                    ),
-                  ),
-                  repeat == "Multiple Day"
-                      ? InkWell(
-                          onTap: () {
-                            _selectDate(context, 1);
-                          },
-                          child: AddScheduleRow(
-                            title: "End Date",
-                            textItem: "${formater.format(endDate)}",
-                            fontSize: size.height <= 569 ? 14 : 16,
-                          ),
-                        )
-                      : Container(),
-                  repeat == "Half Day"
-                      ? InkWell(
-                          onTap: () {
-                            pickTime(context, 0);
-                          },
-                          child: AddScheduleRow(
-                            title: "Start Time",
-                            textItem: Util().changeTimeToString(startTime),
-                            fontSize: size.height <= 569 ? 14 : 16,
-                          ),
-                        )
-                      : Container(),
-                  repeat == "Half Day"
-                      ? InkWell(
-                          onTap: () {
-                            pickTime(context, 1);
-                          },
-                          child: AddScheduleRow(
-                            title: "End Time",
-                            textItem: Util().changeTimeToString(endTime),
-                            fontSize: size.height <= 569 ? 14 : 16,
-                          ),
-                        )
-                      : Container(),
-                  BlocListener<LeaveTypeBloc, LeaveTypeState>(
-                    listener: (context, state) {
-                      if (state is LeaveTypeStateSuccessLoad) {
-                        itemsLeaveName.clear();
-                        dataLeaveType.clear();
-                        //itemLeaveNameID.clear();
-                        state.leaveType.forEach((element) {
-                          setState(() {
-                            itemLeaveNameID.add(element.id);
-
-                            itemsLeaveName.add(element.typeName);
-                          });
-                        });
-                        setState(() {
-                          dataLeaveType.addAll(state.leaveType);
-                          isLoading = true;
-                        });
-                      }
-                    },
-                    child: Container(),
-                  ),
-                  isLoading
-                      ? AddScheduleRow2(
-                          onSelectedItem: (val) {
-                            print(val);
-                            setState(() {
-                              leaveType = val;
-                            });
-                            _changeLeave();
-                          },
-                          items: itemsLeaveName,
-                          title: "Leave Type",
-                          textItem: itemsLeaveName[0],
-                          fontSize: size.height <= 569 ? 14 : 16,
-                        )
-                      : Container(),
-
-                  Container(
-                    decoration: BoxDecoration(
-                        border: _reasonValidator
-                            ? Border.all(color: colorError)
-                            : Border.all(color: Colors.transparent),
-                        color: colorBackground,
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorNeutral1.withOpacity(1),
-                            blurRadius: 15,
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(5)),
-                    child: TextFormField(
-                      maxLines: 8,
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.text,
-                      onChanged: (val) {},
-                      controller: textReason,
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(20),
-                          hintText: "Description",
-                          hintStyle: TextStyle(
-                            color:
-                                _reasonValidator ? colorError : colorNeutral1,
-                          ),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+              )
+            : addOvertime(context));
   }
 
   // Handle if user click back using button in device not in app (usually for android)
@@ -338,6 +358,168 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               );
             })) ??
         false;
+  }
+
+  //Widget for Add Overtime Front
+  Widget addOvertime(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      /*floatingActionButton: FloatingActionButton(onPressed: () {
+          temp();
+        }),*/
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: colorBackground,
+        leadingWidth: 70,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: InkWell(
+              onTap: () {
+                if (textReason.text != "")
+                  _onWillPop(size: size);
+                else
+                  Navigator.pop(context);
+              },
+              child: Center(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                      fontSize: size.height <= 569 ? 15 : 18,
+                      color: colorPrimary,
+                      fontWeight: FontWeight.w500),
+                ),
+              )),
+        ),
+        title: Text(
+          "Apply Overtime",
+          style: TextStyle(
+              color: colorPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: size.height <= 569 ? 20 : 25),
+        ),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: InkWell(
+                onTap: () {
+                  //_createLeaves();
+                  //Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              (ScreenTab(index: 1))));
+                },
+                child: Container(
+                  child: Text(
+                    "Done",
+                    style: TextStyle(
+                        fontSize: size.height <= 569 ? 15 : 18,
+                        color: colorPrimary,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: colorBackground,
+      body: Container(
+        padding: EdgeInsets.all(20),
+        //color: colorSecondaryYellow70,
+        child: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                //SizedBox(height: 20),
+                /*AddScheduleRow2(
+                  fontSize: size.height <= 569 ? 14 : 16,
+                  title: items[0],
+                  textItem: repeat,
+                  items: items,
+                  onSelectedItem: (val) {
+                    print(val);
+                    setState(() {
+                      repeat = val;
+                    });
+                  },
+                ),*/
+                InkWell(
+                  onTap: () {
+                    _selectDate(context, 0);
+                  },
+                  child: AddScheduleRow(
+                    title: repeat == "Multiple Day" ? "Start Date" : "Date",
+                    textItem: "${formater.format(startDate)}",
+                    fontSize: size.height <= 569 ? 14 : 16,
+                  ),
+                ),
+                AddScheduleRow(
+                  arrowRight: "false",
+                  title: "Duration",
+                  textItem: "00:00",
+                  fontSize: size.height <= 569 ? 14 : 16,
+                ),
+                AddScheduleRow2(
+                    fontSize: size.height <= 569 ? 14 : 16,
+                    title: "Project",
+                    textItem: project,
+                    items: projectList,
+                    onSelectedItem: (val) {
+                      print(val);
+                      setState(() {
+                        repeat = val;
+                      });
+                    }),
+                AddScheduleRow2(
+                    fontSize: size.height <= 569 ? 14 : 16,
+                    title: "Task",
+                    textItem: task,
+                    items: taskList,
+                    onSelectedItem: (val) {
+                      print(val);
+                      setState(() {
+                        repeat = val;
+                      });
+                    }),
+                Container(
+                  decoration: BoxDecoration(
+                      border: _reasonValidator
+                          ? Border.all(color: colorError)
+                          : Border.all(color: Colors.transparent),
+                      color: colorBackground,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorNeutral1.withOpacity(1),
+                          blurRadius: 15,
+                        )
+                      ],
+                      borderRadius: BorderRadius.circular(5)),
+                  child: TextFormField(
+                    maxLines: 8,
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.text,
+                    onChanged: (val) {},
+                    controller: textReason,
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(20),
+                        hintText: "Description",
+                        hintStyle: TextStyle(
+                          color: _reasonValidator ? colorError : colorNeutral1,
+                        ),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   //Method to Pick Date

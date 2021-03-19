@@ -14,6 +14,7 @@ import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-inbetween.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -82,6 +83,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
       // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
         return Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ScreenInBetween()),
+                );
+              },
+            ),
             backgroundColor: colorBackground,
             appBar: AppBar(
               elevation: 0,
@@ -127,10 +136,15 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     size: size.height <= 569 ? 16 : 20,
                   ),
                   onPressed: () {
-                    Navigator.push(
+                    /*Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ScreenListLeaves()),
+                    );*/
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenInBetween()),
                     );
                   },
                 )
