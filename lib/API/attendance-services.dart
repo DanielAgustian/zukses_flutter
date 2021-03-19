@@ -46,6 +46,7 @@ class AttendanceService {
     // if success pas the attendance id
     if (response.statusCode == 200) {
       var res = jsonDecode(response.body);
+      prefs.setInt("attendanceId", res["id"]);
       return res["id"];
     }
     return null;

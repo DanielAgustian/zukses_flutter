@@ -79,8 +79,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                         context,
                         MaterialPageRoute(
                             builder: (context) => ApplyLeavesFormScreen(
-                                  index: activeIndex,
-                                )));
+                                permission: widget.permission)));
                   },
                 ),
               ),
@@ -136,15 +135,11 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                 controller: tabController,
                 children: [
                   ScreenTabLeaves(
-                    permission: widget.permission,
-                    tab: "accepted"
-                  ),
-                  ScreenTabLeaves(permission: widget.permission,
-                  tab:"pending"),
+                      permission: widget.permission, tab: "accepted"),
                   ScreenTabLeaves(
-                    permission: widget.permission,
-                  tab:"rejected"
-                  )
+                      permission: widget.permission, tab: "pending"),
+                  ScreenTabLeaves(
+                      permission: widget.permission, tab: "rejected")
                 ],
               ),
             )));

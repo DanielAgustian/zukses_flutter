@@ -31,7 +31,7 @@ class OvertimeBloc extends Bloc<OvertimeEvent, OvertimeState> {
     // return list user model
     var res = await _overtimeServiceHTTP.postOvertime(
         event.attendanceId, event.project, event.reason);
-    print("MapDeleteOvertime Here");
+    
     print("Delete Overtime Status " + res.toString());
     // directly throw into success load or fail add
     if (res == 200) {

@@ -62,6 +62,8 @@ class Util {
     }
     return hour + ":" + minutes;
   }
+
+  
   // void getLocationData() async {
   //   Location location = new Location();
 
