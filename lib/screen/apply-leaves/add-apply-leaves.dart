@@ -76,7 +76,10 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           .add(LoadUserAttendanceEvent(date: DateTime.now()));
     } else {
       Util().showToast(
-          txtColor: colorError, msg: "Permission error", duration: 3);
+          txtColor: colorError,
+          msg: "Permission error",
+          duration: 3,
+          context: context);
     }
   }
 
@@ -186,7 +189,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             textItem: repeat,
                             items: items,
                             onSelectedItem: (val) {
-                              print(val);
                               setState(() {
                                 repeat = val;
                               });
@@ -273,7 +275,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           isLoading
                               ? AddScheduleRow2(
                                   onSelectedItem: (val) {
-                                    print(val);
                                     setState(() {
                                       leaveType = val;
                                     });
@@ -482,7 +483,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             dateDisplay, //"${formater.format(dateDisplay)}",
                         items: dateDisplayList,
                         onSelectedItem: (val) {
-                          print(val);
                           _changeDate();
                           setState(() {
                             dateDisplay = val;
@@ -505,7 +505,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     textItem: project,
                     items: projectList,
                     onSelectedItem: (val) {
-                      print(val);
                       setState(() {
                         project = val;
                       });
@@ -516,7 +515,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     textItem: task,
                     items: taskList,
                     onSelectedItem: (val) {
-                      print(val);
                       setState(() {
                         task = val;
                       });

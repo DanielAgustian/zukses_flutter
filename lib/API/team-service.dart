@@ -19,7 +19,7 @@ class TeamServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print(res.body);
+   
     print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,

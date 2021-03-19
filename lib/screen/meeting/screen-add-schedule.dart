@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart'; 
+import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -425,7 +425,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       textItem: repeat,
                       items: items,
                       onSelectedItem: (val) {
-                        print(val);
                         setState(() {
                           repeat = val;
                         });

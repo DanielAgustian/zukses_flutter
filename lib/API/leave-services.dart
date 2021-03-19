@@ -33,9 +33,9 @@ class LeaveServiceHTTP {
       body: jsonEncode(data),
     );
     print(response.statusCode.toString());
-    print(response.body);
+    //print(response.body);
     if (response.statusCode == 200) {
-      print("response.body:" + response.body);
+      //print("response.body:" + response.body);
       return response.statusCode;
     } else {
       return null;
@@ -51,9 +51,7 @@ class LeaveServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print(token);
-    print(res.body);
-    print(res.statusCode);
+    
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

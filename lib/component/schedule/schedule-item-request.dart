@@ -45,9 +45,9 @@ class ScheduleItemRequest extends StatelessWidget {
               color: colorBackground,
               boxShadow: [
                 BoxShadow(
-                    offset: Offset(0, 0),
-                    color: colorNeutral150,
-                    blurRadius: 15),
+                  color: colorNeutral1.withOpacity(1),
+                  blurRadius: 15,
+                )
               ]),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
