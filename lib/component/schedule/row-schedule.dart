@@ -9,9 +9,10 @@ class AddScheduleRow extends StatelessWidget {
     this.title,
     this.textItem,
     this.fontSize: 16,
+    this.arrowRight,
   }) : super(key: key);
 
-  final String title, textItem;
+  final String title, textItem, arrowRight;
   final double fontSize;
 
   @override
@@ -40,7 +41,7 @@ class AddScheduleRow extends StatelessWidget {
               title != "Time"
                   ? FaIcon(
                       FontAwesomeIcons.chevronRight,
-                      color: colorPrimary,
+                      color: arrowRight!= "false"?colorPrimary:colorBackground,
                     )
                   : Container()
             ],
