@@ -9,19 +9,23 @@ class CommentBox extends StatelessWidget {
     this.user,
     this.comment,
     this.date,
+    this.size,
   }) : super(key: key);
 
   final String user, comment;
   final String date;
+  final Size size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: size.width,
+      margin: EdgeInsets.only(bottom: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 35,
@@ -46,19 +50,17 @@ class CommentBox extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 5),
-                  Column(
-                    children: [
-                      Text(comment, style: TextStyle(color: colorPrimary30)),
-                    ],
-                  )
+                  Container(
+                      width: size.width * 0.7,
+                      child: Text(comment,
+                          style: TextStyle(color: colorPrimary30))),
                 ],
               )
             ],
           ),
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.ellipsisV),
-            onPressed: () {},
-          )
+          InkWell(
+              onTap: () {},
+              child: FaIcon(FontAwesomeIcons.ellipsisV, size: 16)),
         ],
       ),
     );

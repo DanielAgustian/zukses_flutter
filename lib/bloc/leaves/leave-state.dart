@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/leave-model.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
+import 'package:zukses_app_1/model/leave-model.dart'; 
 
 abstract class LeaveState extends Equatable {
   const LeaveState();

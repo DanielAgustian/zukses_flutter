@@ -40,13 +40,13 @@ dependencies:
   timer_builder:
   skeleton_text:
   flutter_slidable:
-  firebase_auth:
-  cloud_firestore: 
-  firebase_core:
-  google_sign_in:
   equatable:
   flutter_bloc:
   http_parser:  
+  # cloud_firestore: 
+  # firebase_auth:
+  # firebase_core:
+  # google_sign_in:
   
 dev_dependencies:
   flutter_test:

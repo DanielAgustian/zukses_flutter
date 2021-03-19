@@ -1,5 +1,5 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -254,8 +254,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           elevation: 2.0,
                           fillColor: Color.fromRGBO(20, 43, 111, 0.9),
                           child: Container(
-                            width: 60,
-                            height: 60,
+                            width: size.height < 600 ? 40 : 60,
+                            height: size.height < 600 ? 40 : 60,
                             child: Icon(Icons.arrow_forward,
                                 size: 35.0, color: Colors.white70),
                           ),
