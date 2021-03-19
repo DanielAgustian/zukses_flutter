@@ -171,7 +171,9 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       Container(
                         padding:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        width: size.width * 0.45,
+                        width: size.height < 600
+                            ? size.width * 0.4
+                            : size.width * 0.45,
                         decoration: BoxDecoration(
                             color: colorBackground,
                             boxShadow: [

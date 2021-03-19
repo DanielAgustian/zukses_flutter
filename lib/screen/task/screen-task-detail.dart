@@ -145,6 +145,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             backgroundColor: colorBackground,
                             flexibleSpace: Container(
                                 color: colorNeutral150,
+                                height: 30,
                                 child: TabBar(
                                     onTap: (index) {
                                       _onTapIndex(index);
@@ -160,7 +161,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         borderRadius: BorderRadius.circular(5)),
                                     tabs: [
                                       Tab(
-                                        text: "To DO",
+                                        text: "ToDo",
                                       ),
                                       Tab(
                                         text: "In Progress",

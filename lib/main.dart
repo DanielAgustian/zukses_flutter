@@ -254,8 +254,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           elevation: 2.0,
                           fillColor: Color.fromRGBO(20, 43, 111, 0.9),
                           child: Container(
-                            width: 60,
-                            height: 60,
+                            width: size.height < 600 ? 40 : 60,
+                            height: size.height < 600 ? 40 : 60,
                             child: Icon(Icons.arrow_forward,
                                 size: 35.0, color: Colors.white70),
                           ),
