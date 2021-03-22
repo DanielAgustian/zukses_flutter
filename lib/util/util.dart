@@ -63,7 +63,11 @@ class Util {
     return hour + ":" + minutes;
   }
 
-  
+  TimeOfDay stringToTimeOfDay(String tod) {
+    final format = DateFormat.jm(); //"6:00 AM"
+    return TimeOfDay.fromDateTime(format.parse(tod));
+  }
+
   // void getLocationData() async {
   //   Location location = new Location();
 

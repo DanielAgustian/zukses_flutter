@@ -605,16 +605,16 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              width: 25,
-                              height: 25,
+                              width: 20,
+                              height: 20,
                               decoration: BoxDecoration(
                                   color: colorSecondaryRed,
                                   borderRadius: BorderRadius.circular(5)),
                               child: Center(
                                 child: FaIcon(
-                                  FontAwesomeIcons.arrowUp,
+                                  FontAwesomeIcons.chevronUp,
                                   color: colorBackground,
-                                  size: 23,
+                                  size: 18,
                                 ),
                               ),
                             ),

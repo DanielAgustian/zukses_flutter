@@ -38,11 +38,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
   List<AttendanceModel> absensiList;
-
+  bool isLoadingAttendance = false;
   void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
       _currentDate = date;
-      selected = absence;
+      if (absence.clockIn != null) {
+        selected = absence;
+        isLoadingAttendance = true;
+      }
       kata = "$_currentDate";
     });
   }
@@ -83,7 +86,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
       // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
         return Scaffold(
-            
             backgroundColor: colorBackground,
             appBar: AppBar(
               elevation: 0,
@@ -177,14 +179,31 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                           ),
                           SizedBox(height: 15),
-                          Container(
-                              child: Text(
-                            "Overtime : 0 hrs",
-                            style: TextStyle(
-                                color: colorPrimary,
-                                fontSize:
-                                    size.width <= 569 ? textSizeSmall18 : 18),
-                          ))
+                          isLoadingAttendance
+                              ? Container(
+                                  child: Text(
+                                  selected.overtime == ""
+                                      ? "Overtime : 0 Hrs"
+                                      : "Overtime : " +
+                                          selected.overtime.substring(0, 2) +
+                                          " hours " +
+                                          selected.overtime.substring(3, 5) +
+                                          " minutes",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontSize: size.width <= 569
+                                          ? textSizeSmall18
+                                          : 18),
+                                ))
+                              : Container(
+                                  child: Text(
+                                  "Overtime : 0 Hrs",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontSize: size.width <= 569
+                                          ? textSizeSmall18
+                                          : 18),
+                                ))
                         ],
                       ),
                     )

@@ -577,7 +577,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: FlatButton(
                                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 color: colorBackground,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ScreenTab(index: 2)));
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
