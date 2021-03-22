@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/task/comment-box.dart';
+import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,6 +30,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   var taskDetail = ["Dadada", "nananan", "mamammaa", "lalalla"];
   var taskDate = ["02/19/2020", "08/19/2020", "12/11/2019", "02/15/2021"];
   var taskHour = ["19.00", "17.00", "15.00", "16.00"];
+  var moveToList = ["To Do", "In Progress", "Done"];
+  String moveTo = "";
   int count = 4, activeIndex = 0;
   ScrollController _controller;
   List<InnerList> _lists = [];
@@ -55,6 +58,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     // TODO: implement initState
     super.initState();
     timer();
+    moveTo = moveToList[0];
     _animationController =
         AnimationController(vsync: this, duration: _duration);
     tabController = TabController(length: 3, vsync: this);
@@ -522,6 +526,17 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                     SizedBox(
                       height: 10,
                     ),
+                    TaskRow(
+                        fontSize: size.height <= 569 ? 12 : 14,
+                        title: "Move To",
+                        textItem: moveTo,
+                        items: moveToList,
+                        onSelectedItem: (val) {
+                          setState(() {
+                            moveTo = val;
+                          });
+                        }),
+                    /*
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -547,7 +562,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ],
                         ),
                       ],
-                    ),
+                    ),*/
                     SizedBox(
                       height: 10,
                     ),
