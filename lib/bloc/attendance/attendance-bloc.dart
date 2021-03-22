@@ -33,8 +33,8 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     var res = await _attendanceService.createClockOut();
 
     // directly throw into success load or fail load
-    if (res == 200 && res != null) {
-      yield AttendanceStateSuccessClockOut();
+    if (res != null) {
+      yield AttendanceStateSuccessClockOut(attendanceID: res);
     } else {
       yield AttendanceStateFailed();
     }

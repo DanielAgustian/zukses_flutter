@@ -13,7 +13,7 @@ class AttendanceService {
     String token = prefs.getString("token");
     String base64Image = base64Encode(image.readAsBytesSync());
     String imageName = image.path.split("/").last;
-
+    print(token);
     int code = 0;
     await http
         .post(Uri.https('api-zukses.yokesen.com', '/api/clock-out'), body: {
@@ -43,7 +43,14 @@ class AttendanceService {
     );
     print(response.statusCode);
     print(response.body);
-    return response.statusCode;
+
+    // if success pas the attendance id
+    if (response.statusCode == 200) {
+      var res = jsonDecode(response.body);
+      prefs.setInt("attendanceId", res["id"]);
+      return res["id"];
+    }
+    return null;
   }
 
   // Get User attendance list

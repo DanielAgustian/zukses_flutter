@@ -1,8 +1,10 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
+import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/task/layout-project-list.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
+import 'package:zukses_app_1/screen/task/screen-add-project.dart';
+import 'package:zukses_app_1/screen/task/screen-task-detail.dart'; 
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key key, this.title}) : super(key: key);
@@ -59,7 +61,7 @@ class _TaskScreen extends State<TaskScreen>
           automaticallyImplyLeading: false,
           //centerTitle: true,
           title: Text(
-            "My Task",
+            "Project List",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: size.height <= 569 ? 20 : 25,
@@ -70,11 +72,16 @@ class _TaskScreen extends State<TaskScreen>
               padding: EdgeInsets.only(right: 20),
               splashColor: Colors.transparent,
               icon: FaIcon(
-                FontAwesomeIcons.bars,
+                FontAwesomeIcons.plusCircle,
                 color: colorPrimary,
                 size: size.height < 570 ? 20 : 25,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddProject()),
+                );
+              },
             ),
           ],
         ),
@@ -82,17 +89,20 @@ class _TaskScreen extends State<TaskScreen>
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 10,
+            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               height: 50,
               //width: MediaQuery.of(context).size.width * 0.45,
               decoration: BoxDecoration(
-                  color: colorNeutral150,
+                  color: colorBackground,
                   boxShadow: [
                     BoxShadow(
-                        offset: Offset(0, 0),
-                        color: Color.fromRGBO(240, 239, 242, 1),
-                        blurRadius: 15),
+                      color: colorNeutral1.withOpacity(1),
+                      blurRadius: 15,
+                    ),
                   ],
                   borderRadius: BorderRadius.circular(5)),
               child: Center(
@@ -122,80 +132,28 @@ class _TaskScreen extends State<TaskScreen>
             SizedBox(
               height: 10,
             ),
-            SizedBox(
-              width: size.width,
-              height: size.height,
-              child: DefaultTabController(
-                length: 3,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                  child: Scaffold(
-                      appBar: AppBar(
-                        leading: Container(),
-                        elevation: 0,
-                        backgroundColor: colorBackground,
-                        flexibleSpace: Container(
-                            color: colorNeutral150,
-                            child: TabBar(
-                                controller: tabController,
-                                labelColor: colorNeutral150,
-                                unselectedLabelColor:
-                                    colorFacebook.withOpacity(0.2),
-                                labelStyle:
-                                    TextStyle(fontWeight: FontWeight.bold),
-                                indicator: BoxDecoration(
-                                    color: colorPrimary,
-                                    borderRadius: BorderRadius.circular(5)),
-                                tabs: [
-                                  Tab(
-                                    text: "Today",
-                                  ),
-                                  Tab(
-                                    text: "Upcoming",
-                                  ),
-                                  Tab(
-                                    text: "Overdue",
-                                  ),
-                                ])),
-                      ),
-                      body: TabBarView(
-                          controller: tabController,
-                          children: <Widget>[
-                            LayoutProjectList(
-                                size: size,
-                                loading: isLoading,
-                                count: count,
-                                fontSize: size.height <= 569 ? 18 : 22,
-                                projectName: projectName,
-                                projectDetail: projectDetail,
-                                projectTask: projectTask,
-                                time: "today",
-                                skeletonWidth: size.height <= 570 ? 200 : 240),
-                            LayoutProjectList(
-                              size: size,
-                              loading: isLoading,
-                              count: count,
-                              fontSize: size.height <= 569 ? 18 : 22,
-                              projectName: projectName,
-                              projectDetail: projectDetail,
-                              projectTask: projectTask,
-                              time: "upcoming",
-                            ),
-                            LayoutProjectList(
-                              size: size,
-                              loading: isLoading,
-                              count: count,
-                              fontSize: size.height <= 569 ? 18 : 22,
-                              projectName: projectName,
-                              projectDetail: projectDetail,
-                              projectTask: projectTask,
-                              time: "overdue",
-                            )
-                          ])),
-                ),
-              ),
+            ListView.builder(
+              itemCount: projectName.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                    onTap: () {
+                      print(projectName[index]);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TaskDetailScreen(
+                                  projectName: projectName[index],
+                                )),
+                      );
+                    },
+                    child: ListReviseProject(
+                      title: projectName[index],
+                      detail: projectDetail[index],
+                      jumlahTask: projectTask[index],
+                    ));
+              },
             ),
           ],
         )));

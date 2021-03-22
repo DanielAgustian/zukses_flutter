@@ -40,8 +40,7 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
   @override
   void initState() {
     super.initState();
-    final date = DateTime.now();
-    _currentDateTime = DateTime(date.year, date.month);
+    _currentDateTime = DateTime.now();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());
@@ -84,10 +83,17 @@ class _WeekLyCanlendarWidgetState extends State<WeekLyCanlendarWidget> {
     // _sequentialDates = dates;
     //get week calendar
     _sequentialWeek = CustomCalendar().getWeeklyCalendar(calendar: dates);
+
     _sequentialWeek.forEach((data) {
-      if (data.firstWeekDate.isAtSameMomentAs(
-          CustomCalendar().findFirstDateOfTheWeek(_currentDateTime))) {
+      if (data.firstWeekDate.day ==
+              CustomCalendar().findFirstDateOfTheWeek(_currentDateTime).day &&
+          data.firstWeekDate.month ==
+              CustomCalendar().findFirstDateOfTheWeek(_currentDateTime).month &&
+          data.firstWeekDate.year ==
+              CustomCalendar().findFirstDateOfTheWeek(_currentDateTime).year) {
         week = data.week;
+        print(week);
+        return;
       }
     });
   }

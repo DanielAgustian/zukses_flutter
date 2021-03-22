@@ -1,7 +1,14 @@
 import 'dart:ui';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
+import 'package:zukses_app_1/bloc/employee/employee-event.dart';
+import 'package:zukses_app_1/bloc/employee/employee-state.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,6 +16,10 @@ import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   @override
@@ -18,25 +29,50 @@ class AddScheduleScreen extends StatefulWidget {
 class _AddScheduleScreenState extends State<AddScheduleScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController textTitle = new TextEditingController();
-  TextEditingController textSearch = new TextEditingController();
   TextEditingController textDescription = new TextEditingController();
   bool _titleValidator = false;
   bool _descriptionValidator = false;
+
+  // Search controlerr
+  TextEditingController textSearch = new TextEditingController();
+  String searchQuery = "";
 
   // formater for showing date
   final DateFormat formater = DateFormat.yMMMMEEEEd();
   DateTime date = DateTime.now();
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
+  List<UserModel> listUser = [];
+  List<String> choosedUser = [];
+
+  // time 1 and time 2
+  DateTime startMeeting;
+  DateTime endMeeting;
 
   // Dropdown menu
-  List<String> items = ["Never", "Once", "1 Day Before"];
+  List<String> items = [
+    "Never",
+    "Everyday",
+    "Weekly",
+    "Every Two Weeks",
+    "Every Year"
+  ];
   String repeat = "Never";
 
   // Dragable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
+
+  //INIT Employee BLOC
+  EmployeeBloc _employeeBloc;
+
+  // Search Function
+  void searchFunction(String q) {
+    setState(() {
+      searchQuery = q;
+    });
+  }
 
   // Handle if user click back using button in device not in app (usually for android)
   Future<bool> _onWillPop({size}) async {
@@ -80,7 +116,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         title: "Discard Changes",
                         onClick: () {
                           Navigator.of(context, rootNavigator: true).pop();
-                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 3))));
                         },
                       )
                     ],
@@ -105,34 +145,84 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       });
   }
 
-  // pick time function
+  // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
   void pickTime(BuildContext context, {int index = 1}) async {
     TimeOfDay picked = await showTimePicker(
       context: context,
       initialTime: index == 1 ? TimeOfDay.now() : time2,
     );
-
-    if (picked.minute == 60) {
-      picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+    try {
+      if (picked.minute == 60) {
+        picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+      }
+    } catch (error) {
+      print(error);
     }
 
     if (picked != null) {
-      if (index == 1) {
-        setState(() {
+      setState(() {
+        if (index == 1) {
           time1 = picked;
           time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
-        });
-      } else {
-        setState(() {
+        } else {
           time2 = picked;
-        });
-      }
+        }
+
+        startMeeting =
+            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+        endMeeting =
+            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+      });
+    }
+  }
+
+  void addMeeting() {
+    if (textTitle.text == "") {
+      setState(() {
+        _titleValidator = true;
+      });
+    } else {
+      setState(() {
+        _titleValidator = false;
+      });
+    }
+    if (textDescription.text == "") {
+      setState(() {
+        _descriptionValidator = true;
+      });
+    } else {
+      setState(() {
+        _descriptionValidator = false;
+      });
+    }
+
+    if (!_descriptionValidator &&
+        !_titleValidator &&
+        startMeeting != null &&
+        endMeeting != null) {
+      ScheduleModel meeting = ScheduleModel(
+          title: textTitle.text,
+          description: textDescription.text,
+          date: startMeeting,
+          meetingEndTime: endMeeting,
+          repeat: repeat.toLowerCase(),
+          userID: choosedUser);
+
+      // call event to add meeting
+      BlocProvider.of<MeetingBloc>(context)
+          .add(AddMeetingEvent(model: meeting));
     }
   }
 
   @override
   void initState() {
     super.initState();
+
+    // getListUser();
+    // init employee bloc
+    _employeeBloc = BlocProvider.of<EmployeeBloc>(context);
+    _employeeBloc.add(LoadAllEmployeeEvent());
+
     _controller = AnimationController(vsync: this, duration: _duration);
 
     // Handle view of `time2` on condition auto set 30 minutes after `time1`
@@ -182,7 +272,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
               if (textDescription.text != "" || textTitle.text != "")
                 _onWillPop(size: size);
               else
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            (ScreenTab(index: 3))));
             },
           ),
           centerTitle: true,
@@ -196,9 +290,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           actions: [
             Center(
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
+                onTap: addMeeting,
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
@@ -214,192 +306,232 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           ],
         ),
         backgroundColor: colorBackground,
-        body: SizedBox.expand(
-          child: Stack(
-            children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                color: colorBackground,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            border: _titleValidator
-                                ? Border.all(color: colorError)
-                                : Border.all(color: Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.streetAddress,
-                          onChanged: (val) {},
-                          controller: textTitle,
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 20),
-                              hintText: "Title",
-                              hintStyle: TextStyle(
-                                color: _titleValidator
-                                    ? colorError
-                                    : colorNeutral1,
-                              ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
+        body: Stack(
+          children: [
+            // Listener for success add meeting
+            BlocListener<MeetingBloc, MeetingState>(
+              listener: (context, state) {
+                if (state is MeetingStateSuccess) {
+                  Navigator.pop(context);
+                } else if (state is MeetingStateFail) {
+                  Util().showToast(
+                      msg: "Something Wrong !",
+                      color: colorError,
+                      context: this.context,
+                      txtColor: colorBackground);
+                }
+              },
+              child: Container(),
+            ),
+            //
+            Container(
+              padding: EdgeInsets.all(20),
+              color: colorBackground,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                          border: _titleValidator
+                              ? Border.all(color: colorError)
+                              : Border.all(color: Colors.transparent),
+                          color: colorBackground,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 0),
+                                color: Color.fromRGBO(240, 239, 242, 1),
+                                blurRadius: 15),
+                          ],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: TextFormField(
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.streetAddress,
+                        onChanged: (val) {},
+                        controller: textTitle,
+                        decoration: InputDecoration(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 20),
+                            hintText: "Title",
+                            hintStyle: TextStyle(
+                              color:
+                                  _titleValidator ? colorError : colorNeutral1,
+                            ),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none),
                       ),
-                      SizedBox(
-                        height: 10,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: _descriptionValidator
+                              ? Border.all(color: colorError)
+                              : Border.all(color: Colors.transparent),
+                          color: colorBackground,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 0),
+                                color: Color.fromRGBO(240, 239, 242, 1),
+                                blurRadius: 15),
+                          ],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: TextFormField(
+                        maxLines: 8,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.text,
+                        onChanged: (val) {},
+                        controller: textDescription,
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(20),
+                            hintText: "Description",
+                            hintStyle: TextStyle(
+                              color: _descriptionValidator
+                                  ? colorError
+                                  : colorNeutral1,
+                            ),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: _descriptionValidator
-                                ? Border.all(color: colorError)
-                                : Border.all(color: Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: Color.fromRGBO(240, 239, 242, 1),
-                                  blurRadius: 15),
-                            ],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          maxLines: 8,
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {},
-                          controller: textDescription,
-                          decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(20),
-                              hintText: "Description",
-                              hintStyle: TextStyle(
-                                color: _descriptionValidator
-                                    ? colorError
-                                    : colorNeutral1,
-                              ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          _selectDate(this.context);
-                        },
-                        child: AddScheduleRow(
-                          fontSize: size.height <= 569 ? 14 : 16,
-                          title: "Date",
-                          textItem: "${formater.format(date)}",
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          pickTime(this.context, index: 2);
-                          pickTime(this.context);
-                        },
-                        child: AddScheduleRow(
-                          fontSize: size.height <= 569 ? 14 : 16,
-                          title: "Time",
-                          textItem: "$h1.$m1 - $h2.$m2",
-                        ),
-                      ),
-                      AddScheduleRow2(
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _selectDate(this.context);
+                      },
+                      child: AddScheduleRow(
                         fontSize: size.height <= 569 ? 14 : 16,
-                        title: "Repeat",
-                        textItem: repeat,
-                        items: items,
-                        onSelectedItem: (val) {
-                          print(val);
-                          setState(() {
-                            repeat = val;
-                          });
-                        },
+                        title: "Date",
+                        textItem: "${formater.format(date)}",
                       ),
-                      SizedBox(
-                        height: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        pickTime(this.context, index: 2);
+                        pickTime(this.context);
+                      },
+                      child: AddScheduleRow(
+                        fontSize: size.height <= 569 ? 14 : 16,
+                        title: "Time",
+                        textItem: "$h1.$m1 - $h2.$m2",
                       ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Invite",
-                          style: TextStyle(
-                              fontSize: size.height <= 569 ? 14 : 16,
-                              color: colorPrimary),
-                        ),
+                    ),
+                    AddScheduleRow2(
+                      fontSize: size.height <= 569 ? 14 : 16,
+                      title: "Repeat",
+                      textItem: repeat,
+                      items: items,
+                      onSelectedItem: (val) {
+                        setState(() {
+                          repeat = val;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Invite",
+                        style: TextStyle(
+                            fontSize: size.height <= 569 ? 14 : 16,
+                            color: colorPrimary),
                       ),
-                      SizedBox(
-                        height: 10,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    LongButtonIcon(
+                      size: size,
+                      title: "Add Invitation",
+                      bgColor: colorBackground,
+                      textColor: colorPrimary,
+                      iconWidget: FaIcon(
+                        FontAwesomeIcons.plusCircle,
+                        color: colorPrimary,
                       ),
-                      LongButtonIcon(
+                      onClick: () {
+                        if (_controller.isDismissed)
+                          _controller.forward();
+                        else if (_controller.isCompleted) _controller.reverse();
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    LongButtonOutline(
                         size: size,
-                        title: "Add Invitation",
+                        title: "Delete Meeting",
                         bgColor: colorBackground,
-                        textColor: colorPrimary,
-                        iconWidget: FaIcon(
-                          FontAwesomeIcons.plusCircle,
-                          color: colorPrimary,
-                        ),
-                        onClick: () {
-                          if (_controller.isDismissed)
-                            _controller.forward();
-                          else if (_controller.isCompleted)
-                            _controller.reverse();
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: 8,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                          ),
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: colorSecondaryRed,
-                                  radius: size.height <= 569 ? 20 : 30,
-                                ),
-                                Text(
-                                  "Done",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: colorPrimary,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                        textColor: colorError,
+                        outlineColor: colorError,
+                        onClick: () {}),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    BlocBuilder<EmployeeBloc, EmployeeState>(
+                      builder: (context, state) {
+                        if (state is EmployeeStateSuccessLoad) {
+                          return Container(
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: choosedUser.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                              ),
+                              itemBuilder: (context, index) {
+                                // If user has been choos attendance
+                                if (choosedUser.length != 0) {
+                                  for (var i = 0;
+                                      i < state.employees.length;
+                                      i++) {
+                                    if (state.employees[i].userID ==
+                                        choosedUser[index]) {
+                                      return Column(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor: colorSecondaryRed,
+                                            radius:
+                                                size.height <= 569 ? 20 : 30,
+                                          ),
+                                          Text(
+                                            "${state.employees[i].name}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: colorPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  }
+                                }
+                                return SizedBox();
+                              },
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    )
+                  ],
                 ),
               ),
-              scrollerSheet(),
-            ],
-          ),
+            ),
+            scrollerSheet(),
+          ],
         ),
       ),
     );
   }
 
+  // Scroller invvitation function
   Widget scrollerSheet() {
-    bool temp = false;
     return SizedBox.expand(
       child: SlideTransition(
         position: _tween.animate(_controller),
@@ -427,13 +559,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         },
                         child: Text(
                           "Cancel",
-                          style: TextStyle(fontSize: 16, color: colorPrimary),
+                          style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.height < 600
+                                  ? 14
+                                  : 16,
+                              color: colorPrimary),
                         ),
                       ),
                       Text(
                         "Add Invitation",
                         style: TextStyle(
-                            fontSize: 20,
+                            fontSize: MediaQuery.of(context).size.height < 600
+                                ? 18
+                                : 20,
                             color: colorPrimary,
                             fontWeight: FontWeight.w700),
                       ),
@@ -444,7 +582,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         child: Text(
                           "Done",
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: MediaQuery.of(context).size.height < 600
+                                  ? 14
+                                  : 16,
                               color: colorPrimary,
                               fontWeight: FontWeight.w700),
                         ),
@@ -466,9 +606,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         ],
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
-                      textInputAction: TextInputAction.next,
+                      textInputAction: TextInputAction.search,
                       keyboardType: TextInputType.streetAddress,
-                      onChanged: (val) {},
+                      onChanged: (val) {
+                        searchFunction(val);
+                      },
                       controller: textSearch,
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 20),
@@ -487,27 +629,80 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                   SizedBox(
                     height: 10,
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: 5,
-                      itemBuilder: (BuildContext context, int index) {
-                        return UserInvitationItem(
-                          val: temp,
-                          title: "User $index",
-                          checkboxCallback: (val) {
-                            print(val);
-                            temp = val;
-                          },
-                        );
-                      },
-                    ),
+                  BlocBuilder<EmployeeBloc, EmployeeState>(
+                    builder: (context, state) {
+                      if (state is EmployeeStateSuccessLoad) {
+                        return showMember(scrollController, state,
+                            query: searchQuery);
+                      } else {}
+                      return Container();
+                    },
                   ),
                 ],
               ),
             );
           },
         ),
+      ),
+    );
+  }
+
+  // List to show the member
+  Widget showMember(
+      ScrollController scrollController, EmployeeStateSuccessLoad state,
+      {String query}) {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        itemCount: state.employees.length,
+        itemBuilder: (BuildContext context, int index) {
+          if (textSearch.text == "" || textSearch.text == null) {
+            return UserInvitationItem(
+              val: state.checklist[index],
+              title: state.employees[index].name,
+              checkboxCallback: (val) {
+                setState(() {
+                  state.checklist[index] = !state.checklist[index];
+
+                  // If user is checked, add to list choosed User
+                  if (state.checklist[index]) {
+                    choosedUser.add(state.employees[index].userID);
+
+                    // If uncheck, remove from the list
+                  } else {
+                    choosedUser.remove(state.employees[index].userID);
+                  }
+                });
+              },
+            );
+          } else {
+            // Handle for search function
+            if (state.employees[index].name
+                .toLowerCase()
+                .contains(query.toLowerCase())) {
+              return UserInvitationItem(
+                val: state.checklist[index],
+                title: state.employees[index].name,
+                checkboxCallback: (val) {
+                  setState(() {
+                    state.checklist[index] = !state.checklist[index];
+
+                    // If user is checked, add to list choosed User
+                    if (state.checklist[index]) {
+                      choosedUser.add(state.employees[index].userID);
+
+                      // If uncheck, remove from the list
+                    } else {
+                      choosedUser.remove(state.employees[index].userID);
+                    }
+                  });
+                },
+              );
+            }
+          }
+
+          return Container();
+        },
       ),
     );
   }

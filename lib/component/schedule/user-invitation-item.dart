@@ -32,7 +32,7 @@ class UserInvitationItem extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  title,
+                  "$title",
                   style: TextStyle(
                     fontSize: 16,
                     color: colorPrimary,
@@ -43,7 +43,7 @@ class UserInvitationItem extends StatelessWidget {
           ),
           Container(
             child: Checkbox(
-                value: true,
+                value: val,
                 activeColor: colorClear,
                 checkColor: Colors.white,
                 onChanged: (value) {

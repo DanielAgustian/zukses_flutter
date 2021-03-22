@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/attendance-model.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarWidget extends StatefulWidget {
@@ -221,10 +222,16 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
-          // if (_sequentialDates[index].date == _selectedDateTime)
-          //   return _selector(_sequentialDates[index]);
-          return _calendarDates(_sequentialDates[index],
-              index: index, data: widget.data);
+          return widget.data == null
+              ? _calendarDates(_sequentialDates[index], index: index)
+              : widget.data[0] is ScheduleModel
+                  // calendar for `schedule screen`
+                  ? _calendarDates(_sequentialDates[index],
+                      index: index, data2: widget.data)
+
+                  // calendar for `attendance screen`
+                  : _calendarDates(_sequentialDates[index],
+                      index: index, data: widget.data);
         },
       ),
     );
@@ -238,19 +245,35 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
+  // function to check the calendar date
+  // is it less than 15 or no
+  // `true` if less than 15, `false` is more than or equal to 15
+  bool checkTheDate({Calendar calendarDate}) {
+    // If the date is less than 15
+    // Or it's a date from previous month
+    // Or it's a date from previous year
+    if (calendarDate.date.day < 15 ||
+        calendarDate.date.month - 1 < calendarDate.date.month ||
+        calendarDate.date.year - 1 < calendarDate.date.year) {
+      return true;
+    }
+
+    // If the date is more than or equal 15
+    // Or it's a date from next month
+    // Or it's a date from next year
+    return false;
+  }
+
   // calendar element
   Widget _calendarDates(Calendar calendarDate,
-      {int index, List<AttendanceModel> data}) {
+      {int index, List<AttendanceModel> data, List<ScheduleModel> data2}) {
     Widget dot = Container();
     AttendanceModel absence;
+
+    // Condition for calendar in Screen `Attendance`
     // Make sure absensi list from backend has been sorted ascending
     if (data != null) {
-      // If the date is less than 15
-      // Or it's a date from previous month
-      // Or it's a date from previous year
-      if (calendarDate.date.day < 15 ||
-          calendarDate.date.month - 1 < calendarDate.date.month ||
-          calendarDate.date.year - 1 < calendarDate.date.year) {
+      if (checkTheDate(calendarDate: calendarDate)) {
         for (var d in data) {
           if (d.clockIn.day == calendarDate.date.day &&
               d.clockIn.month == calendarDate.date.month &&
@@ -260,12 +283,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             break;
           }
         }
-      }
-
-      // If the date is more than or equal 15
-      // Or it's a date from next month
-      // Or it's a date from next year
-      else {
+      } else {
         var i = 0;
         while (i < data.length) {
           // if the data founded
@@ -277,8 +295,40 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             break;
           }
 
-          // if calendar date -15 > 5
+          // if `calendar date day` - 15 > 5, then iteration + 3
           if (15 - data[i].clockIn.day > 5 && i + 3 < data.length) {
+            i = i + 3;
+          } else {
+            i++;
+          }
+        }
+      }
+    }
+
+    // Condition for calendar in Screen `Schedule`
+    if (data2 != null) {
+      if (checkTheDate(calendarDate: calendarDate)) {
+        for (var d in data2) {
+          if (d.date.day == calendarDate.date.day &&
+              d.date.month == calendarDate.date.month &&
+              d.date.year == calendarDate.date.year) {
+            dot = dotBlue;
+            break;
+          }
+        }
+      } else {
+        var i = 0;
+        while (i < data2.length) {
+          // if the data founded
+          if (data2[i].date.day == calendarDate.date.day &&
+              data2[i].date.month == calendarDate.date.month &&
+              data2[i].date.year == calendarDate.date.year) {
+            dot = dotBlue;
+            break;
+          }
+
+          // if `calendar date day` - 15 > 5, then iteration + 3
+          if (15 - data2[i].date.day > 5 && i + 3 < data2.length) {
             i = i + 3;
           } else {
             i++;

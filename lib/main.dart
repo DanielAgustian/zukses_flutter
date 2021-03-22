@@ -1,14 +1,16 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:firebase_core/firebase_core.dart';
-
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/API/attendance-services.dart';
+
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
+import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
@@ -22,19 +24,24 @@ import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 
+import 'bloc/leaves/leave-bloc.dart';
+import 'bloc/overtime/overtime-bloc.dart';
+import 'bloc/team/team-bloc.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = BlocObserver();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
 
   // check is user have been login
   String token;
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
 
-  runApp(MyApp(
-    token: token,
-  ));
+  runApp(DevicePreview(
+      builder: (context) => MyApp(
+            token: token,
+          )));
 }
 
 class MyApp extends StatelessWidget {
@@ -57,15 +64,34 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<UserDataBloc>(
           create: (context) => UserDataBloc(),
-        )
+        ),
+        BlocProvider<EmployeeBloc>(
+          create: (context) => EmployeeBloc(),
+        ),
+        BlocProvider<MeetingBloc>(
+          create: (context) => MeetingBloc(),
+        ),
+        BlocProvider<LeaveTypeBloc>(
+          create: (context) => LeaveTypeBloc(),
+        ),
+        BlocProvider<LeaveBloc>(
+          create: (context) => LeaveBloc(),
+        ),
+        BlocProvider<OvertimeBloc>(
+          create: (context) => OvertimeBloc(),
+        ),
+        BlocProvider<TeamBloc>(
+          create: (context) => TeamBloc(),
+        ),
       ],
       child: MaterialApp(
         title: 'Zukses: Application for Office',
         theme: ThemeData(
-          fontFamily: 'Lato',
-        ),
-        // locale: DevicePreview.locale(context), // Add the locale here
-        // builder: DevicePreview.appBuilder, // Add the builder here
+            scaffoldBackgroundColor: colorBackground,
+            fontFamily: 'Lato',
+            accentColor: colorPrimary),
+        locale: DevicePreview.locale(context), // Add the locale here
+        builder: DevicePreview.appBuilder, // Add the builder here
         home: token != null
             ? ScreenTab()
             : MyHomePage(title: 'Flutter Demo Home Page'),
@@ -158,7 +184,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             title: "LOREM IPSUM",
                             description:
                                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis facilisis neque. Aliquam ",
-                            image: Image.asset("assets/images/ava.png"),
+                            image: Image.asset(
+                              "assets/images/onboarding.png",
+                              fit: BoxFit.fill,
+                            ),
                           );
                         },
                         itemCount: 3, // Can be null
@@ -225,8 +254,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           elevation: 2.0,
                           fillColor: Color.fromRGBO(20, 43, 111, 0.9),
                           child: Container(
-                            width: 60,
-                            height: 60,
+                            width: size.height < 600 ? 40 : 60,
+                            height: size.height < 600 ? 40 : 60,
                             child: Icon(Icons.arrow_forward,
                                 size: 35.0, color: Colors.white70),
                           ),

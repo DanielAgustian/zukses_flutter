@@ -139,14 +139,14 @@ class _ScreenLogin extends State<ScreenLogin> {
                               'icon/google_icon.png',
                               scale: 0.6,
                             ),
-                            onClick: googleLogin,
+                            onClick: () {},
                           ),
                           SizedBox(
                             height: 10,
                           ),
                           LongButtonIcon(
                             size: size,
-                            title: "Sign In with Google",
+                            title: "Sign In with Facebook",
                             bgColor: colorFacebook,
                             textColor: colorBackground,
                             iconWidget: Image.asset(
