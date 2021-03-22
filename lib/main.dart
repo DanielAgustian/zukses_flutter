@@ -38,10 +38,15 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
 
-  runApp(DevicePreview(
-      builder: (context) => MyApp(
+  runApp(
+    //DevicePreview(
+      //builder: (context) => 
+      MyApp
+      (
             token: token,
-          )));
+          )
+          //)
+          );
 }
 
 class MyApp extends StatelessWidget {
