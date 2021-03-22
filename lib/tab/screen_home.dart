@@ -10,6 +10,12 @@ import 'package:skeleton_text/skeleton_text.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/bloc/team/team-bloc.dart';
+import 'package:zukses_app_1/bloc/team/team-event.dart';
+import 'package:zukses_app_1/bloc/team/team-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
@@ -25,6 +31,7 @@ import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 /*
@@ -56,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String dialogText = "Clock In ";
   bool instruction = false;
   int isClockIn;
+  int attendanceID;
 
 // Dummy data
   var taskName = ["Task 1", "task 2"];
@@ -113,10 +121,15 @@ class _HomeScreenState extends State<HomeScreen> {
     BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
   }
 
+  void getMember() async {
+    BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
+  }
+
   @override
   void initState() {
     super.initState();
     // sharedPref();
+    getMember();
     sharedPrefInstruction();
     checkStatusClock();
     getUserProfile();
@@ -160,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       setState(() {
                         isClockIn = 2;
+                        attendanceID = state.attendanceID;
                         stringTap = "Have a nice day";
                       });
                       // // show confirm dialog success clock out
@@ -218,8 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 stringTap,
                                 style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      color: Colors.white, letterSpacing: 1.5),
+                                  textStyle: TextStyle(color: Colors.white),
                                   fontSize: size.height < 600 ? 14 : 18,
                                 ),
                               ),
@@ -441,47 +454,57 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                             builder: (context) => MemberScreen()));
                   },
-                  child: Container(
-                    width: size.width,
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.symmetric(horizontal: 15),
-                    decoration: BoxDecoration(
-                        color: colorBackground,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorNeutral1.withOpacity(1),
-                            blurRadius: 15,
-                          )
-                        ]),
-                    child: Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Team Member",
-                            style: TextStyle(
-                                color: colorPrimary,
-                                letterSpacing: 0,
-                                fontSize: size.width <= 600 ? 18 : 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            height: 20,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 10,
-                              itemBuilder: (context, index) => index >= 9
-                                  ? UserAvatar(
-                                      value: "+5",
-                                    )
-                                  : UserAvatar(dotSize: 7),
+                  child: BlocBuilder<TeamBloc, TeamState>(
+                    builder: (context, state) {
+                      if (state is TeamStateSuccessLoad) {
+                        return Container(
+                          width: size.width,
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorNeutral1.withOpacity(1),
+                                  blurRadius: 15,
+                                )
+                              ]),
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Team Member",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      letterSpacing: 0,
+                                      fontSize: size.width <= 600 ? 18 : 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  height: 20,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: state.team.length,
+                                    itemBuilder: (context, index) => index >= 9
+                                        ? UserAvatar(
+                                            value: "+" +
+                                                (state.team.length - 9)
+                                                    .toString(),
+                                          )
+                                        : UserAvatar(dotSize: 7),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
                   ),
                 ),
                 Padding(
@@ -554,7 +577,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: FlatButton(
                                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 color: colorBackground,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ScreenTab(index: 2)));
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -640,7 +669,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: FlatButton(
                                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 color: colorBackground,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ScreenTab(index: 3)));
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -673,7 +708,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Container(
             width: double.infinity,
-            height: 200,
+            height: size.height * 0.40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(40),
@@ -698,9 +733,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     stringTap,
                     style: GoogleFonts.lato(
-                      textStyle:
-                          TextStyle(color: Colors.white, letterSpacing: 1.5),
-                      fontSize: 14,
+                      textStyle: TextStyle(color: Colors.white),
+                      fontSize: size.height < 600 ? 14 : 18,
                     ),
                   ),
                 ]))),
@@ -795,7 +829,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: FlatButton(
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         color: colorBackground,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 3))));
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -858,7 +898,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: FlatButton(
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         color: colorBackground,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 2))));
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -931,7 +977,9 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "Yes, I need Overtime Pay",
               onClick: () {
                 timeCalculation(1);
-                if (statusOvertime == "No") {
+                Navigator.pop(context);
+                clockOut();
+                if (statusOvertime != "No") {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
@@ -940,6 +988,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     dialogText = "Clock Out";
                   });
+
                   showDialog(
                       context: context,
                       builder: (BuildContext context) =>
@@ -1025,10 +1074,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             decoration: BoxDecoration(color: colorBackground, boxShadow: [
               BoxShadow(
-                color: colorNeutral2.withOpacity(0.7),
-                spreadRadius: 4,
-                blurRadius: 10,
-                offset: Offset(0, 3),
+                color: colorNeutral1.withOpacity(1),
+                blurRadius: 15,
               )
             ]),
             width: double.infinity,
@@ -1038,6 +1085,8 @@ class _HomeScreenState extends State<HomeScreen> {
               minLines: 6,
               maxLines: 6,
               decoration: new InputDecoration(
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.all(5),
                   hintText: 'Reason for Overtime',
                   hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
@@ -1054,12 +1103,32 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 dialogText = "Clock Out";
               });
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      _buildPopupDialog(context));
+              BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+                  attendanceId: attendanceID,
+                  project: "Testing Data",
+                  reason: textReasonOvertime.text));
+              //clockOut();
+              Navigator.pop(context);
             },
           ),
+          BlocListener<OvertimeBloc, OvertimeState>(
+            listener: (context, state) async {
+              if (state is OvertimeStateSuccess) {
+                Util().showToast(
+                    context: this.context,
+                    msg: "Overtime Created !",
+                    color: Colors.blueAccent,
+                    txtColor: colorBackground);
+              } else {
+                Util().showToast(
+                    context: this.context,
+                    msg: "Overtime Failed !",
+                    color: colorError,
+                    txtColor: colorBackground);
+              }
+            },
+            child: Container(),
+          )
         ],
       ),
       actions: <Widget>[],
@@ -1087,16 +1156,6 @@ class _HomeScreenState extends State<HomeScreen> {
     timeCalculation(0);
     String timeClockIn = getSystemTime();
     print("Clock In Pegawai:" + timeClockIn);
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   await showDialog<String>(
-    //       context: context,
-    //       builder: (BuildContext context) => _buildPopupDialog(context));
-    // });
-    // } else if (clockIn == 0) {
-    //   print("Init Data");
-    // } else {
-    //   print("Not Clock In Yet");
-    // }
   }
 
   String getHourNow() {

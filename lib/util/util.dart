@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 
@@ -8,6 +9,63 @@ class Util {
     final DateFormat formatter = DateFormat.Hm();
     final String formatted = formatter.format(now);
     return formatted;
+  }
+
+  String hourFormat(DateTime date) {
+    //var now = new DateTime.now();
+    //print(now.toString);
+    String hour = "";
+    if (date == null) {
+      hour = DateFormat("HH:mm").format(DateTime.now());
+    } else {
+      hour = DateFormat("HH:mm").format(date);
+    }
+    return hour;
+  }
+
+  String yearFormat(DateTime date) {
+    //var now = new DateTime.now();
+    //print(now.toString);
+    String year = "";
+    if (date == null) {
+      year = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    } else {
+      year = DateFormat("yyyy-MM-dd").format(date);
+    }
+    return year;
+  }
+
+  String acceptancePrint(int num) {
+    //num=100 merupakan NULL di DB
+    if (num == 100) {
+      return "pending";
+    } else if (num == 0) {
+      return "reject";
+    } else if (num == 1) {
+      return "accept";
+    } else {
+      return "Error";
+    }
+  }
+
+  String changeTimeToString(TimeOfDay time) {
+    String hour = "", minutes = "";
+    if (time.hour < 10) {
+      hour = "0" + time.hour.toString();
+    } else {
+      hour = time.hour.toString();
+    }
+    if (time.minute < 10) {
+      minutes = "0" + time.minute.toString();
+    } else {
+      minutes = time.minute.toString();
+    }
+    return hour + ":" + minutes;
+  }
+
+  TimeOfDay stringToTimeOfDay(String tod) {
+    final format = DateFormat.jm(); //"6:00 AM"
+    return TimeOfDay.fromDateTime(format.parse(tod));
   }
 
   // void getLocationData() async {

@@ -10,7 +10,6 @@ import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class PreviewCamera extends StatefulWidget {
@@ -54,6 +53,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
       if (mounted) {
         setState(() {
           Navigator.pop(contextTimer);
+
           //Navigator.pop(contextTimer);
         });
       }
@@ -70,7 +70,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
 
   void retakeButton() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
+
     String newImage = pickedFile.path;
+
     setState(() {
       _image = File(newImage);
     });
@@ -83,26 +85,24 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) async {
         if (state is AttendanceStateFailed) {
-          setState(() {
-            uploading = false;
-          });
+          uploading = false;
           Util().showToast(
               context: this.context,
               msg: "Something Wrong !",
               color: colorError,
               txtColor: colorBackground);
         } else if (state is AttendanceStateSuccessClockIn) {
-          setState(() {
-            uploading = false;
-          });
-          addClockInSF(); 
-          showDialog<String>(
+          addClockInSF();
+          uploading = false;
+          showDialog(
               context: context,
-              builder: (BuildContext context) => _buildPopupDialog(context));
-          // timer(mContext);
-          // Navigator.pop(context);
-          //Navigator.pop(context);
+              builder: (BuildContext context) => _buildPopupDialog(mContext));
 
+          timer(mContext);
+          //Navigator.pop(context);
+          //Navigator.pop(context);
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
         }
       },
       child: Scaffold(
@@ -200,18 +200,15 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
 
   Widget _buildPopupDialog(BuildContext context) {
     return new CupertinoAlertDialog(
-      title: Text(
+      title: new Text(
         "Clock In Success!",
-        style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
       ),
       content: new Text("This is my content"),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text("OK"),
             onPressed: () {
-              print("PUSH");
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ScreenTab()));
+              Navigator.pop(context);
             })
       ],
     );

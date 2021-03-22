@@ -28,7 +28,7 @@ const colorError = Color(0xFFE74C3C);
 const colorBackground = Color(0xFFF9FBFB);
 const colorGoogle = Color(0xFF121212);
 const colorFacebook = Color(0xFF142B6F);
-
+const colorNeutral3 = Color(0xFF7B7B7B);
 Widget dotYellow = Container(
     width: 5,
     height: 5,
@@ -46,6 +46,12 @@ Widget dotRed = Container(
     height: 5,
     decoration: BoxDecoration(
         color: colorSecondaryRed, borderRadius: BorderRadius.circular(10)));
+
+Widget dotBlue = Container(
+    width: 5,
+    height: 5,
+    decoration: BoxDecoration(
+        color: colorPrimary, borderRadius: BorderRadius.circular(10)));
 
 double textSizeSmall20 = 18;
 double textSizeSmall18 = 16;

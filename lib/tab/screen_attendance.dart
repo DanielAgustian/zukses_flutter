@@ -14,6 +14,7 @@ import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-inbetween.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -37,11 +38,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
   List<AttendanceModel> absensiList;
-
+  bool isLoadingAttendance = false;
   void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
       _currentDate = date;
-      selected = absence;
+      if (absence.clockIn != null) {
+        selected = absence;
+        isLoadingAttendance = true;
+      }
       kata = "$_currentDate";
     });
   }
@@ -127,10 +131,15 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     size: size.height <= 569 ? 16 : 20,
                   ),
                   onPressed: () {
-                    Navigator.push(
+                    /*Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ScreenListLeaves()),
+                    );*/
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenInBetween()),
                     );
                   },
                 )
@@ -170,14 +179,31 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                           ),
                           SizedBox(height: 15),
-                          Container(
-                              child: Text(
-                            "Overtime : 0 hrs",
-                            style: TextStyle(
-                                color: colorPrimary,
-                                fontSize:
-                                    size.width <= 569 ? textSizeSmall18 : 18),
-                          ))
+                          isLoadingAttendance
+                              ? Container(
+                                  child: Text(
+                                  selected.overtime == ""
+                                      ? "Overtime : 0 Hrs"
+                                      : "Overtime : " +
+                                          selected.overtime.substring(0, 2) +
+                                          " hours " +
+                                          selected.overtime.substring(3, 5) +
+                                          " minutes",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontSize: size.width <= 569
+                                          ? textSizeSmall18
+                                          : 18),
+                                ))
+                              : Container(
+                                  child: Text(
+                                  "Overtime : 0 Hrs",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontSize: size.width <= 569
+                                          ? textSizeSmall18
+                                          : 18),
+                                ))
                         ],
                       ),
                     )
@@ -247,6 +273,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                         "${getDayName.format(absensiList[index].clockIn)}",
