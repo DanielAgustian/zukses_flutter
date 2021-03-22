@@ -1,5 +1,5 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:firebase_core/firebase_core.dart';
+////import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +24,7 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = BlocObserver();
-  await Firebase.initializeApp();
+  //await Firebase.initializeApp();
 
   // check is user have been login
   String token;
