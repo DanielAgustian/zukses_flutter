@@ -15,7 +15,8 @@ class AttendanceService {
     String imageName = image.path.split("/").last;
 
     int code = 0;
-    await http.post("https://api-zukses.yokesen.com/api/clock-in", body: {
+    await http
+        .post(Uri.https('api-zukses.yokesen.com', '/api/clock-out'), body: {
       'image': base64Image,
     }, headers: <String, String>{
       'Authorization': 'Bearer $token'
@@ -54,7 +55,9 @@ class AttendanceService {
     var year = date.year;
 
     // get data
-    var res = await http.get(fullBaseURI + "/user-attendance/$month/$year",
+    ;
+    var res = await http.get(
+        Uri.https(fullBaseURI, "/user-attendance/$month/$year"),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
