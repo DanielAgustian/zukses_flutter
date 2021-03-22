@@ -83,14 +83,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
       // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
         return Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ScreenInBetween()),
-                );
-              },
-            ),
+            
             backgroundColor: colorBackground,
             appBar: AppBar(
               elevation: 0,

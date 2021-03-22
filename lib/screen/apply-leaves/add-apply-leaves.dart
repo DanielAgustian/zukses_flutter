@@ -2,26 +2,33 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart'; 
+import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
+import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';  
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-event.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-state.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/leave-type-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ApplyLeavesFormScreen extends StatefulWidget {
-  ApplyLeavesFormScreen({Key key, this.title, this.index});
+  ApplyLeavesFormScreen({Key key, this.title, this.index, this.permission});
   final String title;
   final int index;
+  final String permission;
   @override
   _ApplyLeavesFormScreenState createState() => _ApplyLeavesFormScreenState();
 }
@@ -37,9 +44,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   // Text field controller
   TextEditingController textReason = new TextEditingController();
   bool _reasonValidator = false;
-
+  String durationOvertime = "";
   // Dropdown menu
-  List<String> itemsLeave = ["Never", "Seldom", "Often", "Always"];
   List<String> itemsLeaveName = [];
   List<int> itemLeaveNameID = [];
   List<LeaveTypeModel> dataLeaveType = [];
@@ -51,10 +57,26 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   List<String> projectList = ["Agerabot", "WGM", "Bayer"];
   String task = "Front End";
   List<String> taskList = ["Front End", "Back End", "Design"];
+  String dateDisplay;
+  List<String> dateDisplayList = [];
+  List<AttendanceModel> userModel = [];
+  String attendanceId = "";
+  bool isLoading2 = false;
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<LeaveTypeBloc>(context).add(LoadAllLeaveTypeEvent());
+    if (widget.permission == "leaves") {
+      BlocProvider.of<LeaveTypeBloc>(context).add(LoadAllLeaveTypeEvent());
+    } else if (widget.permission == "overtime") {
+      BlocProvider.of<AttendanceBloc>(context)
+          .add(LoadUserAttendanceEvent(date: DateTime.now()));
+    } else {
+      Util().showToast(
+          txtColor: colorError,
+          msg: "Permission error",
+          duration: 3,
+          context: context);
+    }
   }
 
   @override
@@ -67,7 +89,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           if (textReason.text != "") return _onWillPop(size: size);
           return Future.value(true);
         },
-        child: widget.index == 0
+        child: widget.permission == "leaves"
             ? Scaffold(
                 appBar: AppBar(
                   elevation: 0,
@@ -161,7 +183,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             textItem: repeat,
                             items: items,
                             onSelectedItem: (val) {
-                              print(val);
                               setState(() {
                                 repeat = val;
                               });
@@ -248,7 +269,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           isLoading
                               ? AddScheduleRow2(
                                   onSelectedItem: (val) {
-                                    print(val);
                                     setState(() {
                                       leaveType = val;
                                     });
@@ -398,6 +418,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               child: InkWell(
                 onTap: () {
                   //_createLeaves();
+                  _createOvertime();
                   //Navigator.of(context).pop();
                   Navigator.pushReplacement(
                       context,
@@ -421,51 +442,65 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       ),
       backgroundColor: colorBackground,
       body: Container(
-        padding: EdgeInsets.all(20),
-        //color: colorSecondaryYellow70,
-        child: SingleChildScrollView(
-          child: Container(
+          padding: EdgeInsets.all(20),
+          //color: colorSecondaryYellow70,
+          child: SingleChildScrollView(
+              child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                //SizedBox(height: 20),
-                /*AddScheduleRow2(
-                  fontSize: size.height <= 600 ? 14 : 16,
-                  title: items[0],
-                  textItem: repeat,
-                  items: items,
-                  onSelectedItem: (val) {
-                    print(val);
-                    setState(() {
-                      repeat = val;
-                    });
+                BlocListener<AttendanceBloc, AttendanceState>(
+                  listener: (context, state) {
+                    if (state is AttendanceStateSuccessLoad) {
+                      dateDisplayList.clear();
+                      userModel.addAll(state.attendanceList);
+                      int i = 0;
+                      state.attendanceList.forEach((element) {
+                        dateDisplayList.add(element.clockOut.toString());
+
+                        if (i < 1) {
+                          dateDisplay = element.clockOut.toString();
+                        }
+                      });
+                      setState(() {
+                        isLoading2 = true;
+                      });
+                    } else {}
                   },
-                ),*/
-                InkWell(
-                  onTap: () {
-                    _selectDate(context, 0);
-                  },
-                  child: AddScheduleRow(
-                    title: repeat == "Multiple Day" ? "Start Date" : "Date",
-                    textItem: "${formater.format(startDate)}",
-                    fontSize: size.height <= 600 ? 14 : 16,
-                  ),
+                  child: Container(),
                 ),
-                AddScheduleRow(
-                  arrowRight: "false",
-                  title: "Duration",
-                  textItem: "00:00",
-                  fontSize: size.height <= 600 ? 14 : 16,
-                ),
+                isLoading2
+                    ? AddScheduleRow2(
+                        fontSize: size.height <= 569 ? 14 : 16,
+                        title: "Date",
+                        textItem:
+                            dateDisplay, //"${formater.format(dateDisplay)}",
+                        items: dateDisplayList,
+                        onSelectedItem: (val) {
+                          _changeDate();
+                          setState(() {
+                            dateDisplay = val;
+                          });
+                        })
+                    : CircularProgressIndicator(),
+                isLoading2
+                    ? AddScheduleRow(
+                        arrowRight: "false",
+                        title: "Duration",
+                        textItem: durationOvertime == ""
+                            ? "00:00:00"
+                            : durationOvertime,
+                        fontSize: size.height <= 569 ? 14 : 16,
+                      )
+                    : CircularProgressIndicator(),
                 AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
                     title: "Project",
                     textItem: project,
                     items: projectList,
                     onSelectedItem: (val) {
-                      print(val);
                       setState(() {
-                        repeat = val;
+                        project = val;
                       });
                     }),
                 AddScheduleRow2(
@@ -474,9 +509,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     textItem: task,
                     items: taskList,
                     onSelectedItem: (val) {
-                      print(val);
                       setState(() {
-                        repeat = val;
+                        task = val;
                       });
                     }),
                 Container(
@@ -510,9 +544,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
+          ))),
     );
   }
 
@@ -582,6 +614,26 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         });
       }
     });
+  }
+
+  _changeDate() {
+    userModel.forEach((element) {
+      if (element.clockOut.toString() == dateDisplay) {
+        setState(() {
+          attendanceId = element.id;
+          durationOvertime = element.overtime == null ? "" : element.overtime;
+
+          print("duration : " + durationOvertime);
+        });
+      }
+    });
+  }
+
+  _createOvertime() {
+    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+        attendanceId: int.parse(attendanceId),
+        project: project,
+        reason: textReason.text));
   }
 
   void _createLeaves() {

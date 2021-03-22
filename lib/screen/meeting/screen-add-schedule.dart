@@ -425,7 +425,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       textItem: repeat,
                       items: items,
                       onSelectedItem: (val) {
-                        print(val);
                         setState(() {
                           repeat = val;
                         });

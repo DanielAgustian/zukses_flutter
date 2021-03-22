@@ -25,7 +25,7 @@ class OvertimeServiceHTTP {
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      print("response.body:" + response.body);
+ 
 
       // Save token
 
@@ -53,11 +53,11 @@ class OvertimeServiceHTTP {
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      print("response.body:" + response.body);
+      
 
       // Save token
       var responseJson = jsonDecode(response.body);
-      print(responseJson);
+      
       return (responseJson['data'] as List)
           .map((p) => OvertimeModel.fromJson(p))
           .toList();
