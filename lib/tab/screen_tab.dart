@@ -23,14 +23,21 @@ class _ScreenTab extends State<ScreenTab> {
     super.initState();
     if (widget.index != null) {
       _currentScreenIndex = widget.index;
-    }else{
+    } else {
       _currentScreenIndex = 0;
     }
-    
+
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
-    screenList.add(TaskScreen());
-    screenList.add(MeetingScreen());
+    //screenList.add(TaskScreen());
+
+    //screenList.add(MeetingScreen());
+    screenList.add(Center(
+      child: Text("Under Development."),
+    ));
+    screenList.add(Center(
+      child: Text("Under Development."),
+    ));
   }
 
   void onTabTapped(int index) {
