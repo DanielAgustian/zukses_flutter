@@ -59,19 +59,7 @@ class _ScreenLogin extends State<ScreenLogin> {
     if (!_usernameValidator && !_passValidator) {
       BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
           email: textUsername.text, password: textPassword.text));
-
-      // _futureLogin.then((data) {
-      //   if (data != null) {
-      //     if (data.token == null) {
-      //       print("Token Null");
-      //     }
-      //     print("Token: " + data.token);
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(builder: (context) => ScreenTab()),
-      //     );
-      //   }
-      // });
+ 
     }
   }
 
