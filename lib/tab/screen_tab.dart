@@ -29,16 +29,14 @@ class _ScreenTab extends State<ScreenTab> {
 
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
-    screenList.add(Container(
+    /*screenList.add(Container(
       child: Center(child: Text("Under Development.")),
     ));
     screenList.add(Container(
       child: Center(child: Text("Under Development.")),
-    ));
-
-    
-    //screenList.add(TaskScreen());
-    //screenList.add(MeetingScreen());
+    ));*/
+    screenList.add(TaskScreen());
+    screenList.add(MeetingScreen());
   }
 
   void onTabTapped(int index) {

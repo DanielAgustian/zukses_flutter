@@ -39,13 +39,13 @@ void main() async {
   token = prefs.getString("token");
 
   runApp(
-    //DevicePreview(
-      //builder: (context) => 
+    DevicePreview(
+      builder: (context) => 
       MyApp
       (
             token: token,
           )
-          //)
+          )
           );
 }
 

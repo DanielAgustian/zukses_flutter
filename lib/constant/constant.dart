@@ -11,6 +11,7 @@ const colorSecondaryRed70 = Color(0xFFF58A96);
 const colorSecondaryRed50 = Color(0xFFF8ABB4);
 const colorSecondaryRed30 = Color(0xFFFBCDD2);
 
+
 const colorSecondaryYellow = Color(0xFFFFD602);
 const colorSecondaryYellow70 = Color(0xFFFFE34E);
 const colorSecondaryYellow50 = Color(0xFFFFEB81);
@@ -29,6 +30,8 @@ const colorBackground = Color(0xFFF9FBFB);
 const colorGoogle = Color(0xFF121212);
 const colorFacebook = Color(0xFF142B6F);
 const colorNeutral3 = Color(0xFF7B7B7B);
+const colorOrange = Color(0xFFFF8C00);
+
 Widget dotYellow = Container(
     width: 5,
     height: 5,
