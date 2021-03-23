@@ -43,7 +43,7 @@ class BoxHome extends StatelessWidget {
                   shimmerColor: colorNeutral170,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     width: 20,
@@ -64,7 +64,7 @@ class BoxHome extends StatelessWidget {
                   shimmerColor: colorNeutral170,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     width: 80,

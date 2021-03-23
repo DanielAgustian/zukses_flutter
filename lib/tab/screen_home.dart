@@ -31,6 +31,7 @@ import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
+import 'package:zukses_app_1/screen/profile/user-profile.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -196,11 +197,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (instruction == true) {
                           pushToCamera();
                         } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CameraInstruction()),
-                          );
+                          if (isClockIn == 2) {
+                            Util().showToast(
+                                msg: "You have already Clock out Today.",
+                                duration: 3,
+                                color: colorError,
+                                txtColor: colorBackground,
+                                context: context);
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CameraInstruction()),
+                            );
+                          }
                         }
                       }
                     },
@@ -294,56 +304,67 @@ class _HomeScreenState extends State<HomeScreen> {
                           : state.userModel.name;
                       return Container(
                         margin: EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Hi, $name",
-                                      style: GoogleFonts.lato(
-                                          textStyle: TextStyle(
-                                              color: colorPrimary,
-                                              letterSpacing: 0),
-                                          fontSize: size.width <= 600 ? 20 : 24,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "WELCOME BACK! ",
-                                          style: GoogleFonts.lato(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserProfile(),
+                                ));
+                          },
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Hi, $name",
+                                        style: GoogleFonts.lato(
                                             textStyle: TextStyle(
-                                                color: Colors.grey,
+                                                color: colorPrimary,
                                                 letterSpacing: 0),
                                             fontSize:
-                                                size.width <= 600 ? 12 : 14,
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                          height: 45,
-                                          width: 45,
-                                          decoration: BoxDecoration(
-                                              color: colorPrimary,
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: Image.asset(
-                                                          "assets/images/ava.png")
-                                                      .image)))
+                                                size.width <= 600 ? 20 : 24,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "WELCOME BACK! ",
+                                            style: GoogleFonts.lato(
+                                              textStyle: TextStyle(
+                                                  color: Colors.grey,
+                                                  letterSpacing: 0),
+                                              fontSize:
+                                                  size.width <= 600 ? 12 : 14,
+                                            ),
+                                          )),
                                     ],
-                                  ))
-                            ]),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                            height: 45,
+                                            width: 45,
+                                            decoration: BoxDecoration(
+                                                color: colorPrimary,
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    fit: BoxFit.fill,
+                                                    image: Image.asset(
+                                                            "assets/images/ava.png")
+                                                        .image)))
+                                      ],
+                                    ))
+                              ]),
+                        ),
                       );
                     } else if (state is UserDataFailLoad) {
                       return Container(
@@ -753,7 +774,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     shimmerColor: colorNeutral170,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: colorNeutral2,
+                        color: colorSkeleton,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       width: size.width * 0.6,
@@ -767,7 +788,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     shimmerColor: colorNeutral170,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: colorNeutral2,
+                        color: colorSkeleton,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       width: size.width * 0.6,
@@ -942,6 +963,7 @@ class _HomeScreenState extends State<HomeScreen> {
               disposeSF();
               setState(() {
                 //dialogText = "Clock In";
+                isClockIn = 2;
                 stringTap = "Have a nice day !";
               });
               String timeClockOut = getSystemTime();
@@ -1138,7 +1160,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void disposeSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt(key, 0);
-    isClockIn = 0;
+    isClockIn = 2;
   }
 
   void sharedPref() async {

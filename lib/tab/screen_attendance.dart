@@ -42,8 +42,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
       _currentDate = date;
+      selected = absence;
       if (absence.clockIn != null) {
-        selected = absence;
         isLoadingAttendance = true;
       }
       kata = "$_currentDate";

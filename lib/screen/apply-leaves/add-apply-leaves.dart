@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';  
+import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-event.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-state.dart';
@@ -21,6 +21,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/leave-type-model.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -57,7 +58,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   List<String> projectList = ["Agerabot", "WGM", "Bayer"];
   String task = "Front End";
   List<String> taskList = ["Front End", "Back End", "Design"];
-  String dateDisplay;
+  String dateDisplay = "";
   List<String> dateDisplayList = [];
   List<AttendanceModel> userModel = [];
   String attendanceId = "";
@@ -134,7 +135,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        (ScreenTab(index: 1))));
+                                        (ScreenListLeaves(
+                                            permission: "leaves"))));
                           },
                           child: Container(
                             child: Text(
@@ -424,7 +426,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              (ScreenTab(index: 1))));
+                              (ScreenListLeaves(permission: "overtime"))));
                 },
                 child: Container(
                   child: Text(
@@ -453,13 +455,17 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   listener: (context, state) {
                     if (state is AttendanceStateSuccessLoad) {
                       dateDisplayList.clear();
+                      userModel.clear();
                       userModel.addAll(state.attendanceList);
                       int i = 0;
                       state.attendanceList.forEach((element) {
                         dateDisplayList.add(element.clockOut.toString());
 
                         if (i < 1) {
-                          dateDisplay = element.clockOut.toString();
+                          setState(() {
+                            dateDisplay = element.clockOut.toString();
+                          });
+                          i++;
                         }
                       });
                       setState(() {

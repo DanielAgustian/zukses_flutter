@@ -28,15 +28,12 @@ class AddScheduleRow extends StatelessWidget {
           ),
           Row(
             children: [
-              SizedBox(
-                width: 90,
-                child: Text(
-                  textItem,
-                  style: TextStyle(
-                      fontSize: fontSize,
-                      color: colorPrimary,
-                      fontWeight: FontWeight.w700),
-                ),
+              Text(
+                textItem,
+                style: TextStyle(
+                    fontSize: fontSize,
+                    color: colorPrimary,
+                    fontWeight: FontWeight.w700),
               ),
               SizedBox(
                 width: 10,
@@ -104,13 +101,16 @@ class AddScheduleRow2 extends StatelessWidget {
                 child: SizedBox(
                   width: 100,
                   child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                          fontSize: fontSize,
-                          color: colorPrimary,
-                          fontWeight: FontWeight.w700),
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                            fontSize: fontSize,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
                 ),

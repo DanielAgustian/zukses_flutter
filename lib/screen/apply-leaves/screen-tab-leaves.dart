@@ -7,7 +7,9 @@ import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
 import 'package:zukses_app_1/component/leaves/list-leaves.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
+import 'package:zukses_app_1/model/overtime-model.dart';
 
 class ScreenTabLeaves extends StatefulWidget {
   const ScreenTabLeaves({
@@ -23,14 +25,14 @@ class ScreenTabLeaves extends StatefulWidget {
 }
 
 class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
-  /* var leavesTitle = ["Schedule 1", "SChedule 2", "Schedule 3", "Schedule 4"];
-  var leavesDate = [
-    "14 Jan 2021 - 19 Jan 2021",
-    "25 Jan 2021 - 31 Jan 2021",
-    "4 Mar 2021- 6 Mar 2021",
-    "9 Apr 2021 - 10 Apr 2021"
-  ];*/
-  //var status = [0, 1, 2, 1];
+  List<LeaveModel> listWaiting = [];
+  List<LeaveModel> listAccepted = [];
+  List<LeaveModel> listRejected = [];
+  List<OvertimeModel> listWaitingOvertime = [];
+  List<OvertimeModel> listAcceptedOvertime = [];
+  List<OvertimeModel> listRejectedOvertime = [];
+  bool isLoadingLeaves = false;
+  bool isLoadingOvertime = false;
   @override
   void initState() {
     super.initState();
@@ -39,86 +41,147 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
     } else if (widget.permission == "overtime") {
       BlocProvider.of<OvertimeBloc>(context).add(LoadAllOvertimeEvent());
     }
+    listWaiting.clear();
+    listAccepted.clear();
+    listRejected.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return widget.permission == "leaves"
-        ? BlocBuilder<LeaveBloc, LeaveState>(builder: (context, state) {
-            if (state is LeaveStateSuccessLoad) {
-              return LayoutBuilder(builder: (ctx, constrains) {
-                return Column(children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: state.leave.length,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return printDataFilter(
-                            context, widget.tab, state.leave[index]);
-                        /*ListLeavesInside(
-                            screen: widget.tab,
-                            title: state.leave[index].typeName,
-                            detail: state.leave[index].duration,
-                            status: state.leave[index].status,
-                            date: state.leave[index].leaveDate == null
-                                ? "Data Cant Be fetch"
-                                : state.leave[index].leaveDate);*/
-                      },
-                    ),
-                  ),
-                ]);
-              });
-            }
-            return Container();
-          })
-        : _viewOvertime(context);
+        ? Column(
+            children: [
+              BlocListener<LeaveBloc, LeaveState>(
+                listener: (context, state) {
+                  if (state is LeaveStateSuccessLoad) {
+                    for (int i = 0; i < state.leave.length; i++) {
+                      if (state.leave[i].status == "accepted") {
+                        listAccepted.add(state.leave[i]);
+                      } else if (state.leave[i].status == "pending") {
+                        listWaiting.add(state.leave[i]);
+                      } else if (state.leave[i].status == "rejected") {
+                        listRejected.add(state.leave[i]);
+                      }
+                    }
+                    setState(() {
+                      isLoadingLeaves = true;
+                    });
+                  }
+                },
+                child: Container(),
+              ),
+              isLoadingLeaves
+                  ? widget.tab == "accepted"
+                      ? printDataFilter(context, widget.tab, listAccepted)
+                      : widget.tab == "pending"
+                          ? printDataFilter(context, widget.tab, listWaiting)
+                          : widget.tab == "rejected"
+                              ? printDataFilter(
+                                  context, widget.tab, listRejected)
+                              : Container()
+                  : Center(child: CircularProgressIndicator())
+            ],
+          )
+        : Column(
+            children: [
+              BlocListener<OvertimeBloc, OvertimeState>(
+                listener: (context, state) {
+                  if (state is OvertimeStateSuccessLoad) {
+                    for (int i = 0; i < state.overtime.length; i++) {
+                      if (state.overtime[i].status == "accepted") {
+                        listAcceptedOvertime.add(state.overtime[i]);
+                      } else if (state.overtime[i].status == "pending") {
+                        listWaitingOvertime.add(state.overtime[i]);
+                      } else if (state.overtime[i].status == "rejected") {
+                        listRejectedOvertime.add(state.overtime[i]);
+                      }
+                    }
+                    setState(() {
+                      isLoadingOvertime = true;
+                    });
+                  }
+                },
+                child: Container(),
+              ),
+              isLoadingOvertime
+                  ? widget.tab == "accepted"
+                      ? _viewOvertime(context, widget.tab, listAcceptedOvertime)
+                      : widget.tab == "pending"
+                          ? _viewOvertime(
+                              context, widget.tab, listWaitingOvertime)
+                          : widget.tab == "rejected"
+                              ? _viewOvertime(
+                                  context, widget.tab, listRejectedOvertime)
+                              : Container()
+                  : Center(child: CircularProgressIndicator())
+            ],
+          );
+    //_viewOvertime(context);
 
     /**/
   }
 
-  Widget _viewOvertime(BuildContext context) {
-    return BlocBuilder<OvertimeBloc, OvertimeState>(builder: (context, state) {
-      if (state is OvertimeStateSuccessLoad) {
-        return LayoutBuilder(builder: (ctx, constrains) {
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: state.overtime.length,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return widget.tab == state.overtime[index].status
-                      ? ListLeavesInside(
-                          title: state.overtime[index].project,
-                          detail: state.overtime[index].clockOut.toString(),
-                          status: state.overtime[index].status,
-                          date: "1996-01-01")
-                      : Container();
-                },
-              ),
+  //untuk viewOvertime
+  Widget _viewOvertime(
+      BuildContext context, String tab, List<OvertimeModel> list) {
+    Size size = MediaQuery.of(context).size;
+    return Expanded(
+      flex: 1,
+      child: list.length < 1
+          ? Center(
+              child: Text(
+              "No Overtime has been " + tab,
+              style: TextStyle(
+                  fontSize: size.height < 569 ? 12 : 14,
+                  fontWeight: FontWeight.bold,
+                  color: colorPrimary),
+            ))
+          : ListView.builder(
+              itemCount: list.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListLeavesInside(
+                    screen: widget.permission,
+                    title: list[index].project,
+                    detail: list[index].clockOut.toString(),
+                    status: list[index].status,
+                    date: "1996-01-01");
+              },
             ),
-          ]);
-        });
-      } else {
-        return Container();
-      }
-    });
+    );
   }
 
-  //untuk filter yang leave sesuai tab
+  //untuk view Leave
   Widget printDataFilter(
-      BuildContext context, String tab, LeaveModel leaveModel) {
-    return leaveModel.status == tab
-        ? ListLeavesInside(
-            screen: widget.tab,
-            title: leaveModel.typeName,
-            detail: leaveModel.duration,
-            status: leaveModel.status,
-            date: leaveModel.leaveDate == null
-                ? "Data Cant Be fetch"
-                : leaveModel.leaveDate)
-        : Container();
+      BuildContext context, String tab, List<LeaveModel> list) {
+    Size size = MediaQuery.of(context).size;
+    return Expanded(
+      flex: 1,
+      child: list.length < 1
+          ? Center(
+              child: Text(
+              "No Leaves has been " + tab,
+              style: TextStyle(
+                  fontSize: size.height < 569 ? 12 : 14,
+                  fontWeight: FontWeight.bold,
+                  color: colorPrimary),
+            ))
+          : ListView.builder(
+              itemCount: list.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListLeavesInside(
+                    screen: widget.permission,
+                    title: list[index].typeName,
+                    detail: list[index].duration,
+                    status: list[index].status,
+                    date: list[index].leaveDate == null
+                        ? "Data Cant Be fetch"
+                        : list[index].leaveDate);
+              }),
+    );
   }
 }

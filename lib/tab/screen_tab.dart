@@ -56,14 +56,18 @@ class _ScreenTab extends State<ScreenTab> {
             _currentScreenIndex, // this will be set when a new tab is tapped
         items: [
           BottomNavigationBarItem(
-            icon: new Icon(
+            icon: ImageIcon(AssetImage(
+                'assets/images/home.png')) 
+                /*new Icon(
               Icons.home_filled,
               size: 27,
-            ),
+            )*/
+            ,
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidCalendarAlt),
+            icon: ImageIcon(AssetImage(
+                'assets/images/attendance-icon.png')),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(

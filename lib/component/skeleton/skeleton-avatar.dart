@@ -19,7 +19,7 @@ class SkeletonAvatar extends StatelessWidget {
           height: radius,
           width: radius,
           decoration:
-              BoxDecoration(color: colorNeutral2, shape: BoxShape.circle)),
+              BoxDecoration(color: colorSkeleton, shape: BoxShape.circle)),
     );
   }
 }
