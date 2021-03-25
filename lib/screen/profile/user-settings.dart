@@ -15,6 +15,8 @@ class UserSettings extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _UserSettingsScreen extends State<UserSettings> {
   bool isLoading = false;
+  bool switchValue = false;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -45,7 +47,37 @@ class _UserSettingsScreen extends State<UserSettings> {
             body: ListView(
               padding: const EdgeInsets.all(8),
               children: <Widget>[
-                TextFormatSettings(size: size, title: "Receive Notification"),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(width: 1, color: colorNeutral2)),
+                        color: colorBackground),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Receive Notification",
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 570 ? 14 : 16),
+                        ),
+                        Switch(
+                          value: switchValue,
+                          onChanged: (value) {
+                            setState(() {
+                              switchValue = value;
+                            });
+                          },
+                          activeTrackColor: Colors.lightGreenAccent,
+                          activeColor: Colors.green,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 TextFormatSettings2(
                     size: size, title: "Language", detail: "English"),
                 TextFormatSettings2(

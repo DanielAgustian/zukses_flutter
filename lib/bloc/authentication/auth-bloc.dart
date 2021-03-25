@@ -42,6 +42,7 @@ class AuthenticationBloc
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {
+      print("AuthStateSuccessLoad");
       yield AuthStateSuccessLoad(res);
     } else {
       yield AuthStateFailLoad();

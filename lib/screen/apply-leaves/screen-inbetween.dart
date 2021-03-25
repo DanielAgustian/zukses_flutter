@@ -55,10 +55,7 @@ class _ScreenInBetweenState extends State<ScreenInBetween> {
                         color: colorBackground,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
-                          BoxShadow(
-                            color: colorNeutral1.withOpacity(1),
-                            blurRadius: 15,
-                          )
+                          boxShadowStandard
                         ]),
                     width: 0.4 * size.width,
                     child: Column(
@@ -88,10 +85,7 @@ class _ScreenInBetweenState extends State<ScreenInBetween> {
                     decoration: BoxDecoration(
                       color: colorBackground,
                       boxShadow: [
-                        BoxShadow(
-                          color: colorNeutral1.withOpacity(1),
-                          blurRadius: 15,
-                        )
+                        boxShadowStandard
                       ],
                       borderRadius: BorderRadius.circular(10),
                     ),

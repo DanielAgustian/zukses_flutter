@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
@@ -82,6 +83,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<TeamBloc>(
           create: (context) => TeamBloc(),
+        ),
+        BlocProvider<CompanyBloc>(
+          create: (context) => CompanyBloc(),
         ),
       ],
       child: MaterialApp(

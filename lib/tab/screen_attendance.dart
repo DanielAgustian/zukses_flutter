@@ -240,9 +240,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                 borderRadius:
                                                     BorderRadius.circular(5),
                                                 boxShadow: [
-                                                  BoxShadow(
-                                                      blurRadius: 15,
-                                                      color: colorNeutral150)
+                                                  boxShadowStandard
                                                 ]),
                                             child: Row(
                                               mainAxisAlignment:

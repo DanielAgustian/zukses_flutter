@@ -30,12 +30,7 @@ class ListLeavesInside extends StatelessWidget {
               decoration: BoxDecoration(
                   color: colorBackground,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorNeutral1.withOpacity(1),
-                      blurRadius: 15,
-                    )
-                  ]),
+                  boxShadow: [boxShadowStandard]),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

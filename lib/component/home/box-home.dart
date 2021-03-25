@@ -30,10 +30,7 @@ class BoxHome extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
-            BoxShadow(
-              color: colorNeutral150,
-              blurRadius: 5,
-            )
+            boxShadowStandard
           ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

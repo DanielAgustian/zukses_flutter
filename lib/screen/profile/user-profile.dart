@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/company-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/profile/user-settings.dart';
 
 class UserProfile extends StatefulWidget {
-  UserProfile({Key key, this.title}) : super(key: key);
+  UserProfile({Key key, this.title, this.company, this.user}) : super(key: key);
   final String title;
+  final CompanyModel company;
+  final UserModel user;
   @override
   _UserProfileScreen createState() => _UserProfileScreen();
 }
@@ -50,7 +54,7 @@ class _UserProfileScreen extends State<UserProfile> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +109,7 @@ class _UserProfileScreen extends State<UserProfile> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Finley Khouwira",
+                          widget.user.name,
                           style: TextStyle(
                               color: colorPrimary,
                               fontSize: size.height < 569 ? 16 : 18,
@@ -122,6 +126,10 @@ class _UserProfileScreen extends State<UserProfile> {
                     )
                   ],
                 ),
+                SizedBox(
+                  height: size.height < 569 ? 10 : 15,
+                ),
+                _dataCompany(context, size),
                 SizedBox(
                   height: size.height < 569 ? 10 : 15,
                 ),
@@ -143,31 +151,76 @@ class _UserProfileScreen extends State<UserProfile> {
                 TextFormat1(
                   size: size,
                   title: "Name",
-                  data: "Finley Khowira",
+                  data: widget.user.name,
                 ),
                 TextFormat1(
-                  size: size,
-                  title: "Username",
-                  data: "Finley Khowira",
-                ),
+                    size: size,
+                    title: "Username",
+                    data: widget.user.email //"Harus Diisi ",
+                    ),
                 TextFormat1(
                   size: size,
                   title: "Zukses ID",
-                  data: "Finley Khowira",
+                  data: widget.user.userID,
                 ),
                 TextFormat1(
                   size: size,
                   title: "Phone Number",
-                  data: "Finley Khowira",
+                  data: widget.user.phone == null
+                      ? "Not Registered"
+                      : widget.user.phone,
                 ),
                 TextFormat1(
                   size: size,
                   title: "Personal Email",
-                  data: "Finley Khowira",
+                  data: widget.user.email,
                 ),
               ],
             ),
           ),
         ));
+  }
+
+  Widget _dataCompany(BuildContext context, Size size) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: size.width,
+          padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom: BorderSide(width: 3, color: Color(0xFFF4F4F4)))),
+          child: Text(
+            "Company",
+            style: TextStyle(
+                color: colorPrimary,
+                fontSize: size.height < 569 ? 14 : 16,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        TextFormat1(
+          size: size,
+          title: "Company Name",
+          data: widget.company.name,
+        ),
+        TextFormat1(
+          size: size,
+          title: "ID Number",
+          data: widget.company.code,
+        ),
+        TextFormat1(
+          size: size,
+          title: "Position",
+          data: "Manager TechTeam",
+        ),
+        TextFormat1(
+          size: size,
+          title: "Company Email",
+          data: widget.company.email,
+        ),
+      ],
+    );
   }
 }

@@ -526,10 +526,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           : Border.all(color: Colors.transparent),
                       color: colorBackground,
                       boxShadow: [
-                        BoxShadow(
-                          color: colorNeutral1.withOpacity(1),
-                          blurRadius: 15,
-                        )
+                        boxShadowStandard
                       ],
                       borderRadius: BorderRadius.circular(5)),
                   child: TextFormField(

@@ -31,7 +31,7 @@ const colorFacebook = Color(0xFF142B6F);
 const colorNeutral3 = Color(0xFF7B7B7B);
 const colorSkeleton = Color(0xFFa1a1a1);
 const colorOrange = Color(0xFFFF8C00);
-
+const colorShadow = Color(0xFF1C1C1E);
 Widget dotYellow = Container(
     width: 5,
     height: 5,
@@ -61,3 +61,8 @@ double textSizeSmall18 = 16;
 double textSizeSmall16 = 14;
 double textSizeSmall14 = 12;
 double textSizeSmall12 = 10;
+
+BoxShadow boxShadowStandard = BoxShadow(
+  color: colorShadow.withOpacity(0.15),
+  blurRadius: 15,
+);

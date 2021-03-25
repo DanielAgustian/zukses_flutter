@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'package:zukses_app_1/API/company-services.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/task/screen-add-project.dart';
-import 'package:zukses_app_1/screen/task/screen-task-detail.dart'; 
+import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key key, this.title}) : super(key: key);
@@ -50,10 +51,19 @@ class _TaskScreen extends State<TaskScreen>
     timer();
   }
 
+  void debug() {
+    CompanyServiceHTTP().fetchCompanyProfile();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            debug();
+          },
+        ),
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,

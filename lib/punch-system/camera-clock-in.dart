@@ -10,6 +10,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class PreviewCamera extends StatefulWidget {
@@ -48,7 +49,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     await prefs.setInt("tanggal", now.day);
   }
 
-  void timer(BuildContext contextTimer) {
+  /*void timer(BuildContext contextTimer) {
     Timer(Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
@@ -58,7 +59,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
         });
       }
     });
-  }
+  }*/
 
   void clockIn() {
     setState(() {
@@ -99,12 +100,6 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   builder: (BuildContext context) =>
                       _buildPopupDialog(mContext))
               .then((value) => Navigator.pop(context));
-
-          //timer(mContext);
-          //Navigator.pop(context);
-          //Navigator.pop(context);
-          // Navigator.push(
-          //     context, MaterialPageRoute(builder: (context) => ScreenTab()));
         }
       },
       child: Scaffold(

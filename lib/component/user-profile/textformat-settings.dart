@@ -11,14 +11,15 @@ class TextFormatSettings extends StatelessWidget {
       this.onClick,
       this.size,
       this.index,
-      this.status});
+      this.isSwitched});
   final String title, detail;
   final int index;
   final Function onClick;
   final Size size;
-  final bool status;
+  final bool isSwitched;
   @override
   Widget build(BuildContext context) {
+    bool switchTemp = isSwitched;
     // TODO: implement build
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -41,21 +42,15 @@ class TextFormatSettings extends StatelessWidget {
                 FontAwesomeIcons.chevronRight,
                 color: colorPrimary,
               ),
-            )
-            /*FlutterSwitch(
-              width: 125.0,
-              height: 55.0,
-              valueFontSize: 25.0,
-              toggleSize: 45.0,
-              value: status,
-              borderRadius: 30.0,
-              padding: 8.0,
-              showOnOff: true,
-              onToggle: (val) {
-                setState(() {
-                  status = val;
-                });
-              },*/
+            ),
+            Switch(
+              value: isSwitched,
+              onChanged: (value) {
+                onClick;
+              },
+              activeTrackColor: Colors.lightGreenAccent,
+              activeColor: Colors.green,
+            ),
           ],
         ),
       ),
