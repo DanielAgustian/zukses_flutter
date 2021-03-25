@@ -43,6 +43,7 @@ dependencies:
   equatable:
   flutter_bloc:
   http_parser:  
+  flutter_switch:
   # cloud_firestore: 
   # firebase_auth:
   # firebase_core:

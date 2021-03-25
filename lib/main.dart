@@ -38,15 +38,10 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
 
-  runApp(
-    DevicePreview(
-      builder: (context) => 
-      MyApp
-      (
+  runApp(DevicePreview(
+      builder: (context) => MyApp(
             token: token,
-          )
-          )
-          );
+          )));
 }
 
 class MyApp extends StatelessWidget {
@@ -90,6 +85,9 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/LoginScreen': (BuildContext context) => new ScreenLogin()
+        },
         title: 'Zukses: Application for Office',
         theme: ThemeData(
             scaffoldBackgroundColor: colorBackground,
@@ -156,26 +154,27 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: colorBackground,
+          leading: Container(),
+          centerTitle: true,
+          title: Text(
+            "ZUKSES",
+            style: GoogleFonts.lato(
+                textStyle: TextStyle(color: colorPrimary, letterSpacing: 1.5),
+                fontSize: 14,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
         backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: Column(children: [
-                  SizedBox(
-                    height: size.height * 0.05,
-                  ),
-                  Text(
-                    "ZUKSES",
-                    style: GoogleFonts.lato(
-                        textStyle:
-                            TextStyle(color: colorPrimary, letterSpacing: 1.5),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 30),
                   Container(
                       width: size.width,
-                      height: size.height * 0.65,
+                      height: size.height * 0.55,
                       child: PageView.builder(
                         controller: _controller,
                         onPageChanged: (value) {
@@ -203,7 +202,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       Container(
                         child: Container(
                           color: Colors.transparent,
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 20),
                           child: Center(
                             child: DotsIndicator(
                               color: colorPrimary,

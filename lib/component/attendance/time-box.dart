@@ -85,3 +85,37 @@ class TimeBox extends StatelessWidget {
     );
   }
 }
+
+class OvertimeText extends StatelessWidget {
+  const OvertimeText({
+    Key key,
+    @required this.selected,
+    @required this.size,
+    this.space = 25,
+    this.fontSize = 20,
+  }) : super(key: key);
+  final AttendanceModel selected;
+  final int space, fontSize;
+  final Size size;
+  @override
+  Widget build(BuildContext context) {
+    String overtime = "";
+    if (selected != null) {
+      if (selected.overtime != null) {
+        overtime = selected.overtime;
+      }
+    }
+    return Container(
+        child: Text(
+      overtime == "" ? "Overtime : 0 Hrs" : "Overtime : " + overtime
+      /*selected.overtime.substring(0, 2) +
+              " hours " +
+              selected.overtime.substring(3, 5) +
+              " minutes"*/
+      ,
+      style: TextStyle(
+          color: colorPrimary,
+          fontSize: size.width <= 569 ? textSizeSmall18 : 18),
+    ));
+  }
+}

@@ -37,6 +37,7 @@ class BoxHome extends StatelessWidget {
           ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           loading
               ? SkeletonAnimation(
@@ -71,13 +72,16 @@ class BoxHome extends StatelessWidget {
                     height: 10,
                   ),
                 )
-              : Text(
-                  title,
-                  style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: fontSize - 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0),
+              : Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                        color: colorPrimary,
+                        fontSize: fontSize - 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0),
+                  ),
                 ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
@@ -75,6 +76,12 @@ class _ScreenLogin extends State<ScreenLogin> {
     }
   }
 
+  _loginSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("userLogin", textUsername.text);
+    prefs.setString("passLogin", textPassword.text);
+  }
+
   void googleLogin() {
     BlocProvider.of<AuthenticationBloc>(context).add(AuthEventWithGoogle());
 
@@ -92,6 +99,7 @@ class _ScreenLogin extends State<ScreenLogin> {
           if (state is AuthStateSuccessLoad) {
             print(state.authUser.user.email);
             print(state.authUser.token);
+            _loginSharedPref();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),

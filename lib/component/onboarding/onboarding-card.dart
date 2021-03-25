@@ -33,13 +33,13 @@ class OnBoardingCard extends StatelessWidget {
           SizedBox(height: 30),
           CircleAvatar(
               backgroundColor: colorBackground,
-              radius: size.height < 600 ? size.width * 0.25 : size.width * 0.35,
+              radius: size.height < 600 ? size.width * 0.15 : size.width * 0.25,
               child: image),
           SizedBox(height: 40),
           Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(40, 1, 40, 0),
+                padding: EdgeInsets.fromLTRB(30, 1, 40, 0),
                 child: Text(title,
                     style: TextStyle(
                         fontSize: size.height < 600 ? 14 : 16,
@@ -47,10 +47,10 @@ class OnBoardingCard extends StatelessWidget {
               )),
           SizedBox(height: 6),
           Padding(
-            padding: EdgeInsets.fromLTRB(40, 1, 40, 0),
+            padding: EdgeInsets.fromLTRB(30, 1, 40, 0),
             child: Text(description,
                 style: TextStyle(
-                    fontSize: size.height < 600 ? 12 : 16,
+                    fontSize: size.height < 600 ? 12 : 14,
                     color: Color.fromRGBO(20, 43, 111, 0.9))),
           ),
           SizedBox(height: 28),

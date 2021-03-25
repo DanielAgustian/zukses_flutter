@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/screen/profile/user-settings.dart';
 
 class UserProfile extends StatefulWidget {
   UserProfile({Key key, this.title}) : super(key: key);
@@ -41,7 +42,10 @@ class _UserProfileScreen extends State<UserProfile> {
                   FontAwesomeIcons.cog,
                   color: colorPrimary,
                 ),
-                onPressed: () {})
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UserSettings()));
+                })
           ],
         ),
         body: SingleChildScrollView(

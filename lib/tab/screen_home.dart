@@ -30,6 +30,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
+import 'package:zukses_app_1/punch-system/camera-non-instruction.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
 import 'package:zukses_app_1/screen/profile/user-profile.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
@@ -53,6 +54,7 @@ class HomeScreen extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController textReasonOvertime = new TextEditingController();
+  TextEditingController textProjectOvertime = new TextEditingController();
   final picker = ImagePicker();
   String statusLate = "";
   String statusOvertime = "";
@@ -124,6 +126,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getMember() async {
     BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
+  }
+
+  void getAuthData() async{
+    
   }
 
   @override
@@ -345,24 +351,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                            height: 45,
-                                            width: 45,
-                                            decoration: BoxDecoration(
-                                                color: colorPrimary,
-                                                shape: BoxShape.circle,
-                                                image: DecorationImage(
-                                                    fit: BoxFit.fill,
-                                                    image: Image.asset(
-                                                            "assets/images/ava.png")
-                                                        .image)))
-                                      ],
-                                    ))
+                                Row(
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.solidBell,
+                                      size: size.height < 569 ? 18 : 25,
+                                      color: colorPrimary,
+                                    ),
+                                    SizedBox(
+                                      width: size.height < 569 ? 10 : 15,
+                                    ),
+                                    Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                                height: 45,
+                                                width: 45,
+                                                decoration: BoxDecoration(
+                                                    color: colorPrimary,
+                                                    shape: BoxShape.circle,
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.fill,
+                                                        image: Image.asset(
+                                                                "assets/images/ava.png")
+                                                            .image)))
+                                          ],
+                                        )),
+                                  ],
+                                )
                               ]),
                         ),
                       );
@@ -801,6 +821,47 @@ class _HomeScreenState extends State<HomeScreen> {
             SkeletonAvatar()
           ]),
         ),
+        SizedBox(
+          height: 5,
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(color: colorBackground, boxShadow: [
+            BoxShadow(
+              color: colorNeutral1.withOpacity(1),
+              blurRadius: 10,
+            )
+          ]),
+          width: size.width,
+          height: 60,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonAnimation(
+                  shimmerColor: colorNeutral170,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: colorSkeleton,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: size.width * 0.4,
+                      height: 20)),
+              SizedBox(
+                height: 10,
+              ),
+              SkeletonAnimation(
+                  shimmerColor: colorNeutral170,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: colorSkeleton,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: size.width * 0.7,
+                      height: 20)),
+            ],
+          ),
+        ),
         Padding(
           padding: EdgeInsets.fromLTRB(10, 40, 0, 0),
           child: Align(
@@ -1046,112 +1107,148 @@ class _HomeScreenState extends State<HomeScreen> {
     buildContext2 = context;
     return new AlertDialog(
       //title: const Text('Popup example'),
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            "Overtime Paid Form",
-            style: TextStyle(
-                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          SizedBox(height: 20),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: colorPrimary, width: 2)),
-                  child: Text("18:00",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: colorPrimary,
-                          letterSpacing: 1))),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: FaIcon(
-                    Icons.arrow_forward,
-                    color: colorPrimary,
-                  )),
-              Container(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: colorSecondaryRed, width: 2)),
-                  child: Text(getSystemTime(),
-                      style: TextStyle(
-                          letterSpacing: 1,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: colorSecondaryRed))),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(color: colorBackground, boxShadow: [
-              BoxShadow(
-                color: colorNeutral1.withOpacity(1),
-                blurRadius: 15,
-              )
-            ]),
-            width: double.infinity,
-            child: TextFormField(
-              controller: textReasonOvertime,
-              keyboardType: TextInputType.multiline,
-              minLines: 6,
-              maxLines: 6,
-              decoration: new InputDecoration(
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(5),
-                  hintText: 'Reason for Overtime',
-                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+      content: SingleChildScrollView(
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Overtime Paid Form",
+              style: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
             ),
-          ),
-          SizedBox(height: 10),
-          LongButton(
-            size: size,
-            bgColor: colorPrimary,
-            textColor: colorBackground,
-            title: "Yes, I need Overtime Pay",
-            onClick: () {
-              timeCalculation(1);
-              setState(() {
-                dialogText = "Clock Out";
-              });
-              BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-                  attendanceId: attendanceID,
-                  project: "Testing Data",
-                  reason: textReasonOvertime.text));
-              //clockOut();
-              Navigator.pop(context);
-            },
-          ),
-          BlocListener<OvertimeBloc, OvertimeState>(
-            listener: (context, state) async {
-              if (state is OvertimeStateSuccess) {
-                Util().showToast(
-                    context: this.context,
-                    msg: "Overtime Created !",
-                    color: Colors.blueAccent,
-                    txtColor: colorBackground);
-              } else {
-                Util().showToast(
-                    context: this.context,
-                    msg: "Overtime Failed !",
-                    color: colorError,
-                    txtColor: colorBackground);
-              }
-            },
-            child: Container(),
-          )
-        ],
+            SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: colorPrimary, width: 2)),
+                    child: Text("18:00",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: colorPrimary,
+                            letterSpacing: 1))),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: FaIcon(
+                      Icons.arrow_forward,
+                      color: colorPrimary,
+                    )),
+                Container(
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: colorSecondaryRed, width: 2)),
+                    child: Text(getSystemTime(),
+                        style: TextStyle(
+                            letterSpacing: 1,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: colorSecondaryRed))),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              decoration: BoxDecoration(color: colorBackground, boxShadow: [
+                BoxShadow(
+                  color: colorNeutral1.withOpacity(1),
+                  blurRadius: 15,
+                )
+              ]),
+              width: double.infinity,
+              child: TextFormField(
+                controller: textProjectOvertime,
+                keyboardType: TextInputType.text,
+                decoration: new InputDecoration(
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                    hintText: 'Project',
+                    hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Container(
+              decoration: BoxDecoration(color: colorBackground, boxShadow: [
+                BoxShadow(
+                  color: colorNeutral1.withOpacity(1),
+                  blurRadius: 15,
+                )
+              ]),
+              width: double.infinity,
+              child: TextFormField(
+                controller: textReasonOvertime,
+                keyboardType: TextInputType.multiline,
+                minLines: 6,
+                maxLines: 6,
+                decoration: new InputDecoration(
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.all(5),
+                    hintText: 'Reason for Overtime',
+                    hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+              ),
+            ),
+            SizedBox(height: 10),
+            LongButton(
+              size: size,
+              bgColor: colorPrimary,
+              textColor: colorBackground,
+              title: "Yes, I need Overtime Pay",
+              onClick: () {
+                if (textProjectOvertime.text != "" &&
+                    textReasonOvertime.text != "") {
+                  timeCalculation(1);
+                  setState(() {
+                    dialogText = "Clock Out";
+                  });
+                  BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+                      attendanceId: attendanceID,
+                      project: textProjectOvertime.text,
+                      reason: textReasonOvertime.text));
+                  //clockOut();
+                  Navigator.pop(context);
+                } else {
+                  Util().showToast(
+                      context: context,
+                      duration: 3,
+                      msg: "Project and Reason for Overtime can't be empty",
+                      color: colorSecondaryRed);
+                }
+              },
+            ),
+            BlocListener<OvertimeBloc, OvertimeState>(
+              listener: (context, state) async {
+                if (state is OvertimeStateSuccess) {
+                  Util().showToast(
+                      context: this.context,
+                      msg: "Overtime Created !",
+                      color: Colors.blueAccent,
+                      txtColor: colorBackground);
+                } else if (state is OvertimeStateLoading) {
+                } else {
+                  Util().showToast(
+                      context: this.context,
+                      msg: "Overtime Failed !",
+                      color: colorError,
+                      txtColor: colorBackground);
+                }
+              },
+              child: Container(),
+            )
+          ],
+        ),
       ),
       actions: <Widget>[],
     );
@@ -1163,7 +1260,7 @@ class _HomeScreenState extends State<HomeScreen> {
     isClockIn = 2;
   }
 
-  void sharedPref() async {
+  /*void sharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -1178,7 +1275,7 @@ class _HomeScreenState extends State<HomeScreen> {
     timeCalculation(0);
     String timeClockIn = getSystemTime();
     print("Clock In Pegawai:" + timeClockIn);
-  }
+  }*/
 
   String getHourNow() {
     final DateTime now = DateTime.now();
@@ -1206,7 +1303,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void pushToCamera() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    /*final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
       setState(() {
         String data = pickedFile.path;
@@ -1217,7 +1314,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       path: data,
                     )));
       });
-    }
+    }*/
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => CameraNonInstruction()));
   }
 
   //for calculate if someone is late or overtime.

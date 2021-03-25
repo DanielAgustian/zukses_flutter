@@ -28,7 +28,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   final picker = ImagePicker();
   bool uploading = false;
   DateTime now = DateTime.now();
-
+  bool closing = false;
   void initState() {
     super.initState();
     imagePath = widget.path;
@@ -94,11 +94,13 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
         } else if (state is AttendanceStateSuccessClockIn) {
           addClockInSF();
           uploading = false;
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => _buildPopupDialog(mContext));
+          await showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      _buildPopupDialog(mContext))
+              .then((value) => Navigator.pop(context));
 
-          timer(mContext);
+          //timer(mContext);
           //Navigator.pop(context);
           //Navigator.pop(context);
           // Navigator.push(
@@ -163,12 +165,15 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                               border:
                                   Border.all(width: 2, color: colorPrimary)),
                           child: Center(
-                            child: Text(
-                              "Retake",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: colorPrimary,
-                                  fontWeight: FontWeight.w700),
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 2),
+                              child: Text(
+                                "Retake",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: colorPrimary,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ),
                           ),
                         ),
@@ -203,12 +208,15 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
       title: new Text(
         "Clock In Success!",
       ),
-      content: new Text("This is my content"),
+      content: new Text("Clock In Time: " + Util().hourFormat(DateTime.now())),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text("OK"),
             onPressed: () {
               Navigator.pop(context);
+              setState(() {
+                closing = true;
+              });
             })
       ],
     );

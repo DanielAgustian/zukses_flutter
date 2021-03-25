@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart'; 
+import 'package:flutter/cupertino.dart';
 
 class LongButtonOutline extends StatelessWidget {
   const LongButtonOutline({
@@ -22,7 +22,7 @@ class LongButtonOutline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(5.0),
       textColor: textColor,
       color: bgColor,
       onPressed: onClick,
@@ -33,7 +33,7 @@ class LongButtonOutline extends StatelessWidget {
         width: loading ? 100 : size.width,
         duration: Duration(milliseconds: 700),
         curve: Curves.fastOutSlowIn,
-        height: 40,
+        height: size.height < 569 ? 30 : 40,
         child: Center(
           child: loading
               ? CircularProgressIndicator(

@@ -43,9 +43,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     setState(() {
       _currentDate = date;
       selected = absence;
-      if (absence.clockIn != null) {
+      /*if (absence.clockIn != null) {
         isLoadingAttendance = true;
-      }
+      }*/
       kata = "$_currentDate";
     });
   }
@@ -179,31 +179,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                           ),
                           SizedBox(height: 15),
-                          isLoadingAttendance
-                              ? Container(
-                                  child: Text(
-                                  selected.overtime == ""
-                                      ? "Overtime : 0 Hrs"
-                                      : "Overtime : " +
-                                          selected.overtime.substring(0, 2) +
-                                          " hours " +
-                                          selected.overtime.substring(3, 5) +
-                                          " minutes",
-                                  style: TextStyle(
-                                      color: colorPrimary,
-                                      fontSize: size.width <= 569
-                                          ? textSizeSmall18
-                                          : 18),
-                                ))
-                              : Container(
-                                  child: Text(
-                                  "Overtime : 0 Hrs",
-                                  style: TextStyle(
-                                      color: colorPrimary,
-                                      fontSize: size.width <= 569
-                                          ? textSizeSmall18
-                                          : 18),
-                                ))
+                          OvertimeText(selected: selected, size: size)
+                          
                         ],
                       ),
                     )
