@@ -76,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool instruction = false;
   int isClockIn;
   int attendanceID;
+  TimeOfDay _time = TimeOfDay.now();
 
 // Dummy data
   var taskName = ["Task 1", "task 2"];
@@ -83,10 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
   var enumTap = ["Tap Here to Clock In", "Tap Here to Clock Out", "Good Work!"];
+
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
   bool isLoadingAuth = false;
   bool stopLooping = false;
+  bool changeTime = false;
   void timer() {
     Timer(Duration(seconds: 2), () {
       if (mounted) {
@@ -156,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      
       backgroundColor: colorBackground,
       body: SingleChildScrollView(
           child: Column(
@@ -286,7 +290,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                               } else if (_authModel.attendance == "true") {
                                 //Clock Out
-                                confirmClockOut(size: size);
+                                int diff =
+                                    timeCalculation(_company.endOfficeTime);
+                                //if employee clock out before office closing time
+                                if (diff < 0) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          _buildClockOutNotFinished(
+                                              context, size));
+                                } else {
+                                  confirmClockOut(size: size);
+                                }
                               } else {
                                 print(_authModel.attendance);
                                 print("Error Data");
@@ -1188,145 +1203,211 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  //POPUP OVERTIME FORM
   Widget _buildPopupOvertime(BuildContext context, {size}) {
     buildContext2 = context;
-    return new AlertDialog(
-      content: SingleChildScrollView(
-        child: new Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Overtime Paid Form",
-              style: TextStyle(
-                  color: colorPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: colorPrimary, width: 2)),
-                    child: Text("18:00",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: colorPrimary,
-                            letterSpacing: 1))),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: FaIcon(
-                      Icons.arrow_forward,
-                      color: colorPrimary,
-                    )),
-                Container(
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: colorSecondaryRed, width: 2)),
-                    child: Text(getSystemTime(),
-                        style: TextStyle(
-                            letterSpacing: 1,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: colorSecondaryRed))),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  color: colorBackground, boxShadow: [boxShadowStandard]),
-              width: double.infinity,
-              child: TextFormField(
-                controller: textProjectOvertime,
-                keyboardType: TextInputType.text,
-                decoration: new InputDecoration(
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                    hintText: 'Project',
-                    hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+    String timeOvertime = getSystemTime();
+    return AlertDialog(
+      content: StatefulBuilder(// You need this, notice the parameters below:
+          builder: (BuildContext context, StateSetter setState) {
+        return SingleChildScrollView(
+          child: new Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Overtime Paid Form",
+                style: TextStyle(
+                    color: colorPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  color: colorBackground, boxShadow: [boxShadowStandard]),
-              width: double.infinity,
-              child: TextFormField(
-                controller: textReasonOvertime,
-                keyboardType: TextInputType.multiline,
-                minLines: 6,
-                maxLines: 6,
-                decoration: new InputDecoration(
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(5),
-                    hintText: 'Reason for Overtime',
-                    hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
-              ),
-            ),
-            SizedBox(height: 10),
-            LongButton(
-              size: size,
-              bgColor: colorPrimary,
-              textColor: colorBackground,
-              title: "Yes, I need Overtime Pay",
-              onClick: () {
-                if (textProjectOvertime.text != "" &&
-                    textReasonOvertime.text != "") {
-                  //timeCalculation(1);
-                  setState(() {
-                    dialogText = "Clock Out";
-                  });
-                  BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-                      attendanceId: attendanceID,
-                      project: textProjectOvertime.text,
-                      reason: textReasonOvertime.text));
+              SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: colorPrimary, width: 2)),
+                      child: Text(formatOfficeTime(_company.endOfficeTime),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: colorPrimary,
+                              letterSpacing: 1))),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: FaIcon(
+                        Icons.arrow_forward,
+                        color: colorPrimary,
+                      )),
+                  InkWell(
+                    onTap: () async {
+                      TimeOfDay newTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                        builder: (BuildContext context, Widget child) {
+                          return MediaQuery(
+                            data: MediaQuery.of(context)
+                                .copyWith(alwaysUse24HourFormat: true),
+                            child: child,
+                          );
+                        },
+                      );
+                      if (newTime != null) {
+                        setState(() {
+                          _time = newTime;
+                          String data = _time.format(context);
+                          DateTime date = DateFormat.jm().parse(data);
+                          setState(() => timeOvertime =
+                              DateFormat("HH:mm:ss").format(date));
 
-                  Navigator.pop(context);
-                } else {
-                  Util().showToast(
-                      context: context,
-                      duration: 3,
-                      msg: "Project and Reason for Overtime can't be empty",
-                      color: colorSecondaryRed);
-                }
-              },
-            ),
-            BlocListener<OvertimeBloc, OvertimeState>(
-              listener: (context, state) async {
-                if (state is OvertimeStateSuccess) {
-                  Util().showToast(
-                      context: this.context,
-                      msg: "Overtime Created !",
-                      color: Colors.blueAccent,
-                      txtColor: colorBackground);
-                } else if (state is OvertimeStateLoading) {
-                } else {
-                  Util().showToast(
-                      context: this.context,
-                      msg: "Overtime Failed !",
-                      color: colorError,
-                      txtColor: colorBackground);
-                }
-              },
-              child: Container(),
-            )
-          ],
-        ),
-      ),
+                          print("TIme Overtime:" + timeOvertime);
+                        });
+                      }
+                      setState(() {
+                        changeTime = true;
+                      });
+                    },
+                    child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border:
+                                Border.all(color: colorSecondaryRed, width: 2)),
+                        child: Text(
+                            changeTime
+                                ? formatOfficeTime(timeOvertime)
+                                : timeOvertime,
+                            style: TextStyle(
+                                letterSpacing: 1,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: colorSecondaryRed))),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    color: colorBackground, boxShadow: [boxShadowStandard]),
+                width: double.infinity,
+                child: TextFormField(
+                  controller: textProjectOvertime,
+                  keyboardType: TextInputType.text,
+                  decoration: new InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                      hintText: 'Project',
+                      hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    color: colorBackground, boxShadow: [boxShadowStandard]),
+                width: double.infinity,
+                child: TextFormField(
+                  controller: textReasonOvertime,
+                  keyboardType: TextInputType.multiline,
+                  minLines: 6,
+                  maxLines: 6,
+                  decoration: new InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.all(5),
+                      hintText: 'Reason for Overtime',
+                      hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+                ),
+              ),
+              SizedBox(height: 10),
+              LongButton(
+                size: size,
+                bgColor: colorPrimary,
+                textColor: colorBackground,
+                title: "Yes, I need Overtime Pay",
+                onClick: () {
+                  if (textProjectOvertime.text != "" &&
+                      textReasonOvertime.text != "") {
+                    //timeCalculation(1);
+                    setState(() {
+                      dialogText = "Clock Out";
+                    });
+                    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+                        attendanceId: attendanceID,
+                        project: textProjectOvertime.text,
+                        reason: textReasonOvertime.text));
+
+                    Navigator.pop(context);
+                  } else {
+                    Util().showToast(
+                        context: context,
+                        duration: 3,
+                        msg: "Project and Reason for Overtime can't be empty",
+                        color: colorSecondaryRed);
+                  }
+                },
+              ),
+              BlocListener<OvertimeBloc, OvertimeState>(
+                listener: (context, state) async {
+                  if (state is OvertimeStateSuccess) {
+                    Util().showToast(
+                        context: this.context,
+                        msg: "Overtime Created !",
+                        color: Colors.blueAccent,
+                        txtColor: colorBackground);
+                  } else if (state is OvertimeStateLoading) {
+                  } else {
+                    Util().showToast(
+                        context: this.context,
+                        msg: "Overtime Failed !",
+                        color: colorError,
+                        txtColor: colorBackground);
+                  }
+                },
+                child: Container(),
+              )
+            ],
+          ),
+        );
+      }),
       actions: <Widget>[],
+    );
+  }
+
+  Widget _buildClockOutNotFinished(BuildContext context, Size size) {
+    Size sizeDialog = MediaQuery.of(context).size;
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Your work hour isn't finished yet",
+      ),
+      content: new Text("Are you sure you want to clock out?"),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              clockOut();
+            }),
+        CupertinoDialogAction(
+            child: Text("No"),
+            onPressed: () {
+              Navigator.pop(context);
+            })
+      ],
     );
   }
 
@@ -1339,8 +1420,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String getSystemTime() {
     var now = new DateTime.now();
-    //print(now.toString);
-    return new DateFormat("H:mm").format(now);
+
+    return new DateFormat("HH:mm").format(now);
   }
 
   void sharedPrefInstruction() async {
@@ -1360,5 +1441,21 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(builder: (context) => CameraNonInstruction()));
   }
 
-  
+  String formatOfficeTime(String tod) {
+    TimeOfDay timeTemp = Util().stringToTimeOfDay(tod);
+    return Util().changeTimeToString(timeTemp);
+  }
+
+  int timeCalculation(String endOfficeString) {
+    TimeOfDay now = TimeOfDay.now();
+    if (_company.endOfficeTime != null) {
+      TimeOfDay endOfficeTime = Util().stringToTimeOfDay(endOfficeString);
+      int diffHour = ((now.hour * 60) + now.minute) -
+          ((endOfficeTime.hour * 60) + endOfficeTime.minute);
+      return diffHour;
+    } else {
+      print("Error Get Data");
+      return 86400;
+    }
+  }
 }

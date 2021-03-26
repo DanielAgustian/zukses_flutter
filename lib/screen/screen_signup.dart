@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -100,33 +100,37 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: colorBackground,
+          elevation: 0.0,
+          leading: Container(),
+          title: Text(
+            "ZUKSES",
+            style: GoogleFonts.lato(
+                textStyle: TextStyle(color: colorPrimary, letterSpacing: 1.5),
+                fontSize: 14,
+                fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+        ),
         backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                 alignment: Alignment.topCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: size.height * 0.04,
+                        height: size.height * 0.01,
                       ),
-                      Text(
-                        "ZUKSES",
-                        style: GoogleFonts.lato(
-                            textStyle: TextStyle(
-                                color: colorPrimary, letterSpacing: 1.5),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: size.width * 0.3),
                       LongButtonIcon(
                         size: size,
                         title: "Sign Up with Google",
                         bgColor: colorGoogle,
                         textColor: colorBackground,
                         iconWidget: Image.asset(
-                          'icon/google_icon.png',
+                          'assets/images/google-logo.png',
                           scale: 0.6,
                         ),
                         onClick: () {
@@ -142,11 +146,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                       ),
                       LongButtonIcon(
                         size: size,
-                        title: "Sign Up with Google",
+                        title: "Sign Up with Facebook",
                         bgColor: colorFacebook,
                         textColor: colorBackground,
                         iconWidget: Image.asset(
-                          'icon/facebook_icon.png',
+                          'assets/images/facebook-logo.png',
                           scale: 0.6,
                         ),
                         onClick: () {
@@ -176,12 +180,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                       ? Border.all(color: colorError)
                                       : Border.all(color: Colors.transparent),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
@@ -211,12 +210,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                       ? Border.all(color: colorError)
                                       : Border.all(color: Colors.transparent),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
@@ -245,12 +239,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                       ? Border.all(color: colorError)
                                       : Border.all(color: Colors.transparent),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 obscureText: _obscureText1,
@@ -293,12 +282,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                       ? Border.all(color: colorError)
                                       : Border.all(color: Colors.transparent),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 obscureText: _obscureText2,

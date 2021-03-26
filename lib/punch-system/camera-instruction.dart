@@ -132,8 +132,23 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
               ),
             ),
           )
-        : Center(
-            child: CircularProgressIndicator(),
+        : Scaffold(
+            body: Container(
+              color: colorBackground,
+              width: size.width,
+              height: size.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text(
+                    "Directing to Next Page ... ",
+                    style: TextStyle(color: colorPrimary),
+                  )
+                ],
+              ),
+            ),
           );
   }
 

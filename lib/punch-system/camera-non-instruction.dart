@@ -65,8 +65,11 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
               ),
             ),
           )
-        : Center(
-            child: CircularProgressIndicator(),
-          );
+        : Scaffold(
+          backgroundColor: colorBackground,
+          body: Center(
+              child: CircularProgressIndicator(),
+            ),
+        );
   }
 }

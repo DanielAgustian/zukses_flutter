@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 
 class Util {
-  static String getHourNow() {
+  String getHourNow() {
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat.Hm();
     final String formatted = formatter.format(now);
@@ -64,8 +64,9 @@ class Util {
   }
 
   TimeOfDay stringToTimeOfDay(String tod) {
-    final format = DateFormat.jm(); //"6:00 AM"
-    return TimeOfDay.fromDateTime(format.parse(tod));
+    return TimeOfDay(
+        hour: int.parse(tod.split(":")[0]),
+        minute: int.parse(tod.split(":")[1]));
   }
 
   // void getLocationData() async {

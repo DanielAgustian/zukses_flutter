@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:device_preview/device_preview.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -99,11 +101,76 @@ class MyApp extends StatelessWidget {
             accentColor: colorPrimary),
         locale: DevicePreview.locale(context), // Add the locale here
         builder: DevicePreview.appBuilder, // Add the builder here
-        home: token != null
-            ? ScreenTab()
-            : MyHomePage(title: 'Flutter Demo Home Page'),
+        home: SplashScreen(token: token),
       ),
     );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  SplashScreen({Key key, this.title, this.token}) : super(key: key);
+  final String title, token;
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  String version = "v1.0 Beta";
+  final splashDelay = 3;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadWidget();
+  }
+
+  _loadWidget() async {
+    var _duration = Duration(seconds: splashDelay);
+    return Timer(_duration, navigationPage);
+  }
+
+  void navigationPage() {
+    if (widget.token != null) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) => ScreenTab()));
+    } else {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+        body: Stack(
+      children: [
+        Center(
+            child: Text(
+          "ZUKSES",
+          style: GoogleFonts.lato(
+              textStyle: TextStyle(color: colorPrimary, letterSpacing: 1.5),
+              fontSize: size.height < 569 ? 36 : 42,
+              fontWeight: FontWeight.bold),
+        )),
+        Positioned(
+            bottom: 0.2 * size.height,
+            left: 0.45 * size.width,
+            child: CircularProgressIndicator()),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              "from Yokesen",
+              style: TextStyle(
+                  color: colorPrimary, fontSize: size.height < 569 ? 16 : 18),
+            ),
+          ),
+        )
+      ],
+    ));
   }
 }
 
@@ -174,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Column(children: [
                   Container(
                       width: size.width,

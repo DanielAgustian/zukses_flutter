@@ -65,8 +65,17 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     setState(() {
       uploading = true;
     });
-    BlocProvider.of<AttendanceBloc>(context)
-        .add(AttendanceClockIn(image: _image));
+    if (_image != null) {
+      BlocProvider.of<AttendanceBloc>(context)
+          .add(AttendanceClockIn(image: _image));
+    } else {
+      Util().showToast(
+          msg: "Image Empty",
+          context: context,
+          duration: 3,
+          color: colorError,
+          txtColor: colorBackground);
+    }
   }
 
   void retakeButton() async {

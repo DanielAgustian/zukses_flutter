@@ -118,6 +118,20 @@ class _ScreenLogin extends State<ScreenLogin> {
           }
         },
         child: Scaffold(
+            appBar: AppBar(
+              leading: Container(),
+              centerTitle: true,
+              elevation: 0.0,
+              backgroundColor: colorBackground,
+              title: Text(
+                "ZUKSES",
+                style: GoogleFonts.lato(
+                    textStyle:
+                        TextStyle(color: colorPrimary, letterSpacing: 1.5),
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
             backgroundColor: colorBackground,
             body: SingleChildScrollView(
                 child: Container(
@@ -127,24 +141,15 @@ class _ScreenLogin extends State<ScreenLogin> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.height * 0.05,
+                            height: size.height * 0.01,
                           ),
-                          Text(
-                            "ZUKSES",
-                            style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                    color: colorPrimary, letterSpacing: 1.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: size.width * 0.3),
                           LongButtonIcon(
                             size: size,
                             title: "Sign In with Google",
                             bgColor: colorGoogle,
                             textColor: colorBackground,
                             iconWidget: Image.asset(
-                              'icon/google_icon.png',
+                              'assets/images/google-logo.png',
                               scale: 0.6,
                             ),
                             onClick: () {},
@@ -158,8 +163,8 @@ class _ScreenLogin extends State<ScreenLogin> {
                             bgColor: colorFacebook,
                             textColor: colorBackground,
                             iconWidget: Image.asset(
-                              'icon/facebook_icon.png',
-                              scale: 0.6,
+                              'assets/images/facebook-logo.png',
+                              fit: BoxFit.contain,
                             ),
                             onClick: () {},
                           ),
@@ -180,10 +185,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                                       : Border.all(color: Colors.transparent),
                                   color: colorBackground,
                                   boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
+                                    boxShadowStandard
                                   ],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
@@ -214,10 +216,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                                     : Border.all(color: Colors.transparent),
                                 color: colorBackground,
                                 boxShadow: [
-                                  BoxShadow(
-                                      offset: Offset(0, 0),
-                                      color: Color.fromRGBO(240, 239, 242, 1),
-                                      blurRadius: 15),
+                                  boxShadowStandard
                                 ],
                                 borderRadius: BorderRadius.circular(5)),
                             child: TextFormField(

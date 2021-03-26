@@ -57,12 +57,7 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                         border: _codeValidator
                             ? Border.all(color: colorError)
                             : Border.all(color: Colors.transparent),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorNeutral1,
-                            blurRadius: 5,
-                          )
-                        ]),
+                        boxShadow: [boxShadowStandard]),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: TextFormField(
                       enabled: _enable,
@@ -87,12 +82,7 @@ class _ScreenLoginPerusahaan extends State<LoginPerusahaan> {
                           decoration: BoxDecoration(
                               color: colorBackground,
                               borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: colorNeutral1,
-                                  blurRadius: 5,
-                                )
-                              ]),
+                              boxShadow: [boxShadowStandard]),
                           child: _codeValidator == true
                               ? Container()
                               : Container(

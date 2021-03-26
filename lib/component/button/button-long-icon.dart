@@ -34,14 +34,14 @@ class LongButtonIcon extends StatelessWidget {
         width: loading ? 100 : size.width,
         duration: Duration(milliseconds: 700),
         curve: Curves.fastOutSlowIn,
-        height: 40,
+        height: 35,
         child: loading
             ? CircularProgressIndicator(
                 backgroundColor: textColor,
                 valueColor: AlwaysStoppedAnimation(bgColor),
               )
             : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                iconWidget,
+                Container(width: 25, height: 25, child: iconWidget),
                 SizedBox(width: 10),
                 Text(
                   title,
