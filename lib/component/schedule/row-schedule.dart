@@ -80,42 +80,45 @@ class AddScheduleRow2 extends StatelessWidget {
             "$title",
             style: TextStyle(fontSize: fontSize, color: colorPrimary),
           ),
-          DropdownButton(
-            value: textItem,
-            icon: FaIcon(
-              FontAwesomeIcons.chevronRight,
-              color: colorPrimary,
-            ),
-            elevation: 16,
-            style: TextStyle(
+          ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButton(
+              value: textItem,
+              icon: FaIcon(
+                FontAwesomeIcons.chevronRight,
                 color: colorPrimary,
-                fontWeight: FontWeight.w700,
-                fontSize: fontSize),
-            underline: Container(),
-            onChanged: (String newValue) {
-              onSelectedItem(newValue);
-            },
-            items: items.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: SizedBox(
-                  width: 100,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                            fontSize: fontSize,
-                            color: colorPrimary,
-                            fontWeight: FontWeight.w700),
+              ),
+              elevation: 16,
+              style: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: fontSize),
+              underline: Container(),
+              onChanged: (String newValue) {
+                onSelectedItem(newValue);
+              },
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: SizedBox(
+                    width: 100,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                              fontSize: fontSize,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           )
         ],
       ),

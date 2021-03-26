@@ -7,6 +7,7 @@ import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
+import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
@@ -88,6 +89,11 @@ class _ScreenLogin extends State<ScreenLogin> {
     setState(() {
       loading = true;
     });
+  }
+
+  void gotoRegister() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
   }
 
   @override
@@ -184,9 +190,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                                       ? Border.all(color: colorError)
                                       : Border.all(color: Colors.transparent),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    boxShadowStandard
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
@@ -215,9 +219,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                                     ? Border.all(color: colorError)
                                     : Border.all(color: Colors.transparent),
                                 color: colorBackground,
-                                boxShadow: [
-                                  boxShadowStandard
-                                ],
+                                boxShadow: [boxShadowStandard],
                                 borderRadius: BorderRadius.circular(5)),
                             child: TextFormField(
                               obscureText: _obscureText,
@@ -253,18 +255,40 @@ class _ScreenLogin extends State<ScreenLogin> {
                           SizedBox(
                             height: 15,
                           ),
-                          Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  gotoRegister();
+                                },
+                                child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Create Account",
+                                      style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontSize:
+                                                size.height < 569 ? 12 : 14,
+                                            color: Color.fromRGBO(
+                                                20, 43, 111, 0.9),
+                                          ),
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                              ),
+                              Container(
+                                  child: Text(
                                 "Forgot Password?",
                                 style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      fontSize: 12,
-                                      color: Color.fromRGBO(20, 43, 111, 0.9),
-                                    ),
-                                    fontWeight: FontWeight.bold),
+                                  textStyle: TextStyle(
+                                    fontSize: size.height < 569 ? 12 : 14,
+                                    color: Color.fromRGBO(20, 43, 111, 0.9),
+                                  ),
+                                ),
                               )),
-                          SizedBox(height: 40),
+                            ],
+                          ),
+                          SizedBox(height: size.height < 569 ? 10 : 20),
                           LongButton(
                             loading: loading,
                             title: "Log In",

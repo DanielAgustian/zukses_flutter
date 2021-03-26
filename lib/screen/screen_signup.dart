@@ -5,6 +5,7 @@ import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
+import 'package:zukses_app_1/screen/screen_login.dart';
 
 class ScreenSignUp extends StatefulWidget {
   ScreenSignUp({Key key, this.title}) : super(key: key);
@@ -94,6 +95,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         MaterialPageRoute(builder: (context) => ScreenTab()),
       );*/
     }
+  }
+
+  gotoLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ScreenLogin()),
+    );
   }
 
   @override
@@ -318,7 +326,19 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 40),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                            onPressed: () {
+                              gotoLogin();
+                            },
+                            child: Text("Already Have an Account?",
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height < 569 ? 12 : 14,
+                                    fontWeight: FontWeight.bold))),
+                      ),
+                      SizedBox(height: 20),
                       LongButton(
                         title: "Sign Up",
                         bgColor: colorPrimary,
