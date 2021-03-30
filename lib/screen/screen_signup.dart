@@ -1,9 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
+import 'package:zukses_app_1/screen/register/screen-setup.dart';
 import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 
@@ -87,7 +90,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         !_confirmPassValidator) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LoginPerusahaan()),
+        MaterialPageRoute(builder: (context) => SetupRegister()),
       );
       /*
       Navigator.push(
@@ -108,19 +111,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: colorBackground,
-          elevation: 0.0,
-          leading: Container(),
-          title: Text(
-            "ZUKSES",
-            style: GoogleFonts.lato(
-                textStyle: TextStyle(color: colorPrimary, letterSpacing: 1.5),
-                fontSize: 14,
-                fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => LoginPerusahaan()));
+          },
         ),
+        appBar:appBarOutside,
         backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
@@ -128,56 +125,17 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                 alignment: Alignment.topCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      LongButtonIcon(
+                      TitleFormat(
                         size: size,
-                        title: "Sign Up with Google",
-                        bgColor: colorGoogle,
-                        textColor: colorBackground,
-                        iconWidget: Image.asset(
-                          'assets/images/google-logo.png',
-                          scale: 0.6,
-                        ),
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenSignUp()),
-                          );
-                        },
+                        title: "Welcome!",
+                        detail:
+                            "Please Fill In This Form to Create Your Account",
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      LongButtonIcon(
-                        size: size,
-                        title: "Sign Up with Facebook",
-                        bgColor: colorFacebook,
-                        textColor: colorBackground,
-                        iconWidget: Image.asset(
-                          'assets/images/facebook-logo.png',
-                          scale: 0.6,
-                        ),
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenSignUp()),
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Text(
-                        "OR",
-                        style:
-                            TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
-                      ),
-                      SizedBox(height: 25),
                       Form(
                         child: Column(
                           children: [
@@ -186,7 +144,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               decoration: BoxDecoration(
                                   border: _emailValidator
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
                                   boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
@@ -216,7 +174,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               decoration: BoxDecoration(
                                   border: _usernameValidator
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
                                   boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
@@ -245,7 +203,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               decoration: BoxDecoration(
                                   border: _passValidator
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
                                   boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
@@ -287,8 +245,9 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               height: 50,
                               decoration: BoxDecoration(
                                   border: _passValidator
-                                      ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      ? Border.all(color: colorError, width: 1)
+                                      : Border.all(
+                                          color: colorBorder, width: 1),
                                   color: colorBackground,
                                   boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
@@ -326,18 +285,6 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                           ],
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextButton(
-                            onPressed: () {
-                              gotoLogin();
-                            },
-                            child: Text("Already Have an Account?",
-                                style: TextStyle(
-                                    color: colorPrimary,
-                                    fontSize: size.height < 569 ? 12 : 14,
-                                    fontWeight: FontWeight.bold))),
-                      ),
                       SizedBox(height: 20),
                       LongButton(
                         title: "Sign Up",
@@ -346,6 +293,78 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         onClick: register,
                         size: size,
                       ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Center(
+                        child: Text(
+                          "OR",
+                          style:
+                              TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
+                        ),
+                      ),
+                      SizedBox(height: 25),
+                      LongButtonIcon(
+                        size: size,
+                        title: "Sign Up with Google",
+                        bgColor: colorGoogle,
+                        textColor: colorBackground,
+                        iconWidget: Image.asset(
+                          'assets/images/google-logo.png',
+                          scale: 0.6,
+                        ),
+                        onClick: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenSignUp()),
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      LongButtonIcon(
+                        size: size,
+                        title: "Sign Up with Facebook",
+                        bgColor: colorFacebook,
+                        textColor: colorBackground,
+                        iconWidget: Image.asset(
+                          'assets/images/facebook-logo.png',
+                          scale: 0.6,
+                        ),
+                        onClick: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenSignUp()),
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: 0.07 * size.height,
+                      ),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                                fontSize: size.height < 569 ? 12 : 14,
+                                color: Colors.black),
+                            children: <TextSpan>[
+                              new TextSpan(text: "Already have an account? "),
+                              TextSpan(
+                                  text: 'Log In',
+                                  style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorPrimary),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      gotoLogin();
+                                    }),
+                            ],
+                          ),
+                        ),
+                      )
                     ]))));
   }
 }

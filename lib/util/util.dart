@@ -69,6 +69,9 @@ class Util {
         minute: int.parse(tod.split(":")[1]));
   }
 
+  String dateNumbertoCalendar(DateTime date) {
+    return DateFormat('yMMMd').format(date);
+  }
   // void getLocationData() async {
   //   Location location = new Location();
 

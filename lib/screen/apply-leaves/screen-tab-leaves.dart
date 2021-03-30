@@ -6,10 +6,12 @@ import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/component/leaves/list-leaves-overtime.dart';
 import 'package:zukses_app_1/component/leaves/list-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ScreenTabLeaves extends StatefulWidget {
   const ScreenTabLeaves({
@@ -142,12 +144,13 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListLeavesInside(
-                    screen: widget.permission,
-                    title: list[index].project,
-                    detail: list[index].clockOut.toString(),
-                    status: list[index].status,
-                    date: "1996-01-01");
+                return ListLeavesOvertime(
+                  screen: widget.permission,
+                  title: list[index].project,
+                  detail: Util().dateNumbertoCalendar(
+                      list[index].clockOut), //list[index].clockOut,
+                  status: list[index].status,
+                );
               },
             ),
     );

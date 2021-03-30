@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,7 +7,9 @@ import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
+import 'package:zukses_app_1/screen/forgot-password/forgot-password.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -124,20 +127,7 @@ class _ScreenLogin extends State<ScreenLogin> {
           }
         },
         child: Scaffold(
-            appBar: AppBar(
-              leading: Container(),
-              centerTitle: true,
-              elevation: 0.0,
-              backgroundColor: colorBackground,
-              title: Text(
-                "ZUKSES",
-                style: GoogleFonts.lato(
-                    textStyle:
-                        TextStyle(color: colorPrimary, letterSpacing: 1.5),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
+            appBar: appBarOutside,
             backgroundColor: colorBackground,
             body: SingleChildScrollView(
                 child: Container(
@@ -145,50 +135,22 @@ class _ScreenLogin extends State<ScreenLogin> {
                     alignment: Alignment.topCenter,
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
                             height: size.height * 0.01,
                           ),
-                          LongButtonIcon(
+                          TitleFormat(
                             size: size,
-                            title: "Sign In with Google",
-                            bgColor: colorGoogle,
-                            textColor: colorBackground,
-                            iconWidget: Image.asset(
-                              'assets/images/google-logo.png',
-                              scale: 0.6,
-                            ),
-                            onClick: () {},
+                            title: "Welcome!",
+                            detail: "Sign in to Your Account",
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          LongButtonIcon(
-                            size: size,
-                            title: "Sign In with Facebook",
-                            bgColor: colorFacebook,
-                            textColor: colorBackground,
-                            iconWidget: Image.asset(
-                              'assets/images/facebook-logo.png',
-                              fit: BoxFit.contain,
-                            ),
-                            onClick: () {},
-                          ),
-                          SizedBox(
-                            height: 25,
-                          ),
-                          Text(
-                            "OR",
-                            style: TextStyle(
-                                fontSize: 16, color: Color(0xFF8793B5)),
-                          ),
-                          SizedBox(height: 25),
                           Container(
                               height: 50,
                               decoration: BoxDecoration(
                                   border: _usernameValidator
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
                                   boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
@@ -217,7 +179,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                             decoration: BoxDecoration(
                                 border: _passValidator
                                     ? Border.all(color: colorError)
-                                    : Border.all(color: Colors.transparent),
+                                    : Border.all(color: colorBorder),
                                 color: colorBackground,
                                 boxShadow: [boxShadowStandard],
                                 borderRadius: BorderRadius.circular(5)),
@@ -258,34 +220,26 @@ class _ScreenLogin extends State<ScreenLogin> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              Container(),
                               TextButton(
                                 onPressed: () {
-                                  gotoRegister();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ForgotPassword()));
                                 },
                                 child: Container(
-                                    alignment: Alignment.centerLeft,
                                     child: Text(
-                                      "Create Account",
-                                      style: GoogleFonts.lato(
-                                          textStyle: TextStyle(
-                                            fontSize:
-                                                size.height < 569 ? 12 : 14,
-                                            color: Color.fromRGBO(
-                                                20, 43, 111, 0.9),
-                                          ),
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                              ),
-                              Container(
-                                  child: Text(
-                                "Forgot Password?",
-                                style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                    fontSize: size.height < 569 ? 12 : 14,
-                                    color: Color.fromRGBO(20, 43, 111, 0.9),
+                                  "Forgot Password?",
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontSize: size.height < 569 ? 10 : 11,
+                                      color: colorPrimary70,
+                                    ),
                                   ),
-                                ),
-                              )),
+                                )),
+                              ),
                             ],
                           ),
                           SizedBox(height: size.height < 569 ? 10 : 20),
@@ -297,6 +251,71 @@ class _ScreenLogin extends State<ScreenLogin> {
                             onClick: login,
                             size: size,
                           ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          Center(
+                            child: Text(
+                              "OR",
+                              style: TextStyle(
+                                  fontSize: 16, color: Color(0xFF8793B5)),
+                            ),
+                          ),
+                          SizedBox(height: 25),
+                          LongButtonIcon(
+                            size: size,
+                            title: "Sign In with Google",
+                            bgColor: colorGoogle,
+                            textColor: colorBackground,
+                            iconWidget: Image.asset(
+                              'assets/images/google-logo.png',
+                              scale: 0.6,
+                            ),
+                            onClick: () {},
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          LongButtonIcon(
+                            size: size,
+                            title: "Sign In with Facebook",
+                            bgColor: colorFacebook,
+                            textColor: colorBackground,
+                            iconWidget: Image.asset(
+                              'assets/images/facebook-logo.png',
+                              fit: BoxFit.contain,
+                            ),
+                            onClick: () {},
+                          ),
+                          SizedBox(
+                            height: 0.1 * size.height,
+                          ),
+                          Center(
+                            child: RichText(
+                              text: TextSpan(
+                                style: TextStyle(
+                                    fontSize: size.height < 569 ? 12 : 14,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                                  new TextSpan(
+                                      text: "Doesn't have an account? "),
+                                  TextSpan(
+                                      text: 'Sign Up',
+                                      style: new TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorPrimary),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ScreenSignUp()));
+                                        }),
+                                ],
+                              ),
+                            ),
+                          )
                         ])))));
   }
 }

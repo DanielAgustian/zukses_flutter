@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 
 class LongButton extends StatelessWidget {
   const LongButton(
@@ -29,6 +30,58 @@ class LongButton extends StatelessWidget {
           RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
       child: AnimatedContainer(
         width: size.width,
+        duration: Duration(milliseconds: 700),
+        curve: Curves.fastOutSlowIn,
+        height: size.height < 569 ? 30 : 40,
+        child: Center(
+          child: loading
+              ? CircularProgressIndicator(
+                  backgroundColor: textColor,
+                  valueColor: AlwaysStoppedAnimation(bgColor),
+                )
+              : Text(
+                  title,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class LongButtonSize extends StatelessWidget {
+  const LongButtonSize(
+      {Key key,
+      @required this.width,
+      @required this.size,
+      this.onClick,
+      this.title,
+      this.bgColor,
+      this.textColor,
+      this.clickable,
+      this.loading = false})
+      : super(key: key);
+
+  final Size size;
+  final double width;
+  final Function onClick;
+  final String title;
+  final Color bgColor, textColor;
+  final bool loading;
+  final bool clickable;
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      splashColor: clickable ? colorPrimary30 : Colors.transparent,
+      highlightColor: clickable ? colorPrimary30 : Colors.transparent,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      textColor: textColor,
+      color: bgColor,
+      onPressed: onClick,
+      shape:
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
+      child: AnimatedContainer(
+        width: width,
         duration: Duration(milliseconds: 700),
         curve: Curves.fastOutSlowIn,
         height: size.height < 569 ? 30 : 40,

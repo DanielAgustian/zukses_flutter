@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const colorPrimary = Color(0xFF142B6F);
 const colorPrimary70 = Color(0xFF5B6B9B);
@@ -32,6 +33,7 @@ const colorNeutral3 = Color(0xFF7B7B7B);
 const colorSkeleton = Color(0xFFa1a1a1);
 const colorOrange = Color(0xFFFF8C00);
 const colorShadow = Color(0xFF1C1C1E);
+const colorBorder = Color(0xFFBFBFBF);
 Widget dotYellow = Container(
     width: 5,
     height: 5,
@@ -63,6 +65,19 @@ double textSizeSmall14 = 12;
 double textSizeSmall12 = 10;
 
 BoxShadow boxShadowStandard = BoxShadow(
-  color: colorShadow.withOpacity(0.15),
-  blurRadius: 15,
+  color: colorShadow.withOpacity(0.07),
+  blurRadius: 20,
+);
+AppBar appBarOutside = AppBar(
+  centerTitle: true,
+  leading: Container(),
+  backgroundColor: colorBackground,
+  elevation: 0.0,
+  title: Text(
+    "ZUKSES",
+    style: GoogleFonts.lato(
+        textStyle: TextStyle(color: colorPrimary, letterSpacing: 1.5),
+        fontSize: 14,
+        fontWeight: FontWeight.bold),
+  ),
 );

@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 // ignore: must_be_immutable
-class ListLeavesInside extends StatelessWidget {
-  ListLeavesInside(
+class ListLeavesOvertime extends StatelessWidget {
+  ListLeavesOvertime(
       {Key key,
       this.title,
       this.detail,
       this.status,
       this.screen,
-      this.date,
       this.onClick})
       : super(key: key);
 
   final String title, detail, screen;
-  final String status, date;
+  final String status;
   final Function onClick;
   DateFormat dateFormat = DateFormat.yMMMMd();
 
   @override
   Widget build(BuildContext context) {
+    
     return Padding(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: InkWell(
