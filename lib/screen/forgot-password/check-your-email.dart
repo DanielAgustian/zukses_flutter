@@ -1,19 +1,57 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
 
 class CheckEmail extends StatefulWidget {
-  CheckEmail({Key key, this.title}) : super(key: key);
+  CheckEmail({Key key, this.title, this.email}) : super(key: key);
   final String title;
+  final String email;
   @override
   _CheckEmailScreen createState() => _CheckEmailScreen();
 }
 
 /// This is the stateless widget that the main application instantiates.
 class _CheckEmailScreen extends State<CheckEmail> {
+  String _linkMessage = "";
+
+  Future<void> _createDynamicLink(bool short) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://zuksesapplication.page.link',
+      link: Uri.parse(
+          'https://zuksesapplication.page.link/forgotpassword?email=' +
+              widget.email),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.zukses_app_1',
+        minimumVersion: 0,
+      ),
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
+
+    Uri url;
+    if (short) {
+      final ShortDynamicLink shortLink = await parameters.buildShortLink();
+      url = shortLink.shortUrl;
+    } else {
+      url = await parameters.buildUrl();
+    }
+
+    setState(() {
+      _linkMessage = url.toString();
+    });
+  }
+
+  _resendEmail() {
+    _createDynamicLink(true);
+    //BELOW LOGIC TO SENT DATA TO API
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -31,6 +69,12 @@ class _CheckEmailScreen extends State<CheckEmail> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                InkWell(
+                  onTap: () {
+                    launch(_linkMessage);
+                  },
+                  child: Text(_linkMessage),
+                ),
                 SizedBox(
                   height: size.height * 0.1,
                 ),
@@ -97,7 +141,11 @@ class _CheckEmailScreen extends State<CheckEmail> {
                           text: "Resend",
                           style: TextStyle(
                               color: colorPrimary, fontWeight: FontWeight.bold),
-                          recognizer: TapGestureRecognizer()..onTap = () {})
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              //Sent Again
+                              _resendEmail();
+                            })
                     ]))
               ],
             ),

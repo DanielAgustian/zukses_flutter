@@ -54,7 +54,8 @@ class _UserProfileScreen extends State<UserProfile> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+            padding: EdgeInsets.fromLTRB(
+                paddingHorizontal, 0, paddingHorizontal, 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -37,7 +37,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   DateTime _currentDate = DateTime.now();
   WeeklyCalendar _selectedWeek;
   DateTime _selectedDate;
-  List<AttendanceModel> absensiList;
+  List<AttendanceModel> absensiList = [];
   bool isLoadingAttendance = false;
   void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
@@ -131,11 +131,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     size: size.height <= 569 ? 16 : 20,
                   ),
                   onPressed: () {
-                    /*Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenListLeaves()),
-                    );*/
                     Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -48,7 +48,8 @@ class _AddTaskScreen extends State<AddTaskScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 10, vertical: paddingVertical),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -59,12 +60,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                         color: colorBackground,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(0, 0),
-                              color: colorNeutral150,
-                              blurRadius: 15),
-                        ],
+                        boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
                     child: Center(
                       child: TextFormField(
@@ -88,12 +84,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                         color: colorBackground,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(0, 0),
-                              color: colorNeutral150,
-                              blurRadius: 15),
-                        ],
+                        boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
                     child: TextFormField(
                       controller: textDescription,
@@ -115,12 +106,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                         color: colorBackground,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(0, 0),
-                              color: colorNeutral150,
-                              blurRadius: 15),
-                        ],
+                        boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
                     child: TextFormField(
                       controller: textAssignedTo,
@@ -142,12 +128,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                         color: colorBackground,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(0, 0),
-                              color: colorNeutral150,
-                              blurRadius: 15),
-                        ],
+                        boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
                     child: TextFormField(
                       controller: textPriority,
@@ -176,12 +157,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                             : size.width * 0.45,
                         decoration: BoxDecoration(
                             color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: colorNeutral150,
-                                  blurRadius: 15),
-                            ],
+                            boxShadow: [boxShadowStandard],
                             borderRadius: BorderRadius.circular(5)),
                         child: TextFormField(
                           controller: textDueDate,
@@ -212,12 +188,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                         width: size.width * 0.40,
                         decoration: BoxDecoration(
                             color: colorBackground,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(0, 0),
-                                  color: colorNeutral150,
-                                  blurRadius: 15),
-                            ],
+                            boxShadow: [boxShadowStandard],
                             borderRadius: BorderRadius.circular(5)),
                         child: TextFormField(
                           controller: textTime,
@@ -268,12 +239,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                           color: colorBackground,
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(0, 0),
-                                color: colorNeutral150,
-                                blurRadius: 15),
-                          ],
+                          boxShadow: [boxShadowStandard],
                           borderRadius: BorderRadius.circular(5)),
                       child: TextFormField(
                         controller: textNotes,

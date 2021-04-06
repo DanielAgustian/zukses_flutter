@@ -2,6 +2,7 @@ class TeamModel {
   int userId;
   String name, email, imgUrl, late;
   DateTime clockIn, clockOut;
+  
   TeamModel(
       {this.userId,
       this.name,

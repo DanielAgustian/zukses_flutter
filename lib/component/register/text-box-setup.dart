@@ -7,6 +7,7 @@ class TextBoxSetup extends StatelessWidget {
       {Key key,
       this.question,
       this.hint,
+      this.onChanged,
       @required this.textBox,
       @required this.size})
       : super(key: key);
@@ -14,6 +15,7 @@ class TextBoxSetup extends StatelessWidget {
   final String question, hint;
   final Size size;
   final TextEditingController textBox;
+  final Function onChanged;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +39,9 @@ class TextBoxSetup extends StatelessWidget {
               child: TextFormField(
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.text,
-                onChanged: (val) {},
+                onChanged: (val) {
+                  onChanged(val);
+                },
                 controller: textBox,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 10),

@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
@@ -73,7 +76,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    getMeetingReq();
     //scheduleClick.title = "";
     _meetingBloc = BlocProvider.of<MeetingBloc>(context);
     _meetingBloc.add(GetAcceptedMeetingEvent());
@@ -84,6 +87,9 @@ class _MeetingScreenState extends State<MeetingScreen>
     timer();
   }
 
+  void getMeetingReq() async {
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
+  }
   /*void postHTTPdemo() async {
     ScheduleModel scheduleModel =
         await MeetingServicesHTTP().fetchScheduleDetail("3");
@@ -188,22 +194,29 @@ class _MeetingScreenState extends State<MeetingScreen>
                               ),
                             ],
                           ),
-                          Container(
-                              width: 20,
-                              height: 20,
-                              alignment: Alignment.centerRight,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: colorSecondaryRed),
-                              child: Center(
-                                child: Text(
-                                  '2',
-                                  style: TextStyle(
-                                      color: colorBackground,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: size.height < 600 ? 8 : 10),
-                                ),
-                              ))
+                          BlocBuilder<MeetingReqBloc, MeetingReqState>(
+                              builder: (context, state) {
+                            if (state is MeetingReqStateSuccessLoad) {
+                              return Container(
+                                  width: 20,
+                                  height: 20,
+                                  alignment: Alignment.centerRight,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: colorSecondaryRed),
+                                  child: Center(
+                                    child: Text(
+                                      state.schedule.length.toString(),
+                                      style: TextStyle(
+                                          color: colorBackground,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: size.height < 600 ? 8 : 10),
+                                    ),
+                                  ));
+                            } else {
+                              return Container();
+                            }
+                          })
                         ],
                       ),
                     )),
@@ -431,13 +444,13 @@ class _MeetingScreenState extends State<MeetingScreen>
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(20),
                               topRight: Radius.circular(20))),
-                      child: Stack(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          scheduleModel.members == null
+                          /*scheduleModel.members == null
                               ? Container()
                               : Container(
-                                  margin:
-                                      EdgeInsets.only(top: size.height * 0.23),
+
                                   child: ListView(
                                     controller: scrollController,
                                     children: [
@@ -489,75 +502,125 @@ class _MeetingScreenState extends State<MeetingScreen>
                                       ),
                                     ],
                                   ),
-                                ),
-                          Container(
-                            height: size.height * 0.20,
-                            color: colorBackground,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      scheduleModel.title == null
-                                          ? "Schedule Not Get"
-                                          : scheduleModel.title,
-                                      style: TextStyle(
-                                          fontSize:
-                                              size.height <= 570 ? 18 : 20,
-                                          color: colorPrimary,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.times,
-                                        color: colorPrimary,
-                                      ),
-                                      onPressed: () {
-                                        _controller.reverse();
-                                        setState(() {
-                                          removeBackgroundDialog =
-                                              !removeBackgroundDialog;
-                                        });
-                                      },
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height <= 570 ? 2 : 5,
-                                ),
-                                Text(
-                                  "$time1 - $time2",
-                                  style: TextStyle(
-                                    fontSize: size.height <= 570 ? 12 : 14,
-                                    color: colorPrimary50,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.height <= 570 ? 6 : 10,
-                                ),
-                                Text(
-                                  "${scheduleModel.description}",
-                                  style: TextStyle(
-                                    fontSize: size.height <= 570 ? 12 : 14,
+                                  ),*/
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                scheduleModel.title == null
+                                    ? "Schedule Not Get"
+                                    : scheduleModel.title,
+                                style: TextStyle(
+                                    fontSize: size.height <= 570 ? 18 : 20,
                                     color: colorPrimary,
-                                  ),
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.times,
+                                  color: colorPrimary,
                                 ),
-                                SizedBox(
-                                  height: size.height <= 570 ? 10 : 20,
-                                ),
-                                Text(
-                                  "Assigned to",
-                                  style: TextStyle(
-                                      fontSize: size.height <= 570 ? 12 : 14,
-                                      color: colorPrimary,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                                onPressed: () {
+                                  _controller.reverse();
+                                  setState(() {
+                                    removeBackgroundDialog =
+                                        !removeBackgroundDialog;
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 2 : 5,
+                          ),
+                          Text(
+                            "$time1 - $time2",
+                            style: TextStyle(
+                              fontSize: size.height <= 570 ? 12 : 14,
+                              color: colorPrimary50,
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 6 : 10,
+                          ),
+                          Container(
+                            width: size.width,
+                            height: 0.09 * size.height,
+                            child: Text(
+                              scheduleModel.description,
+                              style: TextStyle(
+                                fontSize: size.height <= 570 ? 12 : 14,
+                                color: colorPrimary,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height <= 570 ? 10 : 15,
+                          ),
+                          Text(
+                            "Assigned to",
+                            style: TextStyle(
+                                fontSize: size.height <= 570 ? 12 : 14,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          scheduleModel.members == null
+                              ? Text("Data Null")
+                              : Container(
+                                  height: 0.2 * size.height,
+                                  child: ListView(
+                                    controller: scrollController,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          ...scheduleModel.members
+                                              .map((item) => Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 6),
+                                                    child: Row(
+                                                      children: [
+                                                        UserAvatar(
+                                                          avatarRadius:
+                                                              size.height <= 570
+                                                                  ? 15
+                                                                  : 20,
+                                                          dotSize:
+                                                              size.height <= 570
+                                                                  ? 8
+                                                                  : 10,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Text(
+                                                          "User " +
+                                                              item.name +
+                                                              " (" +
+                                                              util.acceptancePrint(
+                                                                  item.accepted) +
+                                                              ") ",
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                size.height <=
+                                                                        570
+                                                                    ? 14
+                                                                    : 16,
+                                                            color: colorPrimary,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                    ],
+                                  ),
+                                )
                         ],
                       ),
                     );

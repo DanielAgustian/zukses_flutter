@@ -131,15 +131,12 @@ class _ScreenLogin extends State<ScreenLogin> {
             backgroundColor: colorBackground,
             body: SingleChildScrollView(
                 child: Container(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     alignment: Alignment.topCenter,
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            height: size.height * 0.01,
-                          ),
                           TitleFormat(
                             size: size,
                             title: "Welcome!",
@@ -215,7 +212,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                             ),
                           ),
                           SizedBox(
-                            height: 15,
+                            height: size.height < 569 ? 3 : 5,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,7 +239,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                               ),
                             ],
                           ),
-                          SizedBox(height: size.height < 569 ? 10 : 20),
+                          SizedBox(height: size.height < 569 ? 5 : 10),
                           LongButton(
                             loading: loading,
                             title: "Log In",
@@ -288,7 +285,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                             onClick: () {},
                           ),
                           SizedBox(
-                            height: 0.1 * size.height,
+                            height: 0.02 * size.height,
                           ),
                           Center(
                             child: RichText(

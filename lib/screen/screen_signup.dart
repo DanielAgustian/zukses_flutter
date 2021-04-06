@@ -111,25 +111,16 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LoginPerusahaan()));
-          },
-        ),
-        appBar:appBarOutside,
+        appBar: appBarOutside,
         backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 alignment: Alignment.topCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: size.height * 0.01,
-                      ),
                       TitleFormat(
                         size: size,
                         title: "Welcome!",
@@ -294,7 +285,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         size: size,
                       ),
                       SizedBox(
-                        height: 25,
+                        height: 15,
                       ),
                       Center(
                         child: Text(
@@ -303,10 +294,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
                         ),
                       ),
-                      SizedBox(height: 25),
+                      SizedBox(height: 15),
                       LongButtonIcon(
+                        
                         size: size,
-                        title: "Sign Up with Google",
+                        title: "Sign In with Google",
                         bgColor: colorGoogle,
                         textColor: colorBackground,
                         iconWidget: Image.asset(
@@ -326,7 +318,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                       ),
                       LongButtonIcon(
                         size: size,
-                        title: "Sign Up with Facebook",
+                        title: "Sign In with Facebook",
                         bgColor: colorFacebook,
                         textColor: colorBackground,
                         iconWidget: Image.asset(
@@ -342,7 +334,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         },
                       ),
                       SizedBox(
-                        height: 0.07 * size.height,
+                        height: 0.02 * size.height,
                       ),
                       Center(
                         child: RichText(

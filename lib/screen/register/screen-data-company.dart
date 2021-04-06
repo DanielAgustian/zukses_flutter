@@ -14,12 +14,19 @@ class DataCompany extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _DataCompanyScreen extends State<DataCompany> {
+  final textName = TextEditingController();
   final textEmail = TextEditingController();
-  final textAdditional1 = TextEditingController();
-  final textAdditional2 = TextEditingController();
+  final textPhone = TextEditingController();
+  final textWebsite = TextEditingController();
+  final textAddress = TextEditingController();
   String textItem = "";
   bool error = false;
-  List<String> bussinessScope = ["Technology", "Accounting", "Communication"];
+  List<String> bussinessScope = [
+    "Choose Your Business Scope",
+    "Technology",
+    "Accounting",
+    "Communication"
+  ];
   @override
   void initState() {
     // TODO: implement initState
@@ -27,27 +34,79 @@ class _DataCompanyScreen extends State<DataCompany> {
     textItem = bussinessScope[0];
   }
 
+  _errorFalse() {
+    setState(() {
+      error = false;
+    });
+  }
+
+  _errorTrue() {
+    setState(() {
+      error = true;
+    });
+  }
+
   void _gotoAccepted() {
     if (textEmail.text != "") {
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+      if (regex.hasMatch(textEmail.text)) {
+        _errorFalse();
+      } else {
+        _errorTrue();
+      }
+    }
+    if (textAddress.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    if (textName.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    if (textPhone.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    if (textItem != "" && textItem != null && textItem != bussinessScope[0]) {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    /*if (textWebsite.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }*/
+    if (!error) {
+      print("Data is Completed");
+      /*Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => RegisApproved()));*/
+    }
+    /*if (textEmail.text != "") {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => RegisApproved()));
     } else {
       setState(() {
         error = true;
       });
-    }
+    }*/
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    // TODO: implement build
     return Scaffold(
       appBar: appBarOutside,
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.symmetric(
+              horizontal: paddingHorizontal, vertical: paddingVertical),
           width: size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -70,12 +129,16 @@ class _DataCompanyScreen extends State<DataCompany> {
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
-                  controller: textEmail,
+                  controller: textName,
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      hintText: "Email",
-                      hintStyle: TextStyle(
+                      labelText: "Legal Name (Required)",
+                      labelStyle: TextStyle(
                         color: error ? colorError : colorNeutral2,
+                      ),
+                      hintText: "Legal Name",
+                      hintStyle: TextStyle(
+                        color: colorNeutral2,
                       ),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none),
@@ -87,17 +150,51 @@ class _DataCompanyScreen extends State<DataCompany> {
               Container(
                 width: size.width,
                 decoration: BoxDecoration(
-                    border: Border.all(color: colorBorder, width: 1),
+                    border: Border.all(
+                        color: error ? colorError : colorBorder, width: 1),
                     color: colorBackground,
                     borderRadius: BorderRadius.circular(5)),
                 child: TextFormField(
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
-                  controller: textAdditional1,
+                  controller: textPhone,
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      hintText: "Additional Data",
+                      labelText: "Company Phone (Required)",
+                      labelStyle: TextStyle(
+                        color: error ? colorError : colorNeutral2,
+                      ),
+                      hintText: "Company phone",
+                      hintStyle: TextStyle(
+                        color: colorNeutral2,
+                      ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none),
+                ),
+              ),
+              SizedBox(
+                height: size.height < 569 ? 10 : 15,
+              ),
+              Container(
+                width: size.width,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: error ? colorError : colorBorder, width: 1),
+                    color: colorBackground,
+                    borderRadius: BorderRadius.circular(5)),
+                child: TextFormField(
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  controller: textEmail,
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      labelText: "Company Email (Required)",
+                      labelStyle: TextStyle(
+                        color: error ? colorError : colorNeutral2,
+                      ),
+                      hintText: "Company email",
                       hintStyle: TextStyle(
                         color: colorNeutral2,
                       ),
@@ -118,10 +215,43 @@ class _DataCompanyScreen extends State<DataCompany> {
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   onChanged: (val) {},
-                  controller: textAdditional2,
+                  controller: textWebsite,
                   decoration: InputDecoration(
+                      labelText: "Company Website",
+                      labelStyle: TextStyle(
+                        color: colorNeutral2,
+                      ),
                       contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      hintText: "Additional Data 2",
+                      hintText: "Company website",
+                      hintStyle: TextStyle(
+                        color: colorNeutral2,
+                      ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none),
+                ),
+              ),
+              SizedBox(
+                height: size.height < 569 ? 10 : 15,
+              ),
+              Container(
+                width: size.width,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: error ? colorError : colorBorder, width: 1),
+                    color: colorBackground,
+                    borderRadius: BorderRadius.circular(5)),
+                child: TextFormField(
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  controller: textAddress,
+                  decoration: InputDecoration(
+                      labelText: "Company Address (Required)",
+                      labelStyle: TextStyle(
+                        color: error ? colorError : colorNeutral2,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      hintText: "Company address",
                       hintStyle: TextStyle(
                         color: colorNeutral2,
                       ),
@@ -182,14 +312,6 @@ class _DataCompanyScreen extends State<DataCompany> {
               SizedBox(
                 height: size.height < 569 ? 5 : 10,
               ),
-              LongButtonOutline(
-                size: size,
-                title: "Save and Add More",
-                bgColor: colorBackground,
-                outlineColor: colorPrimary,
-                textColor: colorPrimary,
-                onClick: () {},
-              )
             ],
           ),
         ),

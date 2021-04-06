@@ -94,7 +94,7 @@ class _AddProjectScreen extends State<AddProject> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),

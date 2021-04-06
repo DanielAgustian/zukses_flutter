@@ -35,6 +35,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
   List<OvertimeModel> listRejectedOvertime = [];
   bool isLoadingLeaves = false;
   bool isLoadingOvertime = false;
+  
   @override
   void initState() {
     super.initState();
@@ -47,7 +48,9 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
     listAccepted.clear();
     listRejected.clear();
   }
-
+  void changeTimeStart(){
+    
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -179,11 +182,11 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                 return ListLeavesInside(
                     screen: widget.permission,
                     title: list[index].typeName,
-                    detail: list[index].duration,
-                    status: list[index].status,
-                    date: list[index].leaveDate == null
+                    detail: list[index].leaveDate == null
                         ? "Data Cant Be fetch"
-                        : list[index].leaveDate);
+                        : list[index].leaveDate,
+                    status: list[index].status,
+                    time: list[index].startTime);
               }),
     );
   }

@@ -6,8 +6,9 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/forgot-password/success-change.dart';
 
 class ResetPassword extends StatefulWidget {
-  ResetPassword({Key key, this.title}) : super(key: key);
+  ResetPassword({Key key, this.title, this.email}) : super(key: key);
   final String title;
+  final String email;
   @override
   _ResetPasswordScreen createState() => _ResetPasswordScreen();
 }
@@ -17,9 +18,20 @@ class _ResetPasswordScreen extends State<ResetPassword> {
   bool _obscureText = true;
   final textNewPassword = TextEditingController();
   final textConfirmPassword = TextEditingController();
+  bool errorPassword = false;
+
   _goTo() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SuccessChange()));
+    if (textNewPassword.text == textConfirmPassword.text) {
+      setState(() {
+        errorPassword = false;
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SuccessChange()));
+    } else {
+      setState(() {
+        errorPassword = true;
+      });
+    }
   }
 
   @override
@@ -30,7 +42,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
         appBar: appBarOutside,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +55,8 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                 Container(
                   height: 50,
                   decoration: BoxDecoration(
-                      border: Border.all(color: colorBorder),
+                      border: Border.all(
+                          color: errorPassword ? colorError : colorBorder),
                       color: colorBackground,
                       boxShadow: [boxShadowStandard],
                       borderRadius: BorderRadius.circular(5)),
@@ -56,7 +69,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                         contentPadding: EdgeInsets.only(left: 20, top: 15),
                         hintText: "New Password",
                         hintStyle: TextStyle(
-                          color: colorNeutral2,
+                          color: errorPassword ? colorError : colorNeutral2,
                         ),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -81,7 +94,8 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                 Container(
                   height: 50,
                   decoration: BoxDecoration(
-                      border: Border.all(color: colorBorder),
+                      border: Border.all(
+                          color: errorPassword ? colorError : colorBorder),
                       color: colorBackground,
                       boxShadow: [boxShadowStandard],
                       borderRadius: BorderRadius.circular(5)),
@@ -94,7 +108,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                         contentPadding: EdgeInsets.only(left: 20, top: 15),
                         hintText: "Confirm Password",
                         hintStyle: TextStyle(
-                          color: colorNeutral2,
+                          color: errorPassword ? colorError : colorNeutral2,
                         ),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -112,6 +126,9 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                           },
                         )),
                   ),
+                ),
+                SizedBox(
+                  height: size.height < 569 ? 15 : 20,
                 ),
                 LongButton(
                   size: size,

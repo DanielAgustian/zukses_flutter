@@ -5,6 +5,7 @@ import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
+import 'package:clipboard/clipboard.dart';
 
 class SetupTeam extends StatefulWidget {
   SetupTeam({Key key, this.title}) : super(key: key);
@@ -15,9 +16,50 @@ class SetupTeam extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _SetupTeamScreen extends State<SetupTeam> {
+  final textLink = TextEditingController();
+  final textInvEmail = TextEditingController();
+  final data = "https://api-zukses.yokesen.com/api/user-attendance/3/2021";
+  bool errorInvEmail = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getLinkTeam();
+  }
+
+  void getLinkTeam() {
+    textLink.text = data;
+  }
+
   void goTo() {
-    Navigator.push(
+    Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => RegisApproved()));
+  }
+
+  void copyLink() {
+    FlutterClipboard.copy(textLink.text)
+        .then((value) => print("copy:" + textLink.text));
+  }
+
+  void sentInvitation() {
+    if (textInvEmail.text == "" || textInvEmail.text.length < 1) {
+      setState(() {
+        errorInvEmail = true;
+      });
+    } else {
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+      if (regex.hasMatch(textInvEmail.text)) {
+        setState(() {
+          errorInvEmail = false;
+        });
+      } else {
+        setState(() {
+          errorInvEmail = true;
+        });
+      }
+    }
   }
 
   @override
@@ -27,7 +69,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
       appBar: appBarOutside,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +80,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                   padding: const EdgeInsets.only(left: 5),
                   child: TitleFormat(
                     size: size,
-                    title: "Set Up Account",
+                    title: "Set Up Your Team",
                     detail: "",
                   ),
                 ),
@@ -56,11 +98,11 @@ class _SetupTeamScreen extends State<SetupTeam> {
                 height: 10,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                      width: size.width * 0.7,
+                      width: size.width * 0.65,
                       height: 50,
                       decoration: BoxDecoration(
                           border: Border.all(color: colorBorder),
@@ -69,10 +111,11 @@ class _SetupTeamScreen extends State<SetupTeam> {
                           borderRadius: BorderRadius.circular(5)),
                       child: Center(
                         child: TextFormField(
+                          readOnly: true,
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.text,
                           onChanged: (val) {},
-                          //controller: textUsername,
+                          controller: textLink,
                           decoration: InputDecoration(
                               contentPadding:
                                   EdgeInsets.symmetric(horizontal: 20),
@@ -84,8 +127,10 @@ class _SetupTeamScreen extends State<SetupTeam> {
                               focusedBorder: InputBorder.none),
                         ),
                       )),
-                  TextButton(
-                      onPressed: () {},
+                  InkWell(
+                      onTap: () {
+                        copyLink();
+                      },
                       child: Container(
                           width: size.width * 0.2,
                           height: 50,
@@ -119,7 +164,8 @@ class _SetupTeamScreen extends State<SetupTeam> {
                   width: size.width * 0.92,
                   height: 50,
                   decoration: BoxDecoration(
-                      border: Border.all(color: colorBorder),
+                      border: Border.all(
+                          color: errorInvEmail ? colorError : colorBorder),
                       color: colorBackground,
                       boxShadow: [boxShadowStandard],
                       borderRadius: BorderRadius.circular(5)),
@@ -128,12 +174,12 @@ class _SetupTeamScreen extends State<SetupTeam> {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.text,
                       onChanged: (val) {},
-                      //controller: textUsername,
+                      controller: textInvEmail,
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                          hintText: "htttp://///",
+                          hintText: "Enter email here",
                           hintStyle: TextStyle(
-                            color: colorNeutral1,
+                            color: errorInvEmail ? colorError : colorNeutral2,
                           ),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none),
@@ -147,7 +193,9 @@ class _SetupTeamScreen extends State<SetupTeam> {
                 title: "Send invitation",
                 bgColor: colorPrimary,
                 textColor: colorBackground,
-                onClick: () {},
+                onClick: () {
+                  sentInvitation();
+                },
               ),
               SizedBox(
                 height: 15,

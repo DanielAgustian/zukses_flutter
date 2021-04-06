@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
@@ -86,11 +88,12 @@ class _UserSettingsScreen extends State<UserSettings> {
                     detail: "We are pleased with your suggestions"),
                 InkWell(
                   onTap: () {
-                    setState(() {
-                      isLoading = true;
-                    });
                     print("Try to Log Out");
-                    toLogOut();
+                    //toLogOut();
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            _buildPopupDialog(context));
                   },
                   child: TextFormatSettings2(
                       //onClick: toLogOut(),
@@ -118,11 +121,36 @@ class _UserSettingsScreen extends State<UserSettings> {
     );
   }
 
-  toLogOut() async {
-    print("Begin Log Out");
+  clearAllSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs?.clear();
+  }
+
+  toLogOut() {
+    print("Begin Log Out");
+    clearAllSharedPref();
     Navigator.of(context).pushNamedAndRemoveUntil(
         '/LoginScreen', (Route<dynamic> route) => false);
+  }
+
+  Widget _buildPopupDialog(BuildContext context) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Do you want to log out?",
+      ),
+      content: new Text("Temporary Data will be deleted"),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text("Yes"),
+            onPressed: () {
+              toLogOut();
+            }),
+        CupertinoDialogAction(
+            child: Text("No"),
+            onPressed: () {
+              Navigator.pop(context);
+            })
+      ],
+    );
   }
 }

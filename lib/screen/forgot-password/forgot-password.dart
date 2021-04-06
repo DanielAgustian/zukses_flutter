@@ -1,5 +1,7 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -17,13 +19,64 @@ class ForgotPassword extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _ForgotPasswordScreen extends State<ForgotPassword> {
   final textEmail = TextEditingController();
+  bool errorEmail = false;
+  String _linkMessage = "";
 
+  Future<void> _createDynamicLink(bool short) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://zuksesapplication.page.link',
+      link: Uri.parse(
+          'https://zuksesapplication.page.link/forgotpassword?email=' +
+              textEmail.text),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.zukses_app_1',
+        minimumVersion: 0,
+      ),
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
+
+    Uri url;
+    if (short) {
+      final ShortDynamicLink shortLink = await parameters.buildShortLink();
+      url = shortLink.shortUrl;
+    } else {
+      url = await parameters.buildUrl();
+    }
+
+    setState(() {
+      _linkMessage = url.toString();
+      print(_linkMessage);
+    });
+  }
+
+  //Goto Next Page
   _goTo() {
     if (textEmail.text == "") {
-      print("Error Data");
+      setState(() {
+        errorEmail = true;
+      });
+    } else {
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+      if (regex.hasMatch(textEmail.text)) {
+        setState(() {
+          errorEmail = false;
+        });
+      } else {
+        setState(() {
+          errorEmail = true;
+        });
+      }
     }
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => CheckEmail()));
+
+    if (!errorEmail) {
+      _createDynamicLink(false);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CheckEmail(email: textEmail.text,)));
+    }
   }
 
   gotoLogin() {
@@ -38,10 +91,18 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
       appBar: appBarOutside,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
           child: Center(
             child: Column(
               children: [
+                _linkMessage == null
+                    ? Container()
+                    : InkWell(
+                        onTap: () {
+                          launch(_linkMessage);
+                        },
+                        child: Text(_linkMessage),
+                      ),
                 TitleFormat(
                   size: size,
                   title: "Forgot Password",
@@ -53,7 +114,9 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                      border: Border.all(color: colorBorder, width: 1),
+                      border: Border.all(
+                          color: errorEmail ? colorError : colorBorder,
+                          width: 1),
                       color: colorBackground,
                       borderRadius: BorderRadius.circular(5)),
                   child: TextFormField(
@@ -65,7 +128,7 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
                         contentPadding: EdgeInsets.symmetric(horizontal: 20),
                         hintText: "Email",
                         hintStyle: TextStyle(
-                          color: colorNeutral2,
+                          color: errorEmail ? colorError : colorNeutral2,
                         ),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none),

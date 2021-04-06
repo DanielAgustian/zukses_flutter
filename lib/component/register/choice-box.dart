@@ -28,7 +28,7 @@ class ChoiceBox extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            pilihan1 = !choice1;
+            pilihan1 = true;
             if (pilihan1 == true && pilihan2 == true) {
               pilihan2 = !pilihan2;
             }
@@ -72,7 +72,7 @@ class ChoiceBox extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            pilihan2 = !choice2;
+            pilihan2 = true;
             if (pilihan1 == true && pilihan2 == true) {
               pilihan1 = !pilihan1;
             }
@@ -145,7 +145,7 @@ class ChoiceBox2 extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            pilihan1 = !choice1;
+            pilihan1 = true;
             if (pilihan1 == true && pilihan2 == true) {
               pilihan2 = !pilihan2;
             }
@@ -192,7 +192,7 @@ class ChoiceBox2 extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            pilihan2 = !choice2;
+            pilihan2 = true;
             if (pilihan1 == true && pilihan2 == true) {
               pilihan1 = !pilihan1;
             }

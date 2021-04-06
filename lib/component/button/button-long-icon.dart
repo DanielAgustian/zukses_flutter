@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/constant/constant.dart';
 
 class LongButtonIcon extends StatelessWidget {
   const LongButtonIcon({
@@ -31,7 +32,8 @@ class LongButtonIcon extends StatelessWidget {
         borderRadius: new BorderRadius.circular(10.0),
       ),
       child: AnimatedContainer(
-        width: loading ? 100 : size.width,
+        decoration: BoxDecoration(boxShadow: [boxShadowStandard]),
+        width: size.width,
         duration: Duration(milliseconds: 700),
         curve: Curves.fastOutSlowIn,
         height: 35,
@@ -45,9 +47,7 @@ class LongButtonIcon extends StatelessWidget {
                 SizedBox(width: 10),
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 )
               ]),
       ),

@@ -8,6 +8,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/register/screen-pricing.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/register/screen-setup-team.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class SetupRegister extends StatefulWidget {
   SetupRegister({Key key, this.title}) : super(key: key);
@@ -21,13 +22,21 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   TextEditingController textTeamName = TextEditingController();
   TextEditingController textRole = TextEditingController();
   final textCompanyCode = TextEditingController();
+  List<String> companyCode = ["YTI1", "WGM", "IHY"];
+  List<String> companyname = ["Yokesen", "Warisan Gajah Mada", "IHoney"];
   List<String> roleList = ["Project Manager", "Team Leader", "Team Member"];
   List<bool> boolOrganization = [false, false];
   List<bool> boolTeam = [false, false];
   List<bool> boolOrganizationExist = [false, false];
   List<bool> boolNewCompany = [false, false];
+  bool teamText = false, teamDropDown = false;
   String textItemRole = "";
+  String valueCode = "";
   bool clickable = false;
+  int indexData = 0;
+  bool searching = false, readOnly = false;
+  bool stopSearching = false;
+  String viewDataCompany = "";
   @override
   void initState() {
     // TODO: implement initState
@@ -47,6 +56,20 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     });
   }
 
+  _searchFunction(String query) {
+    for (int i = 0; i < companyCode.length; i++) {
+      if (companyCode[i].toLowerCase().contains(query.toLowerCase())) {
+        setState(() {
+          _clickableTrue();
+          valueCode = companyCode[i];
+          indexData = 1;
+          viewDataCompany = companyname[i];
+          print(viewDataCompany);
+        });
+      }
+    }
+  }
+
   goTo() {
     if (boolOrganization[0]) {
       //THE WANT TO CREATE AS INDIVIDUAL
@@ -64,12 +87,28 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     }
     if (boolOrganization[1]) {
       //THE WANT TO CREATE AS ORGANIZATION
+      if (boolOrganizationExist[0]) {
+        //THEIR ORGANIZATION IS REGISTERED
+        if (stopSearching) {
+          //if they choose company code
+          //Navigator.push(co);
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => WaitRegisApproved()));
+        }
+      }
       if (boolOrganizationExist[1]) {
         //THEIR ORGANIZATION ISNT REGISTERED
         if (boolNewCompany[0]) {
           //THEY WANTED TO SEE THE PRICE
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Pricing()));
+        }
+        if (boolNewCompany[1]) {
+          setState(() {
+            boolOrganization = [true, false];
+            boolTeam = [false, false];
+            _clickableFalse();
+          });
         }
       }
     }
@@ -82,7 +121,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
       appBar: appBarOutside,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
           child: Center(
             child: Container(
               color: colorBackground,
@@ -92,13 +131,10 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                 children: [
                   Align(
                     alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: TitleFormat(
-                        size: size,
-                        title: "Set Up Account",
-                        detail: "",
-                      ),
+                    child: TitleFormat(
+                      size: size,
+                      title: "Set Up Account",
+                      detail: "",
                     ),
                   ),
                   QuestionFormat(
@@ -145,7 +181,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                                 boolTeam[1] = false;
                               }
                             });
-                            _clickableTrue();
+                            _clickableFalse();
                           },
                           click2: (val) {
                             setState(() {
@@ -177,7 +213,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                                 boolOrganizationExist[1] = false;
                               }
                             });
-                            _clickableTrue();
+                            _clickableFalse();
                           },
                           click2: (val) {
                             setState(() {
@@ -187,7 +223,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                                 boolOrganizationExist[0] = false;
                               }
                               setState(() {
-                                _clickableTrue();
+                                _clickableFalse();
                               });
                             });
                           },
@@ -234,10 +270,18 @@ class _SetupRegisterScreen extends State<SetupRegister> {
           textBox: textTeamName,
           size: size,
           question: "What's your team called?",
-          hint: "e.g. Tech Squad",
+          hint: "e.g. Min Word 4",
+          onChanged: (val) {
+            if (val.length > 3) {
+              setState(() {
+                teamText = true;
+              });
+              _clickableTrue();
+            }
+          },
         ),
-        SizedBox(height: 15),
-        TextDropDownSetup(
+        //SizedBox(height: 15),
+        /*TextDropDownSetup(
           size: size,
           question: "What's your role in the team?",
           hint: "Choose your role",
@@ -246,9 +290,13 @@ class _SetupRegisterScreen extends State<SetupRegister> {
           onChanged: (String value) {
             setState(() {
               textItemRole = value;
+              teamDropDown = true;
             });
+            if (teamText && teamDropDown) {
+              _clickableTrue();
+            }
           },
-        ),
+        ),*/
       ],
     );
   }
@@ -270,15 +318,23 @@ class _SetupRegisterScreen extends State<SetupRegister> {
           height: size.height < 569 ? 5 : 10,
         ),
         Container(
-          width: 0.9 * size.width,
+          width: size.width,
           decoration: BoxDecoration(
               border: Border.all(color: colorBorder, width: 1),
-              color: colorBackground,
+              color: readOnly ? colorNeutral170 : colorBackground,
               borderRadius: BorderRadius.circular(5)),
           child: TextFormField(
+            readOnly: readOnly,
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.text,
-            onChanged: (val) {},
+            onChanged: (val) {
+              if (val.length >= 3 && stopSearching == false) {
+                _searchFunction(val);
+                searching = true;
+              } else if (val.length < 1) {
+                stopSearching = false;
+              }
+            },
             controller: textCompanyCode,
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
@@ -290,6 +346,38 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                 focusedBorder: InputBorder.none),
           ),
         ),
+        searching
+            ? indexData > 0
+                ? InkWell(
+                    onTap: () {
+                      setState(() {
+                        searching = false;
+                        textCompanyCode.text = viewDataCompany;
+                        stopSearching = true;
+                        readOnly = true;
+                      });
+                    },
+                    child: Material(
+                      elevation: 20,
+                      child: Container(
+                        height: size.height < 569 ? 35 : 40,
+                        width: size.width,
+                        decoration: BoxDecoration(
+                          boxShadow: [boxShadowStandard],
+                        ),
+                        child: Center(
+                          child: Text(
+                            viewDataCompany,
+                            style: TextStyle(fontSize: 14, color: colorPrimary),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    child: Text("That code has not been registered"),
+                  )
+            : Container(),
       ],
     );
   }

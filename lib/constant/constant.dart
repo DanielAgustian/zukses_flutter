@@ -63,7 +63,8 @@ double textSizeSmall18 = 16;
 double textSizeSmall16 = 14;
 double textSizeSmall14 = 12;
 double textSizeSmall12 = 10;
-
+double paddingHorizontal = 20.0;
+double paddingVertical = 5.0;
 BoxShadow boxShadowStandard = BoxShadow(
   color: colorShadow.withOpacity(0.07),
   blurRadius: 20,

@@ -67,7 +67,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                                   ScheduleItemRequest(
                                       count:
                                           state.meetings[index].members.length,
-                                      date: util.yearFormat(
+                                      date: util.dateNumbertoCalendar(
                                           state.meetings[index].date),
                                       size: size,
                                       onClick: () {

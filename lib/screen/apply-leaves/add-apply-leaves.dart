@@ -154,7 +154,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 ),
                 backgroundColor: colorBackground,
                 body: Container(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: paddingHorizontal, vertical: paddingVertical),
                   //color: colorSecondaryYellow70,
                   child: SingleChildScrollView(
                     child: Container(
@@ -169,7 +170,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                       msg: "Leave Created",
                                       color: colorPrimary,
                                       txtColor: colorBackground);
-                                } else {
+                                } else if (state is LeaveStateFail) {
                                   Util().showToast(
                                       context: this.context,
                                       msg: "Something Wrong !",
@@ -444,7 +445,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       ),
       backgroundColor: colorBackground,
       body: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(
+              horizontal: paddingHorizontal, vertical: paddingVertical),
           //color: colorSecondaryYellow70,
           child: SingleChildScrollView(
               child: Container(
@@ -525,9 +527,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           ? Border.all(color: colorError)
                           : Border.all(color: Colors.transparent),
                       color: colorBackground,
-                      boxShadow: [
-                        boxShadowStandard
-                      ],
+                      boxShadow: [boxShadowStandard],
                       borderRadius: BorderRadius.circular(5)),
                   child: TextFormField(
                     maxLines: 8,
@@ -640,12 +640,36 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   }
 
   void _createLeaves() {
-    LeaveModel sentLeave = LeaveModel(
-        duration: repeat,
-        leaveDate: Util().yearFormat(startDate),
-        startTime: Util().changeTimeToString(startTime) + ":00",
-        endTime: Util().changeTimeToString(endTime) + ":00",
-        reason: textReason.text);
+    LeaveModel sentLeave = LeaveModel();
+    if (repeat == items[0]) {
+      //Duration: Single Day
+      sentLeave = LeaveModel(
+          duration: repeat,
+          leaveDate: Util().yearFormat(startDate),
+          startTime: "",
+          endTime: "",
+          leaveDateEnd: "",
+          reason: textReason.text);
+    } else if (repeat == items[1]) {
+      //Duration: Multiple Day
+      sentLeave = LeaveModel(
+          duration: repeat,
+          leaveDate: Util().yearFormat(startDate),
+          startTime: "",
+          endTime: "",
+          leaveDateEnd: Util().yearFormat(endDate),
+          reason: textReason.text);
+    } else if (repeat == items[2]) {
+      //Duration : Half Day
+      sentLeave = LeaveModel(
+          duration: repeat,
+          leaveDate: Util().yearFormat(startDate),
+          startTime: Util().changeTimeToString(startTime) + ":00",
+          endTime: Util().changeTimeToString(endTime) + ":00",
+          leaveDateEnd: "",
+          reason: textReason.text);
+    }
+
     BlocProvider.of<LeaveBloc>(context)
         .add(AddLeaveEvent(leaveModel: sentLeave, leaveId: idLeaveType));
   }

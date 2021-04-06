@@ -1,12 +1,13 @@
 class LeaveModel {
   int id;
-  String typeName, duration, leaveDate, startTime, endTime, reason, status;
+  String typeName, duration, leaveDate, startTime, endTime, reason, status, leaveDateEnd;
 
   LeaveModel(
       {this.id,
       this.typeName,
       this.duration,
       this.leaveDate,
+      this.leaveDateEnd,
       this.startTime,
       this.endTime,
       this.reason,
@@ -21,5 +22,6 @@ class LeaveModel {
     this.endTime = map["endTime"];
     this.reason = map["reason"];
     this.status = map["status"];
+    
   }
 }

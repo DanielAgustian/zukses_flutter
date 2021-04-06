@@ -40,7 +40,7 @@ class AttendanceService {
       headers: <String, String>{'Authorization': 'Bearer $token'},
       body: jsonEncode(<String, dynamic>{}),
     );
-    print(response.statusCode);
+    print("ClockOut " + response.statusCode.toString());
     print(response.body);
 
     // if success pas the attendance id

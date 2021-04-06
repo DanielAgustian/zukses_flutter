@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart'; 
-import 'package:zukses_app_1/component/schedule/schedule-item-request.dart'; 
-import 'package:zukses_app_1/component/schedule/user-assigned-item.dart'; 
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
+import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
+import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -69,12 +70,18 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                                 _controller.reverse();
                               }
                             },
-                            date: util.yearFormat(state.meetings[index].date),
+                            date: util.dateNumbertoCalendar(
+                                state.meetings[index].date),
                             time1: util.hourFormat(state.meetings[index].date),
                             time2: util.hourFormat(
                                 state.meetings[index].meetingEndTime),
                             title: state.meetings[index].title))),
-            scrollerSheet()
+            model != null
+                ? scrollerSheet()
+                : Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text("data Error"),
+                  )
           ],
         );
       } else {
@@ -105,12 +112,29 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    model.title,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w700),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        model.title,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.times,
+                            color: colorPrimary,
+                          ),
+                          onPressed: () {
+                            _controller.reverse();
+                          },
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(
                     height: 5,

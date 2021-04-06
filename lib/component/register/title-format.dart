@@ -66,6 +66,7 @@ class TitleFormatCenter extends StatelessWidget {
         detail != ""
             ? Text(
                 detail,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: size.height < 569 ? 12 : 16,
                     fontWeight: FontWeight.w300),

@@ -16,6 +16,12 @@ import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-event.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
@@ -32,6 +38,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -70,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String stringTap = "Tap Here to Clock In";
   AuthModel _authModel = AuthModel();
   CompanyModel _company = CompanyModel();
+  List<ScheduleModel> _scheduleAccepted = [];
+  int scheduleReqLength = 0;
   //For Disabling Button ============================//
   DateTime now = DateTime.now();
   String dialogText = "Clock In ";
@@ -77,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int isClockIn;
   int attendanceID;
   TimeOfDay _time = TimeOfDay.now();
+  Util util = Util();
 
 // Dummy data
   var taskName = ["Task 1", "task 2"];
@@ -84,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
   var enumTap = ["Tap Here to Clock In", "Tap Here to Clock Out", "Good Work!"];
-
+  bool emptyMeeting = false;
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
   bool isLoadingAuth = false;
@@ -143,6 +153,14 @@ class _HomeScreenState extends State<HomeScreen> {
     BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetProfile());
   }
 
+  void _getMeetingToday() async {
+    BlocProvider.of<MeetingBloc>(context).add(GetAcceptedMeetingEvent());
+  }
+
+  void _getMeetingRequest() async {
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -153,18 +171,50 @@ class _HomeScreenState extends State<HomeScreen> {
     sharedPrefInstruction();
     getUserProfile();
     checkStatusClock("initState");
+    _getMeetingToday();
+    _getMeetingRequest();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      
       backgroundColor: colorBackground,
       body: SingleChildScrollView(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          BlocListener<MeetingReqBloc, MeetingReqState>(
+            listener: (context, state) async {
+              if (state is MeetingReqStateSuccessLoad) {
+                setState(() {
+                  scheduleReqLength = state.schedule.length;
+                });
+              }
+            },
+            child: Container(),
+          ),
+          BlocListener<MeetingBloc, MeetingState>(
+              listener: (context, state) async {
+                if (state is MeetingStateSuccessLoad) {
+                  setState(() {
+                    _scheduleAccepted.clear();
+                    state.meetings.forEach((element) {
+                      if (util.yearFormat(now) ==
+                          util.yearFormat(element.date)) {
+                        _scheduleAccepted.add(element);
+                      }
+                    });
+                    if (_scheduleAccepted.length < 1) {
+                      setState(() {
+                        emptyMeeting = true;
+                      });
+                      print("No Data");
+                    }
+                  });
+                }
+              },
+              child: Container()),
           BlocListener<AuthenticationBloc, AuthenticationState>(
               listener: (context, state) async {
                 if (state is AuthStateFailLoad) {
@@ -776,13 +826,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             BoxHome(
                                 loading: isLoading,
                                 title: "Meeting Schedule",
-                                total: 3,
+                                total: _scheduleAccepted.length,
                                 numberColor: colorSecondaryRed,
                                 fontSize: size.width <= 600 ? 34 : 36),
                             BoxHome(
                                 loading: isLoading,
                                 title: "Meeting Request",
-                                total: 11,
+                                total: scheduleReqLength,
                                 numberColor: colorSecondaryYellow,
                                 fontSize: size.width <= 600 ? 34 : 36),
                           ],
@@ -790,55 +840,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 15,
                     ),
-                    Container(
-                        margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            boxShadow: [boxShadowStandard]),
-                        child: Column(
-                          children: [
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(1.0),
-                              itemCount: taskName.length,
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return ListViewBox(
-                                  title: meetName[index],
-                                  detail: meetTime[index],
-                                  viewType: "meeting",
-                                );
-                              },
-                            ),
-                            Padding(
-                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                child: FlatButton(
-                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    color: colorBackground,
-                                    onPressed: () {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ScreenTab(index: 3)));
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Show All Meeting Schedule",
-                                            style: TextStyle(
-                                                color: colorPrimary,
-                                                fontWeight: FontWeight.bold)),
-                                        Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: colorPrimary,
-                                        )
-                                      ],
-                                    )))
-                          ],
-                        )),
+
+                    _listViewMeeting(_scheduleAccepted, size),
                     SizedBox(
                       height: 20,
                     )
@@ -1409,6 +1412,84 @@ class _HomeScreenState extends State<HomeScreen> {
             })
       ],
     );
+  }
+
+  Widget _listViewMeeting(List<ScheduleModel> data, Size size) {
+    return Container(
+        margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        decoration: BoxDecoration(
+            color: colorBackground, boxShadow: [boxShadowStandard]),
+        child: Column(
+          children: [
+            data.length > 0
+                ? data.length > 1
+                    ? ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(1.0),
+                        itemCount: taskName.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListViewBox(
+                            title: data[index].title,
+                            detail: util.hourFormat(data[index].date) +
+                                " - " +
+                                util.hourFormat(data[index].meetingEndTime),
+                            viewType: "meeting",
+                          );
+                        },
+                      )
+                    : ListViewBox(
+                        title: data[0].title,
+                        detail: util.hourFormat(data[0].date) +
+                            " - " +
+                            util.hourFormat(data[0].meetingEndTime),
+                        viewType: "meeting",
+                      )
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom:
+                                    BorderSide(width: 1, color: colorBorder))),
+                        height: 40,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Text("No Meeting Today.",
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height < 569 ? 12 : 14,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ))),
+            Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: FlatButton(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: colorBackground,
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ScreenTab(index: 3)));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Show All Meeting Schedule",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold)),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: colorPrimary,
+                        )
+                      ],
+                    )))
+          ],
+        ));
   }
 
   String getHourNow() {

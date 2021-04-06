@@ -13,7 +13,7 @@ class PricingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10),
-      width: size.width * 0.80,
+      width: size.width,
       height: 475,
       decoration: BoxDecoration(
         color: colorPrimary,
@@ -152,7 +152,7 @@ class PricingCard2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10),
-      width: size.width * 0.80,
+      width: size.width,
       height: size.height < 569 ? 400 : 475,
       decoration: BoxDecoration(
         color: colorBackground,

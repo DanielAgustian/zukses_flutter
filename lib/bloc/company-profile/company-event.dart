@@ -16,7 +16,12 @@ class CompanyEventGetProfile extends CompanyEvent {
   List<Object> get props => [];
 }
 
-
+class CompanyEventGetCode extends CompanyEvent {
+  const CompanyEventGetCode();
+  
+  @override
+  List<Object> get props => [];
+}
 
 class CompanyEventDidUpdated extends CompanyEvent {
   final CompanyModel company;

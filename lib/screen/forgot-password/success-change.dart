@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/screen/screen_login.dart';
 
 class SuccessChange extends StatefulWidget {
   SuccessChange({Key key, this.title}) : super(key: key);
@@ -13,7 +14,11 @@ class SuccessChange extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _SuccessChangeScreen extends State<SuccessChange> {
-  _goTo() {}
+  _goTo() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => ScreenLogin()));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

@@ -24,3 +24,17 @@ class CompanyStateSuccessLoad extends CompanyState {
     return 'Data : { Company List: $company }';
   }
 }
+class CompanyCodeStateSuccessLoad extends CompanyState {
+  final List<CompanyModel> company;
+
+  CompanyCodeStateSuccessLoad( {this.company});
+
+  List<Object> get props => [company];
+
+  @override
+  String toString() {
+    return 'Data : { Company List: $company }';
+  }
+}
+class CompanyCodeStateFailLoad extends CompanyState {}
+

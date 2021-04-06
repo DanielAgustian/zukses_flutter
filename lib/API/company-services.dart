@@ -34,4 +34,32 @@ class CompanyServiceHTTP {
       return null;
     }
   }
+
+  
+  Future<List<CompanyModel>> fetchCompanyCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var res = await http
+        .get(fullBaseURI + "/api/user-company", headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+      //'Authorization': 'Bearer $token'
+    });
+    //print(res.statusCode.toString());
+    //print(res.body);
+    if (res.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      //print("response.body:" + response.body);
+      var responseJson = jsonDecode(res.body);
+      return (responseJson['company'] as List)
+          .map((p) => CompanyModel.fromJson(p))
+          .toList();
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      // throw Exception('Failed to login');
+      return null;
+    }
+  }
 }

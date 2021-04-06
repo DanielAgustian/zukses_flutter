@@ -29,9 +29,7 @@ class BoxHome extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            boxShadowStandard
-          ]),
+          boxShadow: [boxShadowStandard]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -49,7 +47,7 @@ class BoxHome extends StatelessWidget {
                   ),
                 )
               : Text(
-                  "8",
+                  total.toString(),
                   style: TextStyle(
                       color: numberColor,
                       fontSize: fontSize,

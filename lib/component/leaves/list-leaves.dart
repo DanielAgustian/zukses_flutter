@@ -10,12 +10,12 @@ class ListLeavesInside extends StatelessWidget {
       this.detail,
       this.status,
       this.screen,
-      this.date,
+      this.time,
       this.onClick})
       : super(key: key);
 
   final String title, detail, screen;
-  final String status, date;
+  final String status, time;
   final Function onClick;
   DateFormat dateFormat = DateFormat.yMMMMd();
 
@@ -55,6 +55,16 @@ class ListLeavesInside extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(5, 6, 5, 5),
                             child: Text(
                               detail,
+                              style: TextStyle(
+                                color: colorPrimary50,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(5, 6, 5, 5),
+                            child: Text(
+                              time,
                               style: TextStyle(
                                 color: colorPrimary50,
                                 fontSize: 14,
