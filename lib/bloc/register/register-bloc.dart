@@ -26,8 +26,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     yield RegisterStateLoading();
     var res =
         await _registerServicesHTTP.createRegisterIndividual(event.register);
-    if (res == 200) {
-      yield RegisterStateSuccess();
+    if (res != null) {
+      yield RegisterStateSuccess(res);
     } else {
       yield RegisterStateFailed();
     }
@@ -37,8 +37,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     yield RegisterStateLoading();
     var res = await _registerServicesHTTP.createRegisterTeam(
         event.register, event.namaTeam);
-    if (res == 200) {
-      yield RegisterStateSuccess();
+    if (res != null) {
+      yield RegisterStateSuccess(res);
     } else {
       yield RegisterStateFailed();
     }
@@ -49,8 +49,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     yield RegisterStateLoading();
     var res = await _registerServicesHTTP.createRegisterCompany(
         event.register, event.kode);
-    if (res == 200) {
-      yield RegisterStateSuccess();
+    if (res != null) {
+      yield RegisterStateSuccess(res);
     } else {
       yield RegisterStateFailed();
     }

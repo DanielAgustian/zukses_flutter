@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +10,8 @@ import 'package:http/http.dart' as http;
 class AuthServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
-
+  final facebookLogin = FacebookLogin();
+  //GoogleSignIn gsi = GoogleSignIn.standard();
   Future<AuthModel> createLogin(String email, password) async {
     final response = await http.post(
       Uri.https(baseURI, '/api/login'),
@@ -37,6 +41,49 @@ class AuthServiceHTTP {
       // then throw an exception.
       // throw Exception('Failed to login');
       return null;
+    }
+  }
+
+  /*static Future<FirebaseApp> initializeFirebase() async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }*/
+
+  /*loginWithGoogleSignIn() async {
+    initializeFirebase();
+    final user = await gsi.signIn();
+    if (user != null) {
+      final googleAuth = await user.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+    }
+  }*/
+  void _fbLogOut() async{
+    facebookLogin.logOut();
+  }
+  void _fbLogin() async {
+    final result = await facebookLogin.logIn(['email']);
+    print(result.status);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final token = result.accessToken.token;
+        final graphResponse = await http.get(Uri.parse(
+          "https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}",
+        ));
+        final profile = jsonDecode(graphResponse.body);
+        print(profile);
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        print("Facebook Login Canceled");
+        
+        break;
+      case FacebookLoginStatus.error:
+        print("RFecebook Login Error");
+        
+        break;
     }
   }
 }

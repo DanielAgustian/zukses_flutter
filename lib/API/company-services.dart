@@ -38,9 +38,9 @@ class CompanyServiceHTTP {
   
   Future<List<CompanyModel>> fetchCompanyCode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+ 
     var res = await http
-        .get(fullBaseURI + "/api/user-company", headers: <String, String>{
+        .get(fullBaseURI + "/api/company-code/", headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
       //'Authorization': 'Bearer $token'

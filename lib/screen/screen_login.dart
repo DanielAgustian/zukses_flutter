@@ -109,11 +109,12 @@ class _ScreenLogin extends State<ScreenLogin> {
             print(state.authUser.user.email);
             print(state.authUser.token);
             _loginSharedPref();
-            Navigator.pushReplacement(
+
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),
+              (Route<dynamic> route) => false,
             );
-
             //Failed Login
           } else if (state is AuthStateFailLoad) {
             setState(() {

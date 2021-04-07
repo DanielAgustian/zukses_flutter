@@ -252,8 +252,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // ignore: unawaited_futures
         String email = deepLink.queryParameters['email'];
         if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => ResetPassword(email:email)));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ResetPassword(email: email)));
         }
       }
     }, onError: (OnLinkErrorException e) async {
@@ -266,8 +268,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
-      // ignore: unawaited_futures
-      //Navigator.pushNamed(context, deepLink.path);
+      String email = deepLink.queryParameters['email'];
+      if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ResetPassword(email: email)));
+      }
     }
   }
 

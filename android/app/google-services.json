@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "338622488807-jkt40qfqq1a71e86esdnvgke8aj678ri.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zukses_app_1",
+            "certificate_hash": "9254cb0a52dbf00be46bc4fd4cc998de557665be"
+          }
+        },
+        {
           "client_id": "338622488807-9djn94dnfgm3786petbsk2arqkmdl6m5.apps.googleusercontent.com",
           "client_type": 3
         }

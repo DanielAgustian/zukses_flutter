@@ -5,12 +5,17 @@ class AuthModel {
   UserModel user;
   String attendance;
   String maxClockIn;
-  AuthModel({this.token, this.user, this.attendance, this.maxClockIn});
+  String where;
+  AuthModel(
+      {this.token, this.user, this.attendance, this.maxClockIn, this.where});
 
   AuthModel.fromJson(Map<String, dynamic> map) {
     this.token = map["token"];
     this.user = UserModel.fromJson(map["user"]);
-    this.attendance = map["attendance"].toLowerCase();
-    this.maxClockIn = map["maxClockIn"].toLowerCase();
+
+    this.attendance =
+        map["attendance"] == null ? "" : map["attendance"].toLowerCase();
+    this.maxClockIn =
+        map["maxClockIn"] == null ? "" : map["maxClockIn"].toLowerCase();
   }
 }

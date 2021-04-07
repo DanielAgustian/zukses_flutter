@@ -6,6 +6,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
+import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-setup.dart';
 import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
@@ -88,9 +89,15 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         !_usernameValidator &&
         !_passValidator &&
         !_confirmPassValidator) {
+      RegisterModel register = RegisterModel(
+        email: textEmail.text,
+        username: textUsername.text,
+        password: textPassword.text,
+        confirmPassword: textConfirmPassword.text
+      );
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SetupRegister()),
+        MaterialPageRoute(builder: (context) => SetupRegister(register: register,)),
       );
       /*
       Navigator.push(
@@ -296,7 +303,6 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                       ),
                       SizedBox(height: 15),
                       LongButtonIcon(
-                        
                         size: size,
                         title: "Sign In with Google",
                         bgColor: colorGoogle,

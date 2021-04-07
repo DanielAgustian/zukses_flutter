@@ -51,7 +51,8 @@ dependencies:
   firebase_core: any
   firebase_dynamic_links: any
   url_launcher:
-  # google_sign_in:
+  #google_sign_in: any
+  flutter_facebook_login:
   
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,8 @@ flutter:
     - icon/google_icon.png
     - icon/facebook_icon.png
     - assets/json/
+  
+  
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

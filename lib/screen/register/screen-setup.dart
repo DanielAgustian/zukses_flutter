@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/register/register-event.dart';
+import 'package:zukses_app_1/bloc/register/register-state.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/question-format.dart';
 import 'package:zukses_app_1/component/register/text-box-setup.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-pricing.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/register/screen-setup-team.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class SetupRegister extends StatefulWidget {
-  SetupRegister({Key key, this.title}) : super(key: key);
+  SetupRegister({Key key, this.title, this.register}) : super(key: key);
   final String title;
+  final RegisterModel register;
   @override
   _SetupRegisterScreen createState() => _SetupRegisterScreen();
 }
@@ -42,6 +49,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     // TODO: implement initState
     super.initState();
     textItemRole = roleList[0];
+    
   }
 
   _clickableTrue() {
@@ -81,8 +89,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
       }
       if (boolTeam[1]) {
         //THEY DONT WANTED TO CREATE A TEAM
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => RegisApproved()));
+        BlocProvider.of<RegisterBloc>(context)
+            .add(AddRegisterIndividuEvent(widget.register));
       }
     }
     if (boolOrganization[1]) {
@@ -129,6 +137,26 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  BlocListener<RegisterBloc, RegisterState>(
+                    listener: (context, state) {
+                      if (state is RegisterStateSuccess) {
+                        if (state.authUser.where == "individu") {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegisApproved()));
+                        } else if (state is RegisterStateFailed) {
+                          Util().showToast(
+                              context: context,
+                              duration: 3,
+                              txtColor: colorBackground,
+                              color: colorError,
+                              msg: "Register Failed");
+                        }
+                      }
+                    },
+                    child: Container(),
+                  ),
                   Align(
                     alignment: Alignment.topLeft,
                     child: TitleFormat(
