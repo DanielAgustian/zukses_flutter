@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
-import 'package:zukses_app_1/model/company-model.dart'; 
+import 'package:zukses_app_1/model/company-model.dart';
 
 abstract class CompanyEvent extends Equatable {
   const CompanyEvent();
@@ -9,7 +9,6 @@ abstract class CompanyEvent extends Equatable {
 }
 
 class CompanyEventGetProfile extends CompanyEvent {
-  
   const CompanyEventGetProfile();
 
   @override
@@ -17,8 +16,9 @@ class CompanyEventGetProfile extends CompanyEvent {
 }
 
 class CompanyEventGetCode extends CompanyEvent {
-  const CompanyEventGetCode();
-  
+  final String kode;
+  const CompanyEventGetCode({this.kode});
+
   @override
   List<Object> get props => [];
 }

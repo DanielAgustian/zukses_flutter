@@ -22,6 +22,12 @@ class AuthEventWithGoogle extends AuthenticationEvent {
   List<Object> get props => [];
 }
 
+class AuthEventWithFacebook extends AuthenticationEvent {
+  const AuthEventWithFacebook();
+
+  @override
+  List<Object> get props => [];
+}
 class AuthEventUpdated extends AuthenticationEvent {
   final AuthModel user;
   const AuthEventUpdated(this.user);

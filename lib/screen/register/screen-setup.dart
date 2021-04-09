@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/API/company-services.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-event.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-event.dart';
 import 'package:zukses_app_1/bloc/register/register-state.dart';
@@ -29,9 +34,10 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   TextEditingController textTeamName = TextEditingController();
   TextEditingController textRole = TextEditingController();
   final textCompanyCode = TextEditingController();
-  List<String> companyCode = ["YTI1", "WGM", "IHY"];
+  /*List<String> companyCode = ["YTI1", "WGM", "IHY"];
   List<String> companyname = ["Yokesen", "Warisan Gajah Mada", "IHoney"];
-  List<String> roleList = ["Project Manager", "Team Leader", "Team Member"];
+  List<String> roleList = ["Project Manager", "Team Leader", "Team Member"];*/
+  String companyCode = "";
   List<bool> boolOrganization = [false, false];
   List<bool> boolTeam = [false, false];
   List<bool> boolOrganizationExist = [false, false];
@@ -48,8 +54,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    textItemRole = roleList[0];
-    
   }
 
   _clickableTrue() {
@@ -65,16 +69,22 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   }
 
   _searchFunction(String query) {
-    for (int i = 0; i < companyCode.length; i++) {
-      if (companyCode[i].toLowerCase().contains(query.toLowerCase())) {
-        setState(() {
-          _clickableTrue();
-          valueCode = companyCode[i];
-          indexData = 1;
-          viewDataCompany = companyname[i];
-          print(viewDataCompany);
-        });
-      }
+    BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetCode(kode: query));
+  }
+
+  _registerAccount() {
+    BlocProvider.of<RegisterBloc>(context)
+        .add(AddRegisterIndividuEvent(widget.register));
+  }
+
+  _catchPopPricing() async {
+    final result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Pricing()));
+    if (result) {
+      setState(() {
+        boolOrganization = [true, false];
+        boolTeam = [false, true];
+      });
     }
   }
 
@@ -89,27 +99,24 @@ class _SetupRegisterScreen extends State<SetupRegister> {
       }
       if (boolTeam[1]) {
         //THEY DONT WANTED TO CREATE A TEAM
-        BlocProvider.of<RegisterBloc>(context)
-            .add(AddRegisterIndividuEvent(widget.register));
+        _registerAccount();
       }
     }
     if (boolOrganization[1]) {
       //THE WANT TO CREATE AS ORGANIZATION
       if (boolOrganizationExist[0]) {
         //THEIR ORGANIZATION IS REGISTERED
-        if (stopSearching) {
-          //if they choose company code
-          //Navigator.push(co);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => WaitRegisApproved()));
-        }
+
+        //if they choose company code
+        //Navigator.push(co);
+        BlocProvider.of<RegisterBloc>(context).add(AddRegisterCompanyEvent(
+            register: widget.register, kode: companyCode));
       }
       if (boolOrganizationExist[1]) {
         //THEIR ORGANIZATION ISNT REGISTERED
         if (boolNewCompany[0]) {
           //THEY WANTED TO SEE THE PRICE
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Pricing()));
+          _catchPopPricing();
         }
         if (boolNewCompany[1]) {
           setState(() {
@@ -120,6 +127,12 @@ class _SetupRegisterScreen extends State<SetupRegister> {
         }
       }
     }
+  }
+
+  _sharedPrefLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userLogin", widget.register.email);
+    await prefs.setString("passLogin", widget.register.password);
   }
 
   @override
@@ -141,18 +154,34 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     listener: (context, state) {
                       if (state is RegisterStateSuccess) {
                         if (state.authUser.where == "individu") {
+                          _sharedPrefLogin();
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => RegisApproved()));
-                        } else if (state is RegisterStateFailed) {
-                          Util().showToast(
-                              context: context,
-                              duration: 3,
-                              txtColor: colorBackground,
-                              color: colorError,
-                              msg: "Register Failed");
                         }
+                      } else if (state is RegisterStateFailed) {
+                        Util().showToast(
+                            context: context,
+                            duration: 3,
+                            txtColor: colorBackground,
+                            color: colorError,
+                            msg: "Register Failed");
+                      } else if (state is RegisterStateCompanySuccess) {
+                        _sharedPrefLogin();
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WaitRegisApproved(
+                                      company: textCompanyCode.text,
+                                    )));
+                      } else if (state is RegisterStateCompanyFailed) {
+                        Util().showToast(
+                            context: context,
+                            duration: 3,
+                            txtColor: colorBackground,
+                            color: colorError,
+                            msg: "Register Company Failed");
                       }
                     },
                     child: Container(),
@@ -174,6 +203,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     bool2: boolOrganization[1],
                     click1: (val) {
                       setState(() {
+                        readOnly = false;
+                        boolTeam = [false, false];
                         boolOrganization[0] = val;
                         if (boolOrganization[0] == true &&
                             boolOrganization[1] == true) {
@@ -184,7 +215,11 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     },
                     click2: (val) {
                       setState(() {
+                        readOnly = false;
+                        boolOrganizationExist = [false, false];
+                        boolNewCompany = [false, false];
                         boolOrganization[1] = val;
+
                         if (boolOrganization[0] == true &&
                             boolOrganization[1] == true) {
                           boolOrganization[0] = false;
@@ -235,6 +270,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                           bool2: boolOrganizationExist[1],
                           click1: (val) {
                             setState(() {
+                              boolNewCompany = [false, false];
                               boolOrganizationExist[0] = val;
                               if (boolOrganizationExist[0] == true &&
                                   boolOrganizationExist[1] == true) {
@@ -274,7 +310,9 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     size: size,
                     width: 0.9 * size.width,
                     onClick: () {
-                      goTo();
+                      if (clickable) {
+                        goTo();
+                      }
                     },
                     bgColor: clickable ? colorPrimary : colorPrimary30,
                     textColor: colorBackground,
@@ -298,13 +336,18 @@ class _SetupRegisterScreen extends State<SetupRegister> {
           textBox: textTeamName,
           size: size,
           question: "What's your team called?",
-          hint: "e.g. Min Word 4",
+          hint: "e.g. Min Word 3",
           onChanged: (val) {
             if (val.length > 3) {
               setState(() {
                 teamText = true;
               });
               _clickableTrue();
+            } else {
+              setState(() {
+                teamText = false;
+              });
+              _clickableFalse();
             }
           },
         ),
@@ -356,7 +399,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.text,
             onChanged: (val) {
-              if (val.length >= 3 && stopSearching == false) {
+              if (val.length >= 3) {
+                print("Val.length = " + val.length.toString());
                 _searchFunction(val);
                 searching = true;
               } else if (val.length < 1) {
@@ -366,7 +410,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             controller: textCompanyCode,
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                hintText: "Email",
+                hintText: "Company Code",
                 hintStyle: TextStyle(
                   color: colorNeutral2,
                 ),
@@ -374,15 +418,46 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                 focusedBorder: InputBorder.none),
           ),
         ),
-        searching
-            ? indexData > 0
+        BlocBuilder<CompanyBloc, CompanyState>(builder: (context, state) {
+          if (state is CompanyCodeStateSuccessLoad) {
+            if (state.company.id == "") {
+              return searching
+                  ? InkWell(
+                      onTap: () {
+                        setState(() {
+                          searching = false;
+                        });
+                      },
+                      child: Material(
+                        elevation: 20,
+                        child: Container(
+                          height: size.height < 569 ? 35 : 40,
+                          width: size.width,
+                          decoration: BoxDecoration(
+                            boxShadow: [boxShadowStandard],
+                          ),
+                          child: Center(
+                            child: Text(
+                              "That code hasn't been registered.",
+                              style:
+                                  TextStyle(fontSize: 14, color: colorPrimary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container();
+            }
+            return searching
                 ? InkWell(
                     onTap: () {
                       setState(() {
+                        companyCode = textCompanyCode.text;
                         searching = false;
-                        textCompanyCode.text = viewDataCompany;
+                        textCompanyCode.text = state.company.name;
                         stopSearching = true;
                         readOnly = true;
+                        _clickableTrue();
                       });
                     },
                     child: Material(
@@ -395,17 +470,18 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                         ),
                         child: Center(
                           child: Text(
-                            viewDataCompany,
+                            state.company.name,
                             style: TextStyle(fontSize: 14, color: colorPrimary),
                           ),
                         ),
                       ),
                     ),
                   )
-                : Container(
-                    child: Text("That code has not been registered"),
-                  )
-            : Container(),
+                : Container();
+          } else {
+            return Container();
+          }
+        }),
       ],
     );
   }

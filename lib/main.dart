@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/API/auth-service.dart';
 
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
@@ -284,140 +285,134 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: appBarOutside,
         backgroundColor: colorBackground,
-        body: SingleChildScrollView(
-            child: Container(
-                child: Column(children: [
-          _linkMessage == null
-              ? Container()
-              : InkWell(
-                  onTap: () async {
-                    if (_linkMessage != null) {
-                      await launch(_linkMessage);
-                    }
-                  },
-                  child: Text(_linkMessage),
-                ),
-          Container(
-              width: size.width,
-              height: size.height * 0.55,
-              child: PageView.builder(
-                controller: _controller,
-                onPageChanged: (value) {
-                  setState(() {
-                    currentIdx = value;
-                  });
-                },
-                itemBuilder: (context, position) {
-                  return _printOnboardingCard(position, size);
-                },
-                itemCount: 3, // Can be null
-              )),
-          SizedBox(height: 20),
-          Stack(
-            children: [
-              Container(
-                child: Container(
-                  color: Colors.transparent,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  child: Center(
-                    child: DotsIndicator(
-                      color: colorPrimary,
-                      controller: _controller,
-                      itemCount: 3,
-                      onPageSelected: (int page) {
-                        _controller.animateToPage(
-                          page,
-                          duration: _kDuration,
-                          curve: _kCurve,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 10),
-                height: 30,
-                margin: EdgeInsets.only(right: 20),
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () {
-                    _controller.animateToPage(2,
-                        duration: Duration(milliseconds: 400),
-                        curve: Curves.linear);
-                  },
-                  child: Text(
-                    "SKIP",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(135, 147, 181, 0.9)),
-                  ),
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 20),
-          currentIdx < 2
-              ? RawMaterialButton(
-                  onPressed: () {
-                    if (currentIdx != 2) {
-                      _controller.animateToPage(currentIdx + 1,
-                          duration: Duration(milliseconds: 400),
-                          curve: Curves.linear);
-                    } else {
-                      _controller.animateToPage(2,
-                          duration: Duration(milliseconds: 400),
-                          curve: Curves.linear);
-                    }
-                  },
-                  elevation: 2.0,
-                  fillColor: Color.fromRGBO(20, 43, 111, 0.9),
-                  child: Container(
-                    width: size.height < 600 ? 40 : 60,
-                    height: size.height < 600 ? 40 : 60,
-                    child: Icon(Icons.arrow_forward,
-                        size: 35.0, color: Colors.white70),
-                  ),
-                  padding: EdgeInsets.all(15.0),
-                  shape: CircleBorder(),
-                )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      LongButton(
-                          title: "Sign Up",
-                          textColor: colorBackground,
-                          bgColor: colorPrimary,
-                          onClick: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScreenSignUp()),
-                            );
-                          },
-                          size: size),
-                      SizedBox(height: 10),
-                      LongButtonOutline(
-                        size: size,
-                        title: "Log In",
-                        bgColor: colorBackground,
-                        textColor: colorPrimary,
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenLogin()),
-                          );
+        body: Container(
+            width: size.width,
+            height: size.height * 0.86,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                      width: size.width,
+                      height: size.height * 0.55,
+                      child: PageView.builder(
+                        controller: _controller,
+                        onPageChanged: (value) {
+                          setState(() {
+                            currentIdx = value;
+                          });
                         },
-                        outlineColor: colorPrimary,
+                        itemBuilder: (context, position) {
+                          return _printOnboardingCard(position, size);
+                        },
+                        itemCount: 3, // Can be null
+                      )),
+                  SizedBox(height: 20),
+                  Stack(
+                    children: [
+                      Container(
+                        child: Container(
+                          color: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 20),
+                          child: Center(
+                            child: DotsIndicator(
+                              color: colorPrimary,
+                              controller: _controller,
+                              itemCount: 3,
+                              onPageSelected: (int page) {
+                                _controller.animateToPage(
+                                  page,
+                                  duration: _kDuration,
+                                  curve: _kCurve,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
+                      Container(
+                        padding: EdgeInsets.only(top: 10),
+                        height: 30,
+                        margin: EdgeInsets.only(right: 20),
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            _controller.animateToPage(2,
+                                duration: Duration(milliseconds: 400),
+                                curve: Curves.linear);
+                          },
+                          child: Text(
+                            "SKIP",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(135, 147, 181, 0.9)),
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                )
-        ]))));
+                  SizedBox(height: 20),
+                  currentIdx < 2
+                      ? RawMaterialButton(
+                          onPressed: () {
+                            if (currentIdx != 2) {
+                              _controller.animateToPage(currentIdx + 1,
+                                  duration: Duration(milliseconds: 400),
+                                  curve: Curves.linear);
+                            } else {
+                              _controller.animateToPage(2,
+                                  duration: Duration(milliseconds: 400),
+                                  curve: Curves.linear);
+                            }
+                          },
+                          elevation: 2.0,
+                          fillColor: Color.fromRGBO(20, 43, 111, 0.9),
+                          child: Container(
+                            width: size.height < 600 ? 40 : 55,
+                            height: size.height < 600 ? 40 : 55,
+                            child: Icon(Icons.arrow_forward,
+                                size: 35.0, color: Colors.white70),
+                          ),
+                          padding: EdgeInsets.all(15.0),
+                          shape: CircleBorder(),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              LongButton(
+                                  title: "Sign Up",
+                                  textColor: colorBackground,
+                                  bgColor: colorPrimary,
+                                  onClick: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ScreenSignUp()),
+                                    );
+                                  },
+                                  size: size),
+                              SizedBox(height: size.height < 569 ? 5 : 10),
+                              LongButtonOutline(
+                                size: size,
+                                title: "Log In",
+                                bgColor: colorBackground,
+                                textColor: colorPrimary,
+                                onClick: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ScreenLogin()),
+                                  );
+                                },
+                                outlineColor: colorPrimary,
+                              ),
+                            ],
+                          ),
+                        )
+                ])));
   }
 
   //TO PRINT THE ONBOARDING CARD

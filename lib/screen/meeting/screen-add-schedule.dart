@@ -312,7 +312,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             BlocListener<MeetingBloc, MeetingState>(
               listener: (context, state) {
                 if (state is MeetingStateSuccess) {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 } else if (state is MeetingStateFail) {
                   Util().showToast(
                       msg: "Something Wrong !",

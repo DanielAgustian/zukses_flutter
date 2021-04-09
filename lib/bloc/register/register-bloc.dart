@@ -47,14 +47,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Stream<RegisterState> mapAddRegisCompany(
       AddRegisterCompanyEvent event) async* {
     yield RegisterStateLoading();
-    var res = await _registerServicesHTTP.createRegisterCompany(
+    var res = await _registerServicesHTTP.createRegisterToCompany(
         event.register, event.kode);
-    if (res != null) {
-      yield RegisterStateSuccess(res);
+
+    print("AddRegisCompanyEvent" + res.toString());
+    if (res == 200) {
+      yield RegisterStateCompanySuccess(res);
     } else {
-      yield RegisterStateFailed();
+      yield RegisterStateCompanyFailed();
     }
   }
+
   @override
   Future<void> close() {
     _subscription?.cancel();

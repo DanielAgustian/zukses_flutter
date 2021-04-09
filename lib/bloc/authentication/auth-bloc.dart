@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/model/facebook_auth-model.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 
@@ -31,6 +32,14 @@ class AuthenticationBloc
     // } else {
     //   yield AuthStateFailLoad();
     // }
+  }
+  Stream<AuthenticationState> mapLoginFacebook() async* {
+    var res = await _authenticationService.fbLogin();
+    if (res is FBAuthModel && res != null) {
+      yield AuthStateFacebookSuccessLoad(res);
+    } else {
+      yield AuthStateFacebookFailLoad();
+    }
   }
 
   // BLOC for login manually using email and password
@@ -64,6 +73,8 @@ class AuthenticationBloc
       yield* mapLoginManual(event);
     } else if (event is AuthEventUpdated) {
       yield* mapUpdatingAuthState(event);
+    } else if (event is AuthEventWithFacebook) {
+      yield* mapLoginFacebook();
     }
   }
 

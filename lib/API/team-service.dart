@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:zukses_app_1/model/team-model.dart';
 
@@ -19,7 +19,7 @@ class TeamServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-   
+
     print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -31,7 +31,8 @@ class TeamServiceHTTP {
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      return null;
+      //throw Exception('Failed to load album');
     }
   }
 }

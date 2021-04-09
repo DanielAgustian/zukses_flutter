@@ -6,6 +6,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:http/http.dart' as http;
+import 'package:zukses_app_1/model/facebook_auth-model.dart';
 
 class AuthServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
@@ -60,29 +61,30 @@ class AuthServiceHTTP {
       );
     }
   }*/
-  void _fbLogOut() async{
+  void _fbLogOut() async {
     facebookLogin.logOut();
   }
-  void _fbLogin() async {
+
+  Future<FBAuthModel> fbLogin() async {
     final result = await facebookLogin.logIn(['email']);
     print(result.status);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
         final graphResponse = await http.get(Uri.parse(
-          "https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}",
+          "https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token",
         ));
         final profile = jsonDecode(graphResponse.body);
-        print(profile);
+        return FBAuthModel.fromJson(profile);
         break;
 
       case FacebookLoginStatus.cancelledByUser:
         print("Facebook Login Canceled");
-        
+        return null;
         break;
       case FacebookLoginStatus.error:
         print("RFecebook Login Error");
-        
+        return null;
         break;
     }
   }

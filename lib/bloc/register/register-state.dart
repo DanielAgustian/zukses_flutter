@@ -24,6 +24,19 @@ class RegisterStateSuccess extends RegisterState {
   }
 }
 
+class RegisterStateCompanySuccess extends RegisterState {
+  final int status;
+
+  RegisterStateCompanySuccess(this.status);
+  List<Object> get props => [status];
+   @override
+  String toString() {
+    return 'Data : { Register Company Status: $status }';
+  }
+}
+class RegisterStateCompanyFailed extends RegisterState {}
+
+
 class RegisterStateLoading extends RegisterState {}
 
 class RegisterStateFailLoad extends RegisterState {}

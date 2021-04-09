@@ -1,6 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
@@ -90,14 +94,16 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         !_passValidator &&
         !_confirmPassValidator) {
       RegisterModel register = RegisterModel(
-        email: textEmail.text,
-        username: textUsername.text,
-        password: textPassword.text,
-        confirmPassword: textConfirmPassword.text
-      );
+          email: textEmail.text,
+          username: textUsername.text,
+          password: textPassword.text,
+          confirmPassword: textConfirmPassword.text);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SetupRegister(register: register,)),
+        MaterialPageRoute(
+            builder: (context) => SetupRegister(
+                  register: register,
+                )),
       );
       /*
       Navigator.push(
@@ -312,11 +318,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                           scale: 0.6,
                         ),
                         onClick: () {
-                          Navigator.push(
+                          /*Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ScreenSignUp()),
-                          );
+                          );*/
                         },
                       ),
                       SizedBox(
@@ -332,11 +338,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                           scale: 0.6,
                         ),
                         onClick: () {
-                          Navigator.push(
+                          BlocProvider.of<AuthenticationBloc>(context)
+                              .add(AuthEventWithFacebook());
+                          /*Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ScreenSignUp()),
-                          );
+                          );*/
                         },
                       ),
                       SizedBox(
@@ -362,6 +370,18 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             ],
                           ),
                         ),
+                      ),
+                      BlocListener<AuthenticationBloc, AuthenticationState>(
+                        listener: (context, state) {
+                          if (state is AuthStateFacebookSuccessLoad) {
+                            print(state.fbauth.email);
+                          } else if (state is AuthStateFacebookFailLoad) {
+                            print("Get Data from Facebook Failed");
+                          } else {
+                            print("No way going here -facebook");
+                          }
+                        },
+                        child: Container(),
                       )
                     ]))));
   }

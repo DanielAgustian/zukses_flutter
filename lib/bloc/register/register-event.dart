@@ -28,10 +28,10 @@ class AddRegisterTeamEvent extends RegisterEvent {
   List<Object> get props => [register];
 }
 
-class AddRegisterCompanyEvent extends RegisterEvent{
+class AddRegisterCompanyEvent extends RegisterEvent {
   final RegisterModel register;
   final String kode;
-  AddRegisterCompanyEvent(this.register, this.kode);
+  AddRegisterCompanyEvent({this.register, this.kode});
   List<Object> get props => [register];
 }
 

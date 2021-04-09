@@ -25,7 +25,7 @@ class CompanyStateSuccessLoad extends CompanyState {
   }
 }
 class CompanyCodeStateSuccessLoad extends CompanyState {
-  final List<CompanyModel> company;
+  final CompanyModel company;
 
   CompanyCodeStateSuccessLoad( {this.company});
 

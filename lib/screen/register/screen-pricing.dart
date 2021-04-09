@@ -40,8 +40,10 @@ class _PricingScreen extends State<Pricing> {
                 PricingCard(
                   size: size,
                   onClick: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EnterPayment()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EnterPayment()));
                   },
                 ),
                 SizedBox(
@@ -49,7 +51,9 @@ class _PricingScreen extends State<Pricing> {
                 ),
                 PricingCard2(
                   size: size,
-                  onClick: () {},
+                  onClick: () {
+                    Navigator.pop(context, true);
+                  },
                 ),
                 SizedBox(
                   height: size.height < 569 ? 10 : 15,

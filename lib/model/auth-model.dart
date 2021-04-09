@@ -12,7 +12,7 @@ class AuthModel {
   AuthModel.fromJson(Map<String, dynamic> map) {
     this.token = map["token"];
     this.user = UserModel.fromJson(map["user"]);
-
+    
     this.attendance =
         map["attendance"] == null ? "" : map["attendance"].toLowerCase();
     this.maxClockIn =

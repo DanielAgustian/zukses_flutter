@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/invite-team-model.dart';
 import 'package:zukses_app_1/model/register-model.dart';
@@ -31,6 +32,10 @@ class RegisterServicesHTTP {
     print(response.body);
     if (response.statusCode == 201) {
       final user = AuthModel.fromJson(jsonDecode(response.body));
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token", user.token);
+      
       user.where = "individu";
       return user;
     } else {
@@ -61,21 +66,21 @@ class RegisterServicesHTTP {
     }
   }
 
-  Future<AuthModel> createRegisterCompany(
-      RegisterModel regis, String kode) async {
+  Future<int> createRegisterToCompany(RegisterModel regis, String kode) async {
+    AuthModel auth = await createRegisterIndividual(regis);
+    //print("Auth.token = " + auth.token);
+    print("Kode" + kode);
     final response = await http.post(
-      Uri.https(baseURI, ''),
+      Uri.https(baseURI, '/api/company-code'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Charset': 'utf-8'
+        'Charset': 'utf-8',
+        'Authorization': 'Bearer ${auth.token}'
       },
-      body: jsonEncode(<String, dynamic>{
-        'email': regis.email,
-        'username': regis.username,
-        'password': regis.password,
-        'kode': kode
-      }),
+      body: jsonEncode(<String, dynamic>{'companyCode': kode}),
     );
-    return AuthModel.fromJson(jsonDecode(response.body));
+    print(response.body);
+    print("Register COmpany" + response.statusCode.toString());
+    return response.statusCode;
   }
 }

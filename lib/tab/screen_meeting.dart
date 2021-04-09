@@ -90,11 +90,17 @@ class _MeetingScreenState extends State<MeetingScreen>
   void getMeetingReq() async {
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
   }
-  /*void postHTTPdemo() async {
-    ScheduleModel scheduleModel =
-        await MeetingServicesHTTP().fetchScheduleDetail("3");
-    print(scheduleModel.title);
-  }*/
+
+  
+  _getPopAddScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddScheduleScreen()),
+    );
+    if (result) {
+      getMeetingReq();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,11 +132,7 @@ class _MeetingScreenState extends State<MeetingScreen>
 
                   // Move to add schedule screen
                   case 1:
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddScheduleScreen()),
-                    );
+                    _getPopAddScreen();
                     break;
 
                   // Move to request meeting screen

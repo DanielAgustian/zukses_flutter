@@ -35,26 +35,27 @@ class CompanyServiceHTTP {
     }
   }
 
-  
-  Future<List<CompanyModel>> fetchCompanyCode() async {
+  Future<CompanyModel> fetchCompanyCode(String kode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
- 
+
     var res = await http
-        .get(fullBaseURI + "/api/company-code/", headers: <String, String>{
+        .get(fullBaseURI + "/api/company-code/$kode", headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
       //'Authorization': 'Bearer $token'
     });
     //print(res.statusCode.toString());
     //print(res.body);
+    print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       //print("response.body:" + response.body);
       var responseJson = jsonDecode(res.body);
-      return (responseJson['company'] as List)
-          .map((p) => CompanyModel.fromJson(p))
-          .toList();
+      
+      final company = CompanyModel.fromJson(responseJson['company']);
+      
+      return company;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.

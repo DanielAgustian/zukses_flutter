@@ -85,6 +85,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         builder: (context, state) {
       // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
+        print("AttendanceList  = " + state.attendanceList.isEmpty.toString());
         return Scaffold(
             backgroundColor: colorBackground,
             appBar: AppBar(
@@ -108,8 +109,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                   ),
                   onPressed: () {
                     setState(() {
+                      print(state.attendanceList);
                       monthly = !monthly;
-                      if (state.attendanceList != null && monthly == false) {
+                      if (state.attendanceList != null &&
+                          state.attendanceList.length > 0 &&
+                          monthly == false) {
                         absensiList = state.attendanceList.where((data) {
                           var day = CustomCalendar()
                               .findFirstDateOfTheWeek(data.clockIn);
@@ -148,20 +152,23 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          CalendarWidget(
-                            fontSize: size.height <= 600 ? textSizeSmall16 : 16,
-                            // When select the date
-                            onSelectDate: (date, absence) {
-                              selectDate(date, absence);
-                            },
-                            // When change the month
-                            onClickToggle: (DateTime val) {
-                              _attendanceBloc
-                                  .add(LoadUserAttendanceEvent(date: val));
-                            },
-                            data: state.attendanceList,
-                            size: size,
-                          ),
+                          state.attendanceList == null
+                              ? Center(child: CircularProgressIndicator())
+                              : CalendarWidget(
+                                  fontSize:
+                                      size.height <= 600 ? textSizeSmall16 : 16,
+                                  // When select the date
+                                  onSelectDate: (date, absence) {
+                                    selectDate(date, absence);
+                                  },
+                                  // When change the month
+                                  onClickToggle: (DateTime val) {
+                                    _attendanceBloc.add(
+                                        LoadUserAttendanceEvent(date: val));
+                                  },
+                                  data: state.attendanceList,
+                                  size: size,
+                                ),
                           SizedBox(height: 20),
                           TitleDayFormatted(
                             currentDate: _currentDate,
@@ -175,7 +182,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                           ),
                           SizedBox(height: 15),
                           OvertimeText(selected: selected, size: size)
-                          
                         ],
                       ),
                     )
@@ -234,9 +240,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                 color: colorBackground,
                                                 borderRadius:
                                                     BorderRadius.circular(5),
-                                                boxShadow: [
-                                                  boxShadowStandard
-                                                ]),
+                                                boxShadow: [boxShadowStandard]),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment

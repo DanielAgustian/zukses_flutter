@@ -4,11 +4,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-data-company.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 
 class RegisApproved extends StatefulWidget {
-  RegisApproved({Key key, this.title}) : super(key: key);
+  RegisApproved({Key key, this.title, this.register}) : super(key: key);
   final String title;
+  final RegisterModel register;
   @override
   _RegisApprovedScreen createState() => _RegisApprovedScreen();
 }
@@ -84,7 +87,13 @@ class _RegisApprovedScreen extends State<RegisApproved> {
                       title: "Start Exploring",
                       bgColor: colorPrimary,
                       textColor: colorBackground,
-                      onClick: () {},
+                      onClick: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenTab()),
+                            (Route<dynamic> route) => false);
+                      },
                     ),
                   )
                 ],
@@ -96,8 +105,9 @@ class _RegisApprovedScreen extends State<RegisApproved> {
 }
 
 class WaitRegisApproved extends StatefulWidget {
-  WaitRegisApproved({Key key, this.title}) : super(key: key);
+  WaitRegisApproved({Key key, this.title, this.company}) : super(key: key);
   final String title;
+  final String company;
   @override
   _WaitRegisApprovedScreen createState() => _WaitRegisApprovedScreen();
 }
@@ -157,7 +167,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "Your request has been sent to PT. Yokesen Teknologi Indonesia. You will be notify by email when admin already accept your request and redirected to the dashboard.",
+                    "Your request has been sent to PT. ${widget.company}. You will be notify by email when admin already accept your request and redirected to the dashboard.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorGoogle,
