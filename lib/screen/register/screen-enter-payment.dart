@@ -33,6 +33,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
   ];
   String country = "";
   bool error = false;
+  bool notEmpty = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -43,6 +44,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
   _errorFalse() {
     setState(() {
       error = false;
+      notEmpty = true;
     });
   }
 
@@ -78,7 +80,28 @@ class _EnterPaymentScreen extends State<EnterPayment> {
     } else {
       _errorTrue();
     }
-    if (error == false) {
+    if (textCity.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    if (textProvince.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    if (textZipCode.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+
+    if (country != countries[0]) {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }
+    if (error == false && notEmpty) {
       _goto();
     }
   }
@@ -397,7 +420,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: colorBorder),
+                        border: Border.all(color: error?colorError:colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -412,7 +435,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "City",
                             hintStyle: TextStyle(
-                              color: colorNeutral2,
+                              color: error?colorError:colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -424,7 +447,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: colorBorder),
+                        border: Border.all(color: error?colorError:colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -439,7 +462,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Province",
                             hintStyle: TextStyle(
-                              color: colorNeutral2,
+                              color: error?colorError:colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -466,7 +489,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Zip Code",
                             hintStyle: TextStyle(
-                              color: colorNeutral2,
+                              color: error?colorError:colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -479,7 +502,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5)),

@@ -36,6 +36,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 import 'bloc/leaves/leave-bloc.dart';
 import 'bloc/overtime/overtime-bloc.dart';
@@ -198,10 +199,10 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.logOut}) : super(key: key);
 
   final String title;
-
+  final String logOut;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -212,6 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _linkMessage = "";
   DateFormat dayName = DateFormat('E');
 
+  bool getDynamicLinkDone = false;
   PageController _controller;
   static const _kDuration = const Duration(milliseconds: 300);
 
@@ -225,6 +227,18 @@ class _MyHomePageState extends State<MyHomePage> {
         .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
   }
 
+  _loadWidget() async {
+    var _duration = Duration(seconds: 0);
+    return Timer(_duration, afterlogOut);
+  }
+
+  afterlogOut() {
+    if (widget.logOut != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ScreenLogin()));
+    }
+  }
+
   int currentIdx = 0;
 
   @override
@@ -234,13 +248,18 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller = PageController(
       initialPage: 0,
     );
-    initDynamicLinks();
+    dynamicLink();
+    _loadWidget();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  dynamicLink() async {
+    await initDynamicLinks();
   }
 
   Future<void> initDynamicLinks() async {
@@ -253,6 +272,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // ignore: unawaited_futures
         String email = deepLink.queryParameters['email'];
         if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
+          setState(() {
+            getDynamicLinkDone = true;
+          });
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(

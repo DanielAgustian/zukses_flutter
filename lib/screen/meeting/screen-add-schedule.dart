@@ -115,7 +115,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         textColor: colorError,
                         title: "Discard Changes",
                         onClick: () {
-                          Navigator.of(context, rootNavigator: true).pop();
+                          Navigator.pop(context, true);
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

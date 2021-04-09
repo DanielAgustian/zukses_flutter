@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class MeetingServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
-  
+
   Future<List<UserModel>> fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
@@ -23,7 +23,7 @@ class MeetingServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      
+
       var responseJson = jsonDecode(res.body);
       return (responseJson['user'] as List)
           .map((p) => UserModel.fromJson(p))
@@ -60,18 +60,18 @@ class MeetingServicesHTTP {
       body: jsonEncode(data),
     );
     print(response.statusCode.toString());
-
+    print(response.body);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-     
+
       // Save token
       return response.statusCode;
     } else {
       // If the server did not return a 200 CREATED response,
       // then throw an exception.
       // throw Exception('Failed to login');
-     
+
       return null;
     }
   }
@@ -92,7 +92,7 @@ class MeetingServicesHTTP {
       //print(res.body);
       //print(token);
       var responseJson = jsonDecode(res.body);
-     
+
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
           .toList();
@@ -107,7 +107,7 @@ class MeetingServicesHTTP {
   Future<int> postDeleteSchedule(String meetingID) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-  
+
     final response = await http.post(
       Uri.https(baseURI, '/api/schedule/delete'),
       headers: <String, String>{
@@ -119,12 +119,11 @@ class MeetingServicesHTTP {
         'meetingId': meetingID,
       }),
     );
- 
 
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      
+
       return response.statusCode;
     } else {
       // If the server did not return a 201 CREATED response,
@@ -153,11 +152,10 @@ class MeetingServicesHTTP {
       }),
     );
     print(response.statusCode.toString());
-    
+
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-     
 
       //final schedule = ScheduleModel.fromJson(jsonDecode(response.body));
       // Save token
@@ -180,7 +178,7 @@ class MeetingServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    
+
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -301,7 +299,6 @@ class MeetingServicesHTTP {
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-     
 
       final schedule = ScheduleModel.fromJson(jsonDecode(response.body));
 

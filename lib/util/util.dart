@@ -1,7 +1,10 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 class Util {
   String getHourNow() {
@@ -72,34 +75,35 @@ class Util {
   String dateNumbertoCalendar(DateTime date) {
     return DateFormat('yMMMd').format(date);
   }
-  // void getLocationData() async {
-  //   Location location = new Location();
 
-  //   bool _serviceEnabled;
-  //   PermissionStatus _permissionGranted;
-  //   LocationData _locationData;
+  String generateMd5(String input) {
+    return md5.convert(utf8.encode(input)).toString();
+  }
 
-  //   _serviceEnabled = await location.serviceEnabled();
-  //   if (!_serviceEnabled) {
-  //     _serviceEnabled = await location.requestService();
-  //     if (!_serviceEnabled) {
-  //       return;
-  //     }
-  //   }
+  Future<String> _createDynamicLink(
+      {bool short, String value, String key, String page}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://zuksesapplication.page.link',
+      link: Uri.parse('https://zuksesapplication.page.link/$page?$key=$value'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.zukses_app_1',
+        minimumVersion: 0,
+      ),
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
 
-  //   _permissionGranted = await location.hasPermission();
-  //   if (_permissionGranted == PermissionStatus.denied) {
-  //     _permissionGranted = await location.requestPermission();
-  //     if (_permissionGranted != PermissionStatus.granted) {
-  //       return;
-  //     }
-  //   }
+    Uri url;
+    if (short) {
+      final ShortDynamicLink shortLink = await parameters.buildShortLink();
+      url = shortLink.shortUrl;
+    } else {
+      url = await parameters.buildUrl();
+    }
 
-  //   _locationData = await location.getLocation();
-  //   print(_locationData);
-  //   print(_locationData.latitude);
-  //   print(_locationData.longitude);
-  // }
+    return url.toString();
+  }
 
   void showToast(
       {BuildContext context,

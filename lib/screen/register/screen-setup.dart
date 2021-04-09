@@ -78,9 +78,9 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   }
 
   _catchPopPricing() async {
-    final result = await Navigator.push(
+    bool result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => Pricing()));
-    if (result) {
+    if (result == true) {
       setState(() {
         boolOrganization = [true, false];
         boolTeam = [false, true];

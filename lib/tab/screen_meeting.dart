@@ -93,11 +93,11 @@ class _MeetingScreenState extends State<MeetingScreen>
 
   
   _getPopAddScreen() async {
-    final result = await Navigator.push(
+    bool result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddScheduleScreen()),
     );
-    if (result) {
+    if (result  == true) {
       getMeetingReq();
     }
   }

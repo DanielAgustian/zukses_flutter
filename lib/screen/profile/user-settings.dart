@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/main.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 
 class UserSettings extends StatefulWidget {
@@ -129,8 +130,12 @@ class _UserSettingsScreen extends State<UserSettings> {
   toLogOut() {
     print("Begin Log Out");
     clearAllSharedPref();
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        '/LoginScreen', (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (context) => MyHomePage(
+                  logOut: "logout",
+                )),
+        (Route<dynamic> route) => false);
   }
 
   Widget _buildPopupDialog(BuildContext context) {
