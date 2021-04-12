@@ -9,13 +9,13 @@ class BusinessScopeServiceHTTP {
 
   Future<List<BussinessScopeModel>> fetchBusinessScope() async {
     var res =
-        await http.get(Uri.https(baseURI, 'api/'), headers: <String, String>{
+        await http.get(Uri.https(baseURI, 'api/businessScope'), headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
     });
     if (res.statusCode == 200) {
       var responseJson = jsonDecode(res.body);
-      return (responseJson['data'] as List)
+      return (responseJson['businessScope'] as List)
           .map((p) => BussinessScopeModel.fromJson(p))
           .toList();
     } else {

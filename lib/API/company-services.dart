@@ -52,9 +52,9 @@ class CompanyServiceHTTP {
       // then parse the JSON.
       //print("response.body:" + response.body);
       var responseJson = jsonDecode(res.body);
-      
+
       final company = CompanyModel.fromJson(responseJson['company']);
-      
+
       return company;
     } else {
       // If the server did not return a 201 CREATED response,
@@ -62,5 +62,27 @@ class CompanyServiceHTTP {
       // throw Exception('Failed to login');
       return null;
     }
+  }
+
+  Future<int> addOrganization(
+      CompanyModel company, String token, String scope) async {
+    print("addOrganization ");
+    var res = await http
+        .post(fullBaseURI + "/api/organization", headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+      'Authorization': 'Bearer $token'
+    }, body: jsonEncode(<String, dynamic>{
+      'legalName': company.name,
+      'companyPhone': company.phone,
+      'companyEmail': company.email,
+      'companyWebsite': company.website,
+      'companyAddress': company.address,
+      'business_scope': scope,
+      'package_id': company.packageId
+    }));
+    print(res.body);
+    print(res.statusCode);
+    return res.statusCode;
   }
 }

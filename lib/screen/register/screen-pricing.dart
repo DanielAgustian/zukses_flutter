@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
+import 'package:zukses_app_1/bloc/pricing/pricing-event.dart';
+import 'package:zukses_app_1/bloc/pricing/pricing-state.dart';
 import 'package:zukses_app_1/component/register/pricing-card.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -6,8 +10,9 @@ import 'package:zukses_app_1/screen/register/screen-data-company.dart';
 import 'package:zukses_app_1/screen/register/screen-enter-payment.dart';
 
 class Pricing extends StatefulWidget {
-  Pricing({Key key, this.title}) : super(key: key);
+  Pricing({Key key, this.title, this.token}) : super(key: key);
   final String title;
+  final String token;
   @override
   _PricingScreen createState() => _PricingScreen();
 }
@@ -17,6 +22,13 @@ class _PricingScreen extends State<Pricing> {
   _goto() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => EnterPayment()));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<PricingBloc>(context).add(GetPricingEvent());
   }
 
   @override
@@ -37,24 +49,38 @@ class _PricingScreen extends State<Pricing> {
                   title: "Option Plan",
                   detail: "Choose plan that suits your bussiness better",
                 ),
-                PricingCard(
-                  size: size,
-                  onClick: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EnterPayment()));
-                  },
-                ),
-                SizedBox(
-                  height: size.height < 569 ? 5 : 10,
-                ),
-                PricingCard2(
-                  size: size,
-                  onClick: () {
-                    Navigator.pop(context, true);
-                  },
-                ),
+                BlocBuilder<PricingBloc, PricingState>(
+                    builder: (context, state) {
+                  if (state is PricingStateSuccess) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        PricingCard(
+                          price: state.pricing[0],
+                          size: size,
+                          onClick: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EnterPayment(token: widget.token,paketID: state.pricing[0].planId.toString(),)));
+                          },
+                        ),
+                        SizedBox(
+                          height: size.height < 569 ? 5 : 10,
+                        ),
+                        PricingCard2(
+                          price: state.pricing[1],
+                          size: size,
+                          onClick: () {
+                            Navigator.pop(context, true);
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                  return Container();
+                }),
                 SizedBox(
                   height: size.height < 569 ? 10 : 15,
                 ),

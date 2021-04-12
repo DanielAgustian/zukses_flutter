@@ -186,8 +186,10 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
 }
 
 class PaymentApproved extends StatefulWidget {
-  PaymentApproved({Key key, this.title}) : super(key: key);
+  PaymentApproved({Key key, this.title, this.token, this.paketID}) : super(key: key);
   final String title;
+  final String token;
+  final String paketID;
   @override
   _PaymentApprovedScreen createState() => _PaymentApprovedScreen();
 }
@@ -268,7 +270,8 @@ class _PaymentApprovedScreen extends State<PaymentApproved> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DataCompany()));
+                                builder: (context) =>
+                                    DataCompany(token: widget.token, paketID: widget.paketID)));
                       },
                     ),
                   )

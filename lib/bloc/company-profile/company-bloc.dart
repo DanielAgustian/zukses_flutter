@@ -28,10 +28,22 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     }
   }
 
+  Stream<CompanyState> mapAddCompany(AddCompanyEvent event) async* {
+    yield CompanyStateLoading();
+    var res = await _companyServiceHTTP.addOrganization(
+        event.companyModel, event.token, event.scope);
+    if (res == 200) {
+      yield AddCompanyStateSuccessLoad(code: res);
+    } else {
+      yield AddCompanyStateFailLoad();
+    }
+  }
+
   Stream<CompanyState> mapAllCompanyCode(CompanyEventGetCode event) async* {
     yield CompanyStateLoading();
     // return list user model
-    var res = await _companyServiceHTTP.fetchCompanyCode(event.kode); //= await _companyServiceHTTP.fetchCompanyProfile();
+    var res = await _companyServiceHTTP.fetchCompanyCode(
+        event.kode); //= await _companyServiceHTTP.fetchCompanyProfile();
 
     // return checkbox handler
 
@@ -56,6 +68,8 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
       yield* mapUpdatingCompanyState(event);
     } else if (event is CompanyEventGetCode) {
       yield* mapAllCompanyCode(event);
+    } else if (event is AddCompanyEvent) {
+      yield* mapAddCompany(event);
     }
   }
 

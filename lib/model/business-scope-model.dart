@@ -1,8 +1,9 @@
 class BussinessScopeModel {
-  String id, name;
+  String name;
+  int id;
   BussinessScopeModel({this.id, this.name});
   BussinessScopeModel.fromJson(Map<String, dynamic> map) {
     this.id = map['id'];
-    this.name = map['name'];
+    this.name = map['business_scope_name'];
   }
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/pricing-model.dart';
 
 class PricingCard extends StatelessWidget {
-  const PricingCard({Key key, @required this.size, this.onClick})
+  const PricingCard({Key key, @required this.size, this.onClick, this.price})
       : super(key: key);
 
   final Size size;
   final Function onClick;
-
+  final PricingModel price;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +25,7 @@ class PricingCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "Enterprise",
+            price.planName,
             style: TextStyle(
                 fontSize: size.height < 569 ? 16 : 20,
                 color: colorBackground,
@@ -37,12 +38,12 @@ class PricingCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Rp 0",
+              Text("Rp" + price.price.toString(),
                   style: TextStyle(
                       fontSize: size.height < 569 ? 16 : 20,
                       color: colorBackground,
                       fontWeight: FontWeight.bold)),
-              Text("/month",
+              Text("/" + price.interval,
                   style: TextStyle(
                       fontSize: size.height < 569 ? 10 : 12,
                       color: colorBackground)),
@@ -57,7 +58,8 @@ class PricingCard extends StatelessWidget {
               _pricingCardChild(context, size, "Clock in & out", true),
               _pricingCardChild(context, size, "Attendance", true),
               _pricingCardChild(context, size, "Task management", true),
-              _pricingCardChild2(context, size, "Project Limit", "Unlimited"),
+              _pricingCardChild2(
+                  context, size, "Project Limit", price.projectLimit),
               _pricingCardChild(context, size, "Project Role", true),
               _pricingCardChild(context, size, "Meeting Scheduling", true),
               _pricingCardChild(context, size, "Meeting Role Assign", true)
@@ -143,11 +145,12 @@ class PricingCard extends StatelessWidget {
 }
 
 class PricingCard2 extends StatelessWidget {
-  const PricingCard2({Key key, @required this.size, this.onClick})
+  const PricingCard2({Key key, @required this.size, this.onClick, this.price})
       : super(key: key);
 
   final Size size;
   final Function onClick;
+  final PricingModel price;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -164,7 +167,7 @@ class PricingCard2 extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "Free",
+            price.planName,
             style: TextStyle(
                 fontSize: size.height < 569 ? 16 : 20,
                 color: colorPrimary,
@@ -177,12 +180,12 @@ class PricingCard2 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Rp 0",
+              Text("Rp " + price.price.toString(),
                   style: TextStyle(
                       fontSize: size.height < 569 ? 16 : 20,
                       color: colorPrimary,
                       fontWeight: FontWeight.bold)),
-              Text("/month",
+              Text("/" + price.interval,
                   style: TextStyle(
                       fontSize: size.height < 569 ? 10 : 12,
                       color: colorPrimary)),
@@ -196,7 +199,8 @@ class PricingCard2 extends StatelessWidget {
               _pricingCardChild(context, size, "Clock in & out", false),
               _pricingCardChild(context, size, "Attendance", false),
               _pricingCardChild(context, size, "Task management", true),
-              _pricingCardChild2(context, size, "Project Limit", "Up to 3"),
+              _pricingCardChild2(
+                  context, size, "Project Limit", price.projectLimit),
               _pricingCardChild(context, size, "Project Role", false),
               _pricingCardChild(context, size, "Meeting Scheduling", true),
               _pricingCardChild(context, size, "Meeting Role Assign", false)

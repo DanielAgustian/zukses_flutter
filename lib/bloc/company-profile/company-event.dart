@@ -30,3 +30,11 @@ class CompanyEventDidUpdated extends CompanyEvent {
   @override
   List<Object> get props => [company];
 }
+
+class AddCompanyEvent extends CompanyEvent {
+  final CompanyModel companyModel;
+  final String token, scope;
+  AddCompanyEvent({this.companyModel, this.token, this.scope});
+  @override
+  List<Object> get props => [companyModel];
+}

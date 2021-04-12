@@ -5,8 +5,10 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 
 class EnterPayment extends StatefulWidget {
-  EnterPayment({Key key, this.title}) : super(key: key);
+  EnterPayment({Key key, this.title, this.token, this.paketID}) : super(key: key);
   final String title;
+  final String token;
+  final String paketID;
   @override
   _EnterPaymentScreen createState() => _EnterPaymentScreen();
 }
@@ -108,7 +110,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
 
   _goto() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => PaymentApproved()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => PaymentApproved(token: widget.token, paketID: widget.paketID)));
   }
 
   @override
@@ -420,7 +424,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: error?colorError:colorBorder),
+                        border:
+                            Border.all(color: error ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -435,7 +440,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "City",
                             hintStyle: TextStyle(
-                              color: error?colorError:colorNeutral2,
+                              color: error ? colorError : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -447,7 +452,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: error?colorError:colorBorder),
+                        border:
+                            Border.all(color: error ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -462,7 +468,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Province",
                             hintStyle: TextStyle(
-                              color: error?colorError:colorNeutral2,
+                              color: error ? colorError : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -489,7 +495,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Zip Code",
                             hintStyle: TextStyle(
-                              color: error?colorError:colorNeutral2,
+                              color: error ? colorError : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),

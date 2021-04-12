@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/invite-team-model.dart';
 import 'package:zukses_app_1/model/register-model.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class RegisterServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
@@ -35,7 +36,7 @@ class RegisterServicesHTTP {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
-      
+
       user.where = "individu";
       return user;
     } else {
@@ -43,31 +44,36 @@ class RegisterServicesHTTP {
     }
   }
 
-  Future<AuthModel> createRegisterTeam(
-      RegisterModel regis, String namaTeam) async {
+  Future<int> createRegisterTeam(String token, String namaTeam) async {
+   
+
+    String dynamicLink =
+        await Util().createDynamicLink(short: false, page: "registerteam");
+    print(dynamicLink);
     final response = await http.post(
-      Uri.https(baseURI, '/api/'),
+      Uri.https(baseURI, '/api/team'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Charset': 'utf-8'
+        'Charset': 'utf-8',
+        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(<String, dynamic>{
-        'email': regis.email,
-        'username': regis.username,
-        'password': regis.password,
-        'namaTeam': namaTeam
+        'teamName': namaTeam,
+        'invitationLink': dynamicLink
       }),
     );
+    print(response.body);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      return AuthModel.fromJson(jsonData);
+      return response.statusCode;
     } else {
       return null;
     }
   }
 
-  Future<int> createRegisterToCompany(RegisterModel regis, String kode) async {
-    AuthModel auth = await createRegisterIndividual(regis);
+  Future<int> createRegisterToCompany(String token, String kode) async {
+    
     //print("Auth.token = " + auth.token);
     print("Kode" + kode);
     final response = await http.post(
@@ -75,7 +81,7 @@ class RegisterServicesHTTP {
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Charset': 'utf-8',
-        'Authorization': 'Bearer ${auth.token}'
+        'Authorization': 'Bearer $token'
       },
       body: jsonEncode(<String, dynamic>{'companyCode': kode}),
     );
@@ -83,4 +89,7 @@ class RegisterServicesHTTP {
     print("Register COmpany" + response.statusCode.toString());
     return response.statusCode;
   }
+
+
+
 }

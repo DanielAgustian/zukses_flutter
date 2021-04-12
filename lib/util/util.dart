@@ -80,11 +80,11 @@ class Util {
     return md5.convert(utf8.encode(input)).toString();
   }
 
-  Future<String> _createDynamicLink(
+  Future<String> createDynamicLink(
       {bool short, String value, String key, String page}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://zuksesapplication.page.link',
-      link: Uri.parse('https://zuksesapplication.page.link/$page?$key=$value'),
+      link: Uri.parse('https://zuksesapplication.page.link/$page?'),
       androidParameters: AndroidParameters(
         packageName: 'com.example.zukses_app_1',
         minimumVersion: 0,

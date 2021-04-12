@@ -2,9 +2,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
+import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/register/register-event.dart';
+import 'package:zukses_app_1/bloc/register/register-state.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
@@ -98,13 +103,9 @@ class _ScreenSignUp extends State<ScreenSignUp> {
           username: textUsername.text,
           password: textPassword.text,
           confirmPassword: textConfirmPassword.text);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SetupRegister(
-                  register: register,
-                )),
-      );
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterIndividuEvent(register));
+
       /*
       Navigator.push(
         context,
@@ -118,6 +119,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
       context,
       MaterialPageRoute(builder: (context) => ScreenLogin()),
     );
+  }
+
+  _sharedPrefLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userLogin", textEmail.text);
+    await prefs.setString("passLogin", textPassword.text);
+    
   }
 
   @override
@@ -134,6 +142,21 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      BlocListener<RegisterBloc, RegisterState>(
+                        listener: (context, state) {
+                          if (state is RegisterStateSuccess) {
+                            _sharedPrefLogin();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SetupRegister(
+                                        token: state.authUser.token,
+                                      )),
+                            );
+                          }
+                        },
+                        child: Container(),
+                      ),
                       TitleFormat(
                         size: size,
                         title: "Welcome!",

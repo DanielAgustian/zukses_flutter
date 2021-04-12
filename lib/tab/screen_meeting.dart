@@ -46,6 +46,7 @@ class _MeetingScreenState extends State<MeetingScreen>
 
   //STRING FOR GLOBAL VARIABLE
   String meetingID;
+  int waitingRequest = 0;
   List<String> date1 = [], date2 = [];
   void selectDate(DateTime date) {
     setState(() {
@@ -91,13 +92,12 @@ class _MeetingScreenState extends State<MeetingScreen>
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
   }
 
-  
   _getPopAddScreen() async {
     bool result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddScheduleScreen()),
     );
-    if (result  == true) {
+    if (result == true) {
       getMeetingReq();
     }
   }
@@ -120,11 +120,45 @@ class _MeetingScreenState extends State<MeetingScreen>
           ),
           actions: [
             PopupMenuButton(
-              icon: FaIcon(
-                FontAwesomeIcons.ellipsisH,
-                color: colorPrimary,
-              ),
               elevation: 5,
+              child: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: FaIcon(
+                        FontAwesomeIcons.ellipsisH,
+                        color: colorPrimary,
+                      ),
+                    ),
+                  ),
+                  BlocBuilder<MeetingReqBloc, MeetingReqState>(
+                      builder: (context, state) {
+                    if (state is MeetingReqStateSuccessLoad) {
+                      if (state.schedule.length < 1) {
+                        return Container();
+                      } else {
+                        return Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(35, 0, 0, 10),
+                            child: Container(
+                              height: 5,
+                              width: 5,
+                              decoration: BoxDecoration(
+                                color: colorError,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      return Container();
+                    }
+                  }),
+                ],
+              ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               onSelected: (val) {
@@ -199,6 +233,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                           BlocBuilder<MeetingReqBloc, MeetingReqState>(
                               builder: (context, state) {
                             if (state is MeetingReqStateSuccessLoad) {
+                              waitingRequest = state.schedule.length;
                               return Container(
                                   width: 20,
                                   height: 20,
@@ -288,6 +323,9 @@ class _MeetingScreenState extends State<MeetingScreen>
                               TitleDayFormatted(
                                 currentDate: _selectedDate,
                               ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Container(
                                 width: size.width,
                                 child: isLoading
@@ -342,67 +380,99 @@ class _MeetingScreenState extends State<MeetingScreen>
                           ),
                         ))
                     : Container(
+                        child: SingleChildScrollView(
                         child: Column(
-                        children: [
-                          Container(
-                            width: size.width,
-                            height: size.height <= 569
-                                ? size.height * 0.21
-                                : size.height * 0.17,
-                            child: CalendarListWidget(
-                              fontSize:
-                                  size.height <= 569 ? textSizeSmall14 : 16,
-                              onSelectDate: (date) {
-                                selectDate(date);
-                              },
+                          children: [
+                            Container(
+                              width: size.width,
+                              height: size.height <= 569
+                                  ? size.height * 0.21
+                                  : size.height * 0.17,
+                              child: CalendarListWidget(
+                                fontSize:
+                                    size.height <= 569 ? textSizeSmall14 : 16,
+                                onSelectDate: (date) {
+                                  selectDate(date);
+                                },
+                              ),
                             ),
-                          ),
-                          Expanded(
-                              child: Container(
-                            width: size.width,
-                            child: isLoading
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: state.meetings.length,
-                                    itemBuilder: (context, index) =>
-                                        SkeletonLess3WithAvatar(
-                                            size: size, row: 2))
-                                : ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: state.meetings.length,
-                                    itemBuilder: (context, index) => util
-                                                .yearFormat(_selectedDate) ==
-                                            util.yearFormat(
-                                                state.meetings[index].date)
-                                        ? ScheduleItem(
-                                            count: state
-                                                .meetings[index].members.length,
-                                            size: size,
-                                            title: state.meetings[index].title,
-                                            time1: util.hourFormat(
-                                                state.meetings[index].date),
-                                            time2: util.hourFormat(state
-                                                .meetings[index]
-                                                .meetingEndTime),
-                                            onClick: () {
-                                              if (_controller.isDismissed) {
-                                                setState(() {
-                                                  meetingID = state
-                                                      .meetings[index]
-                                                      .meetingID;
-                                                  scheduleClick =
-                                                      state.meetings[index];
-                                                });
+                            SizedBox(height: 30),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              width: size.width,
+                              height: size.height,
+                              child: Column(
+                                children: [
+                                  TitleDayFormatted(
+                                    currentDate: _selectedDate,
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Expanded(
+                                      child: Container(
+                                    width: size.width,
+                                    child: isLoading
+                                        ? ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: state.meetings.length,
+                                            itemBuilder: (context, index) =>
+                                                SkeletonLess3WithAvatar(
+                                                    size: size, row: 2))
+                                        : ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: state.meetings.length,
+                                            itemBuilder: (context, index) =>
+                                                util.yearFormat(
+                                                            _selectedDate) ==
+                                                        util.yearFormat(state
+                                                            .meetings[index]
+                                                            .date)
+                                                    ? ScheduleItem(
+                                                        count: state
+                                                            .meetings[index]
+                                                            .members
+                                                            .length,
+                                                        size: size,
+                                                        title: state
+                                                            .meetings[index]
+                                                            .title,
+                                                        time1: util.hourFormat(
+                                                            state
+                                                                .meetings[index]
+                                                                .date),
+                                                        time2: util.hourFormat(
+                                                            state
+                                                                .meetings[index]
+                                                                .meetingEndTime),
+                                                        onClick: () {
+                                                          if (_controller
+                                                              .isDismissed) {
+                                                            setState(() {
+                                                              meetingID = state
+                                                                  .meetings[
+                                                                      index]
+                                                                  .meetingID;
+                                                              scheduleClick =
+                                                                  state.meetings[
+                                                                      index];
+                                                            });
 
-                                                _controller.forward();
-                                              } else if (_controller
-                                                  .isCompleted)
-                                                _controller.reverse();
-                                            },
-                                          )
-                                        : Container()),
-                          ))
-                        ],
+                                                            _controller
+                                                                .forward();
+                                                          } else if (_controller
+                                                              .isCompleted)
+                                                            _controller
+                                                                .reverse();
+                                                        },
+                                                      )
+                                                    : Container()),
+                                  ))
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       )),
                 showDraggableSheet(size, scheduleClick),
               ],

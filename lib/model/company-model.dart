@@ -2,12 +2,14 @@ import 'package:zukses_app_1/model/user-model.dart';
 
 class CompanyModel {
   String name, code, email, id;
-  String startOfficeTime, endOfficeTime;
+  String startOfficeTime, endOfficeTime, phone, website, address, packageId;
   CompanyModel(
       {this.name,
       this.code,
       this.email,
       this.id,
+      this.phone,
+      this.website, this.address, this.packageId,
       this.startOfficeTime,
       this.endOfficeTime});
 

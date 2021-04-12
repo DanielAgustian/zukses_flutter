@@ -20,6 +20,7 @@ import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/payment-bloc/payment-bloc.dart';
+import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -113,6 +114,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PaymentBloc>(create: (context) => PaymentBloc()),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
         BlocProvider<SentInviteBloc>(create: (context) => SentInviteBloc()),
+        BlocProvider<PricingBloc>(create: (context) => PricingBloc()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{

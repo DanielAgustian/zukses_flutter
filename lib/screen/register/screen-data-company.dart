@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
+import 'package:zukses_app_1/bloc/bussiness-scope/bussiness-scope-event.dart';
+import 'package:zukses_app_1/bloc/bussiness-scope/bussiness-scope-state.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-event.dart';
+import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/business-scope-model.dart';
+import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 
 class DataCompany extends StatefulWidget {
-  DataCompany({Key key, this.title}) : super(key: key);
+  DataCompany({Key key, this.title, this.token, this.paketID})
+      : super(key: key);
   final String title;
+  final String token;
+  final String paketID;
   @override
   _DataCompanyScreen createState() => _DataCompanyScreen();
 }
@@ -20,18 +32,18 @@ class _DataCompanyScreen extends State<DataCompany> {
   final textWebsite = TextEditingController();
   final textAddress = TextEditingController();
   String textItem = "";
+  String idScope = "";
   bool error = false;
-  List<String> bussinessScope = [
-    "Choose Your Business Scope",
-    "Technology",
-    "Accounting",
-    "Communication"
-  ];
+  bool isLoading = true;
+  List<String> bussinessScope = [];
+  List<BussinessScopeModel> scopeData = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    textItem = bussinessScope[0];
+    BlocProvider.of<BussinessScopeBloc>(context)
+        .add(LoadAllBussinessScopeEvent());
+    print("Token = " + widget.token);
   }
 
   _errorFalse() {
@@ -83,7 +95,17 @@ class _DataCompanyScreen extends State<DataCompany> {
       _errorTrue();
     }*/
     if (!error) {
+      _searchIDScope(textItem);
+      CompanyModel model = CompanyModel(
+          name: textName.text,
+          phone: textPhone.text,
+          email: textEmail.text,
+          website: textWebsite.text,
+          address: textAddress.text,
+          packageId: widget.paketID);
       print("Data is Completed");
+      BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
+          companyModel: model, token: widget.token, scope: idScope));
       /*Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => RegisApproved()));*/
     }
@@ -97,6 +119,16 @@ class _DataCompanyScreen extends State<DataCompany> {
     }*/
   }
 
+  _searchIDScope(String textItem) {
+    scopeData.forEach((element) {
+      if (textItem == element.name) {
+        setState(() {
+          idScope = element.id.toString();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -104,216 +136,266 @@ class _DataCompanyScreen extends State<DataCompany> {
     return Scaffold(
       appBar: appBarOutside,
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: paddingHorizontal, vertical: paddingVertical),
-          width: size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TitleFormat(
-                size: size,
-                title: "Company Data",
-                detail:
-                    "Please fill in your company data to help us setting your account",
-              ),
-              Container(
-                width: size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: error ? colorError : colorBorder, width: 1),
-                    color: colorBackground,
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textName,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      labelText: "Legal Name (Required)",
-                      labelStyle: TextStyle(
-                        color: error ? colorError : colorNeutral2,
-                      ),
-                      hintText: "Legal Name",
-                      hintStyle: TextStyle(
-                        color: colorNeutral2,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              Container(
-                width: size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: error ? colorError : colorBorder, width: 1),
-                    color: colorBackground,
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textPhone,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      labelText: "Company Phone (Required)",
-                      labelStyle: TextStyle(
-                        color: error ? colorError : colorNeutral2,
-                      ),
-                      hintText: "Company phone",
-                      hintStyle: TextStyle(
-                        color: colorNeutral2,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              Container(
-                width: size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: error ? colorError : colorBorder, width: 1),
-                    color: colorBackground,
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textEmail,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      labelText: "Company Email (Required)",
-                      labelStyle: TextStyle(
-                        color: error ? colorError : colorNeutral2,
-                      ),
-                      hintText: "Company email",
-                      hintStyle: TextStyle(
-                        color: colorNeutral2,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              Container(
-                width: size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(color: colorBorder, width: 1),
-                    color: colorBackground,
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textWebsite,
-                  decoration: InputDecoration(
-                      labelText: "Company Website",
-                      labelStyle: TextStyle(
-                        color: colorNeutral2,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      hintText: "Company website",
-                      hintStyle: TextStyle(
-                        color: colorNeutral2,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              Container(
-                width: size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: error ? colorError : colorBorder, width: 1),
-                    color: colorBackground,
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textAddress,
-                  decoration: InputDecoration(
-                      labelText: "Company Address (Required)",
-                      labelStyle: TextStyle(
-                        color: error ? colorError : colorNeutral2,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      hintText: "Company address",
-                      hintStyle: TextStyle(
-                        color: colorNeutral2,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: colorBorder),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: FormField<String>(
-                    builder: (FormFieldState<String> state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(
-                            labelStyle: TextStyle(fontSize: 12),
-                            errorStyle:
-                                TextStyle(color: colorError, fontSize: 16.0),
-                            hintText: 'Your Bussiness Scope',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
-                        isEmpty: textItem == '',
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: textItem,
-                            isDense: true,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                textItem = newValue;
-                              });
-                            },
-                            items: bussinessScope.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+        child: Column(
+          children: [
+            BlocListener<BussinessScopeBloc, BussinessScopeState>(
+              listener: (context, state) {
+                if (state is BussinessScopeStateSuccessLoad) {
+                  setState(() {
+                    textItem = state.bussinessScope[0].name;
+                  });
+                  setState(() {
+                    scopeData.clear();
+                    scopeData.addAll(state.bussinessScope);
+                  });
+
+                  state.bussinessScope.forEach((element) {
+                    bussinessScope.add(element.name);
+                  });
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              },
+              child: Container(),
+            ),
+            BlocListener<CompanyBloc, CompanyState>(
+                listener: (context, state) {
+                  if (state is AddCompanyStateSuccessLoad) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RegisApproved()));
+                  }
+                },
+                child: Container()),
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: paddingHorizontal,
+                        vertical: paddingVertical),
+                    width: size.width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TitleFormat(
+                          size: size,
+                          title: "Company Data",
+                          detail:
+                              "Please fill in your company data to help us setting your account",
+                        ),
+                        Container(
+                          width: size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: error ? colorError : colorBorder,
+                                  width: 1),
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            onChanged: (val) {},
+                            controller: textName,
+                            decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                                labelText: "Legal Name (Required)",
+                                labelStyle: TextStyle(
+                                  color: error ? colorError : colorNeutral2,
+                                ),
+                                hintText: "Legal Name",
+                                hintStyle: TextStyle(
+                                  color: colorNeutral2,
+                                ),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none),
                           ),
                         ),
-                      );
-                    },
-                  )),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              LongButton(
-                  size: size,
-                  title: "Save",
-                  bgColor: colorPrimary,
-                  textColor: colorBackground,
-                  onClick: () {
-                    _gotoAccepted();
-                  }),
-              SizedBox(
-                height: size.height < 569 ? 5 : 10,
-              ),
-            ],
-          ),
+                        SizedBox(
+                          height: size.height < 569 ? 10 : 15,
+                        ),
+                        Container(
+                          width: size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: error ? colorError : colorBorder,
+                                  width: 1),
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            onChanged: (val) {},
+                            controller: textPhone,
+                            decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                                labelText: "Company Phone (Required)",
+                                labelStyle: TextStyle(
+                                  color: error ? colorError : colorNeutral2,
+                                ),
+                                hintText: "Company phone",
+                                hintStyle: TextStyle(
+                                  color: colorNeutral2,
+                                ),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height < 569 ? 10 : 15,
+                        ),
+                        Container(
+                          width: size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: error ? colorError : colorBorder,
+                                  width: 1),
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            onChanged: (val) {},
+                            controller: textEmail,
+                            decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                                labelText: "Company Email (Required)",
+                                labelStyle: TextStyle(
+                                  color: error ? colorError : colorNeutral2,
+                                ),
+                                hintText: "Company email",
+                                hintStyle: TextStyle(
+                                  color: colorNeutral2,
+                                ),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height < 569 ? 10 : 15,
+                        ),
+                        Container(
+                          width: size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: colorBorder, width: 1),
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            onChanged: (val) {},
+                            controller: textWebsite,
+                            decoration: InputDecoration(
+                                labelText: "Company Website",
+                                labelStyle: TextStyle(
+                                  color: colorNeutral2,
+                                ),
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                                hintText: "Company website",
+                                hintStyle: TextStyle(
+                                  color: colorNeutral2,
+                                ),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height < 569 ? 10 : 15,
+                        ),
+                        Container(
+                          width: size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: error ? colorError : colorBorder,
+                                  width: 1),
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            onChanged: (val) {},
+                            controller: textAddress,
+                            decoration: InputDecoration(
+                                labelText: "Company Address (Required)",
+                                labelStyle: TextStyle(
+                                  color: error ? colorError : colorNeutral2,
+                                ),
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                                hintText: "Company address",
+                                hintStyle: TextStyle(
+                                  color: colorNeutral2,
+                                ),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height < 569 ? 10 : 15,
+                        ),
+                        Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: colorBorder),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: FormField<String>(
+                              builder: (FormFieldState<String> state) {
+                                return InputDecorator(
+                                  decoration: InputDecoration(
+                                      labelStyle: TextStyle(fontSize: 12),
+                                      errorStyle: TextStyle(
+                                          color: colorError, fontSize: 16.0),
+                                      hintText: 'Your Bussiness Scope',
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0))),
+                                  isEmpty: textItem == '',
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: textItem,
+                                      isDense: true,
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          textItem = newValue;
+                                        });
+                                      },
+                                      items: bussinessScope.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )),
+                        SizedBox(
+                          height: size.height < 569 ? 10 : 15,
+                        ),
+                        LongButton(
+                            size: size,
+                            title: "Save",
+                            bgColor: colorPrimary,
+                            textColor: colorBackground,
+                            onClick: () {
+                              _gotoAccepted();
+                            }),
+                        SizedBox(
+                          height: size.height < 569 ? 5 : 10,
+                        ),
+                      ],
+                    ),
+                  ),
+          ],
         ),
       ),
     );

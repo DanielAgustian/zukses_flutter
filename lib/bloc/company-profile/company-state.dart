@@ -38,3 +38,17 @@ class CompanyCodeStateSuccessLoad extends CompanyState {
 }
 class CompanyCodeStateFailLoad extends CompanyState {}
 
+class AddCompanyStateSuccessLoad extends CompanyState {
+  final int code;
+
+  AddCompanyStateSuccessLoad( {this.code});
+
+  List<Object> get props => [code];
+
+  @override
+  String toString() {
+    return 'Data : { Company List: $code }';
+  }
+}
+
+class AddCompanyStateFailLoad extends CompanyState {}

@@ -22,9 +22,10 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class SetupRegister extends StatefulWidget {
-  SetupRegister({Key key, this.title, this.register}) : super(key: key);
+  SetupRegister({Key key, this.title, this.token}) : super(key: key);
   final String title;
-  final RegisterModel register;
+  final String token;
+  //final RegisterModel register;
   @override
   _SetupRegisterScreen createState() => _SetupRegisterScreen();
 }
@@ -73,13 +74,15 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   }
 
   _registerAccount() {
-    BlocProvider.of<RegisterBloc>(context)
-        .add(AddRegisterIndividuEvent(widget.register));
+    /*BlocProvider.of<RegisterBloc>(context)
+        .add(AddRegisterIndividuEvent(widget.register));*/
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => RegisApproved()));
   }
 
   _catchPopPricing() async {
     bool result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Pricing()));
+        context, MaterialPageRoute(builder: (context) => Pricing(token: widget.token,)));
     if (result == true) {
       setState(() {
         boolOrganization = [true, false];
@@ -93,6 +96,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
       //THE WANT TO CREATE AS INDIVIDUAL
       if (boolTeam[0]) {
         //THEY WANT TO CREATE A TEAM
+        BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+            token: widget.token, namaTeam: textTeamName.text));
         print("TextBox Team :" + textTeamName.text);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SetupTeam()));
@@ -109,8 +114,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
 
         //if they choose company code
         //Navigator.push(co);
-        BlocProvider.of<RegisterBloc>(context).add(AddRegisterCompanyEvent(
-            register: widget.register, kode: companyCode));
+        BlocProvider.of<RegisterBloc>(context).add(
+            AddRegisterCompanyEvent(token: widget.token, kode: companyCode));
       }
       if (boolOrganizationExist[1]) {
         //THEIR ORGANIZATION ISNT REGISTERED
@@ -129,16 +134,21 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     }
   }
 
-  _sharedPrefLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("userLogin", widget.register.email);
-    await prefs.setString("passLogin", widget.register.password);
+  _debug() async {
+    String prinitng =
+        await Util().createDynamicLink(page: "forgotpassword", short: false);
+    print(prinitng);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _debug();
+        },
+      ),
       appBar: appBarOutside,
       body: SingleChildScrollView(
         child: Padding(
@@ -154,7 +164,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     listener: (context, state) {
                       if (state is RegisterStateSuccess) {
                         if (state.authUser.where == "individu") {
-                          _sharedPrefLogin();
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -168,7 +177,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             color: colorError,
                             msg: "Register Failed");
                       } else if (state is RegisterStateCompanySuccess) {
-                        _sharedPrefLogin();
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
