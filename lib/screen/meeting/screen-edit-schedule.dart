@@ -21,12 +21,15 @@ import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
-class AddScheduleScreen extends StatefulWidget {
+class EditScheduleScreen extends StatefulWidget {
+  final ScheduleModel model;
+
+  const EditScheduleScreen({Key key, this.model}) : super(key: key);
   @override
-  _AddScheduleScreenState createState() => _AddScheduleScreenState();
+  _EditScheduleScreenState createState() => _EditScheduleScreenState();
 }
 
-class _AddScheduleScreenState extends State<AddScheduleScreen>
+class _EditScheduleScreenState extends State<EditScheduleScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController textTitle = new TextEditingController();
   TextEditingController textDescription = new TextEditingController();
@@ -209,8 +212,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           userID: choosedUser);
 
       // call event to add meeting
-      BlocProvider.of<MeetingBloc>(context)
-          .add(AddMeetingEvent(model: meeting));
+      /*BlocProvider.of<MeetingBloc>(context)
+          .add(AddMeetingEvent(model: meeting));*/
     }
   }
 

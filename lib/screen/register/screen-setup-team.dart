@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/register/register-event.dart';
+import 'package:zukses_app_1/bloc/register/register-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
@@ -8,23 +12,35 @@ import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:clipboard/clipboard.dart';
 
 class SetupTeam extends StatefulWidget {
-  SetupTeam({Key key, this.title}) : super(key: key);
+  SetupTeam({Key key, this.title, this.link, this.token, this.namaTeam})
+      : super(key: key);
   final String title;
+  final String link;
+  final String token;
+  final String namaTeam;
   @override
   _SetupTeamScreen createState() => _SetupTeamScreen();
 }
 
 /// This is the stateless widget that the main application instantiates.
 class _SetupTeamScreen extends State<SetupTeam> {
+  List<TextEditingController> textEmail = [];
+  List<String> listEmail = [];
   final textLink = TextEditingController();
   final textInvEmail = TextEditingController();
-  final data = "https://api-zukses.yokesen.com/api/user-attendance/3/2021";
+  String data = "";
   bool errorInvEmail = false;
+  int jumlahTextEditing = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getLinkTeam();
+    data = widget.link;
+    for (int i = 0; i < 4; i++) {
+      textEmail.add(TextEditingController());
+    }
+    textLink.text = widget.link;
   }
 
   void getLinkTeam() {
@@ -32,8 +48,12 @@ class _SetupTeamScreen extends State<SetupTeam> {
   }
 
   void goTo() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => RegisApproved()));
+    List<String> listData = [];
+    BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+        namaTeam: widget.namaTeam,
+        token: widget.token,
+        link: widget.link,
+        email: listData));
   }
 
   void copyLink() {
@@ -50,15 +70,38 @@ class _SetupTeamScreen extends State<SetupTeam> {
       Pattern pattern =
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
       RegExp regex = new RegExp(pattern);
-      if (regex.hasMatch(textInvEmail.text)) {
-        setState(() {
-          errorInvEmail = false;
-        });
-      } else {
-        setState(() {
-          errorInvEmail = true;
-        });
+      int temp = 0;
+      while (temp <= jumlahTextEditing) {
+        if (regex.hasMatch(textEmail[temp].text)) {
+          setState(() {
+            errorInvEmail = false;
+          });
+        } else {
+          setState(() {
+            errorInvEmail = true;
+          });
+        }
+        temp++;
       }
+    }
+
+    print("Click Invitation");
+    print("Jumlah Text Editing:" + jumlahTextEditing.toString());
+    print("TextEmail[0]" + textEmail[0].text);
+    print(errorInvEmail);
+    setState(() {
+      errorInvEmail = false;
+    });
+
+    if (errorInvEmail == false) {
+      for (int i = 0; i <= jumlahTextEditing; i++) {
+        listEmail.add(textEmail[i].text);
+      }
+      BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+          namaTeam: widget.namaTeam,
+          token: widget.token,
+          link: widget.link,
+          email: listEmail));
     }
   }
 
@@ -74,6 +117,16 @@ class _SetupTeamScreen extends State<SetupTeam> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              BlocListener<RegisterBloc, RegisterState>(
+                  listener: (context, state) {
+                    if (state is RegisterStateTeamSuccess) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisApproved()));
+                    }
+                  },
+                  child: Container()),
               Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
@@ -174,7 +227,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.text,
                       onChanged: (val) {},
-                      controller: textInvEmail,
+                      controller: textEmail[0],
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(horizontal: 20),
                           hintText: "Enter email here",
@@ -185,6 +238,153 @@ class _SetupTeamScreen extends State<SetupTeam> {
                           focusedBorder: InputBorder.none),
                     ),
                   )),
+              jumlahTextEditing > 0
+                  ? Container(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                              width: size.width * 0.92,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: errorInvEmail
+                                          ? colorError
+                                          : colorBorder),
+                                  color: colorBackground,
+                                  boxShadow: [boxShadowStandard],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                child: TextFormField(
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (val) {},
+                                  controller: textEmail[1],
+                                  decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      hintText: "Enter email here",
+                                      hintStyle: TextStyle(
+                                        color: errorInvEmail
+                                            ? colorError
+                                            : colorNeutral2,
+                                      ),
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none),
+                                ),
+                              )),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              jumlahTextEditing > 1
+                  ? Container(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                              width: size.width * 0.92,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: errorInvEmail
+                                          ? colorError
+                                          : colorBorder),
+                                  color: colorBackground,
+                                  boxShadow: [boxShadowStandard],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                child: TextFormField(
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (val) {},
+                                  controller: textEmail[2],
+                                  decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      hintText: "Enter email here",
+                                      hintStyle: TextStyle(
+                                        color: errorInvEmail
+                                            ? colorError
+                                            : colorNeutral2,
+                                      ),
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none),
+                                ),
+                              )),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              jumlahTextEditing > 2
+                  ? Container(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                              width: size.width * 0.92,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: errorInvEmail
+                                          ? colorError
+                                          : colorBorder),
+                                  color: colorBackground,
+                                  boxShadow: [boxShadowStandard],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                child: TextFormField(
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (val) {},
+                                  controller: textEmail[3],
+                                  decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      hintText: "Enter email here",
+                                      hintStyle: TextStyle(
+                                        color: errorInvEmail
+                                            ? colorError
+                                            : colorNeutral2,
+                                      ),
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none),
+                                ),
+                              )),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              SizedBox(
+                height: size.height < 569 ? 5 : 10,
+              ),
+              jumlahTextEditing < 3
+                  ? Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          if (jumlahTextEditing <= 3) {
+                            setState(() {
+                              jumlahTextEditing++;
+                            });
+                          }
+                        },
+                        child: Text(
+                          "+ Add Team",
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: size.height < 569 ? 10 : 12),
+                        ),
+                      ),
+                    )
+                  : Container(),
               SizedBox(
                 height: 20,
               ),

@@ -2,6 +2,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -78,6 +79,11 @@ class Util {
 
   String generateMd5(String input) {
     return md5.convert(utf8.encode(input)).toString();
+  }
+
+  saveSharedPreferences(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
   }
 
   Future<String> createDynamicLink(

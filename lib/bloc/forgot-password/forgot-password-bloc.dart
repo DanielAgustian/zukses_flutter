@@ -33,9 +33,9 @@ class ForgotPasswordBloc
 
   Stream<ForgotPasswordState> mapSentLink(SentLinkEvent event) async* {
     yield ForgotPasswordStateLoading();
-    var res = await _forgotPasswordServicesHTTP.sentLinkToEmail(event.email);
+    var res = await _forgotPasswordServicesHTTP.sentLinkToEmail(event.email, event.dynamicLink);
     if (res == 200) {
-      yield ForgotPasswordStateSuccess();
+      yield ForgotPasswordStateSuccess(res);
     } else {
       yield ForgotPasswordStateFailed();
     }
@@ -44,9 +44,9 @@ class ForgotPasswordBloc
   Stream<ForgotPasswordState> mapSentNewPassword(
       SentNewPasswordEvent event) async* {
     yield ForgotPasswordStateLoading();
-    var res = await _forgotPasswordServicesHTTP.sentNewPassword(event.password);
+    var res = await _forgotPasswordServicesHTTP.sentNewPassword(event.password, event.token);
     if (res == 200) {
-      yield ForgotPasswordStateSuccess();
+      yield ForgotPasswordStateSuccess(res);
     } else {
       yield ForgotPasswordStateFailed();
     }

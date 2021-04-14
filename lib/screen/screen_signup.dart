@@ -19,6 +19,7 @@ import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-setup.dart';
 import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
+import 'package:recase/recase.dart';
 
 class ScreenSignUp extends StatefulWidget {
   ScreenSignUp({Key key, this.title}) : super(key: key);
@@ -41,6 +42,8 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   bool _usernameValidator = false;
   bool _passValidator = false;
   bool _emailValidator = false;
+  List<bool> empty = [false, false, false, false];
+  String failedRegister = "";
 
   void register() {
     if (textEmail.text == "") {
@@ -48,21 +51,29 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         _emailValidator = true;
       });
     } else {
+      print(textUsername.text.titleCase);
       Pattern pattern =
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(textEmail.text)) {
+      if (textEmail.text == "") {
         setState(() {
-          _emailValidator = true;
+          empty[0] = true;
         });
       } else {
-        setState(() {
-          _emailValidator = false;
-        });
+        if (!regex.hasMatch(textEmail.text)) {
+          setState(() {
+            _emailValidator = true;
+          });
+        } else {
+          setState(() {
+            _emailValidator = false;
+          });
+        }
       }
     }
     if (textUsername.text == "") {
       setState(() {
+        empty[1] = true;
         _usernameValidator = true;
       });
     } else {
@@ -72,6 +83,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
     }
     if (textPassword.text == "") {
       setState(() {
+        empty[2] = true;
         _passValidator = true;
       });
     } else {
@@ -81,6 +93,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
     }
     if (textConfirmPassword.text == "") {
       setState(() {
+        empty[3] = true;
         _confirmPassValidator = true;
       });
     } else {
@@ -89,10 +102,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
           _confirmPassValidator = true;
           _passValidator = true;
         });
+      } else {
+        setState(() {
+          _confirmPassValidator = false;
+        });
       }
-      setState(() {
-        _confirmPassValidator = false;
-      });
     }
     if (!_emailValidator &&
         !_usernameValidator &&
@@ -100,7 +114,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         !_confirmPassValidator) {
       RegisterModel register = RegisterModel(
           email: textEmail.text,
-          username: textUsername.text,
+          username: textUsername.text.titleCase,
           password: textPassword.text,
           confirmPassword: textConfirmPassword.text);
       BlocProvider.of<RegisterBloc>(context)
@@ -125,7 +139,6 @@ class _ScreenSignUp extends State<ScreenSignUp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("userLogin", textEmail.text);
     await prefs.setString("passLogin", textPassword.text);
-    
   }
 
   @override
@@ -153,6 +166,12 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                         token: state.authUser.token,
                                       )),
                             );
+                          } else if (state is RegisterStateFailed) {
+                            setState(() {
+                              failedRegister =
+                                  "Email already used. Please try another email.";
+                              _emailValidator = true;
+                            });
                           }
                         },
                         child: Container(),
@@ -169,7 +188,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _emailValidator
+                                  border: _emailValidator || empty[0]
                                       ? Border.all(color: colorError)
                                       : Border.all(color: colorBorder),
                                   color: colorBackground,
@@ -177,7 +196,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[0] = false;
+                                    });
+                                  }
+                                },
                                 keyboardType: TextInputType.emailAddress,
                                 controller: textEmail,
                                 decoration: InputDecoration(
@@ -199,7 +224,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _usernameValidator
+                                  border: _usernameValidator || empty[1]
                                       ? Border.all(color: colorError)
                                       : Border.all(color: colorBorder),
                                   color: colorBackground,
@@ -207,12 +232,18 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[1] = false;
+                                    });
+                                  }
+                                },
                                 controller: textUsername,
                                 decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.symmetric(horizontal: 20),
-                                    hintText: "Username",
+                                    hintText: "Full Name",
                                     hintStyle: TextStyle(
                                       color: _usernameValidator
                                           ? colorError
@@ -228,7 +259,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _passValidator
+                                  border: _passValidator || empty[2]
                                       ? Border.all(color: colorError)
                                       : Border.all(color: colorBorder),
                                   color: colorBackground,
@@ -237,7 +268,22 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               child: TextFormField(
                                 obscureText: _obscureText1,
                                 textInputAction: TextInputAction.next,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[2] = false;
+                                    });
+                                  }
+                                  if (val.length >= 0 && val.length < 6) {
+                                    setState(() {
+                                      _passValidator = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _passValidator = false;
+                                    });
+                                  }
+                                },
                                 controller: textPassword,
                                 decoration: InputDecoration(
                                     contentPadding:
@@ -252,11 +298,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                     focusedBorder: InputBorder.none,
                                     suffixIcon: IconButton(
                                       icon: FaIcon(
-                                        _obscureText1
-                                            ? FontAwesomeIcons.solidEye
-                                            : FontAwesomeIcons.solidEyeSlash,
-                                        color: colorNeutral2,
-                                      ),
+                                          _obscureText1
+                                              ? FontAwesomeIcons.solidEye
+                                              : FontAwesomeIcons.solidEyeSlash,
+                                          color: colorNeutral2,
+                                          size: size.height < 569 ? 15 : 20),
                                       onPressed: () {
                                         setState(() {
                                           _obscureText1 = !_obscureText1;
@@ -271,7 +317,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _passValidator
+                                  border: _confirmPassValidator || empty[3]
                                       ? Border.all(color: colorError, width: 1)
                                       : Border.all(
                                           color: colorBorder, width: 1),
@@ -281,7 +327,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                               child: TextFormField(
                                 obscureText: _obscureText2,
                                 textInputAction: TextInputAction.go,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[3] = false;
+                                    });
+                                  }
+                                },
                                 controller: textConfirmPassword,
                                 decoration: InputDecoration(
                                     contentPadding:
@@ -296,11 +348,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                     focusedBorder: InputBorder.none,
                                     suffixIcon: IconButton(
                                       icon: FaIcon(
-                                        _obscureText2
-                                            ? FontAwesomeIcons.solidEye
-                                            : FontAwesomeIcons.solidEyeSlash,
-                                        color: colorNeutral2,
-                                      ),
+                                          _obscureText2
+                                              ? FontAwesomeIcons.solidEye
+                                              : FontAwesomeIcons.solidEyeSlash,
+                                          color: colorNeutral2,
+                                          size: size.height < 569 ? 15 : 20),
                                       onPressed: () {
                                         setState(() {
                                           _obscureText2 = !_obscureText2;
@@ -309,6 +361,53 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                     )),
                               ),
                             ),
+                            empty[0] || empty[1] || empty[2] || empty[3]
+                                ? Center(
+                                    child: Text(
+                                      "Please fill the textfield.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: colorError, fontSize: 10),
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      failedRegister != ""
+                                          ? Center(
+                                              child: Text(
+                                                failedRegister,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: colorError,
+                                                    fontSize: 10),
+                                              ),
+                                            )
+                                          : Container(),
+                                      _passValidator &&
+                                              textPassword.text.length < 6
+                                          ? Center(
+                                              child: Text(
+                                                "Short password easy to guess. Try one at least 6 characters.",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: colorError,
+                                                    fontSize: 10),
+                                              ),
+                                            )
+                                          : Container(),
+                                      _passValidator && _confirmPassValidator
+                                          ? Center(
+                                              child: Text(
+                                                "Those passwords didn't match. Please make sure your password match.",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: colorError,
+                                                    fontSize: 10),
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  )
                           ],
                         ),
                       ),

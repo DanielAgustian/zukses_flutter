@@ -23,7 +23,7 @@ class AuthServiceHTTP {
       body: jsonEncode(<String, String>{'email': email, 'password': password}),
     );
     print("email: " + email);
-    print("Auth Code" + response.statusCode.toString());
+    print("Auth Code: " + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,

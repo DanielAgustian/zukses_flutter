@@ -8,8 +8,8 @@ import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/button/button-small-outlined.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:zukses_app_1/component/schedule/schedule-item-request.dart'; 
-import 'package:zukses_app_1/component/schedule/user-assigned-item.dart'; 
+import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
+import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -88,7 +88,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                 ],
               )
             : Center(
-                child: Text("N0 Meeting For Now"),
+                child: Text("No Meeting For Now"),
               );
       } else {
         return Container();
@@ -130,6 +130,14 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                         color: colorPrimary,
                         fontWeight: FontWeight.w700),
                   ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(util.dateNumbertoCalendar(model.date),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorNeutral2,
+                      )),
                   SizedBox(
                     height: 5,
                   ),

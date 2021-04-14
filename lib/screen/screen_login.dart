@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +39,7 @@ class _ScreenLogin extends State<ScreenLogin> {
   bool _usernameValidator = false;
   bool _passValidator = false;
   bool loading = false;
-
+  bool errorLogin = false;
   void login() {
     setState(() {
       loading = true;
@@ -51,7 +53,7 @@ class _ScreenLogin extends State<ScreenLogin> {
         _usernameValidator = false;
       });
     }
-    if (textPassword.text == "") {
+    if (textPassword.text == "" || textPassword.text.length < 6) {
       setState(() {
         _passValidator = true;
       });
@@ -60,7 +62,10 @@ class _ScreenLogin extends State<ScreenLogin> {
         _passValidator = false;
       });
     }
-
+    print("Validator = " +
+        _usernameValidator.toString() +
+        "," +
+        _passValidator.toString());
     if (!_usernameValidator && !_passValidator) {
       BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
           email: textUsername.text, password: textPassword.text));
@@ -78,6 +83,13 @@ class _ScreenLogin extends State<ScreenLogin> {
       //   }
       // });
     }
+  }
+
+  timerLoading() {
+    Duration time = Duration(seconds: 3);
+    Timer _timer = new Timer.periodic(time, (timer) {
+      setState(() {});
+    });
   }
 
   _loginSharedPref() async {
@@ -105,6 +117,7 @@ class _ScreenLogin extends State<ScreenLogin> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           //Success Login
+
           if (state is AuthStateSuccessLoad) {
             print(state.authUser.user.email);
             print(state.authUser.token);
@@ -117,8 +130,12 @@ class _ScreenLogin extends State<ScreenLogin> {
             );
             //Failed Login
           } else if (state is AuthStateFailLoad) {
+            print("NANnananananan");
             setState(() {
+              errorLogin = true;
               loading = false;
+              _passValidator = true;
+              _usernameValidator = true;
             });
             Util().showToast(
                 context: this.context,
@@ -160,7 +177,7 @@ class _ScreenLogin extends State<ScreenLogin> {
                                 decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.symmetric(horizontal: 20),
-                                    hintText: "Username",
+                                    hintText: "Email",
                                     hintStyle: TextStyle(
                                       color: _usernameValidator
                                           ? colorError
@@ -199,11 +216,11 @@ class _ScreenLogin extends State<ScreenLogin> {
                                   focusedBorder: InputBorder.none,
                                   suffixIcon: IconButton(
                                     icon: FaIcon(
-                                      _obscureText
-                                          ? FontAwesomeIcons.solidEye
-                                          : FontAwesomeIcons.solidEyeSlash,
-                                      color: colorNeutral2,
-                                    ),
+                                        _obscureText
+                                            ? FontAwesomeIcons.solidEye
+                                            : FontAwesomeIcons.solidEyeSlash,
+                                        color: colorNeutral2,
+                                        size: size.height < 569 ? 15 : 20),
                                     onPressed: () {
                                       setState(() {
                                         _obscureText = !_obscureText;
@@ -211,6 +228,21 @@ class _ScreenLogin extends State<ScreenLogin> {
                                     },
                                   )),
                             ),
+                          ),
+                          errorLogin
+                              ? SizedBox(
+                                  height: 1,
+                                )
+                              : Container(),
+                          Center(
+                            child: errorLogin
+                                ? Text("Wrong Email or Password",
+                                    style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                      fontSize: size.height < 569 ? 10 : 11,
+                                      color: colorError,
+                                    )))
+                                : Container(),
                           ),
                           SizedBox(
                             height: size.height < 569 ? 3 : 5,

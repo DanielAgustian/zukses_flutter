@@ -8,6 +8,10 @@ abstract class ForgotPasswordState extends Equatable {
 
 class ForgotPasswordStateFailed extends ForgotPasswordState {}
 
-class ForgotPasswordStateSuccess extends ForgotPasswordState {}
+class ForgotPasswordStateSuccess extends ForgotPasswordState {
+  final int code;
+
+  ForgotPasswordStateSuccess(this.code);
+}
 
 class ForgotPasswordStateLoading extends ForgotPasswordState {}

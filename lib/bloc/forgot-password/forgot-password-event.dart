@@ -9,11 +9,13 @@ abstract class ForgotPasswordEvent extends Equatable {
 
 class SentLinkEvent extends ForgotPasswordEvent {
   final String email;
-  SentLinkEvent(this.email);
+  final String dynamicLink;
+  SentLinkEvent({this.email, this.dynamicLink});
   List<Object> get props => [];
 }
+
 class SentNewPasswordEvent extends ForgotPasswordEvent {
-  final String password;
-  SentNewPasswordEvent(this.password);
+  final String password, token;
+  SentNewPasswordEvent(this.password, this.token);
   List<Object> get props => [];
 }

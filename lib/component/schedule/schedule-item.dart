@@ -123,7 +123,7 @@ class ScheduleItem extends StatelessWidget {
                 txtColor: colorPrimary,
                 color: colorNeutral1);
             return Container();
-          } else {
+          } else if (state is MeetingStateFail) {
             Util().showToast(
                 context: context,
                 msg: "Failed to be Deleted",

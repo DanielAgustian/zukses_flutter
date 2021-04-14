@@ -101,6 +101,16 @@ class _MeetingScreenState extends State<MeetingScreen>
       getMeetingReq();
     }
   }
+  _getPopSearchScreen() async{
+    bool result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchSchedule()));
+    if(result == true){
+      _meetingBloc = BlocProvider.of<MeetingBloc>(context);
+    _meetingBloc.add(GetAcceptedMeetingEvent());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,10 +196,8 @@ class _MeetingScreenState extends State<MeetingScreen>
 
                   // Move to search screen
                   case 4:
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchSchedule()));
+                  _getPopSearchScreen();
+                    
                     break;
                 }
               },
@@ -509,7 +517,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                       ScrollController scrollController) {
                     return Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                       decoration: BoxDecoration(
                           boxShadow: [BoxShadow(blurRadius: 15)],
                           color: colorBackground,
@@ -519,63 +527,6 @@ class _MeetingScreenState extends State<MeetingScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /*scheduleModel.members == null
-                              ? Container()
-                              : Container(
-
-                                  child: ListView(
-                                    controller: scrollController,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          ...scheduleModel.members
-                                              .map((item) => Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 6),
-                                                    child: Row(
-                                                      children: [
-                                                        UserAvatar(
-                                                          avatarRadius:
-                                                              size.height <= 570
-                                                                  ? 15
-                                                                  : 20,
-                                                          dotSize:
-                                                              size.height <= 570
-                                                                  ? 8
-                                                                  : 10,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Text(
-                                                          "User " +
-                                                              item.name +
-                                                              " (" +
-                                                              util.acceptancePrint(
-                                                                  item.accepted) +
-                                                              ") ",
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                size.height <=
-                                                                        570
-                                                                    ? 14
-                                                                    : 16,
-                                                            color: colorPrimary,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                    ],
-                                  ),
-                                  ),*/
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -588,23 +539,21 @@ class _MeetingScreenState extends State<MeetingScreen>
                                     color: colorPrimary,
                                     fontWeight: FontWeight.w700),
                               ),
-                              IconButton(
-                                icon: FaIcon(
-                                  FontAwesomeIcons.times,
-                                  color: colorPrimary,
-                                ),
-                                onPressed: () {
+                              InkWell(
+                                onTap: () {
                                   _controller.reverse();
                                   setState(() {
                                     removeBackgroundDialog =
                                         !removeBackgroundDialog;
                                   });
                                 },
-                              )
+                                child: FaIcon(FontAwesomeIcons.times,
+                                    color: colorPrimary, size: 20),
+                              ),
                             ],
                           ),
                           SizedBox(
-                            height: size.height <= 570 ? 2 : 5,
+                            height: size.height < 569 ? 2 : 5,
                           ),
                           Text(
                             "$time1 - $time2",
@@ -618,7 +567,6 @@ class _MeetingScreenState extends State<MeetingScreen>
                           ),
                           Container(
                             width: size.width,
-                            height: 0.09 * size.height,
                             child: Text(
                               scheduleModel.description,
                               style: TextStyle(
@@ -637,61 +585,64 @@ class _MeetingScreenState extends State<MeetingScreen>
                                 color: colorPrimary,
                                 fontWeight: FontWeight.bold),
                           ),
+                          SizedBox(
+                            height: 5,
+                          ),
                           scheduleModel.members == null
                               ? Text("Data Null")
                               : Container(
-                                  height: 0.2 * size.height,
-                                  child: ListView(
-                                    controller: scrollController,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          ...scheduleModel.members
-                                              .map((item) => Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 6),
-                                                    child: Row(
-                                                      children: [
-                                                        UserAvatar(
-                                                          avatarRadius:
-                                                              size.height <= 570
-                                                                  ? 15
-                                                                  : 20,
-                                                          dotSize:
-                                                              size.height <= 570
-                                                                  ? 8
-                                                                  : 10,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Text(
-                                                          "User " +
-                                                              item.name +
-                                                              " (" +
-                                                              util.acceptancePrint(
-                                                                  item.accepted) +
-                                                              ") ",
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                size.height <=
-                                                                        570
-                                                                    ? 14
-                                                                    : 16,
-                                                            color: colorPrimary,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                    ],
-                                  ),
+                                  height: 0.3 * size.height,
+                                  child: ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: scheduleModel.members.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                UserAvatar(
+                                                  avatarRadius:
+                                                      size.height <= 570
+                                                          ? 15
+                                                          : 20,
+                                                  dotSize: size.height <= 570
+                                                      ? 8
+                                                      : 10,
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "User " +
+                                                      scheduleModel
+                                                          .members[index].name +
+                                                      " (" +
+                                                      util.acceptancePrint(
+                                                          scheduleModel
+                                                              .members[index]
+                                                              .accepted) +
+                                                      ") ",
+                                                  style: TextStyle(
+                                                    fontSize: size.height <= 570
+                                                        ? 14
+                                                        : 16,
+                                                    color: colorPrimary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: size.height < 569 ? 2 : 5,
+                                            )
+                                          ],
+                                        );
+                                      }),
+
+                                  
                                 )
                         ],
                       ),

@@ -22,15 +22,15 @@ class AddRegisterIndividuEvent extends RegisterEvent {
 }
 
 class AddRegisterTeamEvent extends RegisterEvent {
-  
+  final String link;
+  final List<String> email;
   final String namaTeam;
   final String token;
-  AddRegisterTeamEvent({ this.namaTeam, this.token});
+  AddRegisterTeamEvent({this.namaTeam, this.token, this.link, this.email});
   List<Object> get props => [namaTeam, token];
 }
 
 class AddRegisterCompanyEvent extends RegisterEvent {
-  
   final String kode;
   final String token;
   AddRegisterCompanyEvent({this.kode, this.token});

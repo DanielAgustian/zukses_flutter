@@ -54,6 +54,7 @@ class AuthenticationBloc
       print("AuthStateSuccessLoad");
       yield AuthStateSuccessLoad(res);
     } else {
+      print("AuthStateFailLoad");
       yield AuthStateFailLoad();
     }
   }

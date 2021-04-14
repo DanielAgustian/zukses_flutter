@@ -124,18 +124,26 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: FaIcon(
+                        child: InkWell(
+                          child: FaIcon(
                             FontAwesomeIcons.times,
                             color: colorPrimary,
                           ),
-                          onPressed: () {
+                          onTap: () {
                             _controller.reverse();
                           },
                         ),
                       )
                     ],
                   ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(util.dateNumbertoCalendar(model.date),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorNeutral2,
+                      )),
                   SizedBox(
                     height: 5,
                   ),

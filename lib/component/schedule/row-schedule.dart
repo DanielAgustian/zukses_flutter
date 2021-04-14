@@ -108,6 +108,7 @@ class AddScheduleRow2 extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 10),
                         child: Text(
                           value,
+                          textAlign: TextAlign.right,
                           style: TextStyle(
                               fontSize: fontSize,
                               color: colorPrimary,

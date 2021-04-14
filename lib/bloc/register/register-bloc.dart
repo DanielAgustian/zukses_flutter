@@ -36,7 +36,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Stream<RegisterState> mapAddRegisTeam(AddRegisterTeamEvent event) async* {
     yield RegisterStateLoading();
     var res = await _registerServicesHTTP.createRegisterTeam(
-        event.token, event.namaTeam);
+        event.token, event.namaTeam, event.link, event.email);
     if (res != null) {
       yield RegisterStateTeamSuccess(res);
     } else {

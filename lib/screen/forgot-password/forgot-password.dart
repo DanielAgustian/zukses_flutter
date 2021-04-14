@@ -1,13 +1,18 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zukses_app_1/bloc/forgot-password/forgot-password-bloc.dart';
+import 'package:zukses_app_1/bloc/forgot-password/forgot-password-event.dart';
+import 'package:zukses_app_1/bloc/forgot-password/forgot-password-state.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:zukses_app_1/screen/forgot-password/check-your-email.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ForgotPassword extends StatefulWidget {
   ForgotPassword({Key key, this.title}) : super(key: key);
@@ -22,7 +27,7 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
   bool errorEmail = false;
   String _linkMessage = "";
 
-  Future<void> _createDynamicLink(bool short) async {
+  /*Future<void> _createDynamicLink(bool short) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://zuksesapplication.page.link',
       link: Uri.parse(
@@ -49,7 +54,7 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
       _linkMessage = url.toString();
       print(_linkMessage);
     });
-  }
+  }*/
 
   //Goto Next Page
   _goTo() {
@@ -73,10 +78,16 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
     }
 
     if (!errorEmail) {
-      _createDynamicLink(false);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => CheckEmail(email: textEmail.text,)));
+      //_createDynamicLink(false);
+      _forgotPasswordProcess();
     }
+  }
+
+  _forgotPasswordProcess() async {
+    String data =
+        await Util().createDynamicLink(short: false, page: "forgotpassword");
+    BlocProvider.of<ForgotPasswordBloc>(context)
+        .add(SentLinkEvent(email: textEmail.text, dynamicLink: data));
   }
 
   gotoLogin() {
@@ -95,14 +106,19 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
           child: Center(
             child: Column(
               children: [
-                _linkMessage == null
-                    ? Container()
-                    : InkWell(
-                        onTap: () {
-                          launch(_linkMessage);
-                        },
-                        child: Text(_linkMessage),
-                      ),
+                BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+                  listener: (context, state) {
+                    if (state is ForgotPasswordStateSuccess) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CheckEmail(
+                                    email: textEmail.text,
+                                  )));
+                    }
+                  },
+                  child: Container(),
+                ),
                 TitleFormat(
                   size: size,
                   title: "Forgot Password",

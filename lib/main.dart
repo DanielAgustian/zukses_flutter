@@ -54,10 +54,14 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
 
-  runApp(DevicePreview(
-      builder: (context) => MyApp(
-            token: token,
-          )));
+  runApp(
+      //DevicePreview(
+      //builder: (context) =>
+      MyApp(
+    token: token,
+  )
+      //)
+      );
 }
 
 class MyApp extends StatelessWidget {
@@ -209,12 +213,13 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   var dayOfWeek = 1;
-
+  int _currentPage = 0;
   var _linkMessage = "";
+  String sprefToken = '';
   DateFormat dayName = DateFormat('E');
-
+  Timer _timerLink;
   bool getDynamicLinkDone = false;
   PageController _controller;
   static const _kDuration = const Duration(milliseconds: 300);
@@ -250,13 +255,36 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller = PageController(
       initialPage: 0,
     );
+    _controller.addListener(() {
+      setState(() {
+        _currentPage = _controller.page.toInt();
+      });
+    });
+    getToken();
+    WidgetsBinding.instance.addObserver(this);
     dynamicLink();
     _loadWidget();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _timerLink = new Timer(
+        const Duration(milliseconds: 1),
+        () {
+          dynamicLink();
+        },
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    if (_timerLink != null) {
+      _timerLink.cancel();
+    }
     super.dispose();
   }
 
@@ -269,18 +297,41 @@ class _MyHomePageState extends State<MyHomePage> {
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
       final Uri deepLink = dynamicLink?.link;
-      print(deepLink.path);
+      //print(deepLink.path);
+      print(deepLink);
       if (deepLink != null) {
+        print("deepLink " + deepLink.toString());
         // ignore: unawaited_futures
-        String email = deepLink.queryParameters['email'];
+        print("OnLink Data:");
         if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
           setState(() {
             getDynamicLinkDone = true;
           });
+          String token = deepLink.queryParameters['token'];
+          print("Onlink token" + token);
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => ResetPassword(email: email)));
+                  builder: (context) => ResetPassword(
+                        token: token,
+                      )));
+        } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
+          String token = deepLink.queryParameters['token'];
+          print("Onlink token" + token);
+          Util().saveSharedPreferences("link", deepLink.toString());
+          if (token == sprefToken) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => ScreenLogin()));
+          } else {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => ScreenSignUp()));
+          }
+          /*Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ResetPassword(
+                        token: token,
+                      )));*/
         }
       }
     }, onError: (OnLinkErrorException e) async {
@@ -291,16 +342,39 @@ class _MyHomePageState extends State<MyHomePage> {
     final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
     final Uri deepLink = data?.link;
-
+    print(deepLink);
     if (deepLink != null) {
-      String email = deepLink.queryParameters['email'];
+      print("GetInitialLink");
+      //String email = deepLink.queryParameters['email'];
+      print("Init" + deepLink.path);
       if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
+        String token = deepLink.queryParameters['token'];
+        print("Initial Link = " + token);
+
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => ResetPassword(email: email)));
+                builder: (context) => ResetPassword(
+                      token: token,
+                    )));
+      } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
+        String token = deepLink.queryParameters['token'];
+        print("Initial Link = " + token);
+        Util().saveSharedPreferences("link", deepLink.toString());
+        if (token == sprefToken) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => ScreenLogin()));
+        } else {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
+        }
       }
     }
+  }
+
+  getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    sprefToken = prefs.getString("token");
   }
 
   @override
@@ -355,26 +429,29 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
-                      Container(
-                        padding: EdgeInsets.only(top: 10),
-                        height: 30,
-                        margin: EdgeInsets.only(right: 20),
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            _controller.animateToPage(2,
-                                duration: Duration(milliseconds: 400),
-                                curve: Curves.linear);
-                          },
-                          child: Text(
-                            "SKIP",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(135, 147, 181, 0.9)),
-                          ),
-                        ),
-                      )
+                      _currentPage >= 2
+                          ? Container()
+                          : Container(
+                              padding: EdgeInsets.only(top: 10),
+                              height: 30,
+                              margin: EdgeInsets.only(right: 20),
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () {
+                                  _controller.animateToPage(2,
+                                      duration: Duration(milliseconds: 400),
+                                      curve: Curves.linear);
+                                },
+                                child: Text(
+                                  "SKIP",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Color.fromRGBO(135, 147, 181, 0.9)),
+                                ),
+                              ),
+                            )
                     ],
                   ),
                   SizedBox(height: 20),
@@ -433,6 +510,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 },
                                 outlineColor: colorPrimary,
                               ),
+                              SizedBox(
+                                height: size.height < 569 ? 5 : 10,
+                              )
                             ],
                           ),
                         )

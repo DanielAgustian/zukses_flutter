@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/company-services.dart';
@@ -74,15 +75,32 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   }
 
   _registerAccount() {
-    /*BlocProvider.of<RegisterBloc>(context)
-        .add(AddRegisterIndividuEvent(widget.register));*/
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => RegisApproved()));
   }
 
+  _registerTeam() async {
+    String data = await _makeLink();
+    /*print(data);
+    BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+        token: widget.token, namaTeam: textTeamName.text, link: data));*/
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SetupTeam(
+                  link: data,
+                  namaTeam: textTeamName.text,
+                  token: widget.token,
+                )));
+  }
+
   _catchPopPricing() async {
     bool result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Pricing(token: widget.token,)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Pricing(
+                  token: widget.token,
+                )));
     if (result == true) {
       setState(() {
         boolOrganization = [true, false];
@@ -96,11 +114,9 @@ class _SetupRegisterScreen extends State<SetupRegister> {
       //THE WANT TO CREATE AS INDIVIDUAL
       if (boolTeam[0]) {
         //THEY WANT TO CREATE A TEAM
-        BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-            token: widget.token, namaTeam: textTeamName.text));
+
+        _registerTeam();
         print("TextBox Team :" + textTeamName.text);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SetupTeam()));
       }
       if (boolTeam[1]) {
         //THEY DONT WANTED TO CREATE A TEAM
@@ -134,21 +150,16 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     }
   }
 
-  _debug() async {
+  Future<String> _makeLink() async {
     String prinitng =
-        await Util().createDynamicLink(page: "forgotpassword", short: false);
-    print(prinitng);
+        await Util().createDynamicLink(page: "registerteam", short: false);
+    return prinitng;
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _debug();
-        },
-      ),
       appBar: appBarOutside,
       body: SingleChildScrollView(
         child: Padding(
@@ -190,6 +201,11 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             txtColor: colorBackground,
                             color: colorError,
                             msg: "Register Company Failed");
+                      } else if (state is RegisterStateTeamSuccess) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SetupTeam()));
                       }
                     },
                     child: Container(),
@@ -396,35 +412,62 @@ class _SetupRegisterScreen extends State<SetupRegister> {
         SizedBox(
           height: size.height < 569 ? 5 : 10,
         ),
-        Container(
-          width: size.width,
-          decoration: BoxDecoration(
-              border: Border.all(color: colorBorder, width: 1),
-              color: readOnly ? colorNeutral170 : colorBackground,
-              borderRadius: BorderRadius.circular(5)),
-          child: TextFormField(
-            readOnly: readOnly,
-            textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.text,
-            onChanged: (val) {
-              if (val.length >= 3) {
-                print("Val.length = " + val.length.toString());
-                _searchFunction(val);
-                searching = true;
-              } else if (val.length < 1) {
-                stopSearching = false;
-              }
-            },
-            controller: textCompanyCode,
-            decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                hintText: "Company Code",
-                hintStyle: TextStyle(
-                  color: colorNeutral2,
-                ),
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: size.width * 0.7,
+              height: 50,
+              decoration: BoxDecoration(
+                  border: Border.all(color: colorBorder, width: 1),
+                  color: readOnly ? colorNeutral170 : colorBackground,
+                  borderRadius: BorderRadius.circular(5)),
+              child: TextFormField(
+                readOnly: readOnly,
+                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.text,
+                onChanged: (val) {
+                  if (val.length >= 3) {
+                    print("Val.length = " + val.length.toString());
+                    _searchFunction(val);
+                    searching = true;
+                  } else if (val.length < 1) {
+                    stopSearching = false;
+                  }
+                },
+                controller: textCompanyCode,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                    hintText: "Company Code",
+                    hintStyle: TextStyle(
+                      color: colorNeutral2,
+                    ),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none),
+              ),
+            ),
+            InkWell(
+                onTap: () {
+                  setState(() {
+                    readOnly = false;
+                    textCompanyCode.text = "";
+                  });
+                },
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: colorError),
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.times,
+                      color: colorBackground,
+                      size: size.height < 569 ? 30 : 35,
+                    ),
+                  ),
+                ))
+          ],
         ),
         BlocBuilder<CompanyBloc, CompanyState>(builder: (context, state) {
           if (state is CompanyCodeStateSuccessLoad) {

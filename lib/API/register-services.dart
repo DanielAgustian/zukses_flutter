@@ -44,12 +44,20 @@ class RegisterServicesHTTP {
     }
   }
 
-  Future<int> createRegisterTeam(String token, String namaTeam) async {
-   
-
-    String dynamicLink =
+  Future<int> createRegisterTeam(
+      String token, String namaTeam, String link, List<String> email) async {
+    /*String dynamicLink =
         await Util().createDynamicLink(short: false, page: "registerteam");
-    print(dynamicLink);
+    print(dynamicLink);*/
+    Map<String, dynamic> map = {
+      'teamName': namaTeam,
+      'invitationLink': link,
+    };
+    
+    for (int i = 0; i < email.length; i++) {
+      map['email$i'] = email[i];
+    }
+    print(map);
     final response = await http.post(
       Uri.https(baseURI, '/api/team'),
       headers: <String, String>{
@@ -57,10 +65,7 @@ class RegisterServicesHTTP {
         'Charset': 'utf-8',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(<String, dynamic>{
-        'teamName': namaTeam,
-        'invitationLink': dynamicLink
-      }),
+      body: jsonEncode(map),
     );
     print(response.body);
     print(response.statusCode);
@@ -73,7 +78,6 @@ class RegisterServicesHTTP {
   }
 
   Future<int> createRegisterToCompany(String token, String kode) async {
-    
     //print("Auth.token = " + auth.token);
     print("Kode" + kode);
     final response = await http.post(
@@ -89,7 +93,4 @@ class RegisterServicesHTTP {
     print("Register COmpany" + response.statusCode.toString());
     return response.statusCode;
   }
-
-
-
 }
