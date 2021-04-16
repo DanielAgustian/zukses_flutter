@@ -31,7 +31,8 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
       yield TeamStateFailLoad();
     }
   }
-
+  
+  
   Stream<TeamState> mapUpdatingTeamState(
       TeamEventDidUpdated event) async* {
     yield TeamStateSuccessLoad(team: event.team);

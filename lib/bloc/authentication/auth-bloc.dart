@@ -59,6 +59,21 @@ class AuthenticationBloc
     }
   }
 
+  Stream<AuthenticationState> mapLoginTeam(AuthEventLoginTeam event) async* {
+    // return auth model
+    var res =
+        await _authenticationService.createLoginTeam(event.email, event.password, event.link);
+
+    // directly throw into success load or fail load
+    if (res is AuthModel && res != null) {
+      print("AuthStateSuccessTeamLoad");
+      yield AuthStateSuccessTeamLoad(res);
+    } else {
+      print("AuthStateFailLoad");
+      yield AuthStateFailLoad();
+    }
+  }
+
   // BLOC for update the state when the user doing event
   Stream<AuthenticationState> mapUpdatingAuthState(
       AuthEventUpdated event) async* {
@@ -76,6 +91,8 @@ class AuthenticationBloc
       yield* mapUpdatingAuthState(event);
     } else if (event is AuthEventWithFacebook) {
       yield* mapLoginFacebook();
+    } else if (event is AuthEventLoginTeam) {
+      yield* mapLoginTeam(event);
     }
   }
 

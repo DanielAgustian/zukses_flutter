@@ -124,7 +124,10 @@ class _UserSettingsScreen extends State<UserSettings> {
 
   clearAllSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs?.clear();
+    //prefs?.clear();
+    prefs.remove("userLogin");
+    prefs.remove("passLogin");
+    prefs.remove("token");
   }
 
   toLogOut() {

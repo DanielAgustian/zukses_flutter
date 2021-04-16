@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -81,10 +82,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
 
   _registerTeam() async {
     String data = await _makeLink();
-    /*print(data);
-    BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-        token: widget.token, namaTeam: textTeamName.text, link: data));*/
-    Navigator.pushReplacement(
+
+    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => SetupTeam(
@@ -109,6 +108,25 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     }
   }
 
+  _registerCompany() async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Company Code: " + companyCode),
+                Text("Company Name: " + textCompanyCode.text)
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterCompanyEvent(token: widget.token, kode: companyCode));
+    }
+  }
+
   goTo() {
     if (boolOrganization[0]) {
       //THE WANT TO CREATE AS INDIVIDUAL
@@ -130,8 +148,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
 
         //if they choose company code
         //Navigator.push(co);
-        BlocProvider.of<RegisterBloc>(context).add(
-            AddRegisterCompanyEvent(token: widget.token, kode: companyCode));
+
+        _registerCompany();
       }
       if (boolOrganizationExist[1]) {
         //THEIR ORGANIZATION ISNT REGISTERED
@@ -188,12 +206,12 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             color: colorError,
                             msg: "Register Failed");
                       } else if (state is RegisterStateCompanySuccess) {
-                        Navigator.pushReplacement(
+                        Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WaitRegisApproved(
                                       company: textCompanyCode.text,
-                                    )));
+                                    )), (route) => false);
                       } else if (state is RegisterStateCompanyFailed) {
                         Util().showToast(
                             context: context,
@@ -573,6 +591,33 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             });
           },
         ),
+      ],
+    );
+  }
+
+  Widget _buildCupertino({BuildContext context, Widget wData}) {
+    Size sizeDialog = MediaQuery.of(context).size;
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Are you sure to register with this data?",
+      ),
+      content: wData,
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "No",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, false);
+            })
       ],
     );
   }

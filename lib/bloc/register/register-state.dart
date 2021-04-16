@@ -24,6 +24,21 @@ class RegisterStateSuccess extends RegisterState {
   }
 }
 
+
+class RegisterStateTeamMemberFailed extends RegisterState {}
+
+class RegisterStateTeamMemberSuccess extends RegisterState {
+  final AuthModel authUser;
+
+  RegisterStateTeamMemberSuccess(this.authUser);
+
+  List<Object> get props => [authUser];
+
+  @override
+  String toString() {
+    return 'Data : { Authentication List: $authUser }';
+  }
+}
 class RegisterStateCompanySuccess extends RegisterState {
   final int status;
 

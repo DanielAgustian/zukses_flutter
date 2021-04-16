@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/model/team-model.dart';
 
 class TeamServiceHTTP {
@@ -33,6 +34,20 @@ class TeamServiceHTTP {
       print("Failed TO Load Alubm");
       return null;
       //throw Exception('Failed to load album');
+    }
+  }
+
+  Future<TeamDetailModel> fetchDetailTeam(String id) async {
+    var res = await http
+        .get(Uri.https(baseURI, 'api/team/$id'), headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+    });
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      final auth = TeamDetailModel.fromJson(data["team"]);
+      return auth;
     }
   }
 }

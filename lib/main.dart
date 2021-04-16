@@ -22,6 +22,7 @@ import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/payment-bloc/payment-bloc.dart';
 import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
@@ -51,25 +52,23 @@ void main() async {
 
   // check is user have been login
   String token;
+  bool onboarding;
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
-
-  runApp(
-      //DevicePreview(
-      //builder: (context) =>
-      MyApp(
-    token: token,
-  )
-      //)
-      );
+  onboarding = prefs.getBool("onboarding");
+  runApp(DevicePreview(
+      builder: (context) => MyApp(
+            token: token,
+            onboarding: onboarding,
+          )));
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
   final String token;
-
-  const MyApp({Key key, this.token}) : super(key: key);
+  final bool onboarding;
+  const MyApp({Key key, this.token, this.onboarding}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +118,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
         BlocProvider<SentInviteBloc>(create: (context) => SentInviteBloc()),
         BlocProvider<PricingBloc>(create: (context) => PricingBloc()),
+        BlocProvider<TeamDetailBloc>(create: (context) => TeamDetailBloc()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{
@@ -131,15 +131,20 @@ class MyApp extends StatelessWidget {
             accentColor: colorPrimary),
         locale: DevicePreview.locale(context), // Add the locale here
         builder: DevicePreview.appBuilder, // Add the builder here
-        home: SplashScreen(token: token),
+        home: SplashScreen(
+          token: token,
+          onboarding: onboarding,
+        ),
       ),
     );
   }
 }
 
 class SplashScreen extends StatefulWidget {
-  SplashScreen({Key key, this.title, this.token}) : super(key: key);
+  SplashScreen({Key key, this.title, this.token, this.onboarding})
+      : super(key: key);
   final String title, token;
+  final bool onboarding;
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -164,8 +169,15 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => ScreenTab()));
     } else {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      if (widget.onboarding == true) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ScreenLogin()));
+      } else {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      }
     }
   }
 
@@ -234,6 +246,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
   }
 
+  _stopOnboarding() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("onboarding", true);
+  }
+
   _loadWidget() async {
     var _duration = Duration(seconds: 0);
     return Timer(_duration, afterlogOut);
@@ -241,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   afterlogOut() {
     if (widget.logOut != null) {
-      Navigator.push(
+      Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => ScreenLogin()));
     }
   }
@@ -262,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
     getToken();
     WidgetsBinding.instance.addObserver(this);
-    dynamicLink();
+    //dynamicLink();
     _loadWidget();
   }
 
@@ -270,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _timerLink = new Timer(
-        const Duration(milliseconds: 1),
+        const Duration(milliseconds: 1000),
         () {
           dynamicLink();
         },
@@ -300,13 +317,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       //print(deepLink.path);
       print(deepLink);
       if (deepLink != null) {
-        print("deepLink " + deepLink.toString());
-        // ignore: unawaited_futures
         print("OnLink Data:");
         if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
-          setState(() {
-            getDynamicLinkDone = true;
-          });
+         
           String token = deepLink.queryParameters['token'];
           print("Onlink token" + token);
           Navigator.pushReplacement(
@@ -326,26 +339,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => ScreenSignUp()));
           }
-          /*Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ResetPassword(
-                        token: token,
-                      )));*/
         }
       }
     }, onError: (OnLinkErrorException e) async {
       print('onLinkError');
       print(e.message);
     });
-
+  
     final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
     final Uri deepLink = data?.link;
     print(deepLink);
     if (deepLink != null) {
       print("GetInitialLink");
-      //String email = deepLink.queryParameters['email'];
+      
       print("Init" + deepLink.path);
       if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
         String token = deepLink.queryParameters['token'];
@@ -488,6 +495,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                   textColor: colorBackground,
                                   bgColor: colorPrimary,
                                   onClick: () {
+                                    _stopOnboarding();
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -502,6 +510,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                 bgColor: colorBackground,
                                 textColor: colorPrimary,
                                 onClick: () {
+                                  _stopOnboarding();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

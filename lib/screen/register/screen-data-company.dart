@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
@@ -104,19 +105,31 @@ class _DataCompanyScreen extends State<DataCompany> {
           address: textAddress.text,
           packageId: widget.paketID);
       print("Data is Completed");
+      _registerNewCompany(model);
+    }
+  }
+
+  _registerNewCompany(CompanyModel model) async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email: " + model.email),
+                Text("Name: " + model.name),
+                Text("Phone: " + model.phone),
+                Text("Website:" + model.website),
+                Text("Address:" + model.address),
+                Text("Scope: " + textItem),
+              ],
+            )));
+    if (result) {
       BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
           companyModel: model, token: widget.token, scope: idScope));
-      /*Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => RegisApproved()));*/
     }
-    /*if (textEmail.text != "") {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => RegisApproved()));
-    } else {
-      setState(() {
-        error = true;
-      });
-    }*/
   }
 
   _searchIDScope(String textItem) {
@@ -162,10 +175,11 @@ class _DataCompanyScreen extends State<DataCompany> {
             BlocListener<CompanyBloc, CompanyState>(
                 listener: (context, state) {
                   if (state is AddCompanyStateSuccessLoad) {
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => RegisApproved()));
+                            builder: (context) => RegisApproved()),
+                        (route) => false);
                   }
                 },
                 child: Container()),
@@ -398,6 +412,33 @@ class _DataCompanyScreen extends State<DataCompany> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCupertino({BuildContext context, Widget wData}) {
+    Size sizeDialog = MediaQuery.of(context).size;
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Are you sure to register your company with this data?",
+      ),
+      content: wData,
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "No",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, false);
+            })
+      ],
     );
   }
 }

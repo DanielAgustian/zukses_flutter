@@ -43,7 +43,39 @@ class RegisterServicesHTTP {
       return null;
     }
   }
+Future<AuthModel> createRegisterTeamMember(RegisterModel regis, String link) async {
+    print("email " + regis.email);
+    print("name " + regis.username);
+    print("password " + regis.password);
+    print("confirmPassowrd " + regis.confirmPassword);
+    final response = await http.post(
+      Uri.https(baseURI, '/api/register'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Charset': 'utf-8'
+      },
+      body: jsonEncode(<String, String>{
+        'email': regis.email,
+        'name': regis.username,
+        'password': regis.password,
+        'password_confirmation': regis.confirmPassword,
+        'invitationLink': link
+      }),
+    );
+    print("RegisterIndividu:" + response.statusCode.toString());
+    print(response.body);
+    if (response.statusCode == 201) {
+      final user = AuthModel.fromJson(jsonDecode(response.body));
 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token", user.token);
+
+      user.where = "individu";
+      return user;
+    } else {
+      return null;
+    }
+  }
   Future<int> createRegisterTeam(
       String token, String namaTeam, String link, List<String> email) async {
     /*String dynamicLink =
@@ -53,9 +85,9 @@ class RegisterServicesHTTP {
       'teamName': namaTeam,
       'invitationLink': link,
     };
-    
+
     for (int i = 0; i < email.length; i++) {
-      map['email$i'] = email[i];
+      map['email${i + 1}'] = email[i];
     }
     print(map);
     final response = await http.post(

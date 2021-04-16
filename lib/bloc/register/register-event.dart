@@ -21,6 +21,12 @@ class AddRegisterIndividuEvent extends RegisterEvent {
   List<Object> get props => [register];
 }
 
+class AddRegisterTeamMemberEvent extends RegisterEvent {
+  final RegisterModel register;
+  final String link;
+  AddRegisterTeamMemberEvent(this.register, this.link);
+  List<Object> get props => [register, link];
+}
 class AddRegisterTeamEvent extends RegisterEvent {
   final String link;
   final List<String> email;

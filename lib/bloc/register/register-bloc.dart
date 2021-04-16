@@ -18,6 +18,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       yield* mapAddRegisTeam(event);
     } else if (event is AddRegisterCompanyEvent) {
       yield* mapAddRegisCompany(event);
+    } else if (event is AddRegisterTeamMemberEvent) {
+      yield* mapAddRegisTeamMember(event);
     }
   }
 
@@ -30,6 +32,18 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       yield RegisterStateSuccess(res);
     } else {
       yield RegisterStateFailed();
+    }
+  }
+
+  Stream<RegisterState> mapAddRegisTeamMember(
+      AddRegisterTeamMemberEvent event) async* {
+    yield RegisterStateLoading();
+    var res = await _registerServicesHTTP.createRegisterTeamMember(
+        event.register, event.link);
+    if (res != null) {
+      yield RegisterStateTeamMemberSuccess(res);
+    } else {
+      yield RegisterStateTeamMemberFailed();
     }
   }
 

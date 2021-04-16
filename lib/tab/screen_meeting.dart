@@ -101,14 +101,13 @@ class _MeetingScreenState extends State<MeetingScreen>
       getMeetingReq();
     }
   }
-  _getPopSearchScreen() async{
+
+  _getPopSearchScreen() async {
     bool result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchSchedule()));
-    if(result == true){
+        context, MaterialPageRoute(builder: (context) => SearchSchedule()));
+    if (result == true) {
       _meetingBloc = BlocProvider.of<MeetingBloc>(context);
-    _meetingBloc.add(GetAcceptedMeetingEvent());
+      _meetingBloc.add(GetAcceptedMeetingEvent());
     }
   }
 
@@ -196,8 +195,8 @@ class _MeetingScreenState extends State<MeetingScreen>
 
                   // Move to search screen
                   case 4:
-                  _getPopSearchScreen();
-                    
+                    _getPopSearchScreen();
+
                     break;
                 }
               },
@@ -641,8 +640,6 @@ class _MeetingScreenState extends State<MeetingScreen>
                                           ],
                                         );
                                       }),
-
-                                  
                                 )
                         ],
                       ),

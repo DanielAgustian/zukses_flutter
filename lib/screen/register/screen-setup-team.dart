@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,13 +48,26 @@ class _SetupTeamScreen extends State<SetupTeam> {
     textLink.text = data;
   }
 
-  void goTo() {
+  void goTo() async {
     List<String> listData = [];
-    BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-        namaTeam: widget.namaTeam,
-        token: widget.token,
-        link: widget.link,
-        email: listData));
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Container(
+              child: Column(
+                children: [
+                  Text("Team Name: " + widget.namaTeam),
+                ],
+              ),
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+          namaTeam: widget.namaTeam,
+          token: widget.token,
+          link: widget.link,
+          email: listData));
+    }
   }
 
   void copyLink() {
@@ -61,7 +75,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
         .then((value) => print("copy:" + textLink.text));
   }
 
-  void sentInvitation() {
+  void sentInvitation() async {
     if (textInvEmail.text == "" || textInvEmail.text.length < 1) {
       setState(() {
         errorInvEmail = true;
@@ -97,11 +111,24 @@ class _SetupTeamScreen extends State<SetupTeam> {
       for (int i = 0; i <= jumlahTextEditing; i++) {
         listEmail.add(textEmail[i].text);
       }
-      BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-          namaTeam: widget.namaTeam,
-          token: widget.token,
-          link: widget.link,
-          email: listEmail));
+      var result = await showDialog(
+          context: context,
+          builder: (BuildContext context) => _buildCupertino(
+              context: context,
+              wData: Container(
+                child: Column(
+                  children: [
+                    Text("Team Name: " + widget.namaTeam),
+                  ],
+                ),
+              )));
+      if (result) {
+        BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+            namaTeam: widget.namaTeam,
+            token: widget.token,
+            link: widget.link,
+            email: listEmail));
+      }
     }
   }
 
@@ -120,10 +147,10 @@ class _SetupTeamScreen extends State<SetupTeam> {
               BlocListener<RegisterBloc, RegisterState>(
                   listener: (context, state) {
                     if (state is RegisterStateTeamSuccess) {
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RegisApproved()));
+                              builder: (context) => RegisApproved()), (route)=>false);
                     }
                   },
                   child: Container()),
@@ -414,6 +441,33 @@ class _SetupTeamScreen extends State<SetupTeam> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCupertino({BuildContext context, Widget wData}) {
+    Size sizeDialog = MediaQuery.of(context).size;
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Are you sure to register your team with this data?",
+      ),
+      content: wData,
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "No",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, false);
+            })
+      ],
     );
   }
 }

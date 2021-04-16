@@ -45,6 +45,41 @@ class AuthServiceHTTP {
     }
   }
 
+  Future<AuthModel> createLoginTeam(String email, password, link) async {
+    final response = await http.post(
+      Uri.https(baseURI, '/api/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Charset': 'utf-8'
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+        'invitationLink': link
+      }),
+    );
+    print("email: " + email);
+    print("Auth Team Code: " + response.statusCode.toString());
+    print(response.body);
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      //print("response.body:" + response.body);
+
+      final user = AuthModel.fromJson(jsonDecode(response.body));
+
+      // Save token
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token", user.token);
+
+      return user;
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      // throw Exception('Failed to login');
+      return null;
+    }
+  }
   /*static Future<FirebaseApp> initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     return firebaseApp;

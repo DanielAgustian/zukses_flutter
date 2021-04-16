@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,21 +17,23 @@ import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/model/register-model.dart';
+import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/register/screen-setup.dart';
 import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:recase/recase.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ScreenSignUp extends StatefulWidget {
-  ScreenSignUp({Key key, this.title}) : super(key: key);
+  ScreenSignUp({Key key, this.title, this.link}) : super(key: key);
 
   final String title;
-
+  final Uri link;
   @override
   _ScreenSignUp createState() => _ScreenSignUp();
 }
 
-class _ScreenSignUp extends State<ScreenSignUp> {
+class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   bool _obscureText1 = true;
   bool _obscureText2 = true;
   TextEditingController textConfirmPassword = new TextEditingController();
@@ -42,8 +45,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   bool _usernameValidator = false;
   bool _passValidator = false;
   bool _emailValidator = false;
+  bool _linkValidator = false;
   List<bool> empty = [false, false, false, false];
   String failedRegister = "";
+
+  AnimationController _controller;
+  Duration _duration = Duration(milliseconds: 800);
+  Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
 
   void register() {
     if (textEmail.text == "") {
@@ -108,6 +116,16 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         });
       }
     }
+
+    if (widget.link == null) {
+      setState(() {
+        _linkValidator = true;
+      });
+    } else {
+      setState(() {
+        _linkValidator = false;
+      });
+    }
     if (!_emailValidator &&
         !_usernameValidator &&
         !_passValidator &&
@@ -117,14 +135,52 @@ class _ScreenSignUp extends State<ScreenSignUp> {
           username: textUsername.text.titleCase,
           password: textPassword.text,
           confirmPassword: textConfirmPassword.text);
+
+      if (_linkValidator) {
+        registerIndividu(register);
+      } else {
+        registerTeamMember(register);
+      }
+    }
+  }
+
+  registerIndividu(RegisterModel register) async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email : " + textEmail.text),
+                Text("Full Name: " + textUsername.text.titleCase),
+              ],
+            )));
+    if (result) {
       BlocProvider.of<RegisterBloc>(context)
           .add(AddRegisterIndividuEvent(register));
+    }
+  }
 
-      /*
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ScreenTab()),
-      );*/
+  registerTeamMember(RegisterModel register) async {
+    String link = await Util()
+        .createDynamicLink2(short: false, link: widget.link.toString());
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email : " + textEmail.text),
+                Text("Full Name: " + textUsername.text.titleCase),
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterTeamMemberEvent(register, link));
     }
   }
 
@@ -139,6 +195,15 @@ class _ScreenSignUp extends State<ScreenSignUp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("userLogin", textEmail.text);
     await prefs.setString("passLogin", textPassword.text);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Util util = Util();
+    util.initDynamicLinks(context);
+    _controller = AnimationController(vsync: this, duration: _duration);
   }
 
   @override
@@ -159,7 +224,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         listener: (context, state) {
                           if (state is RegisterStateSuccess) {
                             _sharedPrefLogin();
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SetupRegister(
@@ -172,6 +237,13 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                   "Email already used. Please try another email.";
                               _emailValidator = true;
                             });
+                          } else if (state is RegisterStateTeamMemberSuccess) {
+                            _sharedPrefLogin();
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisApproved()),
+                                (route) => false);
                           }
                         },
                         child: Container(),
@@ -506,5 +578,30 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         child: Container(),
                       )
                     ]))));
+  }
+
+  Widget _buildCupertino({BuildContext context, Widget wData}) {
+    Size sizeDialog = MediaQuery.of(context).size;
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Are you sure to register with this data?",
+      ),
+      content: wData,
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+        CupertinoDialogAction(
+            child: Text("No"),
+            onPressed: () {
+              Navigator.pop(context, false);
+            })
+      ],
+    );
   }
 }

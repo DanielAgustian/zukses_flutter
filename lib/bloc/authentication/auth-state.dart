@@ -12,6 +12,19 @@ class AuthStateLoading extends AuthenticationState {}
 
 class AuthStateFailLoad extends AuthenticationState {}
 
+class AuthStateSuccessTeamLoad extends AuthenticationState {
+  final AuthModel authUser;
+
+  AuthStateSuccessTeamLoad(this.authUser);
+
+  List<Object> get props => [authUser];
+
+  @override
+  String toString() {
+    return 'Data : { Authentication List: $authUser }';
+  }
+}
+
 class AuthStateSuccessLoad extends AuthenticationState {
   final AuthModel authUser;
 
@@ -35,4 +48,5 @@ class AuthStateFacebookSuccessLoad extends AuthenticationState {
     return 'Data : { Authentication List: $fbauth }';
   }
 }
+
 class AuthStateFacebookFailLoad extends AuthenticationState {}

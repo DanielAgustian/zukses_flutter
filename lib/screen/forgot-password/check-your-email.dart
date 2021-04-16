@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class CheckEmail extends StatefulWidget {
   CheckEmail({Key key, this.title, this.email}) : super(key: key);
@@ -50,6 +51,14 @@ class _CheckEmailScreen extends State<CheckEmail> {
   _resendEmail() {
     _createDynamicLink(true);
     //BELOW LOGIC TO SENT DATA TO API
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Util util = Util();
+    util.initDynamicLinks(context);
   }
 
   @override
