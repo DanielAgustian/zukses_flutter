@@ -2,13 +2,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/pricing-model.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 
 class EnterPayment extends StatefulWidget {
-  EnterPayment({Key key, this.title, this.token, this.paketID}) : super(key: key);
+  EnterPayment({Key key, this.title, this.token, this.paketID, this.pricing})
+      : super(key: key);
   final String title;
   final String token;
   final String paketID;
+  final PricingModel pricing;
   @override
   _EnterPaymentScreen createState() => _EnterPaymentScreen();
 }
@@ -23,7 +26,15 @@ class _EnterPaymentScreen extends State<EnterPayment> {
   final textCity = TextEditingController();
   final textProvince = TextEditingController();
   final textZipCode = TextEditingController();
-
+  bool _cardNumberValidator = false;
+  bool _cvcValidator = false;
+  bool _mmyyValidator = false;
+  bool _cardNameValidator = false;
+  bool _streetValidator = false;
+  bool _cityValidator = false;
+  bool _provinceValidator = false;
+  bool _zipCodeValidator = false;
+  bool _countryValidator = false;
   List<String> countries = [
     "---Select Country---",
     "Australia",
@@ -58,52 +69,96 @@ class _EnterPaymentScreen extends State<EnterPayment> {
 
   _testingData() {
     if (textCardNumber.text != "" && textCardNumber.text.length > 14) {
-      _errorFalse();
+      setState(() {
+        _cardNumberValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _cardNumberValidator = true;
+      });
     }
     if (textMMYY.text != "") {
-      _errorFalse();
+      setState(() {
+        _mmyyValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _mmyyValidator = true;
+      });
     }
     if (textCVC.text != "") {
-      _errorFalse();
+      setState(() {
+        _cvcValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _cvcValidator = true;
+      });
     }
     if (textCardName.text != "") {
-      _errorFalse();
+      setState(() {
+        _cardNameValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _cardNameValidator = true;
+      });
     }
     if (textStreetAddress.text != "") {
-      _errorFalse();
+      setState(() {
+        _streetValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _streetValidator = true;
+      });
     }
     if (textCity.text != "") {
-      _errorFalse();
+      setState(() {
+        _cityValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _cityValidator = true;
+      });
     }
     if (textProvince.text != "") {
-      _errorFalse();
+      setState(() {
+        _provinceValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _provinceValidator = true;
+      });
     }
     if (textZipCode.text != "") {
-      _errorFalse();
+      setState(() {
+        _zipCodeValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _zipCodeValidator = true;
+      });
     }
 
     if (country != countries[0]) {
-      _errorFalse();
+      setState(() {
+        _countryValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _countryValidator = true;
+      });
     }
-    if (error == false && notEmpty) {
+    if (!_cardNumberValidator &&
+        !_mmyyValidator &&
+        !_cvcValidator &&
+        !_cardNameValidator &&
+        !_streetValidator &&
+        !_countryValidator &&
+        !_cityValidator &&
+        !_provinceValidator &&
+        !_zipCodeValidator) {
       _goto();
     }
   }
@@ -112,7 +167,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => PaymentApproved(token: widget.token, paketID: widget.paketID)));
+            builder: (context) =>
+                PaymentApproved(token: widget.token, paketID: widget.paketID)));
   }
 
   @override
@@ -184,7 +240,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                     children: [
                                   TextSpan(text: "Rp. "),
                                   TextSpan(
-                                    text: "100.000",
+                                    text: widget.pricing.price.toString(),
                                   )
                                 ])),
                             SizedBox(
@@ -243,8 +299,10 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: error ? colorError : colorBorder),
+                        border: Border.all(
+                            color: _cardNumberValidator
+                                ? colorError
+                                : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -259,7 +317,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Card Number",
                             hintStyle: TextStyle(
-                              color: error ? colorError : colorNeutral2,
+                              color: _cardNumberValidator
+                                  ? colorError
+                                  : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -275,7 +335,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         width: size.width * 0.42,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: error ? colorError : colorBorder),
+                                color:
+                                    _mmyyValidator ? colorError : colorBorder),
                             color: colorBackground,
                             boxShadow: [boxShadowStandard],
                             borderRadius: BorderRadius.circular(5)),
@@ -290,7 +351,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 hintText: "MM/YY",
                                 hintStyle: TextStyle(
-                                  color: error ? colorError : colorNeutral2,
+                                  color: _mmyyValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none),
@@ -300,7 +363,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         width: size.width * 0.42,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: error ? colorError : colorBorder),
+                                color:
+                                    _cvcValidator ? colorError : colorBorder),
                             color: colorBackground,
                             boxShadow: [boxShadowStandard],
                             borderRadius: BorderRadius.circular(5)),
@@ -315,7 +379,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 hintText: "CVC",
                                 hintStyle: TextStyle(
-                                  color: error ? colorError : colorNeutral2,
+                                  color: _cvcValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none),
@@ -329,8 +395,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: error ? colorError : colorBorder),
+                        border: Border.all(
+                            color:
+                                _cardNameValidator ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -345,7 +412,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Cardholder's name",
                             hintStyle: TextStyle(
-                              color: error ? colorError : colorNeutral2,
+                              color: _cardNameValidator
+                                  ? colorError
+                                  : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -357,8 +426,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: error ? colorError : colorBorder),
+                        border: Border.all(
+                            color: _streetValidator ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -373,7 +442,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Street Adress",
                             hintStyle: TextStyle(
-                              color: error ? colorError : colorNeutral2,
+                              color:
+                                  _streetValidator ? colorError : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -384,7 +454,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 ),
                 Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: colorBorder),
+                      border: Border.all(
+                          color: _countryValidator ? colorError : colorBorder),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: FormField<String>(
@@ -424,8 +495,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: error ? colorError : colorBorder),
+                        border: Border.all(
+                            color: _cityValidator ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -440,7 +511,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "City",
                             hintStyle: TextStyle(
-                              color: error ? colorError : colorNeutral2,
+                              color:
+                                  _cityValidator ? colorError : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -452,8 +524,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: error ? colorError : colorBorder),
+                        border: Border.all(
+                            color:
+                                _provinceValidator ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -468,7 +541,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Province",
                             hintStyle: TextStyle(
-                              color: error ? colorError : colorNeutral2,
+                              color: _provinceValidator
+                                  ? colorError
+                                  : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),
@@ -480,7 +555,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Container(
                     width: size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: colorBorder),
+                        border: Border.all(
+                            color:
+                                _zipCodeValidator ? colorError : colorBorder),
                         color: colorBackground,
                         boxShadow: [boxShadowStandard],
                         borderRadius: BorderRadius.circular(5)),
@@ -495,7 +572,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                 EdgeInsets.symmetric(horizontal: 20),
                             hintText: "Zip Code",
                             hintStyle: TextStyle(
-                              color: error ? colorError : colorNeutral2,
+                              color: _zipCodeValidator
+                                  ? colorError
+                                  : colorNeutral2,
                             ),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none),

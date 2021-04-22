@@ -46,7 +46,6 @@ class _ScreenTab extends State<ScreenTab> {
     screenList.add(MeetingScreen());
     Util util = Util();
     util.initDynamicLinks(context);
-    
   }
 
   void onTabTapped(int index) {
@@ -66,12 +65,7 @@ class _ScreenTab extends State<ScreenTab> {
             _currentScreenIndex, // this will be set when a new tab is tapped
         items: [
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/home.png'))
-            /*new Icon(
-              Icons.home_filled,
-              size: 27,
-            )*/
-            ,
+            icon: ImageIcon(AssetImage('assets/images/home.png')),
             label: 'Home',
           ),
           BottomNavigationBarItem(
@@ -93,60 +87,4 @@ class _ScreenTab extends State<ScreenTab> {
       ),
     );
   }
-
-  /*Widget scrollInvitation(BuildContext context, Size size) {
-    return SizedBox.expand(
-      child: SlideTransition(
-        position: _tween.animate(_controller),
-        child: DraggableScrollableSheet(
-            builder: (BuildContext context, myscrollController) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            color: Color(0xFFFFFFFF),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(),
-                      Padding(
-                        padding: EdgeInsets.all(5),
-                        child: InkWell(
-                            onTap: () {
-                              _controller.reverse();
-                            },
-                            child: FaIcon(FontAwesomeIcons.times,
-                                color: colorPrimary,
-                                size: size.height < 569 ? 20 : 25)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: size.height < 569 ? 5 : 10,
-                  ),
-                  TitleFormat(
-                    size: size,
-                    title: "Team Invitation",
-                    detail:
-                        "You are invited to “Tech Squad” team. Please confirm to join the team.",
-                  ),
-                  SizedBox(
-                    height: size.height < 569 ? 10 : 15,
-                  ),
-                  LongButton(
-                    size: size,
-                    title: "Confirm",
-                    bgColor: colorPrimary,
-                    textColor: colorBackground,
-                    onClick: () {},
-                  )
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }*/ 
 }

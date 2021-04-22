@@ -20,11 +20,15 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     // return checkbox handler
     List<bool> bools = [];
     // directly throw into success load or fail load
-    if (res.length > 0 && res != null) {
-      for (var i = 0; i < res.length; i++) {
-        bools.add(false);
+    if (res != null) {
+      if (res.length > 0) {
+        for (var i = 0; i < res.length; i++) {
+          bools.add(false);
+        }
+        yield EmployeeStateSuccessLoad(employees: res, checklist: bools);
+      } else {
+        yield EmployeeStateFailLoad();
       }
-      yield EmployeeStateSuccessLoad(employees: res, checklist: bools);
     } else {
       yield EmployeeStateFailLoad();
     }

@@ -42,7 +42,7 @@ class _UserSettingsScreen extends State<UserSettings> {
                 "Settings",
                 style: TextStyle(
                     color: colorPrimary,
-                    fontSize: size.height < 570 ? 22 : 25,
+                    fontSize: size.height < 570 ? 18 : 22,
                     fontWeight: FontWeight.bold),
               ),
               centerTitle: true,

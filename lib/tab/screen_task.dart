@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/company-services.dart';
+import 'package:zukses_app_1/bloc/project/project-bloc.dart';
+import 'package:zukses_app_1/bloc/project/project-event.dart';
+import 'package:zukses_app_1/bloc/project/project-state.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -49,6 +53,7 @@ class _TaskScreen extends State<TaskScreen>
     super.initState();
     tabController = TabController(length: 3, vsync: this);
     timer();
+    BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 
   void debug() {
@@ -59,11 +64,11 @@ class _TaskScreen extends State<TaskScreen>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           onPressed: () {
             debug();
           },
-        ),
+        ),*/
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -74,7 +79,7 @@ class _TaskScreen extends State<TaskScreen>
             "Project List",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 20 : 25,
+                fontSize: size.height <= 569 ? 18 : 22,
                 color: colorPrimary),
           ),
           actions: [
@@ -99,10 +104,7 @@ class _TaskScreen extends State<TaskScreen>
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
-            Container(
+            /*Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               height: 50,
               //width: MediaQuery.of(context).size.width * 0.45,
@@ -138,33 +140,39 @@ class _TaskScreen extends State<TaskScreen>
                       focusedBorder: InputBorder.none),
                 ),
               ),
-            ),
+            ),*/
+
             SizedBox(
               height: 10,
             ),
-            ListView.builder(
-              itemCount: projectName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                    onTap: () {
-                      print(projectName[index]);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TaskDetailScreen(
-                                  projectName: projectName[index],
-                                )),
-                      );
-                    },
-                    child: ListReviseProject(
-                      title: projectName[index],
-                      detail: projectDetail[index],
-                      jumlahTask: projectTask[index],
-                    ));
-              },
-            ),
+            BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
+              if (state is ProjectStateSuccessLoad) {
+                return ListView.builder(
+                  itemCount: state.project.length,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                        onTap: () {
+                          //print(projectName[index]);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TaskDetailScreen(
+                                      project: state.project[index],
+                                    )),
+                          );
+                        },
+                        child: ListReviseProject(
+                          title: state.project[index].name,
+                          detail: state.project[index].details,
+                          jumlahTask: state.project[index].totalTask,
+                        ));
+                  },
+                );
+              }
+              return Container();
+            }),
           ],
         )));
   }

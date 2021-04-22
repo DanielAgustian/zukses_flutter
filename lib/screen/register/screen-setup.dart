@@ -100,11 +100,13 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             builder: (context) => Pricing(
                   token: widget.token,
                 )));
-    if (result == true) {
-      setState(() {
-        boolOrganization = [true, false];
-        boolTeam = [false, true];
-      });
+    if (result!=null) {
+      if (result == true) {
+        setState(() {
+          boolOrganization = [true, false];
+          boolTeam = [false, true];
+        });
+      }
     }
   }
 

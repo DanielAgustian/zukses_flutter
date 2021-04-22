@@ -44,6 +44,13 @@ class DeleteMeetingEvent extends MeetingEvent {
   List<Object> get props => [meetingID];
 }
 
+class UpdateMeetingEvent extends MeetingEvent {
+  final String meetingID;
+  final ScheduleModel model;
+  UpdateMeetingEvent({this.meetingID, this.model});
+  List<Object> get props => [meetingID];
+}
+
 class GetUnresponseMeetingEvent extends MeetingEvent {
   final List<ScheduleModel> meeting;
   GetUnresponseMeetingEvent({this.meeting});
@@ -51,6 +58,7 @@ class GetUnresponseMeetingEvent extends MeetingEvent {
   @override
   List<Object> get props => [meeting];
 }
+
 class GetAcceptedMeetingEvent extends MeetingEvent {
   final List<ScheduleModel> meeting;
   GetAcceptedMeetingEvent({this.meeting});
@@ -58,6 +66,7 @@ class GetAcceptedMeetingEvent extends MeetingEvent {
   @override
   List<Object> get props => [meeting];
 }
+
 class GetRejectedMeetingEvent extends MeetingEvent {
   final List<ScheduleModel> meeting;
   GetRejectedMeetingEvent({this.meeting});

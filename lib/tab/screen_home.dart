@@ -166,9 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     String username = prefs.getString("userLogin");
     String password = prefs.getString("passLogin");
     String link = await util.createDynamicLink2(
-        short: false,
-        link:
-            'https%3A%2F%2Fzuksesapplication.page.link%2Fregisterteam%3Ftoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLXp1a3Nlcy55b2tlc2VuLmNvbVwvYXBpXC90ZWFtIiwiaWF0IjoxNjE4NDczNzE3LCJuYmYiOjE2MTg0NzM3MTcsImp0aSI6IkNNUUZ5Vlo4NXg4SUl0azgiLCJzdWIiOjQxLCJwcnYiOiI4N2UwYWYxZWY5ZmQxNTgxMmZkZWM5NzE1M2ExNGUwYjA0NzU0NmFhIn0.UKE1z7faA9xPlwn3gbbnAbvVRkRsnj3X0YbWNzB3C80%26teamId%3D28');
+        short: false, link: widget.link.toString());
     BlocProvider.of<AuthenticationBloc>(context).add(
         AuthEventLoginTeam(email: username, password: password, link: link));
   }
@@ -505,6 +503,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               String name = state.userModel.name == null
                                   ? "Username"
                                   : state.userModel.name;
+                              if (name.length > 15) {
+                                var parts = name.split(" ");
+                                name = parts[0];
+                              }
                               return Container(
                                 margin: EdgeInsets.symmetric(horizontal: 20),
                                 child: InkWell(

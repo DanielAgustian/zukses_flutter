@@ -11,6 +11,7 @@ import 'package:zukses_app_1/component/leaves/list-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-details.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ScreenTabLeaves extends StatefulWidget {
@@ -35,7 +36,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
   List<OvertimeModel> listRejectedOvertime = [];
   bool isLoadingLeaves = false;
   bool isLoadingOvertime = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -48,9 +49,8 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
     listAccepted.clear();
     listRejected.clear();
   }
-  void changeTimeStart(){
-    
-  }
+
+  void changeTimeStart() {}
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -147,12 +147,23 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListLeavesOvertime(
-                  screen: widget.permission,
-                  title: list[index].project,
-                  detail: Util().dateNumbertoCalendar(
-                      list[index].clockOut), //list[index].clockOut,
-                  status: list[index].status,
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LeavesDetailScreen(
+                                  details: "overtime",
+                                  overtime: list[index],
+                                )));
+                  },
+                  child: ListLeavesOvertime(
+                    screen: widget.permission,
+                    title: list[index].project,
+                    detail: Util().dateNumbertoCalendar(
+                        list[index].clockOut), //list[index].clockOut,
+                    status: list[index].status,
+                  ),
                 );
               },
             ),
@@ -179,14 +190,27 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListLeavesInside(
-                    screen: widget.permission,
-                    title: list[index].typeName,
-                    detail: list[index].leaveDate == null
-                        ? "Data Cant Be fetch"
-                        : list[index].leaveDate,
-                    status: list[index].status,
-                    time: list[index].startTime);
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LeavesDetailScreen(
+                                  details: "leaves",
+                                  leave: list[index],
+                                )));
+                  },
+                  child: ListLeavesInside(
+                      screen: widget.permission,
+                      title: list[index].typeName,
+                      detail: list[index].leaveDate == null
+                          ? "Data Cant Be fetch"
+                          : list[index].leaveDate,
+                      status: list[index].status,
+                      time: list[index].startTime == null
+                          ? ""
+                          : list[index].startTime),
+                );
               }),
     );
   }

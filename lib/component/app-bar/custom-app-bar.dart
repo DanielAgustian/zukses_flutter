@@ -17,7 +17,7 @@ AppBar customAppBar(BuildContext context,
       style: TextStyle(
           color: colorPrimary,
           fontWeight: FontWeight.bold,
-          fontSize: size.height <= 569 ? 20 : 25),
+          fontSize: size.height <= 569 ? 18 : 22),
     ),
     actions: [...actionList.map((item) => item)],
   );

@@ -31,6 +31,26 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
     }
   }
 
+  Stream<MeetingState> mapUpdateMeeting(UpdateMeetingEvent event) async* {
+    yield MeetingStateLoading();
+    // return list user model
+    var res = await _meetingServicesHTTP.updateSchedule(
+        event.model.title,
+        event.model.description,
+        event.model.date,
+        event.model.repeat,
+        event.model.userID,
+        event.meetingID,
+        event.model.meetingEndTime);
+
+    // directly throw into success load or fail add
+    if (res == 200) {
+      yield MeetingStateUpdateSuccess();
+    } else {
+      yield MeetingStateUpdateFailed();
+    }
+  }
+
   Stream<MeetingState> mapDeleteMeeting(DeleteMeetingEvent event) async* {
     yield MeetingStateLoading();
     // return list user model
@@ -146,6 +166,8 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       yield* mapPostAcceptanceMeeting(event);
     } else if (event is GetAcceptedMeetingEvent) {
       yield* mapLoadAcceptedMeeting(event);
+    } else if (event is UpdateMeetingEvent) {
+      yield* mapUpdateMeeting(event);
     }
   }
 }

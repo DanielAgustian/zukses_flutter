@@ -31,6 +31,7 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   Util util = Util();
+  bool shade = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -65,9 +66,11 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                                 _controller.forward();
                                 setState(() {
                                   model = state.meetings[index];
+                                  shade = true;
                                 });
                               } else if (_controller.isCompleted) {
                                 _controller.reverse();
+                                shade = false;
                               }
                             },
                             date: util.dateNumbertoCalendar(
@@ -76,6 +79,13 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                             time2: util.hourFormat(
                                 state.meetings[index].meetingEndTime),
                             title: state.meetings[index].title))),
+            shade
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.black38.withOpacity(0.5),
+                  )
+                : Container(),
             model != null
                 ? scrollerSheet()
                 : Align(
@@ -131,6 +141,9 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                           ),
                           onTap: () {
                             _controller.reverse();
+                            setState(() {
+                              shade = false;
+                            });
                           },
                         ),
                       )

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class CommentBox extends StatelessWidget {
@@ -53,8 +54,8 @@ class CommentBox extends StatelessWidget {
                   SizedBox(height: 5),
                   Container(
                       width: size.width * 0.7,
-                      child: Text(comment,
-                          style: TextStyle(color: colorPrimary30))),
+                      child:
+                          Text(comment, style: TextStyle(color: colorPrimary))),
                 ],
               )
             ],
@@ -83,7 +84,7 @@ class HistoryBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 10, 5, 0),
+      padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
       child: Container(
           padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
@@ -121,6 +122,66 @@ class HistoryBox extends StatelessWidget {
               ],
             ),
           )),
+    );
+  }
+}
+
+class PostBox extends StatelessWidget {
+  PostBox(
+      {Key key,
+      @required this.user,
+      this.date,
+      @required this.onPost,
+      @required this.size,
+      @required this.textEditController})
+      : super(key: key);
+  final UserModel user;
+  final DateTime date;
+  final Size size;
+  final TextEditingController textEditController;
+  final Function onPost;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          width: 0.1 * size.width,
+          height: 0.1 * size.width,
+          decoration:
+              BoxDecoration(shape: BoxShape.circle, color: colorNeutral2),
+        ),
+        Container(
+          width: 0.77 * size.width,
+          decoration: BoxDecoration(
+            boxShadow: [boxShadowStandard],
+            color: colorBackground,
+            border: Border.all(width: 1, color: colorPrimary),
+          ),
+          child: TextFormField(
+            textInputAction: TextInputAction.next,
+            onChanged: (val) {},
+            controller: textEditController,
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 20, top: 15),
+                hintText: "Add a comment.. ",
+                hintStyle: TextStyle(
+                  color: colorNeutral1,
+                ),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                suffixIcon: TextButton(
+                    child: Text(
+                      "Post",
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: size.height < 569 ? 14 : 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: onPost)),
+          ),
+        )
+      ],
     );
   }
 }

@@ -20,7 +20,7 @@ class LongButtonIcon extends StatelessWidget {
   final Color bgColor, textColor;
   final Widget iconWidget;
   final bool loading;
-
+  
   @override
   Widget build(BuildContext context) {
     return RaisedButton(

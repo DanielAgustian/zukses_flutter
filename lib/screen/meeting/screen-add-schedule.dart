@@ -32,7 +32,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   TextEditingController textDescription = new TextEditingController();
   bool _titleValidator = false;
   bool _descriptionValidator = false;
-
+  bool _timeValidator = false;
   // Search controlerr
   TextEditingController textSearch = new TextEditingController();
   String searchQuery = "";
@@ -149,7 +149,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   void pickTime(BuildContext context, {int index = 1}) async {
     TimeOfDay picked = await showTimePicker(
       context: context,
-      initialTime: index == 1 ? TimeOfDay.now() : time2,
+      initialTime: index == 1 ? time1 : time2,
     );
     try {
       if (picked.minute == 60) {
@@ -195,11 +195,22 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         _descriptionValidator = false;
       });
     }
-
-    if (!_descriptionValidator &&
+    int pembanding =
+        (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
+    if (pembanding < 0) {
+      setState(() {
+        _timeValidator = true;
+      });
+    } else {
+      setState(() {
+        _timeValidator = false;
+      });
+    }
+    if (startMeeting != null) if (!_descriptionValidator &&
         !_titleValidator &&
         startMeeting != null &&
-        endMeeting != null) {
+        endMeeting != null &&
+        !_timeValidator) {
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,
@@ -285,7 +296,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             style: TextStyle(
                 color: colorPrimary,
                 fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 20 : 25),
+                fontSize: size.height <= 569 ? 18 : 22),
           ),
           actions: [
             Center(
@@ -410,6 +421,12 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           children: [
                             InkWell(
                               onTap: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+
                                 _selectDate(this.context);
                               },
                               child: AddScheduleRow(
@@ -420,15 +437,29 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                             ),
                             InkWell(
                               onTap: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
                                 pickTime(this.context, index: 2);
                                 pickTime(this.context);
                               },
-                              child: AddScheduleRow(
-                                fontSize: size.height <= 569 ? 14 : 16,
-                                title: "Time",
-                                textItem: "$h1.$m1 - $h2.$m2",
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: colorBackground,
+                                    border: Border.all(
+                                        color: _timeValidator
+                                            ? colorError
+                                            : colorBackground)),
+                                child: AddScheduleRow(
+                                  fontSize: size.height <= 569 ? 14 : 16,
+                                  title: "Time",
+                                  textItem: "$h1.$m1 - $h2.$m2",
+                                ),
                               ),
                             ),
+
                             AddScheduleRow2(
                               fontSize: size.height <= 569 ? 14 : 16,
                               title: "Repeat",
@@ -478,20 +509,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                               _controller.reverse();
                           },
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: LongButtonOutline(
-                            size: size,
-                            title: "Delete Meeting",
-                            bgColor: colorBackground,
-                            textColor: colorError,
-                            outlineColor: colorError,
-                            onClick: () {}),
                       ),
                       SizedBox(
                         height: 10,

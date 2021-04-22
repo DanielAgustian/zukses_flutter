@@ -50,13 +50,21 @@ class TaskRow extends StatelessWidget {
                 child: SizedBox(
                   width: 100,
                   child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                          fontSize: fontSize,
-                          color: colorPrimary,
-                          fontWeight: FontWeight.w700),
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          value,
+                          style: TextStyle(
+                              fontSize: fontSize,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -120,9 +128,9 @@ class TaskRow2 extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerRight,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
                               value,
@@ -131,6 +139,7 @@ class TaskRow2 extends StatelessWidget {
                                   color: colorPrimary,
                                   fontWeight: FontWeight.w700),
                             ),
+                            SizedBox(width: 5),
                             Row(
                               children: [
                                 Container(
@@ -290,33 +299,88 @@ class RowTaskUndroppable extends StatelessWidget {
             style: TextStyle(fontSize: fontSize, color: colorPrimary),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(
-                width: 90,
-                child: Text(
-                  textItem,
-                  style: TextStyle(
-                      fontSize: fontSize,
-                      color: colorPrimary,
-                      fontWeight: FontWeight.w700),
-                ),
+              Text(
+                textItem,
+                style: TextStyle(
+                    fontSize: fontSize,
+                    color: colorPrimary,
+                    fontWeight: FontWeight.w700),
               ),
               SizedBox(
                 width: 10,
               ),
-              title != "Time"
-                  ? FaIcon(
-                      FontAwesomeIcons.chevronDown,
-                      size: 18,
-                      color: arrowRight != "false"
-                          ? colorPrimary
-                          : colorBackground,
-                    )
-                  : Container()
+              FaIcon(FontAwesomeIcons.chevronDown,
+                  size: 18, color: colorPrimary)
             ],
           )
         ],
       ),
     );
+  }
+}
+
+class RowTaskDrop extends StatelessWidget {
+  const RowTaskDrop(
+      {Key key,
+      this.textItem,
+      this.fontSize: 16,
+      this.size,
+      @required this.list,
+      this.onSelectedItem})
+      : super(key: key);
+
+  final String textItem;
+  final double fontSize;
+  final Size size;
+  final List<String> list;
+  final Function onSelectedItem;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        //padding: EdgeInsets.symmetric(horizontal: 10),
+        width: size.width,
+        decoration: BoxDecoration(
+          color: colorBackground,
+          boxShadow: [boxShadowStandard],
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: FormField<String>(
+          builder: (FormFieldState<String> state) {
+            return InputDecorator(
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(0),
+                labelStyle: TextStyle(fontSize: 12),
+                errorStyle: TextStyle(color: colorError, fontSize: 16.0),
+                hintText: "",
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                /*border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0))*/
+              ),
+              isEmpty: textItem == '',
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: textItem,
+                    isDense: true,
+                    onChanged: onSelectedItem,
+                    items: list.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            );
+          },
+        ));
   }
 }

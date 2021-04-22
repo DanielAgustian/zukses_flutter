@@ -412,7 +412,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
-              fontSize: size.height <= 600 ? 20 : 25),
+              fontSize: size.height <= 600 ? 18 : 22),
         ),
         actions: [
           Center(

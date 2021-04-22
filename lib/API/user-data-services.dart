@@ -17,7 +17,7 @@ class UserDataServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print("UserProfile "+res.statusCode.toString());
+    print("UserProfile " + res.statusCode.toString());
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -45,6 +45,9 @@ class UserDataServiceHTTP {
       // then parse the JSON.
       print("data user ${res.body}");
       var responseJson = jsonDecode(res.body);
+      if (responseJson['user'] == null) {
+        return null;
+      }
       return (responseJson['user'] as List)
           .map((p) => UserModel.fromJson(p))
           .toList();

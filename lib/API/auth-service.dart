@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,7 +35,8 @@ class AuthServiceHTTP {
       // Save token
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
-
+      await prefs.setString("myID", user.user.userID);
+      
       return user;
     } else {
       // If the server did not return a 201 CREATED response,

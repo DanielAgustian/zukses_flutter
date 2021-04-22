@@ -15,6 +15,7 @@ import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/screen/meeting/screen-edit-schedule.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
@@ -97,17 +98,22 @@ class _MeetingScreenState extends State<MeetingScreen>
       context,
       MaterialPageRoute(builder: (context) => AddScheduleScreen()),
     );
-    if (result == true) {
+    if(result!=null){
+      if (result == true) {
       getMeetingReq();
     }
+    }
+    
   }
 
   _getPopSearchScreen() async {
     bool result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => SearchSchedule()));
-    if (result == true) {
-      _meetingBloc = BlocProvider.of<MeetingBloc>(context);
-      _meetingBloc.add(GetAcceptedMeetingEvent());
+    if (result != null) {
+      if (result == true) {
+        _meetingBloc = BlocProvider.of<MeetingBloc>(context);
+        _meetingBloc.add(GetAcceptedMeetingEvent());
+      }
     }
   }
 
@@ -125,7 +131,7 @@ class _MeetingScreenState extends State<MeetingScreen>
             style: TextStyle(
                 color: colorPrimary,
                 fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 20 : 25),
+                fontSize: size.height <= 569 ? 18 : 22),
           ),
           actions: [
             PopupMenuButton(
@@ -529,15 +535,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                scheduleModel.title == null
-                                    ? "Schedule Not Get"
-                                    : scheduleModel.title,
-                                style: TextStyle(
-                                    fontSize: size.height <= 570 ? 18 : 20,
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.w700),
-                              ),
+                              /**/
                               InkWell(
                                 onTap: () {
                                   _controller.reverse();
@@ -546,10 +544,40 @@ class _MeetingScreenState extends State<MeetingScreen>
                                         !removeBackgroundDialog;
                                   });
                                 },
-                                child: FaIcon(FontAwesomeIcons.times,
-                                    color: colorPrimary, size: 20),
+                                child: Text("Close",
+                                    style: TextStyle(
+                                        color: colorPrimary,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditScheduleScreen(
+                                                  model: scheduleModel)));
+                                },
+                                child: Text(
+                                  "Edit",
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ],
+                          ),
+                          SizedBox(
+                            height: size.height < 569 ? 3 : 5,
+                          ),
+                          Text(
+                            scheduleModel.title == null
+                                ? "Schedule Not Get"
+                                : scheduleModel.title,
+                            style: TextStyle(
+                                fontSize: size.height <= 570 ? 18 : 20,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.w700),
                           ),
                           SizedBox(
                             height: size.height < 569 ? 2 : 5,

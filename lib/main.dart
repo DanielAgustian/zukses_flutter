@@ -13,14 +13,17 @@ import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
+import 'package:zukses_app_1/bloc/comment/comment-bloc.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/forgot-password/forgot-password-bloc.dart';
+import 'package:zukses_app_1/bloc/label-task/business-scope-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/payment-bloc/payment-bloc.dart';
 import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
+import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
@@ -43,6 +46,7 @@ import 'package:zukses_app_1/util/util.dart';
 import 'bloc/leaves/leave-bloc.dart';
 import 'bloc/overtime/overtime-bloc.dart';
 import 'bloc/sent-invite-team/sent-invite-bloc.dart';
+import 'bloc/task/task-bloc.dart';
 import 'bloc/team/team-bloc.dart';
 
 void main() async {
@@ -119,6 +123,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<SentInviteBloc>(create: (context) => SentInviteBloc()),
         BlocProvider<PricingBloc>(create: (context) => PricingBloc()),
         BlocProvider<TeamDetailBloc>(create: (context) => TeamDetailBloc()),
+        BlocProvider<ProjectBloc>(create: (context) => ProjectBloc()),
+        BlocProvider<TaskBloc>(create: (context) => TaskBloc()),
+        BlocProvider<CommentBloc>(create: (context) => CommentBloc()),
+        BlocProvider<LabelTaskBloc>(create: (context) => LabelTaskBloc()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{
@@ -319,7 +327,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       if (deepLink != null) {
         print("OnLink Data:");
         if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
-         
           String token = deepLink.queryParameters['token'];
           print("Onlink token" + token);
           Navigator.pushReplacement(
@@ -345,14 +352,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       print('onLinkError');
       print(e.message);
     });
-  
+
     final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
     final Uri deepLink = data?.link;
     print(deepLink);
     if (deepLink != null) {
       print("GetInitialLink");
-      
+
       print("Init" + deepLink.path);
       if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
         String token = deepLink.queryParameters['token'];
@@ -533,9 +540,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (position == 0) {
       return OnBoardingCard(
         size: size,
-        title: "LOREM IPSUM" + position.toString(),
+        title: "MEETING SCHEDULER",
         description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis facilisis neque. Aliquam ",
+            "Get your meeting scheduled neatly and notify all team members in just one click.",
         image: Image.asset(
           "assets/images/onboarding-0.png",
           fit: BoxFit.fill,
@@ -544,9 +551,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     } else if (position == 1) {
       return OnBoardingCard(
         size: size,
-        title: "LOREM IPSUM" + position.toString(),
+        title: "TASK MANAGER",
         description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis facilisis neque. Aliquam ",
+            "Managing your task has never been easier. Planning and prioritizing can be done easily just by drag and drop. ",
         image: Image.asset(
           "assets/images/onboarding-1.png",
           fit: BoxFit.fill,
@@ -555,9 +562,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     } else if (position == 2) {
       return OnBoardingCard(
         size: size,
-        title: "LOREM IPSUM" + position.toString(),
+        title: "ATTENDANCE MANAGER",
         description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis facilisis neque. Aliquam ",
+            "Leave all the long-winded method, clock in and clock out is all you need to do to record your attendance.",
         image: Image.asset(
           "assets/images/onboarding.png",
           fit: BoxFit.fill,

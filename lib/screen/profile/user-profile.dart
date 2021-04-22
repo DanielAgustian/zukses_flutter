@@ -4,6 +4,7 @@ import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/screen/profile/user-edit-profile.dart';
 import 'package:zukses_app_1/screen/profile/user-settings.dart';
 
 class UserProfile extends StatefulWidget {
@@ -21,6 +22,11 @@ class _UserProfileScreen extends State<UserProfile> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfile(user: widget.user,)));
+          },
+        ),
         appBar: AppBar(
           backgroundColor: colorBackground,
           leading: IconButton(
@@ -37,7 +43,7 @@ class _UserProfileScreen extends State<UserProfile> {
             "Profile",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 22 : 25,
+                fontSize: size.height < 570 ? 18 : 22,
                 color: colorPrimary),
           ),
           actions: [

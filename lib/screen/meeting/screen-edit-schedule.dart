@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -20,6 +21,7 @@ import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:recase/recase.dart';
 
 class EditScheduleScreen extends StatefulWidget {
   final ScheduleModel model;
@@ -46,12 +48,14 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   TimeOfDay time1 = TimeOfDay.now();
   TimeOfDay time2;
   List<UserModel> listUser = [];
+  List<bool> checklistdata = [];
   List<String> choosedUser = [];
-
+  bool getDataDone = false;
+  bool _timeValidator = false;
   // time 1 and time 2
   DateTime startMeeting;
   DateTime endMeeting;
-
+  String myId = "";
   // Dropdown menu
   List<String> items = [
     "Never",
@@ -152,7 +156,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   void pickTime(BuildContext context, {int index = 1}) async {
     TimeOfDay picked = await showTimePicker(
       context: context,
-      initialTime: index == 1 ? TimeOfDay.now() : time2,
+      initialTime: time1,
     );
     try {
       if (picked.minute == 60) {
@@ -166,20 +170,20 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
       setState(() {
         if (index == 1) {
           time1 = picked;
-          time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
+          print("${time1.hour}.${time1.minute}");
+          //time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
         } else {
           time2 = picked;
         }
-
-        startMeeting =
-            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
-        endMeeting =
-            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
       });
     }
   }
 
   void addMeeting() {
+    startMeeting =
+        DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+    endMeeting =
+        DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
     if (textTitle.text == "") {
       setState(() {
         _titleValidator = true;
@@ -198,13 +202,24 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         _descriptionValidator = false;
       });
     }
-
+    int pembanding =
+        (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
+    if (pembanding < 0) {
+      setState(() {
+        _timeValidator = true;
+      });
+    } else {
+      setState(() {
+        _timeValidator = false;
+      });
+    }
     if (!_descriptionValidator &&
         !_titleValidator &&
         startMeeting != null &&
-        endMeeting != null) {
+        endMeeting != null &&
+        !_timeValidator) {
       ScheduleModel meeting = ScheduleModel(
-          title: textTitle.text,
+          title: textTitle.text.titleCase,
           description: textDescription.text,
           date: startMeeting,
           meetingEndTime: endMeeting,
@@ -212,26 +227,36 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
           userID: choosedUser);
 
       // call event to add meeting
-      /*BlocProvider.of<MeetingBloc>(context)
-          .add(AddMeetingEvent(model: meeting));*/
+      BlocProvider.of<MeetingBloc>(context).add(UpdateMeetingEvent(
+          model: meeting, meetingID: widget.model.meetingID));
     }
   }
 
   @override
   void initState() {
     super.initState();
-
+    _loadAllAsyncMethod();
     // getListUser();
     // init employee bloc
     _employeeBloc = BlocProvider.of<EmployeeBloc>(context);
     _employeeBloc.add(LoadAllEmployeeEvent());
 
     _controller = AnimationController(vsync: this, duration: _duration);
-
+    setState(() {
+      textTitle.text = widget.model.title;
+      textDescription.text = widget.model.description;
+      date = widget.model.date;
+      repeat = widget.model.repeat.titleCase;
+      time1 = TimeOfDay(
+          hour: widget.model.date.hour, minute: widget.model.date.minute);
+      time2 = TimeOfDay(
+          hour: widget.model.meetingEndTime.hour,
+          minute: widget.model.meetingEndTime.minute);
+    });
     // Handle view of `time2` on condition auto set 30 minutes after `time1`
     // if hour = 24, tjhen it should be 00
     // and if minutes = 60, it should be 00
-    int h, m;
+    /*int h, m;
     m = time1.minute >= 30 ? (time1.minute + 30) - 60 : (time1.minute + 30);
     h = time1.minute >= 30
         ? time1.hour >= 23
@@ -239,7 +264,23 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
             : time1.hour + 1
         : time1.hour;
 
-    time2 = TimeOfDay(hour: h, minute: m);
+    time2 = TimeOfDay(hour: h, minute: m);*/
+  }
+
+  _loadAllAsyncMethod() async {
+    await _getMyID();
+  }
+
+  _getMyID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    myId = prefs.getString("myID");
+    print("myId: " + myId);
+    widget.model.members.forEach((element) {
+      if (element.userIDSchedule != myId) {
+        choosedUser.add(element.userIDSchedule);
+      }
+      print(element.userIDSchedule + ";" + myId);
+    });
   }
 
   @override
@@ -263,6 +304,12 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         return Future.value(true);
       },
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            print("Widget.model.members" +
+                widget.model.members[1].userIDSchedule);
+          },
+        ),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: colorBackground,
@@ -284,11 +331,11 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
           ),
           centerTitle: true,
           title: Text(
-            "Add Schedule",
+            "Edit Schedule",
             style: TextStyle(
                 color: colorPrimary,
                 fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 20 : 25),
+                fontSize: size.height <= 569 ? 18 : 22),
           ),
           actions: [
             Center(
@@ -314,11 +361,26 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
             // Listener for success add meeting
             BlocListener<MeetingBloc, MeetingState>(
               listener: (context, state) {
-                if (state is MeetingStateSuccess) {
-                  Navigator.pop(context, true);
-                } else if (state is MeetingStateFail) {
+                if (state is MeetingStateUpdateSuccess) {
+                  //Navigator.pop(context, true);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(index: 3)));
+                } else if (state is MeetingStateUpdateFailed) {
                   Util().showToast(
                       msg: "Something Wrong !",
+                      color: colorError,
+                      context: this.context,
+                      txtColor: colorBackground);
+                } else if (state is MeetingStateSuccess) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(index: 3)));
+                } else if (state is MeetingStateFail) {
+                  Util().showToast(
+                      msg: "Delete Failed!",
                       color: colorError,
                       context: this.context,
                       txtColor: colorBackground);
@@ -327,7 +389,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
               child: Container(),
             ),
             //
-
             Padding(
               padding: EdgeInsets.symmetric(vertical: paddingVertical),
               child: Container(
@@ -421,6 +482,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                                 textItem: "${formater.format(date)}",
                               ),
                             ),
+
                             InkWell(
                               onTap: () {
                                 pickTime(this.context, index: 2);
@@ -494,7 +556,11 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             bgColor: colorBackground,
                             textColor: colorError,
                             outlineColor: colorError,
-                            onClick: () {}),
+                            onClick: () {
+                              BlocProvider.of<MeetingBloc>(context).add(
+                                  DeleteMeetingEvent(
+                                      meetingID: widget.model.meetingID));
+                            }),
                       ),
                       SizedBox(
                         height: 10,
@@ -502,6 +568,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                       BlocBuilder<EmployeeBloc, EmployeeState>(
                         builder: (context, state) {
                           if (state is EmployeeStateSuccessLoad) {
+                            print(choosedUser);
                             return Container(
                               child: GridView.builder(
                                 shrinkWrap: true,
@@ -657,15 +724,35 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                   SizedBox(
                     height: 10,
                   ),
-                  BlocBuilder<EmployeeBloc, EmployeeState>(
-                    builder: (context, state) {
+                  BlocListener<EmployeeBloc, EmployeeState>(
+                    listener: (context, state) {
                       if (state is EmployeeStateSuccessLoad) {
-                        return showMember(scrollController, state,
-                            query: searchQuery);
+                        setState(() {
+                          listUser.clear();
+                          checklistdata.clear();
+                        });
+                        for (int i = 0; i < state.employees.length; i++) {
+                          setState(() {
+                            listUser.add(state.employees[i]);
+                            checklistdata.add(state.checklist[i]);
+                            choosedUser.forEach((element) {
+                              if (element == state.employees[i].userID) {
+                                checklistdata[i] = !checklistdata[i];
+                              }
+                            });
+                          });
+                        }
+                        setState(() {
+                          getDataDone = true;
+                        });
                       } else {}
-                      return Container();
                     },
+                    child: Container(),
                   ),
+                  getDataDone
+                      ? showMember(scrollController, listUser, checklistdata,
+                          query: searchQuery)
+                      : Container()
                 ],
               ),
             );
@@ -676,52 +763,49 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   }
 
   // List to show the member
-  Widget showMember(
-      ScrollController scrollController, EmployeeStateSuccessLoad state,
+  Widget showMember(ScrollController scrollController, List<UserModel> user,
+      List<bool> checkList,
       {String query}) {
     return Expanded(
       child: ListView.builder(
         controller: scrollController,
-        itemCount: state.employees.length,
+        itemCount: user.length,
         itemBuilder: (BuildContext context, int index) {
           if (textSearch.text == "" || textSearch.text == null) {
             return UserInvitationItem(
-              val: state.checklist[index],
-              title: state.employees[index].name,
+              val: checkList[index],
+              title: user[index].name,
               checkboxCallback: (val) {
                 setState(() {
-                  state.checklist[index] = !state.checklist[index];
+                  checkList[index] = !checkList[index];
 
                   // If user is checked, add to list choosed User
-                  if (state.checklist[index]) {
-                    choosedUser.add(state.employees[index].userID);
-
+                  if (checkList[index]) {
+                    choosedUser.add(user[index].userID);
                     // If uncheck, remove from the list
                   } else {
-                    choosedUser.remove(state.employees[index].userID);
+                    choosedUser.remove(user[index].userID);
                   }
                 });
               },
             );
           } else {
             // Handle for search function
-            if (state.employees[index].name
-                .toLowerCase()
-                .contains(query.toLowerCase())) {
+            if (user[index].name.toLowerCase().contains(query.toLowerCase())) {
               return UserInvitationItem(
-                val: state.checklist[index],
-                title: state.employees[index].name,
+                val: checkList[index],
+                title: user[index].name,
                 checkboxCallback: (val) {
                   setState(() {
-                    state.checklist[index] = !state.checklist[index];
+                    checkList[index] = !checkList[index];
 
                     // If user is checked, add to list choosed User
-                    if (state.checklist[index]) {
-                      choosedUser.add(state.employees[index].userID);
+                    if (checkList[index]) {
+                      choosedUser.add(user[index].userID);
 
                       // If uncheck, remove from the list
                     } else {
-                      choosedUser.remove(state.employees[index].userID);
+                      choosedUser.remove(user[index].userID);
                     }
                   });
                 },

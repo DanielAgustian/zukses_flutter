@@ -27,7 +27,7 @@ class _SearchScheduleState extends State<SearchSchedule>
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
 
   Util util = Util();
-
+  bool shade = false;
   @override
   void initState() {
     super.initState();
@@ -50,7 +50,10 @@ class _SearchScheduleState extends State<SearchSchedule>
         backgroundColor: colorBackground,
         title: Text(
           "Search",
-          style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: colorPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: size.height < 569 ? 18 : 20),
         ),
         leading: IconButton(
           icon: FaIcon(
@@ -110,6 +113,13 @@ class _SearchScheduleState extends State<SearchSchedule>
               }),
             ],
           ),
+          shade
+              ? Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.black38.withOpacity(0.5),
+                )
+              : Container(),
           model.meetingID != null
               ? showDraggableSheet(size, model)
               : Container()
@@ -133,13 +143,23 @@ class _SearchScheduleState extends State<SearchSchedule>
                   count: state.meetings[index].members.length,
                   date: util.yearFormat(state.meetings[index].date),
                   onClick: () {
-                    /*if (_controller.isDismissed) {
-                                            _controller.forward();
-                                            setState(() {
-                                              model = state.meetings[index];
-                                            });
-                                          } else if (_controller.isCompleted)
-                                            _controller.reverse();*/
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
+                    }
+
+                    if (_controller.isDismissed) {
+                      _controller.forward();
+                      setState(() {
+                        model = state.meetings[index];
+                        shade = true;
+                      });
+                    } else if (_controller.isCompleted) {
+                      _controller.reverse();
+                      setState(() {
+                        shade = false;
+                      });
+                    }
                   },
                   time1: util.hourFormat(state.meetings[index].date),
                   time2: util.hourFormat(state.meetings[index].meetingEndTime),
@@ -153,6 +173,10 @@ class _SearchScheduleState extends State<SearchSchedule>
                     count: state.meetings[index].members.length,
                     date: util.yearFormat(state.meetings[index].date),
                     onClick: () {
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
                       if (_controller.isDismissed) {
                         _controller.forward();
                         setState(() {
@@ -217,7 +241,9 @@ class _SearchScheduleState extends State<SearchSchedule>
                               InkWell(
                                 onTap: () {
                                   _controller.reverse();
-                                  setState(() {});
+                                  setState(() {
+                                    shade = false;
+                                  });
                                 },
                                 child: FaIcon(FontAwesomeIcons.times,
                                     color: colorPrimary, size: 20),
@@ -234,86 +260,103 @@ class _SearchScheduleState extends State<SearchSchedule>
                               color: colorPrimary50,
                             ),
                           ),
-                          SizedBox(
-                            height: size.height <= 570 ? 6 : 10,
-                          ),
-                          Container(
-                            width: size.width,
-                            child: Text(
-                              scheduleModel.description,
-                              style: TextStyle(
-                                fontSize: size.height <= 570 ? 12 : 14,
-                                color: colorPrimary,
-                              ),
+                          SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: size.height <= 570 ? 6 : 10,
+                                ),
+                                Container(
+                                  width: size.width,
+                                  child: Text(
+                                    scheduleModel.description,
+                                    style: TextStyle(
+                                      fontSize: size.height <= 570 ? 12 : 14,
+                                      color: colorPrimary,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: size.height <= 570 ? 10 : 15,
+                                ),
+                                Text(
+                                  "Assigned to",
+                                  style: TextStyle(
+                                      fontSize: size.height <= 570 ? 12 : 14,
+                                      color: colorPrimary,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                scheduleModel.members == null
+                                    ? Text("Data Null")
+                                    : Container(
+                                        height: 0.3 * size.height,
+                                        child: ListView.builder(
+                                            //controller: scrollController,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                scheduleModel.members.length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      UserAvatar(
+                                                        avatarRadius:
+                                                            size.height <= 570
+                                                                ? 15
+                                                                : 20,
+                                                        dotSize:
+                                                            size.height <= 570
+                                                                ? 8
+                                                                : 10,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Text(
+                                                        "User " +
+                                                            scheduleModel
+                                                                .members[index]
+                                                                .name +
+                                                            " (" +
+                                                            util.acceptancePrint(
+                                                                scheduleModel
+                                                                    .members[
+                                                                        index]
+                                                                    .accepted) +
+                                                            ") ",
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              size.height <= 570
+                                                                  ? 14
+                                                                  : 16,
+                                                          color: colorPrimary,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: size.height < 569
+                                                        ? 2
+                                                        : 5,
+                                                  )
+                                                ],
+                                              );
+                                            }),
+                                      )
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            height: size.height <= 570 ? 10 : 15,
-                          ),
-                          Text(
-                            "Assigned to",
-                            style: TextStyle(
-                                fontSize: size.height <= 570 ? 12 : 14,
-                                color: colorPrimary,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          scheduleModel.members == null
-                              ? Text("Data Null")
-                              : Container(
-                                  height: 0.3 * size.height,
-                                  child: ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: scheduleModel.members.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                UserAvatar(
-                                                  avatarRadius:
-                                                      size.height <= 570
-                                                          ? 15
-                                                          : 20,
-                                                  dotSize: size.height <= 570
-                                                      ? 8
-                                                      : 10,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  "User " +
-                                                      scheduleModel
-                                                          .members[index].name +
-                                                      " (" +
-                                                      util.acceptancePrint(
-                                                          scheduleModel
-                                                              .members[index]
-                                                              .accepted) +
-                                                      ") ",
-                                                  style: TextStyle(
-                                                    fontSize: size.height <= 570
-                                                        ? 14
-                                                        : 16,
-                                                    color: colorPrimary,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: size.height < 569 ? 2 : 5,
-                                            )
-                                          ],
-                                        );
-                                      }),
-                                )
                         ],
                       ),
                     );

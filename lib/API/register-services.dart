@@ -43,7 +43,9 @@ class RegisterServicesHTTP {
       return null;
     }
   }
-Future<AuthModel> createRegisterTeamMember(RegisterModel regis, String link) async {
+
+  Future<AuthModel> createRegisterTeamMember(
+      RegisterModel regis, String link) async {
     print("email " + regis.email);
     print("name " + regis.username);
     print("password " + regis.password);
@@ -76,6 +78,7 @@ Future<AuthModel> createRegisterTeamMember(RegisterModel regis, String link) asy
       return null;
     }
   }
+
   Future<int> createRegisterTeam(
       String token, String namaTeam, String link, List<String> email) async {
     /*String dynamicLink =
@@ -109,7 +112,7 @@ Future<AuthModel> createRegisterTeamMember(RegisterModel regis, String link) asy
     }
   }
 
-  Future<int> createRegisterToCompany(String token, String kode) async {
+Future<int> createRegisterToCompany(String token, String kode) async {
     //print("Auth.token = " + auth.token);
     print("Kode" + kode);
     final response = await http.post(
@@ -122,7 +125,7 @@ Future<AuthModel> createRegisterTeamMember(RegisterModel regis, String link) asy
       body: jsonEncode(<String, dynamic>{'companyCode': kode}),
     );
     print(response.body);
-    print("Register COmpany" + response.statusCode.toString());
+    print("Register Company: " + response.statusCode.toString());
     return response.statusCode;
   }
 }

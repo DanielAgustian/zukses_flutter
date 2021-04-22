@@ -12,7 +12,7 @@ class AttendanceService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     String base64Image = base64Encode(image.readAsBytesSync());
-    String imageName = image.path.split("/").last;
+   
     print(token);
     int code = 0;
     await http.post("https://api-zukses.yokesen.com/api/clock-in", body: {

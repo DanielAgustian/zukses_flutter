@@ -32,6 +32,12 @@ class _DataCompanyScreen extends State<DataCompany> {
   final textPhone = TextEditingController();
   final textWebsite = TextEditingController();
   final textAddress = TextEditingController();
+  bool _nameValidator = false;
+  bool _emailValidator = false;
+  bool _phoneValidator = false;
+  bool _addressValidator = false;
+  bool _websiteValidator = false;
+  bool _scopeValidator = false;
   String textItem = "";
   String idScope = "";
   bool error = false;
@@ -65,37 +71,75 @@ class _DataCompanyScreen extends State<DataCompany> {
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
       RegExp regex = new RegExp(pattern);
       if (regex.hasMatch(textEmail.text)) {
-        _errorFalse();
+        setState(() {
+          _emailValidator = false;
+        });
       } else {
-        _errorTrue();
+        setState(() {
+          _emailValidator = true;
+        });
       }
+    } else {
+      setState(() {
+        _emailValidator = true;
+      });
     }
     if (textAddress.text != "") {
-      _errorFalse();
+      setState(() {
+        _addressValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _addressValidator = true;
+      });
     }
     if (textName.text != "") {
-      _errorFalse();
+      setState(() {
+        _nameValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _nameValidator = true;
+      });
     }
     if (textPhone.text != "") {
-      _errorFalse();
+      setState(() {
+        _phoneValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _phoneValidator = true;
+      });
     }
-    if (textItem != "" && textItem != null && textItem != bussinessScope[0]) {
-      _errorFalse();
+    if (textItem != "" && textItem != null) {
+      setState(() {
+        _scopeValidator = false;
+      });
     } else {
-      _errorTrue();
+      setState(() {
+        _scopeValidator = true;
+      });
+    }
+    if (textWebsite.text != "") {
+      setState(() {
+        _websiteValidator = false;
+      });
+    } else {
+      setState(() {
+        _websiteValidator = true;
+      });
     }
     /*if (textWebsite.text != "") {
       _errorFalse();
     } else {
       _errorTrue();
     }*/
-    if (!error) {
+    if (!_addressValidator &&
+        !_emailValidator &&
+        !_nameValidator &&
+        !_phoneValidator &&
+        !_scopeValidator &&
+        !_websiteValidator) {
       _searchIDScope(textItem);
       CompanyModel model = CompanyModel(
           name: textName.text,
@@ -126,9 +170,12 @@ class _DataCompanyScreen extends State<DataCompany> {
                 Text("Scope: " + textItem),
               ],
             )));
-    if (result) {
-      BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
+    if (result!=null) {
+      if(result){
+        BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
           companyModel: model, token: widget.token, scope: idScope));
+      }
+      
     }
   }
 
@@ -206,7 +253,8 @@ class _DataCompanyScreen extends State<DataCompany> {
                           width: size.width,
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: error ? colorError : colorBorder,
+                                  color:
+                                      _nameValidator ? colorError : colorBorder,
                                   width: 1),
                               color: colorBackground,
                               borderRadius: BorderRadius.circular(5)),
@@ -220,7 +268,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 labelText: "Legal Name (Required)",
                                 labelStyle: TextStyle(
-                                  color: error ? colorError : colorNeutral2,
+                                  color: _nameValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 hintText: "Legal Name",
                                 hintStyle: TextStyle(
@@ -237,7 +287,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                           width: size.width,
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: error ? colorError : colorBorder,
+                                  color: _phoneValidator
+                                      ? colorError
+                                      : colorBorder,
                                   width: 1),
                               color: colorBackground,
                               borderRadius: BorderRadius.circular(5)),
@@ -251,7 +303,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 labelText: "Company Phone (Required)",
                                 labelStyle: TextStyle(
-                                  color: error ? colorError : colorNeutral2,
+                                  color: _phoneValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 hintText: "Company phone",
                                 hintStyle: TextStyle(
@@ -268,7 +322,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                           width: size.width,
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: error ? colorError : colorBorder,
+                                  color: _emailValidator
+                                      ? colorError
+                                      : colorBorder,
                                   width: 1),
                               color: colorBackground,
                               borderRadius: BorderRadius.circular(5)),
@@ -282,7 +338,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 labelText: "Company Email (Required)",
                                 labelStyle: TextStyle(
-                                  color: error ? colorError : colorNeutral2,
+                                  color: _emailValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 hintText: "Company email",
                                 hintStyle: TextStyle(
@@ -298,7 +356,11 @@ class _DataCompanyScreen extends State<DataCompany> {
                         Container(
                           width: size.width,
                           decoration: BoxDecoration(
-                              border: Border.all(color: colorBorder, width: 1),
+                              border: Border.all(
+                                  color: _websiteValidator
+                                      ? colorError
+                                      : colorBorder,
+                                  width: 1),
                               color: colorBackground,
                               borderRadius: BorderRadius.circular(5)),
                           child: TextFormField(
@@ -307,9 +369,11 @@ class _DataCompanyScreen extends State<DataCompany> {
                             onChanged: (val) {},
                             controller: textWebsite,
                             decoration: InputDecoration(
-                                labelText: "Company Website",
+                                labelText: "Company Website(Required)",
                                 labelStyle: TextStyle(
-                                  color: colorNeutral2,
+                                  color: _websiteValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
@@ -328,7 +392,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                           width: size.width,
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: error ? colorError : colorBorder,
+                                  color: _addressValidator
+                                      ? colorError
+                                      : colorBorder,
                                   width: 1),
                               color: colorBackground,
                               borderRadius: BorderRadius.circular(5)),
@@ -340,7 +406,9 @@ class _DataCompanyScreen extends State<DataCompany> {
                             decoration: InputDecoration(
                                 labelText: "Company Address (Required)",
                                 labelStyle: TextStyle(
-                                  color: error ? colorError : colorNeutral2,
+                                  color: _addressValidator
+                                      ? colorError
+                                      : colorNeutral2,
                                 ),
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
@@ -357,7 +425,10 @@ class _DataCompanyScreen extends State<DataCompany> {
                         ),
                         Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: colorBorder),
+                              border: Border.all(
+                                  color: _scopeValidator
+                                      ? colorError
+                                      : colorBorder),
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: FormField<String>(

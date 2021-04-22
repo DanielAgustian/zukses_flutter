@@ -5,9 +5,12 @@ import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/project-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
+
 import 'package:zukses_app_1/util/util.dart';
 
 class InnerList {
@@ -17,9 +20,10 @@ class InnerList {
 }
 
 class TaskDetailScreen extends StatefulWidget {
-  TaskDetailScreen({Key key, this.title, this.projectName}) : super(key: key);
+  TaskDetailScreen({Key key, this.title, this.project}) : super(key: key);
   final String title;
-  final String projectName;
+  ProjectModel project;
+  //final String projectName;
   @override
   _TaskDetailScreen createState() => _TaskDetailScreen();
 }
@@ -27,13 +31,7 @@ class TaskDetailScreen extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _TaskDetailScreen extends State<TaskDetailScreen>
     with TickerProviderStateMixin {
-  var taskName = ["task 1", "Task 2", "Task4", "Task 6"];
-  var taskDone = ["task 3", "task 5"];
-  var taskDetail = ["Dadada", "nananan", "mamammaa", "lalalla"];
-  var taskDate = ["02/19/2020", "08/19/2020", "12/11/2019", "02/15/2021"];
-  var taskHour = ["19.00", "17.00", "15.00", "16.00"];
-
-  //-----------------DROP DOWN LIST ELEMENT----------------------//
+  TextEditingController textEditingController = TextEditingController();
   var moveToList = ["To Do", "In Progress", "Done"];
   var priorityList = ["High", "Medium", "Low"];
   String priority = "";
@@ -42,10 +40,19 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   var labelList = ["Front End", "Back End", "Design"];
   bool historyClick = false;
   //=======================================================//
-
+  List<String> insertValueTodo = ["data", "Kiamat", "yokesen"];
+  List<String> insertValueProgess = [
+    "Kaetahuan Bodoh",
+    "Kelakuan",
+    "yokese312",
+    "kurang ajar",
+    "Kalrupadatu"
+  ];
+  List<String> insertValueDone = ["Kera AJaib", "Kutang"];
   int count = 4, activeIndex = 0;
   ScrollController _controller;
-  List<InnerList> _lists = [];
+
+  List<List<String>> data = [];
   AnimationController _animationController;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
@@ -78,11 +85,13 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     tabController.addListener(_getTabIndex);
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
-    _lists = List.generate(3, (outerIndex) {
-      return InnerList(
-        name: outerIndex.toString(),
-        children: List.generate(10, (innerIndex) => '$outerIndex.$innerIndex'),
-      );
+    data = List.generate(3, (index) {
+      if (index == 0) {
+        return insertValueTodo;
+      } else if (index == 1) {
+        return insertValueProgess;
+      }
+      return insertValueDone;
     });
   }
 
@@ -90,20 +99,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-        /*floatingActionButton: FloatingActionButton(
-          backgroundColor: colorPrimary,
-          child: FaIcon(
-            FontAwesomeIcons.plus,
-            color: colorBackground,
-            size: size.height < 570 ? 25 : 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddTaskScreen()),
-            );
-          },
-        ),*/
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -111,14 +106,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: colorPrimary),
+            icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            widget.projectName,
+            widget.project.name,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 22 : 25,
+                fontSize: size.height < 570 ? 18 : 22,
                 color: colorPrimary),
           ),
           actions: [
@@ -207,7 +202,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                 Expanded(
                                   child: DragAndDropLists(
                                     scrollController: _controller,
-                                    children: List.generate(_lists.length,
+                                    children: List.generate(data.length,
                                         (index) => _buildList(index)),
                                     onItemReorder: _onItemReorder,
                                     onListReorder: _onListReorder,
@@ -261,7 +256,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   _buildList(int outerIndex) {
-    var innerList = _lists[outerIndex];
+    var innerList = data[outerIndex];
     dataIndex(outerIndex);
     return DragAndDropList(
       header: Container(
@@ -280,8 +275,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         color: colorPrimary,
       ),
       canDrag: false,
-      children: List.generate(innerList.children.length,
-          (index) => _buildItem(innerList.children[index], index)),
+      children: List.generate(
+          innerList.length, (index) => _buildItem(innerList[index], index)),
     );
   }
 
@@ -305,15 +300,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     setState(() {
-      var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
-      _lists[newListIndex].children.insert(newItemIndex, movedItem);
+      var movedItem = data[oldListIndex].removeAt(oldItemIndex);
+      data[newListIndex].insert(newItemIndex, movedItem);
     });
   }
 
   _onListReorder(int oldListIndex, int newListIndex) {
     setState(() {
-      var movedList = _lists.removeAt(oldListIndex);
-      _lists.insert(newListIndex, movedList);
+      var movedList = data.removeAt(oldListIndex);
+      data.insert(newListIndex, movedList);
     });
   }
 
@@ -751,7 +746,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                       user: "Finley Khouwira",
                                       date: DateTime.now());
                             },
-                          )
+                          ),
+                          PostBox(
+                              date: DateTime.now(),
+                              onPost: () {
+                                print(textEditingController.text);
+                              },
+                              user: UserModel(userID: "41", name: "Daniel"),
+                              size: size,
+                              textEditController: textEditingController)
                         ],
                       ),
                     ),

@@ -63,7 +63,12 @@ class _PricingScreen extends State<Pricing> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EnterPayment(token: widget.token,paketID: state.pricing[0].planId.toString(),)));
+                                    builder: (context) => EnterPayment(
+                                          token: widget.token,
+                                          paketID: state.pricing[0].planId
+                                              .toString(),
+                                          pricing: state.pricing[0],
+                                        )));
                           },
                         ),
                         SizedBox(

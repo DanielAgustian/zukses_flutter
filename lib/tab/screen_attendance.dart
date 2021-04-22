@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
@@ -97,7 +98,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                 style: TextStyle(
                     color: colorPrimary,
                     fontWeight: FontWeight.bold,
-                    fontSize: size.height <= 569 ? 20 : 25),
+                    fontSize: size.height <= 569 ? 18 : 22),
               ),
               actions: [
                 IconButton(
@@ -307,7 +308,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
-              fontSize: size.height <= 569 ? 20 : 25),
+              fontSize: size.height <= 569 ? 18 : 22),
         ),
         actions: [
           IconButton(

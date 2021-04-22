@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
@@ -35,6 +36,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   Util util = Util();
   ScheduleModel model = ScheduleModel();
+  bool shade = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -75,15 +77,27 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                                           _controller.forward();
                                           setState(() {
                                             model = state.meetings[index];
+                                            shade = true;
                                           });
-                                        } else if (_controller.isCompleted)
+                                        } else if (_controller.isCompleted) {
                                           _controller.reverse();
+                                          setState(() {
+                                            shade = false;
+                                          });
+                                        }
                                       },
                                       time1: util.hourFormat(
                                           state.meetings[index].date),
                                       time2: util.hourFormat(
                                           state.meetings[index].meetingEndTime),
                                       title: state.meetings[index].title))),
+                  shade
+                      ? Container(
+                          width: size.width,
+                          height: size.height,
+                          color: Colors.black38.withOpacity(0.5),
+                        )
+                      : Container(),
                   scrollerSheet()
                 ],
               )
@@ -123,12 +137,32 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    model.title,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w700),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        model.title,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          child: FaIcon(
+                            FontAwesomeIcons.times,
+                            color: colorPrimary,
+                          ),
+                          onTap: () {
+                            _controller.reverse();
+                            setState(() {
+                              shade = false;
+                            });
+                          },
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(
                     height: 5,
@@ -198,6 +232,9 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                               accept: "1",
                               reason: ""));
                       _controller.reverse();
+                      setState(() {
+                        shade = false;
+                      });
                       loadBeginningData();
                     },
                   ),

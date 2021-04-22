@@ -54,6 +54,151 @@ class AddScheduleRow extends StatelessWidget {
   }
 }
 
+class AddScheduleRowStatus extends StatelessWidget {
+  const AddScheduleRowStatus({
+    Key key,
+    this.title,
+    this.textItem,
+    this.fontSize: 16,
+    this.arrowRight,
+  }) : super(key: key);
+
+  final String title, textItem, arrowRight;
+  final double fontSize;
+
+  Widget _buildText(BuildContext context) {
+    String textHasil = "";
+    Color colorText;
+    if (textItem == "pending") {
+      textHasil = "Requested";
+      colorText = colorSecondaryYellow;
+    } else if (textItem == "approved") {
+      textHasil = "Approval";
+      colorText = colorClear;
+    } else if (textItem == "rejected") {
+      textHasil = "Rejected";
+      colorText = colorError;
+    }
+    return Text(
+      textHasil,
+      style: TextStyle(
+          color: colorText, fontWeight: FontWeight.bold, fontSize: 16),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          _buildText(context)
+        ],
+      ),
+    );
+  }
+}
+
+class AddScheduleRowNonArrow extends StatelessWidget {
+  const AddScheduleRowNonArrow({
+    Key key,
+    this.title,
+    this.textItem,
+    this.fontSize: 16,
+    this.arrowRight,
+  }) : super(key: key);
+
+  final String title, textItem, arrowRight;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          Text(
+            textItem,
+            style: TextStyle(
+                fontSize: fontSize,
+                color: colorPrimary,
+                fontWeight: FontWeight.w700),
+          )
+        ],
+      ),
+    );
+  }
+}
+/*class AddScheduleRowHour extends StatelessWidget {
+  const AddScheduleRowHour(
+      {Key key,
+      this.title,
+      this.textHour1,
+      this.textHour2,
+      this.fontSize: 16,
+      this.onSelected1,
+      this.onSelected2})
+      : super(key: key);
+
+  final String title, textHour1, textHour2;
+  final double fontSize;
+  final Function onSelected1, onSelected2;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          Row(
+            children: [
+              InkWell(
+                onTap: onSelected1,
+                child: Text(
+                  textHour1,
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: colorPrimary,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+              Text(
+                "-",
+                style: TextStyle(
+                    fontSize: fontSize,
+                    color: colorPrimary,
+                    fontWeight: FontWeight.w700),
+              ),
+              InkWell(
+                onTap: onSelected2,
+                child: Text(textHour2,
+                    style: TextStyle(
+                        fontSize: fontSize,
+                        color: colorPrimary,
+                        fontWeight: FontWeight.w700)),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}*/
+
 class AddScheduleRow2 extends StatelessWidget {
   const AddScheduleRow2({
     Key key,

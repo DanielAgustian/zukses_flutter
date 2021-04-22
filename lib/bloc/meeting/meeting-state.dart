@@ -42,3 +42,7 @@ class MeetingStateDetailSuccessLoad extends MeetingState {
     return 'Data : { Meeting List: $meeting }';
   }
 }
+
+class MeetingStateUpdateSuccess extends MeetingState {}
+
+class MeetingStateUpdateFailed extends MeetingState {}

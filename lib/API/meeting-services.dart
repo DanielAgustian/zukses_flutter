@@ -284,23 +284,22 @@ class MeetingServicesHTTP {
         'Charset': 'utf-8',
         'Authorization': 'Bearer $token'
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         'title': title,
         'description': description,
         'date': date.toString(),
         'repeat': repeat,
         'endTime': endTime.toString(),
-        'userId': jsonEncode(userID),
+        'userId': userID,
         'meetingId': meetingId
       }),
     );
     print(response.statusCode.toString());
-
+    print(response.body);
+    print(userID.toString());
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-
-      final schedule = ScheduleModel.fromJson(jsonDecode(response.body));
 
       return response.statusCode;
     } else {
