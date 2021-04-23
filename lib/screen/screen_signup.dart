@@ -19,7 +19,7 @@ import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/register/screen-setup.dart';
-import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
+
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:recase/recase.dart';
 import 'package:zukses_app_1/util/util.dart';
@@ -48,11 +48,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   bool _linkValidator = false;
   List<bool> empty = [false, false, false, false];
   String failedRegister = "";
-
-  AnimationController _controller;
-  Duration _duration = Duration(milliseconds: 800);
-  Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
-
+  
   void register() {
     if (textEmail.text == "") {
       setState(() {
@@ -203,7 +199,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
     super.initState();
     Util util = Util();
     util.initDynamicLinks(context);
-    _controller = AnimationController(vsync: this, duration: _duration);
+    
   }
 
   @override

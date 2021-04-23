@@ -14,10 +14,10 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   CommentBloc() : super(null);
 
   // Bloc for loadd all Comment
-  Stream<CommentState> mapAllComment() async* {
+  Stream<CommentState> mapAllComment(LoadAllCommentEvent event) async* {
     yield CommentStateLoading();
     // return list user model
-    var res = await _commentServiceHTTP.fetchComment();
+    var res = await _commentServiceHTTP.fetchComment(event.idTask);
     if (res.length > 0 && res != null) {
       yield CommentStateGetSuccessLoad(comment: res);
     } else {
@@ -28,7 +28,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   Stream<CommentState> mapAddComment(AddCommentEvent event) async* {
     yield CommentStateLoading();
     // return list user model
-    var res = await _commentServiceHTTP.addComment(event.comment, event.image);
+    var res = await _commentServiceHTTP.addComment(event.comment);
     if (res != null) {
       if (res == 200) {
         yield CommentStateAddSuccessLoad(kode: res);
@@ -79,7 +79,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   @override
   Stream<CommentState> mapEventToState(CommentEvent event) async* {
     if (event is LoadAllCommentEvent) {
-      yield* mapAllComment();
+      yield* mapAllComment(event);
     } else if (event is CommentEventDidUpdated) {
       yield* mapUpdatingCommentState(event);
     } else if (event is AddCommentEvent) {

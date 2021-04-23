@@ -48,6 +48,8 @@ class TeamServiceHTTP {
       final data = jsonDecode(res.body);
       final auth = TeamDetailModel.fromJson(data["team"]);
       return auth;
+    } else {
+      return null;
     }
   }
 }

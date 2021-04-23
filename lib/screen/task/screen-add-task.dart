@@ -23,8 +23,9 @@ import 'package:zukses_app_1/util/util.dart';
 import 'package:recase/recase.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  AddTaskScreen({Key key, this.title}) : super(key: key);
+  AddTaskScreen({Key key, this.title, this.projectId}) : super(key: key);
   final String title;
+  final int projectId;
   @override
   _AddTaskScreen createState() => _AddTaskScreen();
 }
@@ -61,7 +62,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
   bool _priorityValidator = false;
   _addNewTask() {
     print("Click here");
-    if (textTime.text != "") {
+    if (textTitle.text != "") {
       setState(() {
         _titleValidator = false;
       });
@@ -70,6 +71,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
         _titleValidator = true;
       });
     }
+    print("titleValidator = " + _titleValidator.toString());
     if (textDescription.text != "") {
       setState(() {
         _descValidation = false;
@@ -146,11 +148,11 @@ class _AddTaskScreen extends State<AddTaskScreen> {
       DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
           selectedDate.day, _time.hour, _time.minute);
       TaskModel task = TaskModel(
-        idProject: 1,
+        idProject: widget.projectId,
         taskName: textTitle.text.titleCase,
         details: textDescription.text,
         assignee: idUser,
-        date: datePush,
+        date: datePush.toString(),
         priority: textItem,
         notes: textNotes.text,
         label: idLabel.toString(),

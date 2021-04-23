@@ -19,8 +19,8 @@ class LoadAllCommentEvent extends CommentEvent {
 
 class AddCommentEvent extends CommentEvent {
   final CommentModel comment;
-  final File image;
-  AddCommentEvent(this.comment, this.image);
+ 
+  AddCommentEvent(this.comment);
   List<Object> get props => [];
 }
 

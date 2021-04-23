@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/payment-services.dart';
-import 'package:zukses_app_1/bloc/payment-bloc/payment-event.dart';
-import 'package:zukses_app_1/bloc/payment-bloc/payment-state.dart';
+import 'package:zukses_app_1/bloc/payment/payment-event.dart';
+import 'package:zukses_app_1/bloc/payment/payment-state.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   PaymentBloc() : super(null);

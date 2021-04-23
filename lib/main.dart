@@ -8,11 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/API/auth-service.dart';
 
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task-bloc.dart';
+import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-bloc.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-bloc.dart';
 import 'package:zukses_app_1/bloc/comment/comment-bloc.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
@@ -21,18 +23,17 @@ import 'package:zukses_app_1/bloc/label-task/business-scope-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
-import 'package:zukses_app_1/bloc/payment-bloc/payment-bloc.dart';
+import 'package:zukses_app_1/bloc/payment/payment-bloc.dart';
 import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
-import 'package:zukses_app_1/screen/forgot-password/check-your-email.dart';
-import 'package:zukses_app_1/screen/forgot-password/forgot-password.dart';
+
 import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
@@ -45,7 +46,6 @@ import 'package:zukses_app_1/util/util.dart';
 
 import 'bloc/leaves/leave-bloc.dart';
 import 'bloc/overtime/overtime-bloc.dart';
-import 'bloc/sent-invite-team/sent-invite-bloc.dart';
 import 'bloc/task/task-bloc.dart';
 import 'bloc/team/team-bloc.dart';
 
@@ -120,13 +120,15 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<PaymentBloc>(create: (context) => PaymentBloc()),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
-        BlocProvider<SentInviteBloc>(create: (context) => SentInviteBloc()),
         BlocProvider<PricingBloc>(create: (context) => PricingBloc()),
         BlocProvider<TeamDetailBloc>(create: (context) => TeamDetailBloc()),
         BlocProvider<ProjectBloc>(create: (context) => ProjectBloc()),
         BlocProvider<TaskBloc>(create: (context) => TaskBloc()),
         BlocProvider<CommentBloc>(create: (context) => CommentBloc()),
         BlocProvider<LabelTaskBloc>(create: (context) => LabelTaskBloc()),
+        BlocProvider<CLTBloc>(create: (context) => CLTBloc()),
+        BlocProvider<CLTPBloc>(create: (context) => CLTPBloc()),
+        BlocProvider<ChangeTaskBloc>(create: (context) => ChangeTaskBloc()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{
@@ -162,7 +164,6 @@ class _SplashScreenState extends State<SplashScreen> {
   final splashDelay = 3;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadWidget();
   }
@@ -191,7 +192,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         body: Stack(
@@ -236,7 +236,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   var dayOfWeek = 1;
   int _currentPage = 0;
-  var _linkMessage = "";
+
   String sprefToken = '';
   DateFormat dayName = DateFormat('E');
   Timer _timerLink;
@@ -275,7 +275,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller = PageController(
       initialPage: 0,
@@ -314,76 +313,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   dynamicLink() async {
-    await initDynamicLinks();
-  }
-
-  Future<void> initDynamicLinks() async {
-    print("INIT DYNAMIC LINK");
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-      //print(deepLink.path);
-      print(deepLink);
-      if (deepLink != null) {
-        print("OnLink Data:");
-        if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
-          String token = deepLink.queryParameters['token'];
-          print("Onlink token" + token);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ResetPassword(
-                        token: token,
-                      )));
-        } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
-          String token = deepLink.queryParameters['token'];
-          print("Onlink token" + token);
-          Util().saveSharedPreferences("link", deepLink.toString());
-          if (token == sprefToken) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => ScreenLogin()));
-          } else {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => ScreenSignUp()));
-          }
-        }
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
-
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
-    print(deepLink);
-    if (deepLink != null) {
-      print("GetInitialLink");
-
-      print("Init" + deepLink.path);
-      if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
-        String token = deepLink.queryParameters['token'];
-        print("Initial Link = " + token);
-
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ResetPassword(
-                      token: token,
-                    )));
-      } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
-        String token = deepLink.queryParameters['token'];
-        print("Initial Link = " + token);
-        Util().saveSharedPreferences("link", deepLink.toString());
-        if (token == sprefToken) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => ScreenLogin()));
-        } else {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
-        }
-      }
-    }
+    Util().initDynamicLinks(context);
   }
 
   getToken() async {

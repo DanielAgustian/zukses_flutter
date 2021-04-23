@@ -276,17 +276,19 @@ class TaskRowLabel extends StatelessWidget {
 }
 
 class RowTaskUndroppable extends StatelessWidget {
-  const RowTaskUndroppable({
-    Key key,
-    this.title,
-    this.textItem,
-    this.fontSize: 16,
-    this.arrowRight,
-  }) : super(key: key);
+  const RowTaskUndroppable(
+      {Key key,
+      this.title,
+      this.textItem,
+      this.fontSize: 16,
+      this.priority = false,
+      this.needArrow = false})
+      : super(key: key);
 
-  final String title, textItem, arrowRight;
+  final String title, textItem;
   final double fontSize;
-
+  final bool needArrow;
+  final bool priority;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -308,16 +310,46 @@ class RowTaskUndroppable extends StatelessWidget {
                     color: colorPrimary,
                     fontWeight: FontWeight.w700),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              FaIcon(FontAwesomeIcons.chevronDown,
-                  size: 18, color: colorPrimary)
+              priority
+                  ? SizedBox(
+                      width: 10,
+                    )
+                  : Container(),
+              priority
+                  ? Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                          color: colorChange(textItem),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.chevronUp,
+                          color: colorBackground,
+                          size: 15,
+                        ),
+                      ),
+                    )
+                  : Container() /*FaIcon(FontAwesomeIcons.chevronDown,
+                      size: 18,
+                      color: needArrow ? colorPrimary : Colors.transparent)*/
             ],
           )
         ],
       ),
     );
+  }
+
+  Color colorChange(String label) {
+    if (label == "Front End") {
+      return colorSecondaryYellow;
+    } else if (label == "Back End") {
+      return colorClear;
+    } else if (label == "Design") {
+      return colorSecondaryRed;
+    } else {
+      return colorError;
+    }
   }
 }
 

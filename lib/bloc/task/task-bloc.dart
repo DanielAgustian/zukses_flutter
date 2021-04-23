@@ -21,13 +21,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Stream<TaskState> mapGetTask(GetAllTaskEvent event) async* {
     yield TaskStateLoading();
 
-    /*var res = await _taskServicesHTTP.fetchTask();
+    var res = await _taskServicesHTTP.fetchTask(event.projectId);
     if (res != null) {
       print(res);
-      yield TaskStateSuccessLoad(res);
+      yield TaskStateSuccessLoad(task: res);
     } else {
       yield TaskStateFailLoad();
-    }*/
+    }
   }
 
   Stream<TaskState> mapAddTask(AddTaskEvent event) async* {

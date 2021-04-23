@@ -130,11 +130,13 @@ class PostBox extends StatelessWidget {
   PostBox(
       {Key key,
       @required this.user,
+      this.hint = "Add a comment.. ",
       this.date,
       @required this.onPost,
       @required this.size,
       @required this.textEditController})
       : super(key: key);
+  final String hint;
   final UserModel user;
   final DateTime date;
   final Size size;
@@ -164,7 +166,64 @@ class PostBox extends StatelessWidget {
             controller: textEditController,
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(left: 20, top: 15),
-                hintText: "Add a comment.. ",
+                hintText: hint,
+                hintStyle: TextStyle(
+                  color: colorNeutral1,
+                ),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                suffixIcon: TextButton(
+                    child: Text(
+                      "Post",
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: size.height < 569 ? 14 : 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: onPost)),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class AddCheckBox extends StatelessWidget {
+  AddCheckBox(
+      {Key key,
+      @required this.onPost,
+      @required this.size,
+      @required this.textEditController})
+      : super(key: key);
+
+  final Size size;
+  final TextEditingController textEditController;
+  final Function onPost;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          width: 0.1 * size.width,
+          height: 0.1 * size.width,
+          decoration:
+              BoxDecoration(shape: BoxShape.rectangle, color: colorNeutral2),
+        ),
+        Container(
+          width: 0.77 * size.width,
+          decoration: BoxDecoration(
+            boxShadow: [boxShadowStandard],
+            color: colorBackground,
+            border: Border.all(width: 1, color: colorPrimary),
+          ),
+          child: TextFormField(
+            textInputAction: TextInputAction.next,
+            onChanged: (val) {},
+            controller: textEditController,
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 20, top: 15),
+                hintText: "Add new list...",
                 hintStyle: TextStyle(
                   color: colorNeutral1,
                 ),

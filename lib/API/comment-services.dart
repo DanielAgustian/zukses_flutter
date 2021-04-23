@@ -11,33 +11,42 @@ class CommentServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
 
-  Future<List<CommentModel>> fetchComment() async {
+  Future<List<CommentModel>> fetchComment(String idTask) async {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     //Query to API
-    var res = await http
-        .get(Uri.https(baseURI, 'api/Comment'), headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Charset': 'utf-8',
-      'Authorization': 'Bearer $token'
-    } );
-
+    var queryParameters = {
+      'taskId': idTask,
+    };
+    var res = await http.get(Uri.https(baseURI, 'api/comment', queryParameters),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        });
+    print(res.statusCode);
+    print(res.body);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
+
       var responseJson = jsonDecode(res.body);
-      return (responseJson['data'] as List)
+      if (responseJson['Data'].toString() == "[]") {
+        List<CommentModel> comment = [];
+        return comment;
+      }
+      return (responseJson['Data'] as List)
           .map((p) => CommentModel.fromJson(p))
           .toList();
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      return null;
     }
   }
 
-  Future<int> addComment(CommentModel comment, File image) async {
+  Future<int> addComment(CommentModel comment) async {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
@@ -49,10 +58,13 @@ class CommentServicesHTTP {
           'Authorization': 'Bearer $token'
         },
         body: jsonEncode(<String, dynamic>{
-          'content': comment.content,
+          'comment': comment.content,
+          'taskId': comment.taskID
           //'userId': comment.user.userID,
         }));
 
+    print(res.statusCode);
+    print(res.body);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -61,7 +73,7 @@ class CommentServicesHTTP {
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      return null;
     }
   }
 
@@ -89,7 +101,7 @@ class CommentServicesHTTP {
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      return null;
     }
   }
 

@@ -79,7 +79,7 @@ class LayoutProjectList extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => TaskDetailScreen(
-                                    projectName: projectName[index],
+                                    
                                   )),
                         );
                       },

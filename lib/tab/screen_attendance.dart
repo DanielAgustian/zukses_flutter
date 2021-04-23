@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
@@ -37,7 +36,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   AttendanceModel selected;
   DateTime _currentDate = DateTime.now();
   WeeklyCalendar _selectedWeek;
-  DateTime _selectedDate;
+ 
   List<AttendanceModel> absensiList = [];
   bool isLoadingAttendance = false;
   void selectDate(DateTime date, AttendanceModel absence) {

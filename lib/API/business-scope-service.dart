@@ -12,6 +12,7 @@ class BusinessScopeServiceHTTP {
         await http.get(Uri.https(baseURI, 'api/businessScope'), headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
+      
     });
     if (res.statusCode == 200) {
       var responseJson = jsonDecode(res.body);

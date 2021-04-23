@@ -24,9 +24,6 @@ class TeamDetailBloc extends Bloc<TeamDetailEvent, TeamDetailState> {
     yield TeamDetailStateLoading();
     // return list user model
     var res = await _teamServiceHTTP.fetchDetailTeam(event.id);
-
-    
-    
     // directly throw into success load or fail load
     if (res != null ) {
       yield TeamDetailStateSuccess(res);

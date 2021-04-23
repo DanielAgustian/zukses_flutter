@@ -8,10 +8,10 @@ abstract class TaskEvent extends Equatable {
 }
 
 class GetAllTaskEvent extends TaskEvent {
-  final List<TaskModel> task;
+  final int projectId;
 
-  GetAllTaskEvent({this.task});
-  List<Object> get props => [task];
+  GetAllTaskEvent({this.projectId});
+  List<Object> get props => [projectId];
 }
 
 class AddTaskEvent extends TaskEvent {

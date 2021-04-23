@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/project-model.dart';
-import 'package:zukses_app_1/model/project-model.dart';
 
 class ProjectServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
@@ -25,8 +24,12 @@ class ProjectServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print(res.body);
+      //print(res.body);
       var responseJson = jsonDecode(res.body);
+      if (responseJson['data'].toString() == "[]") {
+        List<ProjectModel> project;
+        return project;
+      }
       return (responseJson['data'] as List)
           .map((p) => ProjectModel.fromJson(p))
           .toList();

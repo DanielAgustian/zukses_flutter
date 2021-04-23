@@ -36,21 +36,18 @@ class CompanyServiceHTTP {
   }
 
   Future<CompanyModel> fetchCompanyCode(String kode) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     var res = await http
         .get(fullBaseURI + "/api/company-code/$kode", headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
-      //'Authorization': 'Bearer $token'
     });
     //print(res.statusCode.toString());
     //print(res.body);
     print(res.statusCode);
     if (res.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
+      // If the server did return a 200 OK response,
       // then parse the JSON.
-      //print("response.body:" + response.body);
+
       var responseJson = jsonDecode(res.body);
 
       final company = CompanyModel.fromJson(responseJson['company']);
@@ -67,20 +64,21 @@ class CompanyServiceHTTP {
   Future<int> addOrganization(
       CompanyModel company, String token, String scope) async {
     print("addOrganization ");
-    var res = await http
-        .post(fullBaseURI + "/api/organization", headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Charset': 'utf-8',
-      'Authorization': 'Bearer $token'
-    }, body: jsonEncode(<String, dynamic>{
-      'legalName': company.name,
-      'companyPhone': company.phone,
-      'companyEmail': company.email,
-      'companyWebsite': company.website,
-      'companyAddress': company.address,
-      'business_scope': scope,
-      'package_id': company.packageId
-    }));
+    var res = await http.post(fullBaseURI + "/api/organization",
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'legalName': company.name,
+          'companyPhone': company.phone,
+          'companyEmail': company.email,
+          'companyWebsite': company.website,
+          'companyAddress': company.address,
+          'business_scope': scope,
+          'package_id': company.packageId
+        }));
     print(res.body);
     print(res.statusCode);
     return res.statusCode;

@@ -1,11 +1,28 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task-bloc.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task-event.dart';
+import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-bloc.dart';
+import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-event.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-bloc.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-event.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-state.dart';
+import 'package:zukses_app_1/bloc/comment/comment-bloc.dart';
+import 'package:zukses_app_1/bloc/comment/comment-event.dart';
+import 'package:zukses_app_1/bloc/comment/comment-state.dart';
+import 'package:zukses_app_1/bloc/task/task-bloc.dart';
+import 'package:zukses_app_1/bloc/task/task-event.dart';
+import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/comment-model.dart';
 import 'package:zukses_app_1/model/project-model.dart';
+import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,12 +30,13 @@ import 'package:zukses_app_1/component/task/list-task-detail2.dart';
 
 import 'package:zukses_app_1/util/util.dart';
 
-class InnerList {
+/*class InnerList {
   final String name;
   List<String> children;
   InnerList({this.name, this.children});
-}
+}*/
 
+// ignore: must_be_immutable
 class TaskDetailScreen extends StatefulWidget {
   TaskDetailScreen({Key key, this.title, this.project}) : super(key: key);
   final String title;
@@ -28,36 +46,46 @@ class TaskDetailScreen extends StatefulWidget {
   _TaskDetailScreen createState() => _TaskDetailScreen();
 }
 
-/// This is the stateless widget that the main application instantiates.
 class _TaskDetailScreen extends State<TaskDetailScreen>
     with TickerProviderStateMixin {
   TextEditingController textEditingController = TextEditingController();
+  final textAddCheckBox = TextEditingController();
+
+  //==================Method to Move =====================//
+  String moveTo = "";
+  String historyMoveTo = "";
+  String changeMoveTo = "";
   var moveToList = ["To Do", "In Progress", "Done"];
+  var dbEnum = ["to-do", "in-progress", "done"];
+
   var priorityList = ["High", "Medium", "Low"];
   String priority = "";
-  String moveTo = "";
+
   var label = "";
   var labelList = ["Front End", "Back End", "Design"];
-  bool historyClick = false;
+
   //=======================================================//
-  List<String> insertValueTodo = ["data", "Kiamat", "yokesen"];
-  List<String> insertValueProgess = [
-    "Kaetahuan Bodoh",
-    "Kelakuan",
-    "yokese312",
-    "kurang ajar",
-    "Kalrupadatu"
-  ];
-  List<String> insertValueDone = ["Kera AJaib", "Kutang"];
+
+  bool historyClick = true;
+
   int count = 4, activeIndex = 0;
   ScrollController _controller;
+  Util util = Util();
 
-  List<List<String>> data = [];
+  List<TaskModel> taskToDo = [];
+  List<TaskModel> taskInProgress = [];
+  List<TaskModel> taskDone = [];
+  TaskModel clickTask = TaskModel();
+  List<List<TaskModel>> dataTask = [];
+  int checkClick = 0;
+
   AnimationController _animationController;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   bool checkBoxClick = false;
+  bool postCommentValidator = false;
   Size size;
+
   var projectTask = [1, 5, 2, 0];
   TabController tabController;
   // FOR SKELETON -------------------------------------------------------------------------
@@ -85,14 +113,28 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     tabController.addListener(_getTabIndex);
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
-    data = List.generate(3, (index) {
-      if (index == 0) {
-        return insertValueTodo;
-      } else if (index == 1) {
-        return insertValueProgess;
+
+    BlocProvider.of<TaskBloc>(context)
+        .add(GetAllTaskEvent(projectId: widget.project.id));
+  }
+
+  _postComment(CommentModel comment) {
+    BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
+  }
+
+  _searchEnum(String moving, String idtask) {
+    for (int i = 0; i < moveToList.length; i++) {
+      if (moving == moveToList[i]) {
+        if (moving != historyMoveTo) {
+          _changeProgress(moving, idtask);
+        }
       }
-      return insertValueDone;
-    });
+    }
+  }
+
+  _changeProgress(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateEvent(idTask, progress));
   }
 
   @override
@@ -128,7 +170,10 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddTaskScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => AddTaskScreen(
+                            projectId: widget.project.id,
+                          )),
                 );
               },
             ),
@@ -141,6 +186,32 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                BlocListener<TaskBloc, TaskState>(
+                  listener: (context, state) {
+                    if (state is TaskStateSuccessLoad) {
+                      taskToDo.clear();
+                      state.task.forEach((element) {
+                        if (element.taskType.toLowerCase() == "to-do") {
+                          taskToDo.add(element);
+                        } else if (element.taskType.toLowerCase() ==
+                            "in progress") {
+                          taskInProgress.add(element);
+                        } else if (element.taskType.toLowerCase() == "done") {
+                          taskDone.add(element);
+                        }
+                      });
+                    }
+                    dataTask = List.generate(3, (index) {
+                      if (index == 0) {
+                        return taskToDo;
+                      } else if (index == 1) {
+                        return taskInProgress;
+                      }
+                      return taskDone;
+                    });
+                  },
+                  child: Container(),
+                ),
                 SizedBox(
                   width: double.infinity,
                   height: size.height,
@@ -202,7 +273,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                 Expanded(
                                   child: DragAndDropLists(
                                     scrollController: _controller,
-                                    children: List.generate(data.length,
+                                    children: List.generate(dataTask.length,
                                         (index) => _buildList(index)),
                                     onItemReorder: _onItemReorder,
                                     onListReorder: _onListReorder,
@@ -233,7 +304,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                 ),
               ],
             )),
-            scrollerSheet(),
+            clickTask.idTask == null ? Container() : scrollerSheet(clickTask),
           ],
         ));
   }
@@ -256,7 +327,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   _buildList(int outerIndex) {
-    var innerList = data[outerIndex];
+    var innerList = dataTask[outerIndex];
     dataIndex(outerIndex);
     return DragAndDropList(
       header: Container(
@@ -280,18 +351,48 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     );
   }
 
-  _buildItem(String item, index) {
+  _buildItem(TaskModel item, index) {
     return DragAndDropItem(
       child: ListTaskDetail2(
+        label: item.label,
         size: size,
-        title: item,
-        detail: index.toString(),
-        date: "19-02-2019",
-        hour: "15:22",
+        title: item.taskName,
+        detail: item.details,
+        date: util.yearFormat(DateTime.parse(item.date)),
+        hour: util.hourFormat(DateTime.parse(item.date)),
         index: index,
         onClick: () {
-          print(item);
-          _onClickItem();
+          setState(() {
+            if (item.taskType.toLowerCase() == "in progress") {
+              historyMoveTo = dbEnum[1];
+            } else {
+              historyMoveTo = item.taskType.toLowerCase();
+            }
+          });
+          for (int i = 0; i < dbEnum.length; i++) {
+            if (item.taskType.toLowerCase() == dbEnum[i]) {
+              setState(() {
+                moveTo = moveToList[i];
+              });
+            } else {
+              if (item.taskType.toLowerCase() == "in progress") {
+                setState(() {
+                  moveTo = moveToList[1];
+                });
+              }
+            }
+          }
+
+          setState(() {
+            clickTask = item;
+            priority = item.priority;
+          });
+          BlocProvider.of<CommentBloc>(context)
+              .add(LoadAllCommentEvent(item.idTask.toString()));
+
+          BlocProvider.of<CLTBloc>(context)
+              .add(LoadAllCLTEvent(item.idTask.toString()));
+          _onClickItem(item);
         },
       ),
     );
@@ -300,15 +401,18 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     setState(() {
-      var movedItem = data[oldListIndex].removeAt(oldItemIndex);
-      data[newListIndex].insert(newItemIndex, movedItem);
+      var movedItem = dataTask[oldListIndex].removeAt(oldItemIndex);
+
+      dataTask[newListIndex].insert(newItemIndex, movedItem);
+
+      _changeProgress(dbEnum[newListIndex], movedItem.idTask.toString());
     });
   }
 
   _onListReorder(int oldListIndex, int newListIndex) {
     setState(() {
-      var movedList = data.removeAt(oldListIndex);
-      data.insert(newListIndex, movedList);
+      var movedList = dataTask.removeAt(oldListIndex);
+      dataTask.insert(newListIndex, movedList);
     });
   }
 
@@ -350,7 +454,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     }
   }
 
-  _onClickItem() {
+  _onClickItem(TaskModel task) {
     if (_animationController.isDismissed) {
       _animationController.forward();
     } else if (_animationController.isCompleted) {
@@ -362,7 +466,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         checkBoxClick = newValue;
       });
 
-  Widget scrollerSheet() {
+  Widget scrollerSheet(TaskModel clickTask) {
     bool temp = false;
     Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
@@ -396,7 +500,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                 fontWeight: FontWeight.bold)),
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          _searchEnum(moveTo, clickTask.idTask.toString());
+                        },
                         child: Text("Done",
                             style: TextStyle(
                                 color: colorPrimary,
@@ -411,14 +517,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Task Title",
+                        clickTask.taskName,
                         style: TextStyle(
                             fontSize: 20,
                             color: colorPrimary,
                             fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        "Task ID",
+                        clickTask.idTask.toString(),
                         style: TextStyle(
                             fontSize: 12,
                             color: colorPrimary50,
@@ -436,8 +542,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             height: 5,
                           ),
                           Container(
-                            child: Text(
-                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Senectus in nascetur massa aliquam sollicitudin tellus. Tincidunt tellus a hac aliquam pharetra, massa laoreet. Varius adipiscing at neque venenatis quam mattis dui odio mi. Vitae euismod blandit. (Note)",
+                            child: Text(clickTask.details,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: colorNeutral3,
@@ -516,8 +621,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             },
                             child: RowTaskUndroppable(
                               title: "End Time",
-                              textItem:
-                                  Util().changeTimeToString(TimeOfDay.now()),
+                              textItem: clickTask.date,
                               fontSize: size.height <= 600 ? 12 : 14,
                             ),
                           ),
@@ -537,20 +641,22 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           SizedBox(
                             height: 10,
                           ),
-                          TaskRowLabel(
-                              fontSize: size.height <= 569 ? 12 : 14,
-                              title: "Label",
-                              textItem: label,
-                              items: labelList,
-                              onSelectedItem: (val) {
-                                setState(() {
-                                  label = val;
-                                });
-                              }),
+                          RowTaskUndroppable(
+                            title: "Label",
+                            textItem: clickTask.label,
+                            fontSize: size.height <= 600 ? 12 : 14,
+                          ),
                           SizedBox(
                             height: 10,
                           ),
-                          TaskRow2(
+                          RowTaskUndroppable(
+                            title: "Priority",
+                            textItem: clickTask.priority,
+                            fontSize: size.height <= 600 ? 12 : 14,
+                            priority: true,
+                          ),
+
+                          /*TaskRow2(
                               fontSize: size.height <= 569 ? 12 : 14,
                               title: "Priority",
                               textItem: priority,
@@ -559,7 +665,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                 setState(() {
                                   priority = val;
                                 });
-                              }),
+                              }),*/
                           SizedBox(
                             height: 20,
                           ),
@@ -650,28 +756,74 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   ))
                             ],
                           ),
-                          ListView.builder(
-                            padding: EdgeInsets.all(0),
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 2,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
+                          BlocBuilder<CLTBloc, CLTState>(
+                              builder: (context, state) {
+                            if (state is CLTStateGetSuccessLoad) {
+                              return ListView.builder(
+                                padding: EdgeInsets.all(0),
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    state.listCheckList.length + 1, //+ 1,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  if (index == state.listCheckList.length) {
+                                    return Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: CheckboxListTile(
+                                          value: checkBoxClick,
+                                          onChanged: _onCheckBoxClick,
+                                          controlAffinity:
+                                              ListTileControlAffinity.leading,
+                                          title: _textBoxCheck(
+                                              context, clickTask.idTask)),
+                                    );
+                                  }
+                                  return Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: CheckboxListTile(
+                                      value: state.boolCheckList[index],
+                                      onChanged: (val) {
+                                        setState(() {
+                                          state.boolCheckList[index] =
+                                              !state.boolCheckList[index];
+                                        });
+                                        BlocProvider.of<CLTPBloc>(context).add(
+                                            PutCLTPEvent(state
+                                                .listCheckList[index].id
+                                                .toString()));
+                                      },
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      title: Text(
+                                          state.listCheckList[index].checkList,
+                                          style: TextStyle(
+                                              fontSize:
+                                                  size.height <= 569 ? 12 : 14,
+                                              color: colorPrimary,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else if (state is CLTStateGetFailLoad) {
                               return Container(
                                 alignment: Alignment.centerLeft,
                                 child: CheckboxListTile(
-                                  value: checkBoxClick,
-                                  onChanged: _onCheckBoxClick,
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
-                                  title: Text("Tile" + index.toString(),
-                                      style: TextStyle(
-                                          fontSize:
-                                              size.height <= 569 ? 12 : 14,
-                                          color: colorPrimary,
-                                          fontWeight: FontWeight.bold)),
-                                ),
+                                    value: checkBoxClick,
+                                    onChanged: _onCheckBoxClick,
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                    title: _textBoxCheck(
+                                        context, clickTask.idTask)),
                               );
-                            },
+                            } else if (state is CLTStateAddSuccessLoad) {
+                              BlocProvider.of<CLTBloc>(context).add(
+                                  LoadAllCLTEvent(clickTask.idTask.toString()));
+                            }
+                            return Container();
+                          }),
+                          SizedBox(
+                            height: 10,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -726,31 +878,74 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           SizedBox(
                             height: 10,
                           ),
-                          ListView.builder(
-                            padding: EdgeInsets.all(0),
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 2,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return historyClick
-                                  ? CommentBox(
-                                      size: size,
-                                      comment:
-                                          "Lorem ipsum dolor sit amet, cboboa sl anapisna pna pindo aoad n[oa k doa a[ da[on a[oa [aomd [omfn lk  kh ahbd la[ß",
-                                      user: "Finley Khowira",
-                                      date: "14 Jan 2021")
-                                  : HistoryBox(
-                                      size: size,
-                                      history:
-                                          "Lorem ipsum dolor sit amet, cboboa sl anapisna pna pindo aoad n[oa k doa a[ da[on a",
-                                      user: "Finley Khouwira",
-                                      date: DateTime.now());
-                            },
-                          ),
+                          historyClick
+                              ? BlocBuilder<CommentBloc, CommentState>(
+                                  builder: (context, state) {
+                                    if (state is CommentStateGetSuccessLoad) {
+                                      return ListView.builder(
+                                          padding: EdgeInsets.all(0),
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: state.comment.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            return CommentBox(
+                                                size: size,
+                                                comment: state
+                                                    .comment[index].content,
+                                                user: state
+                                                    .comment[index].nameUser,
+                                                date: util.dateNumbertoCalendar(
+                                                        state.comment[index]
+                                                            .date) +
+                                                    " at " +
+                                                    util.hourFormat(state
+                                                        .comment[index].date));
+                                          });
+                                    } else if (state
+                                        is CommentStateGetFailLoad) {
+                                      return Text("No Comment Yet");
+                                    } else if (state
+                                        is CommentStateAddSuccessLoad) {
+                                      BlocProvider.of<CommentBloc>(context).add(
+                                          LoadAllCommentEvent(
+                                              clickTask.idTask.toString()));
+                                      return CircularProgressIndicator();
+                                    }
+                                    return Container();
+                                  },
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.all(0),
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: 2,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return HistoryBox(
+                                        size: size,
+                                        history:
+                                            "Lorem ipsum dolor sit amet, cboboa sl anapisna pna pindo aoad n[oa k doa a[ da[on a",
+                                        user: "Finley Khouwira",
+                                        date: DateTime.now());
+                                  }),
                           PostBox(
                               date: DateTime.now(),
                               onPost: () {
-                                print(textEditingController.text);
+                                if (textEditingController.text != "") {
+                                  setState(() {
+                                    postCommentValidator = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    postCommentValidator = true;
+                                  });
+                                }
+                                if (!postCommentValidator) {
+                                  CommentModel commentModel = CommentModel(
+                                      taskID: clickTask.idTask,
+                                      content: textEditingController.text);
+                                  _postComment(commentModel);
+                                }
                               },
                               user: UserModel(userID: "41", name: "Daniel"),
                               size: size,
@@ -764,6 +959,46 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _textBoxCheck(context, int taskId) {
+    return Container(
+      width: 0.5 * size.width,
+      decoration: BoxDecoration(
+        boxShadow: [boxShadowStandard],
+        color: colorBackground,
+        border: Border.all(width: 1, color: colorPrimary),
+      ),
+      child: TextField(
+        style: TextStyle(fontSize: 16, height: 1.0),
+        textInputAction: TextInputAction.next,
+        onChanged: (val) {},
+        controller: textAddCheckBox,
+        decoration: InputDecoration(
+            isDense: true,
+            contentPadding: EdgeInsets.only(top: 15, left: 10),
+            hintText: "Add new list...",
+            hintStyle: TextStyle(
+              color: colorNeutral1,
+            ),
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            suffixIcon: TextButton(
+                child: Text(
+                  "Post",
+                  style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: size.height < 569 ? 14 : 16,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  if (textAddCheckBox.text != "") {
+                    BlocProvider.of<CLTBloc>(context).add(
+                        AddCLTEvent(taskId.toString(), textAddCheckBox.text));
+                  }
+                })),
       ),
     );
   }

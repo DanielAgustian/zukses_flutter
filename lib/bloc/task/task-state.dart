@@ -28,14 +28,14 @@ class TaskStateAddFailLoad extends TaskState {}
 class TaskStateFailLoad extends TaskState {}
 
 class TaskStateSuccessLoad extends TaskState {
-  final List<TaskModel> project;
+  final List<TaskModel> task;
 
-  TaskStateSuccessLoad({this.project});
+  TaskStateSuccessLoad({this.task});
 
-  List<Object> get props => [project];
+  List<Object> get props => [task];
 
   @override
   String toString() {
-    return 'Data : { employee List: $project }';
+    return 'Data : { employee List: $task }';
   }
 }

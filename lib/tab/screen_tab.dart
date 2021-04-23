@@ -21,9 +21,7 @@ class ScreenTab extends StatefulWidget {
 class _ScreenTab extends State<ScreenTab> {
   List<Widget> screenList = [];
   int _currentScreenIndex;
-  AnimationController _controller;
-  Duration _duration = Duration(milliseconds: 800);
-  Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -36,12 +34,7 @@ class _ScreenTab extends State<ScreenTab> {
 
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
-    /*screenList.add(Container(
-      child: Center(child: Text("Under Development.")),
-    ));
-    screenList.add(Container(
-      child: Center(child: Text("Under Development.")),
-    ));*/
+    
     screenList.add(TaskScreen());
     screenList.add(MeetingScreen());
     Util util = Util();

@@ -10,6 +10,7 @@ import 'package:zukses_app_1/bloc/project/project-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:recase/recase.dart';
 
 class AddProject extends StatefulWidget {
   AddProject({Key key, this.title}) : super(key: key);
@@ -26,7 +27,8 @@ class _AddProjectScreen extends State<AddProject> {
   String data = "";
   bool loading = false;
   final picker = ImagePicker();
-  TextEditingController _textTitle = TextEditingController();
+  bool _titleValidator = false;
+  bool _detailValidator = false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -122,6 +124,10 @@ class _AddProjectScreen extends State<AddProject> {
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: Container(
                       decoration: BoxDecoration(
+                        border: Border.all(
+                            color: _titleValidator
+                                ? colorError
+                                : Colors.transparent),
                         borderRadius: BorderRadius.circular(5),
                         color: colorBackground,
                         boxShadow: [
@@ -147,6 +153,10 @@ class _AddProjectScreen extends State<AddProject> {
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
                     child: Container(
                       decoration: BoxDecoration(
+                        border: Border.all(
+                            color: _detailValidator
+                                ? colorError
+                                : Colors.transparent),
                         borderRadius: BorderRadius.circular(5),
                         color: colorBackground,
                         boxShadow: [
@@ -196,6 +206,7 @@ class _AddProjectScreen extends State<AddProject> {
 
   _imagePicker() async {
     //ImagePicker for gallery
+
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
@@ -220,18 +231,40 @@ class _AddProjectScreen extends State<AddProject> {
   }
 
   _addProject() {
-    setState(() {
-      loading = true;
-    });
-    File image;
-    if (data != null) {
+    if (textTitle.text != "") {
       setState(() {
-        image = File(data);
+        _titleValidator = false;
+      });
+    } else {
+      setState(() {
+        _titleValidator = true;
       });
     }
-    ProjectModel project =
-        ProjectModel(name: textTitle.text, details: textDetails.text);
-    BlocProvider.of<ProjectBloc>(context).add(AddProjectEvent(project, image));
+
+    if (textDetails.text != "") {
+      setState(() {
+        _detailValidator = false;
+      });
+    } else {
+      setState(() {
+        _detailValidator = true;
+      });
+    }
+    if (!_titleValidator && !_detailValidator) {
+      setState(() {
+        loading = true;
+      });
+      File image;
+      if (data != null) {
+        setState(() {
+          image = File(data);
+        });
+      }
+      ProjectModel project =
+          ProjectModel(name: textTitle.text.titleCase, details: textDetails.text);
+      BlocProvider.of<ProjectBloc>(context)
+          .add(AddProjectEvent(project, image));
+    }
   }
 
   void _showPicker(context) {

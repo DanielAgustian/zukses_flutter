@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
-import 'package:zukses_app_1/model/invite-team-model.dart';
+
 import 'package:zukses_app_1/model/register-model.dart';
-import 'package:zukses_app_1/util/util.dart';
+
 
 class RegisterServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
@@ -105,7 +105,6 @@ class RegisterServicesHTTP {
     print(response.body);
     print(response.statusCode);
     if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
       return response.statusCode;
     } else {
       return null;

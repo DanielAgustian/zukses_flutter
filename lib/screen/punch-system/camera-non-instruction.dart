@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
+import 'package:zukses_app_1/screen/punch-system/camera-clock-in.dart';
 
 class CameraNonInstruction extends StatefulWidget {
   CameraNonInstruction({Key key, this.title}) : super(key: key);

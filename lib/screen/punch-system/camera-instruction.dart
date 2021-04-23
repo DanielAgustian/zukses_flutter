@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
+import 'package:zukses_app_1/screen/punch-system/camera-clock-in.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 
 class CameraInstruction extends StatefulWidget {

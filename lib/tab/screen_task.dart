@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/API/company-services.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-event.dart';
 import 'package:zukses_app_1/bloc/project/project-state.dart';
@@ -19,16 +18,7 @@ class TaskScreen extends StatefulWidget {
 }
 
 /// This is the stateless widget that the main application instantiates.
-class _TaskScreen extends State<TaskScreen>
-    with SingleTickerProviderStateMixin {
-  var projectName = ["Project 1", "Project 2", "Project 3", "Project 4"];
-  var projectDetail = [
-    "Project 1: Batman",
-    "Project 2: Golor",
-    "Project 3: Dummy Project",
-    "Project 4: Liar"
-  ];
-  TabController tabController;
+class _TaskScreen extends State<TaskScreen> {
   TextEditingController textSearch = new TextEditingController();
   var projectTask = [1, 5, 2, 0];
   int count = 4;
@@ -51,24 +41,15 @@ class _TaskScreen extends State<TaskScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+
     timer();
     BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
-  }
-
-  void debug() {
-    CompanyServiceHTTP().fetchCompanyProfile();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        /*floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            debug();
-          },
-        ),*/
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -104,44 +85,15 @@ class _TaskScreen extends State<TaskScreen>
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            /*Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              height: 50,
-              //width: MediaQuery.of(context).size.width * 0.45,
-              decoration: BoxDecoration(
-                  color: colorBackground,
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorNeutral1.withOpacity(1),
-                      blurRadius: 15,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(5)),
-              child: Center(
-                child: TextFormField(
-                  controller: textSearch,
-                  textInputAction: TextInputAction.go,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                        icon: FaIcon(FontAwesomeIcons.search,
-                            color: colorPrimary),
-                        onPressed: () {
-                          setState(() {
-                            searchTask(textSearch.text);
-                          });
-                        },
-                      ),
-                      contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-                      hintText: "Search..",
-                      hintStyle: TextStyle(),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-            ),*/
-
+            BlocListener<ProjectBloc, ProjectState>(
+              listener: (context, state) {
+                if (state is ProjectStateAddSuccessLoad) {
+                  BlocProvider.of<ProjectBloc>(context)
+                      .add(GetAllProjectEvent());
+                }
+              },
+              child: Container(),
+            ),
             SizedBox(
               height: 10,
             ),

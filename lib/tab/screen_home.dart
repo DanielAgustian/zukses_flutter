@@ -44,13 +44,12 @@ import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
-import 'package:zukses_app_1/punch-system/camera-clock-in.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/punch-system/camera-instruction.dart';
+import 'package:zukses_app_1/screen/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
-import 'package:zukses_app_1/punch-system/camera-non-instruction.dart';
+import 'package:zukses_app_1/screen/punch-system/camera-non-instruction.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
 import 'package:zukses_app_1/screen/profile/user-profile.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
@@ -1540,9 +1539,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ))),
             Padding(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: FlatButton(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: colorBackground,
+                child: TextButton(
+                    style: TextButton.styleFrom(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        backgroundColor: colorBackground),
                     onPressed: () {
                       Navigator.pushReplacement(
                           context,

@@ -2,14 +2,25 @@ import 'package:zukses_app_1/model/user-model.dart';
 
 class CommentModel {
   String content;
-  int id;
+  int taskID;
+  int id, userId;
   DateTime date;
-  UserModel user;
-  CommentModel({this.id, this.content, this.date, this.user});
+
+  String nameUser;
+  CommentModel(
+      {this.id,
+      this.content,
+      this.date,
+      this.taskID,
+      this.nameUser,
+      this.userId});
   CommentModel.fromJson(Map<String, dynamic> map) {
     this.id = map['id'];
-    this.content = map['content'];
-    this.date = map['date'];
-    this.user = UserModel.fromJson(map['user']);
+    this.content = map['comment'];
+    this.date = DateTime.parse(map['updated_at']);
+    //this.user = UserModel.fromJson(map['user']);
+    this.taskID = map['task_id'];
+    this.nameUser = map['name'];
+    this.userId = map['user_id'];
   }
 }
