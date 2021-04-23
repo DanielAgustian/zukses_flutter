@@ -25,3 +25,18 @@ class ChangeTaskStateSuccessLoad extends ChangeTaskState {
     return 'Data : { employee List: $code}';
   }
 }
+class ChangeTaskStateDropdownFailLoad extends ChangeTaskState {}
+
+class ChangeTaskStateDropdownSuccessLoad extends ChangeTaskState {
+  final int code;
+  // handle for checklist user
+
+  ChangeTaskStateDropdownSuccessLoad({this.code});
+
+  List<Object> get props => [code];
+
+  @override
+  String toString() {
+    return 'Data : { employee List: $code}';
+  }
+}

@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/bloc/change-task-bloc/change-task-bloc.dart';
 import 'package:zukses_app_1/bloc/change-task-bloc/change-task-event.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task.state.dart';
 import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-bloc.dart';
 import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-event.dart';
 import 'package:zukses_app_1/bloc/checklist-task/checklist-task-bloc.dart';
@@ -16,6 +19,9 @@ import 'package:zukses_app_1/bloc/comment/comment-state.dart';
 import 'package:zukses_app_1/bloc/task/task-bloc.dart';
 import 'package:zukses_app_1/bloc/task/task-event.dart';
 import 'package:zukses_app_1/bloc/task/task-state.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-event.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-state.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
@@ -50,7 +56,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     with TickerProviderStateMixin {
   TextEditingController textEditingController = TextEditingController();
   final textAddCheckBox = TextEditingController();
-
+  final picker = ImagePicker();
+  String data = "";
   //==================Method to Move =====================//
   String moveTo = "";
   String historyMoveTo = "";
@@ -84,6 +91,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   bool checkBoxClick = false;
   bool postCommentValidator = false;
+  bool upload = false;
   Size size;
 
   var projectTask = [1, 5, 2, 0];
@@ -91,19 +99,11 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    timer();
+    //timer();
     label = labelList[0];
     priority = priorityList[0];
     moveTo = moveToList[0];
@@ -126,10 +126,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     for (int i = 0; i < moveToList.length; i++) {
       if (moving == moveToList[i]) {
         if (moving != historyMoveTo) {
-          _changeProgress(moving, idtask);
+          _changeProgressbyDropdown(moving, idtask);
         }
       }
     }
+  }
+
+  _changeProgressbyDropdown(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateByDropdownEvent(idTask, progress));
   }
 
   _changeProgress(String progress, String idTask) {
@@ -186,15 +191,40 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                BlocListener<ChangeTaskBloc, ChangeTaskState>(
+                  listener: (context, state) {
+                    if (state is ChangeTaskStateDropdownSuccessLoad) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<TaskBloc>(context)
+                          .add(GetAllTaskEvent(projectId: widget.project.id));
+                    }
+                  },
+                  child: Container(),
+                ),
+                BlocListener<UploadAttachBloc, UploadAttachState>(
+                  listener: (context, state) {
+                    if (state is UploadAttachStateSuccess) {
+                      setState(() {
+                        upload = true;
+                      });
+                    }
+                  },
+                  child: Container(),
+                ),
                 BlocListener<TaskBloc, TaskState>(
                   listener: (context, state) {
                     if (state is TaskStateSuccessLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
                       taskToDo.clear();
                       state.task.forEach((element) {
                         if (element.taskType.toLowerCase() == "to-do") {
                           taskToDo.add(element);
                         } else if (element.taskType.toLowerCase() ==
-                            "in progress") {
+                            "in-progress") {
                           taskInProgress.add(element);
                         } else if (element.taskType.toLowerCase() == "done") {
                           taskDone.add(element);
@@ -305,6 +335,20 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               ],
             )),
             clickTask.idTask == null ? Container() : scrollerSheet(clickTask),
+            isLoading
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.black38.withOpacity(0.5),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        // strokeWidth: 0,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                    ),
+                  )
+                : Container()
           ],
         ));
   }
@@ -502,6 +546,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       InkWell(
                         onTap: () {
                           _searchEnum(moveTo, clickTask.idTask.toString());
+                          _animationController.reverse();
                         },
                         child: Text("Done",
                             style: TextStyle(
@@ -655,17 +700,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             fontSize: size.height <= 600 ? 12 : 14,
                             priority: true,
                           ),
-
-                          /*TaskRow2(
-                              fontSize: size.height <= 569 ? 12 : 14,
-                              title: "Priority",
-                              textItem: priority,
-                              items: priorityList,
-                              onSelectedItem: (val) {
-                                setState(() {
-                                  priority = val;
-                                });
-                              }),*/
                           SizedBox(
                             height: 20,
                           ),
@@ -681,7 +715,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ),
                               SizedBox(width: 10),
                               Text(
-                                "Attachement",
+                                "Attachment",
                                 style: TextStyle(
                                     color: colorPrimary, fontSize: 16),
                               ),
@@ -693,22 +727,34 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 color: colorNeutral2,
-                                borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                    fit: BoxFit.fitHeight,
+                                    image: data == ""
+                                        ? AssetImage("assets/images/camera.png")
+                                        : FileImage(File(data)))),
                             child: Align(
                               alignment: Alignment.bottomCenter,
-                              child: Container(
-                                alignment: Alignment.bottomLeft,
-                                height: size.height * 0.045,
-                                decoration: BoxDecoration(
-                                  color: colorNeutral3,
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10)),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "StatusImage.jpg",
-                                    style: TextStyle(color: colorBackground),
+                              child: InkWell(
+                                onTap: () {
+                                  _showPicker(context);
+                                },
+                                child: Container(
+                                  alignment: Alignment.bottomLeft,
+                                  height: size.height * 0.045,
+                                  decoration: BoxDecoration(
+                                    color: colorNeutral3,
+                                    borderRadius: BorderRadius.only(
+                                        bottomRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10)),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      upload
+                                          ? "Upload Success"
+                                          : "Click Here to Upload",
+                                      style: TextStyle(color: colorBackground),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1001,5 +1047,75 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                 })),
       ),
     );
+  }
+
+  _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imagePicker();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imagePickerCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.cancel),
+                    title: new Text('Cancel'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _imagePicker() async {
+    //ImagePicker for gallery
+
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    } else {}
+  }
+
+  _imagePickerCamera() async {
+    //ImagePicker for Camera
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    }
+  }
+
+  _uploadAttachment(File image) {
+    BlocProvider.of<UploadAttachBloc>(context)
+        .add(UploadAttachNewEvent(clickTask.idTask.toString(), image));
   }
 }

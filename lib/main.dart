@@ -28,6 +28,7 @@ import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
@@ -129,6 +130,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<CLTBloc>(create: (context) => CLTBloc()),
         BlocProvider<CLTPBloc>(create: (context) => CLTPBloc()),
         BlocProvider<ChangeTaskBloc>(create: (context) => ChangeTaskBloc()),
+        BlocProvider<UploadAttachBloc>(create: (context) => UploadAttachBloc()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{

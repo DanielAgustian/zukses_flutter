@@ -24,7 +24,6 @@ class ChangeTaskBloc extends Bloc<ChangeTaskEvent, ChangeTaskState> {
         await _taskServices.changeProgressTask(event.idTask, event.progress);
 
     // return checkbox handler
-    List<bool> bools = [];
 
     // directly throw into success load or fail load
     if (res == 200) {
@@ -34,10 +33,29 @@ class ChangeTaskBloc extends Bloc<ChangeTaskEvent, ChangeTaskState> {
     }
   }
 
+  Stream<ChangeTaskState> mapChangeTaskDropdown(
+      ChangeTaskUpdateByDropdownEvent event) async* {
+    yield ChangeTaskStateLoading();
+    // return list user model
+    var res =
+        await _taskServices.changeProgressTask(event.idTask, event.progress);
+
+    // return checkbox handler
+
+    // directly throw into success load or fail load
+    if (res == 200) {
+      yield ChangeTaskStateDropdownSuccessLoad(code: res);
+    } else {
+      yield ChangeTaskStateDropdownFailLoad();
+    }
+  }
+
   @override
   Stream<ChangeTaskState> mapEventToState(ChangeTaskEvent event) async* {
     if (event is ChangeTaskUpdateEvent) {
       yield* mapChangeTask(event);
+    } else if (event is ChangeTaskUpdateByDropdownEvent) {
+      yield* mapChangeTaskDropdown(event);
     }
   }
 

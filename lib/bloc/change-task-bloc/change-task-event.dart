@@ -15,3 +15,10 @@ class ChangeTaskUpdateEvent extends ChangeTaskEvent {
   ChangeTaskUpdateEvent(this.idTask, this.progress);
   List<Object> get props => [];
 }
+
+class ChangeTaskUpdateByDropdownEvent extends ChangeTaskEvent {
+  final String idTask;
+  final String progress;
+  ChangeTaskUpdateByDropdownEvent(this.idTask, this.progress);
+  List<Object> get props => [];
+}

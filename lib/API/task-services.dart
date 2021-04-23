@@ -105,4 +105,32 @@ class TaskServicesHTTP {
       return null;
     }
   }
+
+  Future<int> uploadAttachment(String taskId, File image) async {
+    //Token from Login
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    String base64Image = base64Encode(image.readAsBytesSync());
+    //Query to API
+    var res = await http.post(Uri.https(baseURI, 'api/attachment'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(
+            <String, dynamic>{'taskId': taskId, 'image': base64Image}));
+    print(res.body);
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      //var responseJson = jsonDecode(res.body);
+      return res.statusCode;
+    } else {
+      // IF the server return everything except 200, it will gte exception.
+      print("Failed TO Load Alubm");
+      return null;
+    }
+  }
 }
