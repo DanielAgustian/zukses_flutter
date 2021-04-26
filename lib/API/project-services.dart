@@ -20,7 +20,8 @@ class ProjectServicesHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-
+    print("fecthProject" + res.statusCode.toString());
+    print(res.body);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

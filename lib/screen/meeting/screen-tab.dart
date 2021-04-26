@@ -102,7 +102,11 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                 ],
               )
             : Center(
-                child: Text("No Meeting For Now"),
+                child: Text(
+                  "No Meeting Request.",
+                  style: TextStyle(
+                      color: colorPrimary, fontWeight: FontWeight.bold),
+                ),
               );
       } else {
         return Container();

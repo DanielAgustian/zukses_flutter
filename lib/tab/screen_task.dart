@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-event.dart';
 import 'package:zukses_app_1/bloc/project/project-state.dart';
+import 'package:zukses_app_1/bloc/task/task-bloc.dart';
+import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,22 +30,11 @@ class _TaskScreen extends State<TaskScreen> {
 
   bool isLoading = true;
 
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    timer();
     BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 
@@ -81,52 +73,120 @@ class _TaskScreen extends State<TaskScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        body: Stack(
           children: [
-            BlocListener<ProjectBloc, ProjectState>(
-              listener: (context, state) {
-                if (state is ProjectStateAddSuccessLoad) {
-                  BlocProvider.of<ProjectBloc>(context)
-                      .add(GetAllProjectEvent());
-                }
-              },
-              child: Container(),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
-              if (state is ProjectStateSuccessLoad) {
-                return ListView.builder(
-                  itemCount: state.project.length,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                        onTap: () {
-                          //print(projectName[index]);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TaskDetailScreen(
-                                      project: state.project[index],
-                                    )),
-                          );
-                        },
-                        child: ListReviseProject(
-                          title: state.project[index].name,
-                          detail: state.project[index].details,
-                          jumlahTask: state.project[index].totalTask,
-                        ));
+            SingleChildScrollView(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                BlocListener<ProjectBloc, ProjectState>(
+                  listener: (context, state) {
+                    if (state is ProjectStateAddSuccessLoad) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<ProjectBloc>(context)
+                          .add(GetAllProjectEvent());
+                    } else if (state is ProjectStateSuccessLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    } else if (state is ProjectStateFailLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
                   },
-                );
-              }
-              return Container();
-            }),
+                  child: Container(),
+                ),
+                BlocListener<TaskBloc, TaskState>(
+                  listener: (context, state) {
+                    if (state is TaskStateSuccessLoad) {
+                      BlocProvider.of<ProjectBloc>(context)
+                          .add(GetAllProjectEvent());
+                    }
+                  },
+                  child: Container(),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                BlocBuilder<ProjectBloc, ProjectState>(
+                    builder: (context, state) {
+                  if (state is ProjectStateSuccessLoad) {
+                    return ListView.builder(
+                      itemCount: state.project.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                            onTap: () {
+                              //print(projectName[index]);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TaskDetailScreen(
+                                          project: state.project[index],
+                                        )),
+                              );
+                            },
+                            child: ListReviseProject(
+                              image: state.project[index].imgUrl,
+                              title: state.project[index].name,
+                              detail: state.project[index].details,
+                              jumlahTask: state.project[index].totalTask,
+                            ));
+                      },
+                    );
+                  } else if (state is ProjectStateFailLoad) {
+                    return Container(
+                      width: size.width,
+                      height: size.height * 0.75,
+                      child: Center(
+                          child: RichText(
+                        text: TextSpan(
+                          text: 'No Project Here. Click ',
+                          style: TextStyle(color: colorPrimary),
+                          children: <TextSpan>[
+                            TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddProject()));
+                                  },
+                                text: 'here',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorPrimary)),
+                            TextSpan(text: ' to continue'),
+                          ],
+                        ),
+                      )),
+                    );
+                  }
+                  return Container();
+                }),
+              ],
+            )),
+            isLoading
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.black38.withOpacity(0.5),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        // strokeWidth: 0,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                    ),
+                  )
+                : Container()
           ],
-        )));
+        ));
   }
 
   void searchTask(String word) {}

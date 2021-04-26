@@ -17,9 +17,9 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileScreen extends State<EditProfile> {
   final picker = ImagePicker();
+  bool data = false;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -52,8 +52,8 @@ class _EditProfileScreen extends State<EditProfile> {
                         fontWeight: FontWeight.bold)),
               ),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UserSettings()));
+                /*Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserSettings()));*/
               })
         ],
       ),

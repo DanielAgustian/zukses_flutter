@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/component/register/choice-box.dart';
+
 import 'package:zukses_app_1/constant/constant.dart';
 
 class TextBoxSetup extends StatelessWidget {

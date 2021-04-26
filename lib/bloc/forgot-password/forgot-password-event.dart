@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/payment-model.dart';
+
 
 abstract class ForgotPasswordEvent extends Equatable {
   const ForgotPasswordEvent();

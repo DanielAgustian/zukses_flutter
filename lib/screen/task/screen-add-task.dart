@@ -60,6 +60,8 @@ class _AddTaskScreen extends State<AddTaskScreen> {
   bool _timeValidator = false;
   bool _labelValidator = false;
   bool _priorityValidator = false;
+  bool freeLabel = false;
+  bool freeAssignTo = false;
   _addNewTask() {
     print("Click here");
     if (textTitle.text != "") {
@@ -81,6 +83,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
         _descValidation = true;
       });
     }
+
     if (hasilMultiple.length > 0) {
       setState(() {
         _assignToValidator = false;
@@ -117,6 +120,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
         _timeValidator = true;
       });
     }
+
     if (textLabel != labelList[0] && textLabel != labelList.last) {
       setState(() {
         _labelValidator = false;
@@ -127,37 +131,65 @@ class _AddTaskScreen extends State<AddTaskScreen> {
       });
     }
 
-    if (!_titleValidator &&
-        !_descValidation &&
-        !_assignToValidator &&
-        !_dateValidator &&
-        !_timeValidator &&
-        !_labelValidator &&
-        !_priorityValidator) {
-      List<int> idUser = [];
-      for (int i = 0; i < hasilMultiple.length; i++) {
-        int temp = hasilMultiple[i];
-        idUser.add(int.parse(allUser[temp].userID));
-      }
-      int idLabel;
-      for (int i = 0; i < label.length; i++) {
-        if (label[i].name == textLabel) {
-          idLabel = label[i].id;
+    print("FreeAssignTO" + freeAssignTo.toString());
+    if (freeAssignTo) {
+      if (!_titleValidator &&
+          !_descValidation &&
+          !_dateValidator &&
+          !_timeValidator &&
+          !_priorityValidator) {
+        int idLabel;
+        for (int i = 0; i < label.length; i++) {
+          if (label[i].name == textLabel) {
+            idLabel = label[i].id;
+          }
         }
+        DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
+            selectedDate.day, _time.hour, _time.minute);
+        TaskModel task = TaskModel(
+          idProject: widget.projectId,
+          taskName: textTitle.text.titleCase,
+          details: textDescription.text,
+          date: datePush.toString(),
+          priority: textItem,
+          notes: textNotes.text,
+          label: idLabel.toString(),
+        );
+        BlocProvider.of<TaskBloc>(context).add(AddTaskFreeEvent(task));
       }
-      DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
-          selectedDate.day, _time.hour, _time.minute);
-      TaskModel task = TaskModel(
-        idProject: widget.projectId,
-        taskName: textTitle.text.titleCase,
-        details: textDescription.text,
-        assignee: idUser,
-        date: datePush.toString(),
-        priority: textItem,
-        notes: textNotes.text,
-        label: idLabel.toString(),
-      );
-      BlocProvider.of<TaskBloc>(context).add(AddTaskEvent(task));
+    } else {
+      if (!_titleValidator &&
+          !_descValidation &&
+          !_assignToValidator &&
+          !_dateValidator &&
+          !_timeValidator &&
+          !_labelValidator &&
+          !_priorityValidator) {
+        List<int> idUser = [];
+        for (int i = 0; i < hasilMultiple.length; i++) {
+          int temp = hasilMultiple[i];
+          idUser.add(int.parse(allUser[temp].userID));
+        }
+        int idLabel;
+        for (int i = 0; i < label.length; i++) {
+          if (label[i].name == textLabel) {
+            idLabel = label[i].id;
+          }
+        }
+        DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
+            selectedDate.day, _time.hour, _time.minute);
+        TaskModel task = TaskModel(
+          idProject: widget.projectId,
+          taskName: textTitle.text.titleCase,
+          details: textDescription.text,
+          assignee: idUser,
+          date: datePush.toString(),
+          priority: textItem,
+          notes: textNotes.text,
+          label: idLabel.toString(),
+        );
+        BlocProvider.of<TaskBloc>(context).add(AddTaskEvent(task));
+      }
     }
   }
 
@@ -217,6 +249,17 @@ class _AddTaskScreen extends State<AddTaskScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  BlocListener<EmployeeBloc, EmployeeState>(
+                    listener: (context, state) {
+                      print(state);
+                      if (state is EmployeeStateFailLoad) {
+                        setState(() {
+                          freeAssignTo = true;
+                        });
+                      }
+                    },
+                    child: Container(),
+                  ),
                   BlocListener<TaskBloc, TaskState>(
                       listener: (context, state) {
                         if (state is TaskStateAddSuccessLoad) {
@@ -247,6 +290,16 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                           waitingLabel = false;
                         });
                       } else if (state is LabelTaskStateFailLoad) {
+                        setState(() {
+                          //freeLabel = true;
+                        });
+                        labelList.clear();
+                        labelList.add("Click Here for Label");
+                        labelList.add("+ New Label");
+                        setState(() {
+                          textLabel = labelList[0];
+                          waitingLabel = false;
+                        });
                         print("Data Error");
                       } else if (state is LabelTaskAddStateSuccessLoad) {
                         BlocProvider.of<LabelTaskBloc>(context)
@@ -357,6 +410,8 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                           isExpanded: true,
                         ),
                       );
+                    } else if (State is EmployeeStateFailLoad) {
+                      return Container();
                     } else {
                       return Container();
                     }

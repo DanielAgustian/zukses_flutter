@@ -15,6 +15,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* mapGetTask(event);
     } else if (event is AddTaskEvent) {
       yield* mapAddTask(event);
+    } else if (event is AddTaskFreeEvent) {
+      yield* mapAddTaskFree(event);
     }
   }
 
@@ -22,18 +24,46 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     yield TaskStateLoading();
 
     var res = await _taskServicesHTTP.fetchTask(event.projectId);
+
     if (res != null) {
       print(res);
       yield TaskStateSuccessLoad(task: res);
+      //print(state);
     } else {
       yield TaskStateFailLoad();
+      //print(state);
     }
   }
+  Stream<TaskState> mapLowPriorityTask(LoadLowPriorityTaskEvent event) async* {
+    yield TaskStateLoading();
 
+    var res = await _taskServicesHTTP.fetchTaskByPriority(event.priority);
+
+    if (res != null) {
+      print(res);
+      yield TaskStateLowPrioritySuccessLoad(task: res);
+      //print(state);
+    } else {
+      yield TaskStateLowPriorityFailLoad();
+      //print(state);
+    }
+  }
   Stream<TaskState> mapAddTask(AddTaskEvent event) async* {
     yield TaskStateLoading();
 
     var res = await _taskServicesHTTP.addTask(event.task);
+    if (res == 200) {
+      print(res);
+      yield TaskStateAddSuccessLoad(project: res);
+    } else {
+      yield TaskStateAddFailLoad();
+    }
+  }
+
+  Stream<TaskState> mapAddTaskFree(AddTaskFreeEvent event) async* {
+    yield TaskStateLoading();
+
+    var res = await _taskServicesHTTP.addTaskFree(event.task);
     if (res == 200) {
       print(res);
       yield TaskStateAddSuccessLoad(project: res);

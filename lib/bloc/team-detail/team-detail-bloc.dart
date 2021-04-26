@@ -14,7 +14,7 @@ class TeamDetailBloc extends Bloc<TeamDetailEvent, TeamDetailState> {
 
   @override
   Stream<TeamDetailState> mapEventToState(TeamDetailEvent event) async* {
-    // TODO: implement mapEventToState
+    
     if (event is LoadAllTeamDetailEvent) {
       yield* mapTeamDetail(event);
     }
@@ -30,5 +30,10 @@ class TeamDetailBloc extends Bloc<TeamDetailEvent, TeamDetailState> {
     } else {
       yield TeamDetailStateFailed();
     }
+  }
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }

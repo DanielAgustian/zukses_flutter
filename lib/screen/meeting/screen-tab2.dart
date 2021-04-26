@@ -45,55 +45,68 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
     Size size = MediaQuery.of(context).size;
     return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
       if (state is MeetingStateSuccessLoad) {
-        return Stack(
-          children: [
-            Container(
-                child: widget.loading
-                    ? ListView.builder(
-                        itemCount: state.meetings.length,
-                        itemBuilder: (context, index) =>
-                            SkeletonLess3WithAvatar(
-                              size: size,
-                              row: 2,
-                            ))
-                    : ListView.builder(
-                        itemCount: state.meetings.length,
-                        itemBuilder: (context, index) => ScheduleItemRequest(
-                            count: state.meetings[index].members.length,
-                            size: size,
-                            onClick: () {
-                              if (_controller.isDismissed) {
-                                _controller.forward();
-                                setState(() {
-                                  model = state.meetings[index];
-                                  shade = true;
-                                });
-                              } else if (_controller.isCompleted) {
-                                _controller.reverse();
-                                shade = false;
-                              }
-                            },
-                            date: util.dateNumbertoCalendar(
-                                state.meetings[index].date),
-                            time1: util.hourFormat(state.meetings[index].date),
-                            time2: util.hourFormat(
-                                state.meetings[index].meetingEndTime),
-                            title: state.meetings[index].title))),
-            shade
-                ? Container(
-                    width: size.width,
-                    height: size.height,
-                    color: Colors.black38.withOpacity(0.5),
-                  )
-                : Container(),
-            model != null
-                ? scrollerSheet()
-                : Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text("data Error"),
-                  )
-          ],
-        );
+        int panjang = state.meetings.length;
+        return panjang >= 1
+            ? Stack(
+                children: [
+                  Container(
+                      child: widget.loading
+                          ? ListView.builder(
+                              itemCount: state.meetings.length,
+                              itemBuilder: (context, index) =>
+                                  SkeletonLess3WithAvatar(
+                                    size: size,
+                                    row: 2,
+                                  ))
+                          : ListView.builder(
+                              itemCount: state.meetings.length,
+                              itemBuilder: (context, index) =>
+                                  ScheduleItemRequest(
+                                      count:
+                                          state.meetings[index].members.length,
+                                      size: size,
+                                      onClick: () {
+                                        if (_controller.isDismissed) {
+                                          _controller.forward();
+                                          setState(() {
+                                            model = state.meetings[index];
+                                            shade = true;
+                                          });
+                                        } else if (_controller.isCompleted) {
+                                          _controller.reverse();
+                                          shade = false;
+                                        }
+                                      },
+                                      date: util.dateNumbertoCalendar(
+                                          state.meetings[index].date),
+                                      time1: util.hourFormat(
+                                          state.meetings[index].date),
+                                      time2: util.hourFormat(
+                                          state.meetings[index].meetingEndTime),
+                                      title: state.meetings[index].title))),
+                  shade
+                      ? Container(
+                          width: size.width,
+                          height: size.height,
+                          color: Colors.black38.withOpacity(0.5),
+                        )
+                      : Container(),
+                  model != null
+                      ? scrollerSheet()
+                      : Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Text("data Error"),
+                        )
+                ],
+              )
+            : Center(
+                child: Text(
+                  "No Meeting has been Rejected.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: colorPrimary, fontWeight: FontWeight.bold),
+                ),
+              );
       } else {
         return Container();
       }

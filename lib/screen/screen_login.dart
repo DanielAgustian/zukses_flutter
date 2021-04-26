@@ -161,7 +161,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     Util util = Util();
     util.initDynamicLinks(context);

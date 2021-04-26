@@ -7,7 +7,7 @@ import 'package:zukses_app_1/bloc/bussiness-scope/bussiness-scope-state.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-event.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
-import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';

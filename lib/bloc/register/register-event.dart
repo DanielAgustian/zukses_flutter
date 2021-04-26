@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
+
 import 'package:zukses_app_1/model/register-model.dart';
 
 abstract class RegisterEvent extends Equatable {

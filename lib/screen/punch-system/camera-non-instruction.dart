@@ -43,7 +43,7 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    // TODO: implement build
+   
     return loadingData
         ? Scaffold(
             body: Container(

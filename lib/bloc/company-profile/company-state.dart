@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:zukses_app_1/model/company-model.dart';
-import 'package:zukses_app_1/model/company-model.dart'; 
+
 
 abstract class CompanyState extends Equatable {
   const CompanyState();

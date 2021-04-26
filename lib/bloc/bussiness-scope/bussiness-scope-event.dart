@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:zukses_app_1/model/business-scope-model.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
+
 
 abstract class BussinessScopeEvent extends Equatable {
   const BussinessScopeEvent();

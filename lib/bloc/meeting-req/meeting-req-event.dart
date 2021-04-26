@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 
 abstract class MeetingReqEvent extends Equatable {

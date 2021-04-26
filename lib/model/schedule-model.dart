@@ -41,7 +41,7 @@ class ScheduleModel {
     this.description = map["description"];
     this.date = DateTime.parse(map["date"]);
 
-    // TODO : Delete after database which is null is gone
+  
     if (map["meetingEndTime"] != null) {
       this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
     }

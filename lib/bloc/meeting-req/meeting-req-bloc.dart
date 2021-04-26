@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/API/leave-type-services.dart';
+
 import 'package:zukses_app_1/API/meeting-services.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
@@ -22,7 +22,7 @@ class MeetingReqBloc extends Bloc<MeetingReqEvent, MeetingReqState> {
     var res = await _scheduleServicesHTTP.fetchUnresponseScheduleData();
 
     // return checkbox handler
-    List<bool> bools = [];
+   
     
     // directly throw into success load or fail load
     if (res.length > 0 && res != null) {

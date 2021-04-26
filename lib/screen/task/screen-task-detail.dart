@@ -119,6 +119,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   _postComment(CommentModel comment) {
+    setState(() {
+      textEditingController.text = "";
+    });
     BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
   }
 
@@ -126,7 +129,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     for (int i = 0; i < moveToList.length; i++) {
       if (moving == moveToList[i]) {
         if (moving != historyMoveTo) {
-          _changeProgressbyDropdown(moving, idtask);
+          _changeProgressbyDropdown(dbEnum[i], idtask);
         }
       }
     }
@@ -186,9 +189,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         ),
         body: Stack(
           children: [
-            SingleChildScrollView(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 BlocListener<ChangeTaskBloc, ChangeTaskState>(
@@ -230,21 +232,31 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           taskDone.add(element);
                         }
                       });
+                      dataTask = List.generate(3, (index) {
+                        if (index == 0) {
+                          return taskToDo;
+                        } else if (index == 1) {
+                          return taskInProgress;
+                        }
+                        return taskDone;
+                      });
+                    } else if (state is TaskStateAddSuccessLoad) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<TaskBloc>(context)
+                          .add(GetAllTaskEvent(projectId: widget.project.id));
+                    } else if (state is TaskStateFailLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
                     }
-                    dataTask = List.generate(3, (index) {
-                      if (index == 0) {
-                        return taskToDo;
-                      } else if (index == 1) {
-                        return taskInProgress;
-                      }
-                      return taskDone;
-                    });
                   },
                   child: Container(),
                 ),
                 SizedBox(
                   width: double.infinity,
-                  height: size.height,
+                  height: size.height * 0.8,
                   child: DefaultTabController(
                     length: 3,
                     child: Container(
@@ -285,7 +297,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                     ])),
                           ),
                           body: Container(
-                            height: double.infinity,
                             width: double.infinity,
                             child: Column(
                               children: [
@@ -333,7 +344,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   ),
                 ),
               ],
-            )),
+            ),
             clickTask.idTask == null ? Container() : scrollerSheet(clickTask),
             isLoading
                 ? Container(
@@ -398,7 +409,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _buildItem(TaskModel item, index) {
     return DragAndDropItem(
       child: ListTaskDetail2(
-        label: item.label,
+        label: item.label == null ? "" : item.label,
         size: size,
         title: item.taskName,
         detail: item.details,
@@ -618,7 +629,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   ),
                                   SizedBox(width: 10),
                                   Text(
-                                    "Member 1",
+                                    clickTask.reporter.name,
                                     style: TextStyle(color: Colors.black),
                                   ),
                                 ],
@@ -628,35 +639,53 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           SizedBox(
                             height: 10,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Assignee",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        color: colorNeutral3,
-                                        shape: BoxShape.circle),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "Member 5",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          clickTask.assignment.length > 0
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Assignee",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorPrimary,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: ListView.builder(
+                                          itemCount:
+                                              clickTask.assignment.length,
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                      color: colorNeutral3,
+                                                      shape: BoxShape.circle),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  clickTask
+                                                      .assignment[index].name,
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                              ],
+                                            );
+                                          }),
+                                    )
+                                  ],
+                                )
+                              : Container(),
                           SizedBox(
                             height: 10,
                           ),
@@ -686,14 +715,18 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           SizedBox(
                             height: 10,
                           ),
-                          RowTaskUndroppable(
-                            title: "Label",
-                            textItem: clickTask.label,
-                            fontSize: size.height <= 600 ? 12 : 14,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          clickTask.label == null
+                              ? Container()
+                              : RowTaskUndroppable(
+                                  title: "Label",
+                                  textItem: clickTask.label,
+                                  fontSize: size.height <= 600 ? 12 : 14,
+                                ),
+                          clickTask.label == null
+                              ? Container()
+                              : SizedBox(
+                                  height: 10,
+                                ),
                           RowTaskUndroppable(
                             title: "Priority",
                             textItem: clickTask.priority,
@@ -791,7 +824,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                     height: 20,
                                     decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: colorPrimary),
+                                        color: Colors.transparent),
                                     child: Center(
                                       child: FaIcon(
                                         FontAwesomeIcons.plus,
@@ -840,13 +873,30 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                       },
                                       controlAffinity:
                                           ListTileControlAffinity.leading,
-                                      title: Text(
-                                          state.listCheckList[index].checkList,
-                                          style: TextStyle(
-                                              fontSize:
-                                                  size.height <= 569 ? 12 : 14,
-                                              color: colorPrimary,
-                                              fontWeight: FontWeight.bold)),
+                                      title: state.boolCheckList[index]
+                                          ? Text(
+                                              state.listCheckList[index]
+                                                  .checkList,
+                                              style:
+                                                  TextStyle(
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontSize:
+                                                          size.height <= 569
+                                                              ? 12
+                                                              : 14,
+                                                      color: colorPrimary,
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                          : Text(
+                                              state.listCheckList[index]
+                                                  .checkList,
+                                              style: TextStyle(
+                                                  fontSize: size.height <= 569
+                                                      ? 12
+                                                      : 14,
+                                                  color: colorPrimary,
+                                                  fontWeight: FontWeight.bold)),
                                     ),
                                   );
                                 },
@@ -950,7 +1000,17 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                           });
                                     } else if (state
                                         is CommentStateGetFailLoad) {
-                                      return Text("No Comment Yet");
+                                      return Center(
+                                          child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          "No Comment Yet.",
+                                          style: TextStyle(
+                                              color: colorPrimary,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ));
                                     } else if (state
                                         is CommentStateAddSuccessLoad) {
                                       BlocProvider.of<CommentBloc>(context).add(
@@ -1043,6 +1103,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   if (textAddCheckBox.text != "") {
                     BlocProvider.of<CLTBloc>(context).add(
                         AddCLTEvent(taskId.toString(), textAddCheckBox.text));
+                    setState(() {
+                      textAddCheckBox.text = "";
+                    });
                   }
                 })),
       ),

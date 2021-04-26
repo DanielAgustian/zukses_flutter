@@ -1,14 +1,10 @@
 import 'dart:async';
-
 import 'package:device_preview/device_preview.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
@@ -27,15 +23,14 @@ import 'package:zukses_app_1/bloc/payment/payment-bloc.dart';
 import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
-
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
-
-import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
+//import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,6 +126,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<CLTPBloc>(create: (context) => CLTPBloc()),
         BlocProvider<ChangeTaskBloc>(create: (context) => ChangeTaskBloc()),
         BlocProvider<UploadAttachBloc>(create: (context) => UploadAttachBloc()),
+        BlocProvider<TaskPriorityBloc>(create: (context) => TaskPriorityBloc()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{

@@ -1,4 +1,4 @@
-import 'package:zukses_app_1/model/user-model.dart';
+
 
 class CompanyModel {
   String name, code, email, id;

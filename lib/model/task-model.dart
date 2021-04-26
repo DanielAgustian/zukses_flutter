@@ -3,7 +3,8 @@ import 'package:zukses_app_1/model/user-model.dart';
 
 class TaskModel {
   int idTask, idProject, idLabel;
-  String taskName, details, reporter;
+  String taskName, details;
+  UserModel reporter;
   List<int> assignee;
   List<AssignmentModel> assignment;
   String date;
@@ -30,7 +31,9 @@ class TaskModel {
     this.idProject = map["projectId"];
     this.taskName = map["title"];
     this.details = map["description"];
-    this.reporter = map["reporter"];
+    this.reporter = map["reporter"] == null
+        ? UserModel()
+        : UserModel.fromJson(map['reporter']);
     this.assignee = map["assignee"];
     this.date = map["due_date"] == null ? "" : map["due_date"];
     this.taskType = map["progress"];

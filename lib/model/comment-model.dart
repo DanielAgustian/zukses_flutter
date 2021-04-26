@@ -1,4 +1,4 @@
-import 'package:zukses_app_1/model/user-model.dart';
+
 
 class CommentModel {
   String content;

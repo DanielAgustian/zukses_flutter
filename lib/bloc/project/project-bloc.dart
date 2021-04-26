@@ -21,11 +21,11 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
   Stream<ProjectState> mapGetProject(GetAllProjectEvent event) async* {
     yield ProjectStateLoading();
-    
     var res = await _projectServicesHTTP.fetchProject();
+    print("mapGetProject" + res.toString());
     if (res != null && res is List<ProjectModel>) {
       print(res);
-      yield ProjectStateSuccessLoad(project:res);
+      yield ProjectStateSuccessLoad(project: res);
     } else {
       yield ProjectStateFailLoad();
     }
@@ -33,7 +33,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
   Stream<ProjectState> mapAddProject(AddProjectEvent event) async* {
     yield ProjectStateLoading();
-    
+
     var res = await _projectServicesHTTP.addProject(event.project, event.image);
     if (res == 200) {
       print(res);

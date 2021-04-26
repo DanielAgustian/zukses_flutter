@@ -37,4 +37,9 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
       yield* mapUpdatingUserDataState(event);
     }
   }
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
+  }
 }

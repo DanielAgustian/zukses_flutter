@@ -11,7 +11,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   StreamSubscription _subscription;
   @override
   Stream<RegisterState> mapEventToState(RegisterEvent event) async* {
-    // TODO: implement mapEventToState
+    
     if (event is AddRegisterIndividuEvent) {
       yield* mapAddRegisIndividual(event);
     } else if (event is AddRegisterTeamEvent) {

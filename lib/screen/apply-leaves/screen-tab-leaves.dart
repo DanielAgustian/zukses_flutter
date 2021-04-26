@@ -53,7 +53,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
   void changeTimeStart() {}
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+   
     return widget.permission == "leaves"
         ? Column(
             children: [

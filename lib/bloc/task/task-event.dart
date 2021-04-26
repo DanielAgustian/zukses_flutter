@@ -21,3 +21,16 @@ class AddTaskEvent extends TaskEvent {
   List<Object> get props => [task];
 }
 
+class AddTaskFreeEvent extends TaskEvent {
+  final TaskModel task;
+
+  AddTaskFreeEvent(this.task);
+  List<Object> get props => [task];
+}
+
+class LoadLowPriorityTaskEvent extends TaskEvent{
+  final String priority;
+
+  LoadLowPriorityTaskEvent(this.priority);
+
+}

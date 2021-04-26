@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_switch/flutter_switch.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
@@ -19,8 +19,7 @@ class TextFormatSettings extends StatelessWidget {
   final bool isSwitched;
   @override
   Widget build(BuildContext context) {
-    bool switchTemp = isSwitched;
-    // TODO: implement build
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -73,7 +72,7 @@ class TextFormatSettings2 extends StatelessWidget {
   final bool status;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(

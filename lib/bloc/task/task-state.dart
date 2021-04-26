@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/project-model.dart';
+
 import 'package:zukses_app_1/model/task-model.dart';
 
 abstract class TaskState extends Equatable {
@@ -31,6 +31,21 @@ class TaskStateSuccessLoad extends TaskState {
   final List<TaskModel> task;
 
   TaskStateSuccessLoad({this.task});
+
+  List<Object> get props => [task];
+
+  @override
+  String toString() {
+    return 'Data : { employee List: $task }';
+  }
+}
+
+class TaskStateLowPriorityFailLoad extends TaskState {}
+
+class TaskStateLowPrioritySuccessLoad extends TaskState {
+  final List<TaskModel> task;
+
+  TaskStateLowPrioritySuccessLoad({this.task});
 
   List<Object> get props => [task];
 

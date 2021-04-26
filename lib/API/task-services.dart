@@ -24,7 +24,8 @@ class TaskServicesHTTP {
         });
     Uri uri = Uri.https(baseURI, 'api/task?projectId=$projectId');
     print(uri.toString());
-
+    print(res.statusCode);
+    print(res.body);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -72,6 +73,76 @@ class TaskServicesHTTP {
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
       return res.statusCode;
+    } else {
+      // IF the server return everything except 200, it will gte exception.
+      print("Failed TO Load Alubm");
+      return null;
+    }
+  }
+
+  Future<int> addTaskFree(TaskModel task) async {
+    //Token from Login
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    //Query to API
+    var res = await http.post(Uri.https(baseURI, 'api/task'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'projectId': task.idProject,
+          'title': task.taskName,
+          'description': task.details,
+          'priority': task.priority,
+          'dueDate': task.date.toString(),
+          'notes': task.notes
+        }));
+    //print(res.body);
+    print(res.statusCode);
+    print(res.body);
+    if (res.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      //var responseJson = jsonDecode(res.body);
+      return res.statusCode;
+    } else {
+      // IF the server return everything except 200, it will gte exception.
+      print("Failed TO Load Alubm");
+      return null;
+    }
+  }
+
+  Future<List<TaskModel>> fetchTaskByPriority(
+       String priority) async {
+    //Token from Login
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    //Query to API
+    var queryParameters = {
+      'priority': priority,
+    };
+    var res = await http.get(Uri.https(baseURI, 'api/task', queryParameters),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        });
+    print(res.statusCode);
+    print(res.body);
+    if (res.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var responseJson = jsonDecode(res.body);
+      if (responseJson['Data'].toString() == "[]") {
+        List<TaskModel> task;
+        return task;
+      } else {
+        return (responseJson['Data'] as List)
+            .map((p) => TaskModel.fromJson(p))
+            .toList();
+      }
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");

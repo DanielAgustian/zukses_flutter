@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/business-scope-service.dart';
-import 'package:zukses_app_1/API/leave-type-services.dart';
+
 import 'package:zukses_app_1/bloc/bussiness-scope/bussiness-scope-event.dart';
 import 'package:zukses_app_1/bloc/bussiness-scope/bussiness-scope-state.dart';
 
@@ -21,8 +21,7 @@ class BussinessScopeBloc extends Bloc<BussinessScopeEvent, BussinessScopeState> 
     var res = await _businessScopeServiceHTTP.fetchBusinessScope();
 
     // return checkbox handler
-    List<bool> bools = [];
-    
+   
     // directly throw into success load or fail load
     if (res.length > 0 && res != null) {
      

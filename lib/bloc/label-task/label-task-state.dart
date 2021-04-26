@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/business-scope-model.dart';
+
 import 'package:zukses_app_1/model/label-task-model.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
+
 
 
 abstract class LabelTaskState extends Equatable {

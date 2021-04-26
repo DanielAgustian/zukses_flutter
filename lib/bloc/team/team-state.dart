@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/team-detail-model.dart';
+
 
 import 'package:zukses_app_1/model/team-model.dart';
 

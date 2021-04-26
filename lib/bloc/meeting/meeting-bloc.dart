@@ -170,4 +170,9 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       yield* mapUpdateMeeting(event);
     }
   }
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
+  }
 }

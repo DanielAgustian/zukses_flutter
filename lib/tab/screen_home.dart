@@ -25,6 +25,12 @@ import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
+import 'package:zukses_app_1/bloc/task-priority/task-priority-event.dart';
+import 'package:zukses_app_1/bloc/task-priority/task-priority-state.dart';
+import 'package:zukses_app_1/bloc/task/task-bloc.dart';
+import 'package:zukses_app_1/bloc/task/task-event.dart';
+import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-event.dart';
 import 'package:zukses_app_1/bloc/team-detail/team-detail-state.dart';
@@ -43,6 +49,7 @@ import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
+import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -85,6 +92,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   CompanyModel _company = CompanyModel();
   List<ScheduleModel> _scheduleAccepted = [];
   int scheduleReqLength = 0;
+  List<TaskModel> _taskHighPriority = [];
+  int lengthLowPriority = 0, lengthHighPriority = 0;
   //For Disabling Button ============================//
   DateTime now = DateTime.now();
   String dialogText = "Clock In ";
@@ -100,7 +109,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
   var enumTap = ["Tap Here to Clock In", "Tap Here to Clock Out", "Good Work!"];
-  bool emptyMeeting = false;
+  //bool emptyMeeting = false;
+  //bool emptyTask = false;
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
   bool isLoadingAuth = false;
@@ -186,6 +196,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     BlocProvider.of<TeamDetailBloc>(context).add(LoadAllTeamDetailEvent("12"));
   }
 
+  void _getTaskLowPriority() async {
+    BlocProvider.of<TaskBloc>(context).add(LoadLowPriorityTaskEvent("low"));
+  }
+
+  void _getTaskHighPriority() async {
+    BlocProvider.of<TaskPriorityBloc>(context)
+        .add(LoadHighPriorityEvent("high"));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -195,9 +214,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     getCompanyProfile();
     sharedPrefInstruction();
     getUserProfile();
+    _getTaskLowPriority();
+    _getTaskHighPriority();
     checkStatusClock("initState");
     _getMeetingToday();
     _getMeetingRequest();
+
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
     if (widget.link != null) {
@@ -245,9 +267,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           }
                         });
                         if (_scheduleAccepted.length < 1) {
-                          setState(() {
-                            emptyMeeting = true;
-                          });
                           print("No Data");
                         }
                       });
@@ -268,11 +287,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         _authModel = state.authUser;
                         isLoadingAuth = true;
                       });
+                      /*
                       if (_authModel.maxClockIn == "true") {
                         setState(() {
                           stringTap = enumTap[2];
                         });
-                      }
+                      }*/
                       if (_authModel.maxClockIn == "false") {
                         if (_authModel.attendance == "false") {
                           setState(() {
@@ -344,6 +364,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     print("Company Model: " + _company.name);
                   } else if (state is CompanyStateLoading) {
                   } else {}
+                },
+                child: Container(),
+              ),
+              BlocListener<TaskBloc, TaskState>(
+                listener: (context, state) {
+                  if (state is TaskStateLowPrioritySuccessLoad) {
+                    setState(() {
+                      lengthLowPriority = state.task.length;
+                    });
+                  }
+                },
+                child: Container(),
+              ),
+              BlocListener<TaskPriorityBloc, TaskPriorityState>(
+                listener: (context, state) {
+                  if (state is TaskPriorityStateSuccessLoad) {
+                    setState(() {
+                      lengthHighPriority = state.task.length;
+                    });
+                    for (int i = 0; i < state.task.length; i++) {
+                      _taskHighPriority.add(state.task[i]);
+                    }
+                  }
                 },
                 child: Container(),
               ),
@@ -791,6 +834,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         SizedBox(
                           height: 20,
                         ),
+
                         Container(
                             padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                             child: Row(
@@ -799,14 +843,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 BoxHome(
                                   loading: isLoading,
                                   title: "High Priority Task",
-                                  total: 8,
+                                  total: lengthHighPriority,
                                   numberColor: colorSecondaryRed,
                                   fontSize: size.width <= 600 ? 34 : 36,
                                 ),
                                 BoxHome(
                                     loading: isLoading,
                                     title: "Low Priority Task",
-                                    total: 8,
+                                    total: lengthLowPriority,
                                     numberColor: colorClear,
                                     fontSize: size.width <= 600 ? 34 : 36),
                               ],
@@ -821,20 +865,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 boxShadow: [boxShadowStandard]),
                             child: Column(
                               children: [
-                                ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.all(1.0),
-                                  itemCount: taskName.length,
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    return ListViewBox(
-                                      title: taskName[index],
-                                      detail: taskDetail[index],
-                                      viewType: "task",
-                                    );
-                                  },
-                                ),
+                                _taskHighPriority.length < 1
+                                    ? Center(
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          child: Text(
+                                            "No High Priority Task",
+                                            style: TextStyle(
+                                                color: colorPrimary,
+                                                fontSize:
+                                                    size.height < 569 ? 12 : 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        padding: EdgeInsets.all(1.0),
+                                        itemCount: _taskHighPriority.length > 2
+                                            ? 2
+                                            : _taskHighPriority.length,
+                                        scrollDirection: Axis.vertical,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          return ListViewBox(
+                                            title: _taskHighPriority[index]
+                                                .taskName,
+                                            detail: _taskHighPriority[index]
+                                                .details,
+                                            viewType: "task",
+                                          );
+                                        },
+                                      ),
                                 Padding(
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child: FlatButton(

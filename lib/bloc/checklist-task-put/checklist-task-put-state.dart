@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/business-scope-model.dart';
+
 import 'package:zukses_app_1/model/checklist-model.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
+
 
 abstract class CLTPState extends Equatable {
   const CLTPState();

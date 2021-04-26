@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-event.dart';
 import 'package:zukses_app_1/bloc/project/project-state.dart';
@@ -29,6 +28,7 @@ class _AddProjectScreen extends State<AddProject> {
   final picker = ImagePicker();
   bool _titleValidator = false;
   bool _detailValidator = false;
+  bool _pictureValidator = false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -120,6 +120,12 @@ class _AddProjectScreen extends State<AddProject> {
                           color: colorPrimary),
                     ),
                   ),
+                  _pictureValidator
+                      ? Text(
+                          "Please Choose a Picture as Your Group Picture",
+                          style: TextStyle(color: colorError),
+                        )
+                      : Container(),
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: Container(
@@ -250,7 +256,16 @@ class _AddProjectScreen extends State<AddProject> {
         _detailValidator = true;
       });
     }
-    if (!_titleValidator && !_detailValidator) {
+    if (data != null && data != "") {
+      setState(() {
+        _pictureValidator = false;
+      });
+    } else {
+      setState(() {
+        _pictureValidator = true;
+      });
+    }
+    if (!_titleValidator && !_detailValidator && !_pictureValidator) {
       setState(() {
         loading = true;
       });
@@ -260,8 +275,8 @@ class _AddProjectScreen extends State<AddProject> {
           image = File(data);
         });
       }
-      ProjectModel project =
-          ProjectModel(name: textTitle.text.titleCase, details: textDetails.text);
+      ProjectModel project = ProjectModel(
+          name: textTitle.text.titleCase, details: textDetails.text);
       BlocProvider.of<ProjectBloc>(context)
           .add(AddProjectEvent(project, image));
     }

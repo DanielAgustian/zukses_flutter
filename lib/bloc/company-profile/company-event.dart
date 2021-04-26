@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 
 abstract class CompanyEvent extends Equatable {

@@ -45,8 +45,6 @@ class _EnterPaymentScreen extends State<EnterPayment> {
     "USA"
   ];
   String country = "";
-  bool error = false;
-  bool notEmpty = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -54,18 +52,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
     country = countries[0];
   }
 
-  _errorFalse() {
-    setState(() {
-      error = false;
-      notEmpty = true;
-    });
-  }
-
-  _errorTrue() {
-    setState(() {
-      error = true;
-    });
-  }
+  
 
   _testingData() {
     if (textCardNumber.text != "" && textCardNumber.text.length > 14) {

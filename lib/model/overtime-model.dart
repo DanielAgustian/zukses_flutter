@@ -16,7 +16,9 @@ class OvertimeModel {
 
   OvertimeModel.fromJson(Map<String, dynamic> map) {
     this.clockIn = DateTime.parse(map["clock_in_time"]);
-    this.clockOut = DateTime.parse(map["clock_out_time"]);
+    this.clockOut = map["clock_out_time"] == null
+        ? DateTime.now()
+        : DateTime.parse(map["clock_out_time"]);
     this.workingFrom = map["working_from"];
     this.late = map["late"];
     this.halfDay = map["half_day"];

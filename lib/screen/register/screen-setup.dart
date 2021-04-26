@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/API/company-services.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-event.dart';
 import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
@@ -16,11 +13,9 @@ import 'package:zukses_app_1/component/register/question-format.dart';
 import 'package:zukses_app_1/component/register/text-box-setup.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-pricing.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/register/screen-setup-team.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class SetupRegister extends StatefulWidget {
@@ -598,7 +593,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   }
 
   Widget _buildCupertino({BuildContext context, Widget wData}) {
-    Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
         "Are you sure to register with this data?",
