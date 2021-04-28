@@ -1,4 +1,3 @@
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +8,7 @@ import 'package:zukses_app_1/bloc/forgot-password/forgot-password-state.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
+
 import 'package:zukses_app_1/screen/forgot-password/check-your-email.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/util/util.dart';
@@ -25,8 +24,7 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordScreen extends State<ForgotPassword> {
   final textEmail = TextEditingController();
   bool errorEmail = false;
-  String _linkMessage = "";
-
+  
   /*Future<void> _createDynamicLink(bool short) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://zuksesapplication.page.link',
@@ -93,6 +91,12 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
   gotoLogin() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ScreenLogin()));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Util().initDynamicLinks(context);
   }
 
   @override

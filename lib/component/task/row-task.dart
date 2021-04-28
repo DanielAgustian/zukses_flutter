@@ -176,10 +176,10 @@ class TaskRow2 extends StatelessWidget {
   }
 
   Color colorChange(String priority) {
-    if (priority == "High") {
+    if (priority.toLowerCase() == "high") {
       return colorError;
-    } else if (priority == "Medium") {
-      return colorSecondaryRed;
+    } else if (priority.toLowerCase() == "medium") {
+      return colorSecondaryYellow;
     } else {
       return colorSecondaryYellow;
     }
@@ -341,14 +341,14 @@ class RowTaskUndroppable extends StatelessWidget {
   }
 
   Color colorChange(String label) {
-    if (label == "Front End") {
-      return colorSecondaryYellow;
-    } else if (label == "Back End") {
-      return colorClear;
-    } else if (label == "Design") {
-      return colorSecondaryRed;
-    } else {
+    if (label.toLowerCase() == "high") {
       return colorError;
+    } else if (label.toLowerCase() == "medium") {
+      return colorSecondaryYellow;
+    } else if (label.toLowerCase() == "low") {
+      return colorClear;
+    } else {
+      return Colors.transparent;
     }
   }
 }
@@ -414,5 +414,102 @@ class RowTaskDrop extends StatelessWidget {
             );
           },
         ));
+  }
+}
+
+class RowTaskAddPriority extends StatelessWidget {
+  const RowTaskAddPriority(
+      {Key key,
+      this.textItem,
+      this.fontSize: 16,
+      this.size,
+      @required this.list,
+      this.onSelectedItem})
+      : super(key: key);
+
+  final String textItem;
+  final double fontSize;
+  final Size size;
+  final List<String> list;
+  final Function onSelectedItem;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        //padding: EdgeInsets.symmetric(horizontal: 10),
+        width: size.width,
+        decoration: BoxDecoration(
+          color: colorBackground,
+          boxShadow: [boxShadowStandard],
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: FormField<String>(
+          builder: (FormFieldState<String> state) {
+            return InputDecorator(
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(0),
+                labelStyle: TextStyle(fontSize: 12),
+                errorStyle: TextStyle(color: colorError, fontSize: 16.0),
+                hintText: "",
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                /*border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0))*/
+              ),
+              isEmpty: textItem == '',
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: textItem,
+                    isDense: true,
+                    onChanged: onSelectedItem,
+                    items: list.map((String value) {
+                      return DropdownMenuItem<String>(
+                          value: value,
+                          child: Container(
+                            width: size.width * 0.8,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(value),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: colorChange(value),
+                                      borderRadius: BorderRadius.circular(5)),
+                                  width: 25,
+                                  height: 25,
+                                  child: Center(
+                                    child: FaIcon(
+                                      FontAwesomeIcons.chevronUp,
+                                      color: colorBackground,
+                                      size: size.height < 569 ? 16 : 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
+                    }).toList(),
+                  ),
+                ),
+              ),
+            );
+          },
+        ));
+  }
+
+  Color colorChange(String priority) {
+    if (priority.toLowerCase() == "high") {
+      return colorError;
+    } else if (priority.toLowerCase() == "medium") {
+      return colorSecondaryYellow;
+    } else if (priority.toLowerCase() == "low") {
+      return colorClear;
+    } else {
+      return Colors.transparent;
+    }
   }
 }

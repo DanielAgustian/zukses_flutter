@@ -50,7 +50,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   String viewDataCompany = "";
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -95,7 +94,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             builder: (context) => Pricing(
                   token: widget.token,
                 )));
-    if (result!=null) {
+    if (result != null) {
       if (result == true) {
         setState(() {
           boolOrganization = [true, false];
@@ -208,7 +207,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             MaterialPageRoute(
                                 builder: (context) => WaitRegisApproved(
                                       company: textCompanyCode.text,
-                                    )), (route) => false);
+                                    )),
+                            (route) => false);
                       } else if (state is RegisterStateCompanyFailed) {
                         Util().showToast(
                             context: context,
@@ -263,6 +263,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             boolOrganization[1] == true) {
                           boolOrganization[0] = false;
                         }
+                        textTeamName.text = "";
                       });
                       _clickableFalse();
                     },
@@ -293,6 +294,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                               }
                               setState(() {
                                 _clickableTrue();
+                                textTeamName.text = "";
                               });
                             });
                           },
@@ -315,6 +317,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                                   boolOrganizationExist[1] == true) {
                                 boolOrganizationExist[1] = false;
                               }
+                              textTeamName.text = "";
                             });
                             _clickableFalse();
                           },
@@ -327,6 +330,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                               }
                               setState(() {
                                 _clickableFalse();
+                                textTeamName.text = "";
                               });
                             });
                           },
@@ -374,8 +378,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
         TextBoxSetup(
           textBox: textTeamName,
           size: size,
-          question: "What's your team called?",
-          hint: "e.g. Min Word 3",
+          question: "What's your team called? (min. 3 character)",
+          hint: "Team Name",
           onChanged: (val) {
             if (val.length > 3) {
               setState(() {
@@ -467,6 +471,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     readOnly = false;
                     textCompanyCode.text = "";
                   });
+                  _clickableFalse();
                 },
                 child: Container(
                   width: 50,
@@ -573,6 +578,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
               if (boolNewCompany[0] == true && boolNewCompany[1] == true) {
                 boolNewCompany[1] = false;
               }
+              textTeamName.text = "";
             });
             _clickableTrue();
           },
@@ -583,6 +589,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                 boolNewCompany[0] = false;
               }
               setState(() {
+                textTeamName.text = "";
                 _clickableTrue();
               });
             });
@@ -601,19 +608,20 @@ class _SetupRegisterScreen extends State<SetupRegister> {
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "Yes",
-            ),
-            onPressed: () {
-              Navigator.pop(context, true);
-            }),
-        CupertinoDialogAction(
-            child: Text(
               "No",
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
               Navigator.pop(context, false);
-            })
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
       ],
     );
   }

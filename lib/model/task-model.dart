@@ -1,4 +1,5 @@
 import 'package:zukses_app_1/model/assignment-mode.dart';
+import 'package:zukses_app_1/model/attachment-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 
 class TaskModel {
@@ -8,7 +9,8 @@ class TaskModel {
   List<int> assignee;
   List<AssignmentModel> assignment;
   String date;
-  String taskType, label, priority, attachmentUrl, idComment;
+  String taskType, label, priority, idComment;
+  List<AttachmentModel> attachment;
   String notes;
   TaskModel(
       {this.idTask,
@@ -22,7 +24,7 @@ class TaskModel {
       this.taskType,
       this.label,
       this.priority,
-      this.attachmentUrl,
+      this.attachment,
       this.idComment,
       this.assignment,
       this.notes});
@@ -40,7 +42,7 @@ class TaskModel {
     this.idLabel = map["label_id"];
     this.label = map["labelsName"];
     this.priority = map["priority"];
-    this.attachmentUrl = map["attachmentUrl"];
+    this.attachment = _convertMapToList(map["attachment"]);
     this.notes = map["notes"];
     this.assignment = _convertMembers(map['assignment']);
   }
@@ -55,5 +57,16 @@ class TaskModel {
     });
 
     return user;
+  }
+
+  List<AttachmentModel> _convertMapToList(List list) {
+    if (list == null) {
+      return null;
+    }
+    List<AttachmentModel> attach = [];
+    list.forEach((element) {
+      attach.add(AttachmentModel.fromJson(element));
+    });
+    return attach;
   }
 }

@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/main.dart';
-import 'package:zukses_app_1/screen/screen_login.dart';
 
 class UserSettings extends StatefulWidget {
   UserSettings({Key key, this.title}) : super(key: key);
@@ -23,7 +22,6 @@ class _UserSettingsScreen extends State<UserSettings> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    // TODO: implement build
     return Stack(
       children: [
         Scaffold(
@@ -149,15 +147,21 @@ class _UserSettingsScreen extends State<UserSettings> {
       content: new Text("Temporary Data will be deleted"),
       actions: <Widget>[
         CupertinoDialogAction(
-            child: Text("Yes"),
+            child: Text(
+              "No",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             onPressed: () {
               toLogOut();
             }),
-        CupertinoDialogAction(
-            child: Text("No"),
-            onPressed: () {
-              Navigator.pop(context);
-            })
       ],
     );
   }

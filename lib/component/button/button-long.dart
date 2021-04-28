@@ -21,28 +21,33 @@ class LongButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      padding: const EdgeInsets.all(8.0),
-      textColor: textColor,
-      color: bgColor,
-      onPressed: onClick,
-      shape:
-          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
-      child: AnimatedContainer(
-        width: size.width,
-        duration: Duration(milliseconds: 700),
-        curve: Curves.fastOutSlowIn,
-        height: size.height < 569 ? 30 : 40,
-        child: Center(
-          child: loading
-              ? CircularProgressIndicator(
-                  backgroundColor: textColor,
-                  valueColor: AlwaysStoppedAnimation(bgColor),
-                )
-              : Text(
-                  title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
+    return InkWell(
+      onTap: onClick,
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: AnimatedContainer(
+          width: size.width,
+          duration: Duration(milliseconds: 700),
+          curve: Curves.fastOutSlowIn,
+          height: size.height < 569 ? 30 : 40,
+          child: Center(
+            child: loading
+                ? CircularProgressIndicator(
+                    backgroundColor: textColor,
+                    valueColor: AlwaysStoppedAnimation(bgColor),
+                  )
+                : Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: textColor),
+                  ),
+          ),
         ),
       ),
     );
@@ -71,15 +76,16 @@ class LongButtonSize extends StatelessWidget {
   final bool clickable;
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      splashColor: clickable ? colorPrimary30 : Colors.transparent,
-      highlightColor: clickable ? colorPrimary30 : Colors.transparent,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      textColor: textColor,
-      color: bgColor,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        primary: bgColor,
+        onSurface: clickable ? colorPrimary30 : Colors.transparent,
+        onPrimary: clickable ? colorPrimary30 : Colors.transparent,
+        shape:
+            RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
+      ),
       onPressed: onClick,
-      shape:
-          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10)),
       child: AnimatedContainer(
         width: width,
         duration: Duration(milliseconds: 700),
@@ -93,7 +99,10 @@ class LongButtonSize extends StatelessWidget {
                 )
               : Text(
                   title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: textColor),
                 ),
         ),
       ),

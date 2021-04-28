@@ -1,16 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
-import 'package:zukses_app_1/model/auth-model.dart';
+
 import 'package:zukses_app_1/screen/forgot-password/forgot-password.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
@@ -31,7 +29,7 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
-  Future<AuthModel> _futureLogin;
+  //Future<AuthModel> _futureLogin;
   bool _obscureText = true;
   AuthServiceHTTP authService = AuthServiceHTTP();
   TextEditingController textUsername = new TextEditingController();
@@ -122,16 +120,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
     if (!_usernameValidator && !_passValidator) {
       BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
           email: textUsername.text, password: textPassword.text));
-
-      
     }
-  }
-
-  timerLoading() {
-    Duration time = Duration(seconds: 3);
-    Timer _timer = new Timer.periodic(time, (timer) {
-      setState(() {});
-    });
   }
 
   _loginTeamSharedPref() async {
@@ -161,7 +150,6 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
 
   @override
   void initState() {
-
     super.initState();
     Util util = Util();
     util.initDynamicLinks(context);
@@ -317,11 +305,10 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               Center(
                                 child: errorLogin
                                     ? Text("Wrong Email or Password",
-                                        style: GoogleFonts.lato(
-                                            textStyle: TextStyle(
+                                        style: TextStyle(
                                           fontSize: size.height < 569 ? 10 : 11,
                                           color: colorError,
-                                        )))
+                                        ))
                                     : Container(),
                               ),
                               SizedBox(
@@ -341,15 +328,14 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                                   ForgotPassword()));
                                     },
                                     child: Container(
-                                        child: Text(
-                                      "Forgot Password?",
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
+                                      child: Text(
+                                        "Forgot Password?",
+                                        style: TextStyle(
                                           fontSize: size.height < 569 ? 10 : 11,
                                           color: colorPrimary70,
                                         ),
                                       ),
-                                    )),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -368,7 +354,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                 child: Text(
                                   "OR",
                                   style: TextStyle(
-                                      fontSize: 16, color: Color(0xFF8793B5)),
+                                      fontSize: 16, color: colorPrimary70),
                                 ),
                               ),
                               SizedBox(height: 25),
@@ -543,11 +529,10 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                     Center(
                       child: errorLogin
                           ? Text("Wrong Email or Password",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
+                              style: TextStyle(
                                 fontSize: size.height < 569 ? 10 : 11,
                                 color: colorError,
-                              )))
+                              ))
                           : Container(),
                     ),
                     SizedBox(
@@ -567,11 +552,9 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                           child: Container(
                               child: Text(
                             "Forgot Password?",
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: size.height < 569 ? 10 : 11,
-                                color: colorPrimary70,
-                              ),
+                            style: TextStyle(
+                              fontSize: size.height < 569 ? 10 : 11,
+                              color: colorPrimary70,
                             ),
                           )),
                         ),
@@ -592,8 +575,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                     Center(
                       child: Text(
                         "OR",
-                        style:
-                            TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
+                        style: TextStyle(fontSize: 16, color: colorPrimary70),
                       ),
                     ),
                     SizedBox(height: 25),

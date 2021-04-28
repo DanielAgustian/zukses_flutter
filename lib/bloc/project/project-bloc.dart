@@ -23,9 +23,14 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     yield ProjectStateLoading();
     var res = await _projectServicesHTTP.fetchProject();
     print("mapGetProject" + res.toString());
+    List<bool> bools = [];
+
     if (res != null && res is List<ProjectModel>) {
+      for (int i = 0; i < res.length; i++) {
+        bools.add(false);
+      }
       print(res);
-      yield ProjectStateSuccessLoad(project: res);
+      yield ProjectStateSuccessLoad(project: res, bools: bools);
     } else {
       yield ProjectStateFailLoad();
     }

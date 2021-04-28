@@ -76,10 +76,10 @@ class _MeetingScreenState extends State<MeetingScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     getMeetingReq();
-    //scheduleClick.title = "";
+    
     _meetingBloc = BlocProvider.of<MeetingBloc>(context);
     _meetingBloc.add(GetAcceptedMeetingEvent());
     _selectedDate = _currentDate;
@@ -535,7 +535,6 @@ class _MeetingScreenState extends State<MeetingScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              /**/
                               InkWell(
                                 onTap: () {
                                   _controller.reverse();

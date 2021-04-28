@@ -53,7 +53,6 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
   void changeTimeStart() {}
   @override
   Widget build(BuildContext context) {
-   
     return widget.permission == "leaves"
         ? Column(
             children: [
@@ -205,13 +204,21 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                       title: list[index].typeName,
                       detail: list[index].leaveDate == null
                           ? "Data Cant Be fetch"
-                          : list[index].leaveDate,
+                          : Util().dateNumbertoCalendar(
+                              DateTime.parse(list[index].leaveDate)),
                       status: list[index].status,
                       time: list[index].startTime == null
                           ? ""
-                          : list[index].startTime),
+                          : cutTime(list[index].startTime) +
+                              "-" +
+                              cutTime(list[index].endTime)),
                 );
               }),
     );
+  }
+
+  String cutTime(String time) {
+    var temp = Util().stringToTimeOfDay(time);
+    return Util().changeTimeToString(temp);
   }
 }

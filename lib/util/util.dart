@@ -115,7 +115,7 @@ class Util {
   }
 
   Future<String> createDynamicLink(
-      {bool short, String value, String key, String page}) async {
+      {bool short = false, String value, String key, String page}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://zuksesapplication.page.link',
       link: Uri.parse('https://zuksesapplication.page.link/$page?'),

@@ -31,9 +31,9 @@ class _SetupTeamScreen extends State<SetupTeam> {
   String data = "";
   bool errorInvEmail = false;
   int jumlahTextEditing = 0;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getLinkTeam();
     data = widget.link;
@@ -149,7 +149,8 @@ class _SetupTeamScreen extends State<SetupTeam> {
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RegisApproved()), (route)=>false);
+                              builder: (context) => RegisApproved()),
+                          (route) => false);
                     }
                   },
                   child: Container()),
@@ -444,7 +445,6 @@ class _SetupTeamScreen extends State<SetupTeam> {
   }
 
   Widget _buildCupertino({BuildContext context, Widget wData}) {
-    Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
         "Are you sure to register your team with this data?",
@@ -453,19 +453,20 @@ class _SetupTeamScreen extends State<SetupTeam> {
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "Yes",
-            ),
-            onPressed: () {
-              Navigator.pop(context, true);
-            }),
-        CupertinoDialogAction(
-            child: Text(
               "No",
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
               Navigator.pop(context, false);
-            })
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
       ],
     );
   }

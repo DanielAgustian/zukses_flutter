@@ -19,7 +19,6 @@ class TextFormatSettings extends StatelessWidget {
   final bool isSwitched;
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -44,9 +43,7 @@ class TextFormatSettings extends StatelessWidget {
             ),
             Switch(
               value: isSwitched,
-              onChanged: (value) {
-                onClick;
-              },
+              onChanged: onClick,
               activeTrackColor: Colors.lightGreenAccent,
               activeColor: Colors.green,
             ),
@@ -72,7 +69,6 @@ class TextFormatSettings2 extends StatelessWidget {
   final bool status;
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +31,6 @@ class _TaskScreen extends State<TaskScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
@@ -131,10 +129,17 @@ class _TaskScreen extends State<TaskScreen> {
                               );
                             },
                             child: ListReviseProject(
+                              tag: state.bools[index],
                               image: state.project[index].imgUrl,
                               title: state.project[index].name,
                               detail: state.project[index].details,
                               jumlahTask: state.project[index].totalTask,
+                              onTapStar: () {
+                                print("OnTapStar");
+                                setState(() {
+                                  state.bools[index] = !state.bools[index];
+                                });
+                              },
                             ));
                       },
                     );

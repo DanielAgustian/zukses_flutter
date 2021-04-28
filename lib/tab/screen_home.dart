@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
@@ -287,12 +287,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         _authModel = state.authUser;
                         isLoadingAuth = true;
                       });
-                      /*
+
                       if (_authModel.maxClockIn == "true") {
                         setState(() {
                           stringTap = enumTap[2];
                         });
-                      }*/
+                      }
                       if (_authModel.maxClockIn == "false") {
                         if (_authModel.attendance == "false") {
                           setState(() {
@@ -310,9 +310,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       } else {
                         print("Get Auth Data Error");
                       }
-                      /*print("attendance auth" + _authModel.attendance);
-                      print("MaxClockIn " + _authModel.maxClockIn);*/
-
                       checkStatusClock("Get Auth Data");
                     } else if (state is AuthStateSuccessTeamLoad) {
                       _controller.reverse();
@@ -336,10 +333,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   } else if (state is AttendanceStateSuccessClockOut) {
                     print("clock out");
 
-                    int counter = 2;
-                    /*SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          await prefs.setInt(key, counter);*/
                     setState(() {
                       isClockIn = 2;
                       attendanceID = state.attendanceID;
@@ -482,11 +475,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     }),
                                     Text(
                                       stringTap,
-                                      style: GoogleFonts.lato(
-                                        textStyle:
-                                            TextStyle(color: Colors.white),
-                                        fontSize: size.height < 600 ? 14 : 18,
-                                      ),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              size.height < 600 ? 14 : 18),
                                     ),
                                   ]))),
                         ),
@@ -581,10 +573,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             children: [
                                               Text(
                                                 "Hi, $name",
-                                                style: GoogleFonts.lato(
-                                                    textStyle: TextStyle(
-                                                        color: colorPrimary,
-                                                        letterSpacing: 0),
+                                                style: TextStyle(
+                                                    color: colorPrimary,
+                                                    letterSpacing: 0,
                                                     fontSize: size.width <= 600
                                                         ? 20
                                                         : 24,
@@ -592,20 +583,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         FontWeight.bold),
                                               ),
                                               Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    "WELCOME BACK! ",
-                                                    style: GoogleFonts.lato(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.grey,
-                                                          letterSpacing: 0),
-                                                      fontSize:
-                                                          size.width <= 600
-                                                              ? 12
-                                                              : 14,
-                                                    ),
-                                                  )),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "WELCOME BACK! ",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    letterSpacing: 0,
+                                                    fontSize: size.width <= 600
+                                                        ? 12
+                                                        : 14,
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -707,27 +696,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         children: [
                                           Text(
                                             "Hi, Finley Khouwira",
-                                            style: GoogleFonts.lato(
-                                                textStyle: TextStyle(
-                                                    color: colorPrimary,
-                                                    letterSpacing: 0),
-                                                fontSize:
-                                                    size.width <= 600 ? 20 : 24,
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                              color: colorPrimary,
+                                              letterSpacing: 0,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                                  size.width <= 600 ? 20 : 24,
+                                            ),
                                           ),
                                           Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "WELCOME BACK! ",
-                                                style: GoogleFonts.lato(
-                                                  textStyle: TextStyle(
-                                                      color: Colors.grey,
-                                                      letterSpacing: 0),
-                                                  fontSize: size.width <= 600
-                                                      ? 12
-                                                      : 14,
-                                                ),
-                                              )),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "WELCOME BACK! ",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                letterSpacing: 0,
+                                                fontSize:
+                                                    size.width <= 600 ? 12 : 14,
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -823,9 +811,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "Task List",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      color: colorPrimary, letterSpacing: 0),
+                              style: TextStyle(
+                                  color: colorPrimary,
+                                  letterSpacing: 0,
                                   fontSize: size.width <= 600 ? 20 : 22,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -900,10 +888,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       ),
                                 Padding(
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    child: FlatButton(
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        color: colorBackground,
+                                    child: TextButton(
+                                        style: TextButton.styleFrom(
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 0, 10, 0),
+                                            primary: colorBackground),
                                         onPressed: () {
                                           Navigator.pushReplacement(
                                               context,
@@ -934,9 +923,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "Meeting List",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      color: colorPrimary, letterSpacing: 0),
+                              style: TextStyle(
+                                  color: colorPrimary,
+                                  letterSpacing: 0,
                                   fontSize: size.width <= 600 ? 20 : 22,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -1115,8 +1104,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             alignment: Alignment.centerLeft,
             child: Text(
               "Task List",
-              style: GoogleFonts.lato(
-                  textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
+              style: TextStyle(
+                  color: colorPrimary,
+                  letterSpacing: 0,
                   fontSize: size.width <= 600 ? 18 : 20,
                   fontWeight: FontWeight.bold),
             ),
@@ -1151,9 +1141,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     )),
                 Padding(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: FlatButton(
-                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        color: colorBackground,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          primary: colorBackground,
+                        ),
                         onPressed: () {
                           Navigator.pushReplacement(
                               context,
@@ -1175,18 +1167,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ],
             )),
         Padding(
-          padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Meeting List",
-              style: GoogleFonts.lato(
-                  textStyle: TextStyle(color: colorPrimary, letterSpacing: 0),
-                  fontSize: size.width <= 600 ? 18 : 20,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
+            padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Meeting List",
+                style: TextStyle(
+                    color: colorPrimary,
+                    letterSpacing: 0,
+                    fontSize: size.width <= 600 ? 18 : 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            )),
         SizedBox(
           height: 20,
         ),
@@ -1216,9 +1208,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     )),
                 Padding(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: FlatButton(
-                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        color: colorBackground,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          primary: colorBackground,
+                        ),
                         onPressed: () {
                           Navigator.pushReplacement(
                               context,
@@ -1248,7 +1242,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
 //Pop Up Dialog for Clock in and Out Confirmation
   Widget _buildPopupDialog(BuildContext context, String where) {
-    Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
         "Clock Out Success!",
@@ -1525,7 +1518,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildClockOutNotFinished(BuildContext context, Size size) {
-    Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
         "Your work hour isn't finished yet",
@@ -1533,19 +1525,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       content: new Text("Are you sure you want to clock out?"),
       actions: <Widget>[
         CupertinoDialogAction(
+            child: Text("No", style: TextStyle(color: colorError)),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        CupertinoDialogAction(
             child: Text(
               "Yes",
-              style: TextStyle(color: colorError),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {
               Navigator.pop(context);
               clockOut();
             }),
-        CupertinoDialogAction(
-            child: Text("No"),
-            onPressed: () {
-              Navigator.pop(context);
-            })
       ],
     );
   }
@@ -1686,7 +1678,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             builder: (BuildContext context, myscrollController) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            color: Color(0xFFFFFFFF),
+            color: colorBackground,
             child: SingleChildScrollView(
               child: Column(
                 children: [

@@ -6,7 +6,7 @@ import 'package:zukses_app_1/bloc/pricing/pricing-state.dart';
 import 'package:zukses_app_1/component/register/pricing-card.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/screen/register/screen-data-company.dart';
+
 import 'package:zukses_app_1/screen/register/screen-enter-payment.dart';
 
 class Pricing extends StatefulWidget {
@@ -19,14 +19,10 @@ class Pricing extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _PricingScreen extends State<Pricing> {
-  _goto() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => EnterPayment()));
-  }
 
   @override
   void initState() {
-    // TODO: implement initState
+   
     super.initState();
     BlocProvider.of<PricingBloc>(context).add(GetPricingEvent());
   }

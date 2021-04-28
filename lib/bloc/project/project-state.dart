@@ -28,8 +28,8 @@ class ProjectStateFailLoad extends ProjectState {}
 
 class ProjectStateSuccessLoad extends ProjectState {
   final List<ProjectModel> project;
-
-  ProjectStateSuccessLoad({this.project});
+  final List<bool> bools;
+  ProjectStateSuccessLoad({this.project, this.bools});
 
   List<Object> get props => [project];
 

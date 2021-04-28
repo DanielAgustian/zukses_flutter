@@ -17,13 +17,17 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
   bool loadingData = false;
   @override
   void initState() {
-    // TODO: implement initState
+    // implement initState
     super.initState();
     getImage();
   }
 
   void getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: imageQualityCamera,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth);
     if (pickedFile != null) {
       setState(() {
         loadingData = true;
@@ -43,7 +47,7 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-   
+
     return loadingData
         ? Scaffold(
             body: Container(
@@ -66,10 +70,10 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
             ),
           )
         : Scaffold(
-          backgroundColor: colorBackground,
-          body: Center(
+            backgroundColor: colorBackground,
+            body: Center(
               child: CircularProgressIndicator(),
             ),
-        );
+          );
   }
 }

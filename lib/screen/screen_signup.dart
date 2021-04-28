@@ -46,7 +46,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   bool _linkValidator = false;
   List<bool> empty = [false, false, false, false];
   String failedRegister = "";
-  
+
   void register() {
     if (textEmail.text == "") {
       setState(() {
@@ -193,11 +193,9 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Util util = Util();
     util.initDynamicLinks(context);
-    
   }
 
   @override
@@ -575,7 +573,6 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   }
 
   Widget _buildCupertino({BuildContext context, Widget wData}) {
-    Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
         "Are you sure to register with this data?",
@@ -584,17 +581,20 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "No",
               style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, false);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {
               Navigator.pop(context, true);
             }),
-        CupertinoDialogAction(
-            child: Text("No"),
-            onPressed: () {
-              Navigator.pop(context, false);
-            })
       ],
     );
   }

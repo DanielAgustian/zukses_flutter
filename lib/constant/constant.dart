@@ -65,6 +65,7 @@ double textSizeSmall14 = 12;
 double textSizeSmall12 = 10;
 double paddingHorizontal = 20.0;
 double paddingVertical = 5.0;
+
 BoxShadow boxShadowStandard = BoxShadow(
   color: colorShadow.withOpacity(0.07),
   blurRadius: 20,
@@ -82,3 +83,6 @@ AppBar appBarOutside = AppBar(
         fontWeight: FontWeight.bold),
   ),
 );
+const int imageQualityCamera = 55;
+const double maxHeight = 600;
+const double maxWidth = 480;

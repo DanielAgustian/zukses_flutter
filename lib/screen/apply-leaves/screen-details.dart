@@ -33,7 +33,6 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
   Util util = Util();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     leaveModel = widget.leave;
     overtimeModel = widget.overtime;
@@ -46,7 +45,6 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     Size size = MediaQuery.of(context).size;
     return widget.details == null
         ? Container(
@@ -94,7 +92,9 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: 10),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                },
                 child: Container(
                   child: Text(
                     "Done",

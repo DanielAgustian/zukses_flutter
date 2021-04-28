@@ -47,7 +47,6 @@ class _EnterPaymentScreen extends State<EnterPayment> {
   String country = "";
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     country = countries[0];
   }

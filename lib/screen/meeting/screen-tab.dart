@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,12 +39,21 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   Util util = Util();
   ScheduleModel model = ScheduleModel();
   bool shade = false;
+  bool isLoading = true;
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     BlocProvider.of<MeetingBloc>(context).add(GetUnresponseMeetingEvent());
     _controller = AnimationController(vsync: this, duration: _duration);
+    timer();
   }
 
   @override
@@ -55,7 +66,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
             ? Stack(
                 children: [
                   Container(
-                      child: widget.loading
+                      child: isLoading
                           ? ListView.builder(
                               itemCount: state.meetings.length,
                               itemBuilder: (context, index) =>
@@ -119,7 +130,6 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   }
 
   Widget scrollerSheet() {
-    bool temp = false;
     Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
       child: SlideTransition(
@@ -268,7 +278,6 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   }
 
   Widget _dialog(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return AlertDialog(
       //title: const Text('Popup example'),
       content: new Column(

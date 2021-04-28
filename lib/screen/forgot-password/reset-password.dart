@@ -48,7 +48,6 @@ class _ResetPasswordScreen extends State<ResetPassword> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     token = widget.token;
   }
@@ -56,7 +55,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    // TODO: implement build
+
     return Scaffold(
         appBar: appBarOutside,
         body: SingleChildScrollView(

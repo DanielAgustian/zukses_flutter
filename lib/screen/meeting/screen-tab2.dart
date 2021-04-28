@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,12 +34,21 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   Util util = Util();
   bool shade = false;
+  bool isLoading = true;
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
     _controller = AnimationController(vsync: this, duration: _duration);
+    timer();
   }
 
   @override
@@ -50,7 +61,7 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
             ? Stack(
                 children: [
                   Container(
-                      child: widget.loading
+                      child: isLoading
                           ? ListView.builder(
                               itemCount: state.meetings.length,
                               itemBuilder: (context, index) =>

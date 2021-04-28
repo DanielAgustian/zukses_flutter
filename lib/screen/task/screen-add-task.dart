@@ -419,7 +419,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  RowTaskDrop(
+                  RowTaskAddPriority(
                     list: priorityList,
                     textItem: textItem,
                     size: size,

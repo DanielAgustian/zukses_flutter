@@ -213,7 +213,8 @@ class _AddProjectScreen extends State<AddProject> {
   _imagePicker() async {
     //ImagePicker for gallery
 
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.gallery, maxHeight: maxHeight, maxWidth: maxWidth);
 
     if (pickedFile != null) {
       setState(() {
@@ -225,8 +226,11 @@ class _AddProjectScreen extends State<AddProject> {
 
   _imagePickerCamera() async {
     //ImagePicker for Camera
-    final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: imageQualityCamera,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth);
 
     if (pickedFile != null) {
       setState(() {

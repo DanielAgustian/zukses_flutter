@@ -158,7 +158,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
         if (dontShowAgain) {
           print("I wont show again. Sorry to bother you.");
         } else {
-          // TODO: Forget the user
+          //Forget the user
           print("We will meet again");
         }
       });
@@ -167,12 +167,15 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
     setState(() {
       waiting = false;
     });
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: imageQualityCamera,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth);
 
     if (pickedFile != null) {
       setState(() {
         String data = pickedFile.path;
-
         Navigator.pop(context);
         Navigator.push(
             context,

@@ -40,30 +40,20 @@ class _DataCompanyScreen extends State<DataCompany> {
   bool _scopeValidator = false;
   String textItem = "";
   String idScope = "";
-  bool error = false;
+  
   bool isLoading = true;
   List<String> bussinessScope = [];
   List<BussinessScopeModel> scopeData = [];
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     BlocProvider.of<BussinessScopeBloc>(context)
         .add(LoadAllBussinessScopeEvent());
     print("Token = " + widget.token);
   }
 
-  _errorFalse() {
-    setState(() {
-      error = false;
-    });
-  }
-
-  _errorTrue() {
-    setState(() {
-      error = true;
-    });
-  }
+  
 
   void _gotoAccepted() {
     if (textEmail.text != "") {
@@ -487,20 +477,13 @@ class _DataCompanyScreen extends State<DataCompany> {
   }
 
   Widget _buildCupertino({BuildContext context, Widget wData}) {
-    Size sizeDialog = MediaQuery.of(context).size;
     return new CupertinoAlertDialog(
       title: new Text(
         "Are you sure to register your company with this data?",
       ),
       content: wData,
       actions: <Widget>[
-        CupertinoDialogAction(
-            child: Text(
-              "Yes",
-            ),
-            onPressed: () {
-              Navigator.pop(context, true);
-            }),
+        
         CupertinoDialogAction(
             child: Text(
               "No",
@@ -508,7 +491,14 @@ class _DataCompanyScreen extends State<DataCompany> {
             ),
             onPressed: () {
               Navigator.pop(context, false);
-            })
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
       ],
     );
   }

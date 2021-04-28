@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +15,7 @@ import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
 import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
@@ -46,9 +48,10 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   bool _reasonValidator = false;
   String durationOvertime = "";
   // Dropdown menu
-  List<String> itemsLeaveName = [];
-  List<int> itemLeaveNameID = [];
+
+  LeaveTypeModel result = LeaveTypeModel();
   List<LeaveTypeModel> dataLeaveType = [];
+
   List<String> items = ["Single Day", "Multiple Day", "Half Day"];
   String repeat = "Single Day";
   String leaveType = "";
@@ -130,12 +133,12 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           onTap: () {
                             _createLeaves();
                             //Navigator.of(context).pop();
-                            Navigator.pushReplacement(
+                            /*Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
                                         (ScreenListLeaves(
-                                            permission: "leaves"))));
+                                            permission: "leaves"))));*/
                           },
                           child: Container(
                             child: Text(
@@ -169,6 +172,14 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                       msg: "Leave Created",
                                       color: colorPrimary,
                                       txtColor: colorBackground);
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              (ScreenListLeaves(
+                                                permission: "leaves",
+                                                animate: true,
+                                              ))));
                                 } else if (state is LeaveStateFail) {
                                   Util().showToast(
                                       context: this.context,
@@ -243,25 +254,11 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           BlocListener<LeaveTypeBloc, LeaveTypeState>(
                             listener: (context, state) {
                               if (state is LeaveTypeStateSuccessLoad) {
-                                itemsLeaveName.clear();
                                 dataLeaveType.clear();
-                                //itemLeaveNameID.clear();
-                                int i = 0;
-                                state.leaveType.forEach((element) {
-                                  if (i < 1) {
-                                    setState(() {
-                                      leaveType = element.typeName;
-                                      i++;
-                                    });
-                                  }
-                                  setState(() {
-                                    itemLeaveNameID.add(element.id);
 
-                                    itemsLeaveName.add(element.typeName);
-                                  });
-                                });
                                 setState(() {
                                   dataLeaveType.addAll(state.leaveType);
+                                  result = dataLeaveType[0];
                                   isLoading = true;
                                 });
                               }
@@ -269,16 +266,16 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             child: Container(),
                           ),
                           isLoading
-                              ? AddScheduleRow2(
+                              ? AddScheduleLeaveType(
                                   onSelectedItem: (val) {
                                     setState(() {
-                                      leaveType = val;
+                                      result = val;
                                     });
-                                    _changeLeave();
+                                    //_changeLeave();
                                   },
-                                  items: itemsLeaveName,
+                                  items: dataLeaveType,
                                   title: "Leave Type",
-                                  textItem: leaveType,
+                                  textItem: result,
                                   fontSize: size.height <= 600 ? 14 : 16,
                                 )
                               : Container(),
@@ -422,11 +419,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   //_createLeaves();
                   _createOvertime();
                   //Navigator.of(context).pop();
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              (ScreenListLeaves(permission: "overtime"))));
                 },
                 child: Container(
                   child: Text(
@@ -452,6 +444,21 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                BlocListener<OvertimeBloc, OvertimeState>(
+                  listener: (context, state) {
+                    if (state is OvertimeStateSuccess) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  (ScreenListLeaves(
+                                    permission: "overtime",
+                                    animate: true,
+                                  ))));
+                    }
+                  },
+                  child: Container(),
+                ),
                 BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) {
                     if (state is AttendanceStateSuccessLoad) {
@@ -608,16 +615,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     }
   }
 
-  _changeLeave() {
-    dataLeaveType.forEach((element) {
-      if (element.typeName == leaveType) {
-        setState(() {
-          idLeaveType = element.id;
-        });
-      }
-    });
-  }
-
   _changeDate() {
     userModel.forEach((element) {
       if (element.clockOut.toString() == dateDisplay) {
@@ -631,14 +628,23 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     });
   }
 
-  _createOvertime() {
-    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-        attendanceId: int.parse(attendanceId),
-        project: project,
-        reason: textReason.text));
+  _createOvertime() async {
+    bool result = await showDialog(
+        context: context,
+        builder: (context) => _buildCupertino(
+            context: context,
+            title: "Are you sure with this data to apply overtime?"));
+    if (result != null) {
+      if (result) {
+        BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+            attendanceId: int.parse(attendanceId),
+            project: project,
+            reason: textReason.text));
+      }
+    }
   }
 
-  void _createLeaves() {
+  Future<void> _createLeaves() async {
     LeaveModel sentLeave = LeaveModel();
     if (repeat == items[0]) {
       //Duration: Single Day
@@ -668,8 +674,43 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           leaveDateEnd: "",
           reason: textReason.text);
     }
+    bool result2 = await showDialog(
+        context: context,
+        builder: (context) => _buildCupertino(
+            context: context,
+            title: "Are you sure you wanted to apply leaves?"));
+    if (result2 != null) {
+      if (result2) {
+        BlocProvider.of<LeaveBloc>(context)
+            .add(AddLeaveEvent(leaveModel: sentLeave, leaveId: result.id));
+      }
+    }
+  }
 
-    BlocProvider.of<LeaveBloc>(context)
-        .add(AddLeaveEvent(leaveModel: sentLeave, leaveId: idLeaveType));
+  Widget _buildCupertino({BuildContext context, String title}) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        title,
+      ),
+      //content: wData,
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "No",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, false);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+      ],
+    );
   }
 }

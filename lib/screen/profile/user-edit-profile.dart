@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/user-model.dart';
-import 'package:zukses_app_1/screen/profile/user-settings.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({Key key, this.title, this.user}) : super(key: key);
@@ -188,7 +187,10 @@ class _EditProfileScreen extends State<EditProfile> {
 
   _imagePicker(int index) async {
     if (index == 0) {
-      final pickedFile = await picker.getImage(source: ImageSource.camera);
+      final pickedFile = await picker.getImage(
+          source: ImageSource.gallery,
+          maxWidth: maxWidth,
+          maxHeight: maxHeight);
 
       if (pickedFile != null) {
         setState(() {
@@ -198,7 +200,8 @@ class _EditProfileScreen extends State<EditProfile> {
       }
     } else if (index == 1) {
       //Gallery
-      final pickedFile = await picker.getImage(source: ImageSource.camera);
+      final pickedFile = await picker.getImage(
+          source: ImageSource.camera, maxWidth: maxWidth, maxHeight: maxHeight);
       if (pickedFile != null) {
         setState(() {
           String data = pickedFile.path;

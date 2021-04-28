@@ -39,7 +39,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //Untuk Mulai bikin Add/Edit Member Layout
+              // To Do: Untuk Mulai bikin Add/Edit Member Layout
             ],
           ),
         ),

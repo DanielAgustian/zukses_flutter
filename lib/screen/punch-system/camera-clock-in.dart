@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:zukses_app_1/tab/screen_tab.dart';
+
 import 'package:zukses_app_1/util/util.dart';
 
 class PreviewCamera extends StatefulWidget {
@@ -79,7 +78,11 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   }
 
   void retakeButton() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: imageQualityCamera,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth);
 
     String newImage = pickedFile.path;
 

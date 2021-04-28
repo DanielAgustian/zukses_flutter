@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -6,8 +6,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-tab-leaves.dart';
 
 class ScreenListLeaves extends StatefulWidget {
-  ScreenListLeaves({Key key, this.title, this.permission}) : super(key: key);
-
+  ScreenListLeaves({Key key, this.title, this.permission, this.animate})
+      : super(key: key);
+  final bool animate;
   final String title;
   final String permission;
   @override
@@ -28,6 +29,9 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
     tabController.addListener(() {
       _getTabIndex();
     });
+    if (widget.animate != null) {
+      tabController.animateTo(1);
+    }
   }
 
   _getTabIndex() {
@@ -36,6 +40,19 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
     });
 
     print(activeIndex);
+  }
+
+  _toAddLeaveOvertime() async {
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ApplyLeavesFormScreen(permission: widget.permission)));
+    if (result != null) {
+      if (result) {
+        tabController.animateTo(1);
+      }
+    }
   }
 
   Widget build(BuildContext context) {
@@ -69,11 +86,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                     size: size.height < 570 ? 18 : 23,
                   ),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ApplyLeavesFormScreen(
-                                permission: widget.permission)));
+                    _toAddLeaveOvertime();
                   },
                 ),
               ),

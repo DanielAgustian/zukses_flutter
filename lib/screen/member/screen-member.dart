@@ -22,7 +22,7 @@ class _MemberScreenState extends State<MemberScreen> {
   Util util = Util();
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
   }

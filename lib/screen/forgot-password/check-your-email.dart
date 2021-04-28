@@ -54,7 +54,7 @@ class _CheckEmailScreen extends State<CheckEmail> {
 
   @override
   void initState() {
-    // TODO: implement initState
+   
     super.initState();
     Util util = Util();
     util.initDynamicLinks(context);

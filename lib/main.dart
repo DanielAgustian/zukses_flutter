@@ -33,7 +33,7 @@ import 'package:zukses_app_1/repository/auth-repo.dart';
 //import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
@@ -65,7 +65,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-
   final String token;
   final bool onboarding;
   const MyApp({Key key, this.token, this.onboarding}) : super(key: key);
@@ -195,13 +194,15 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Stack(
       children: [
         Center(
-            child: Text(
-          "ZUKSES",
-          style: GoogleFonts.lato(
-              textStyle: TextStyle(color: colorPrimary, letterSpacing: 2),
-              fontSize: size.height < 569 ? 40 : 46,
-              fontWeight: FontWeight.bold),
-        )),
+          child: Text(
+            "ZUKSES",
+            style: TextStyle(
+                color: colorPrimary,
+                letterSpacing: 2,
+                fontSize: size.height < 569 ? 40 : 46,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
         Positioned(
             bottom: 0.2 * size.height,
             left: 0.45 * size.width,

@@ -21,7 +21,7 @@ class _ScreenInBetweenState extends State<ScreenInBetween> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    // TODO: implement build
+    
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: customAppBar(context,

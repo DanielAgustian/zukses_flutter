@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/component/button/button-long.dart';
-import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/tab/screen_task.dart';
 import 'package:zukses_app_1/tab/screen_home.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -24,7 +22,7 @@ class _ScreenTab extends State<ScreenTab> {
   
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     if (widget.index != null) {
       _currentScreenIndex = widget.index;

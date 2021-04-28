@@ -23,8 +23,17 @@ class _UserProfileScreen extends State<UserProfile> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         floatingActionButton: FloatingActionButton(
+          child: Center(
+            child: FaIcon(FontAwesomeIcons.pencilAlt,
+                color: colorBackground, size: size.height < 569 ? 18 : 22),
+          ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfile(user: widget.user,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditProfile(
+                          user: widget.user,
+                        )));
           },
         ),
         appBar: AppBar(
@@ -87,7 +96,7 @@ class _UserProfileScreen extends State<UserProfile> {
                                 ),
                               )),
                         ),
-                        Positioned(
+                        /*Positioned(
                             right: 0.0,
                             bottom: 0.0,
                             child: InkWell(
@@ -105,7 +114,7 @@ class _UserProfileScreen extends State<UserProfile> {
                                       size: size.height < 569 ? 12 : 14),
                                 ),
                               ),
-                            ))
+                            ))*/
                       ],
                     ),
                     SizedBox(

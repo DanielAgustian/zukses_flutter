@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -22,7 +21,7 @@ import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-event.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-state.dart';
-import 'package:zukses_app_1/component/schedule/row-schedule.dart';
+
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -101,9 +100,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //timer();
+
     label = labelList[0];
     priority = priorityList[0];
     moveTo = moveToList[0];
@@ -222,6 +220,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                         isLoading = false;
                       });
                       taskToDo.clear();
+                      taskInProgress.clear();
+                      taskDone.clear();
                       state.task.forEach((element) {
                         if (element.taskType.toLowerCase() == "to-do") {
                           taskToDo.add(element);
@@ -522,8 +522,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
       });
 
   Widget scrollerSheet(TaskModel clickTask) {
-    bool temp = false;
     Size size = MediaQuery.of(context).size;
+    print("clickTask Attachment" + clickTask.attachment.length.toString());
     return SizedBox.expand(
       child: SlideTransition(
         position: _tween.animate(_animationController),
@@ -591,6 +591,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -754,45 +755,119 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ),
                             ],
                           ),
-                          SizedBox(height: 5),
                           Container(
-                            height: size.height * 0.2,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                color: colorNeutral2,
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    fit: BoxFit.fitHeight,
-                                    image: data == ""
-                                        ? AssetImage("assets/images/camera.png")
-                                        : FileImage(File(data)))),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: InkWell(
-                                onTap: () {
-                                  _showPicker(context);
-                                },
-                                child: Container(
-                                  alignment: Alignment.bottomLeft,
-                                  height: size.height * 0.045,
-                                  decoration: BoxDecoration(
-                                    color: colorNeutral3,
-                                    borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10)),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      upload
-                                          ? "Upload Success"
-                                          : "Click Here to Upload",
-                                      style: TextStyle(color: colorBackground),
+                            height: 150,
+                            child: clickTask.attachment.length == 0
+                                ? Container(
+                                    height: size.height * 0.2,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: colorNeutral2,
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                            fit: BoxFit.fitHeight,
+                                            image: data == ""
+                                                ? AssetImage(
+                                                    "assets/images/camera.png")
+                                                : FileImage(File(data)))),
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _showPicker(context);
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.bottomLeft,
+                                          height: size.height * 0.045,
+                                          decoration: BoxDecoration(
+                                            color: colorNeutral3,
+                                            borderRadius: BorderRadius.only(
+                                                bottomRight:
+                                                    Radius.circular(10),
+                                                bottomLeft:
+                                                    Radius.circular(10)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              upload
+                                                  ? "Upload Success"
+                                                  : "Click Here to Upload",
+                                              style: TextStyle(
+                                                  color: colorBackground),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                                  )
+                                : clickTask.attachment.length > 0
+                                    ? SizedBox(
+                                        child: ListView.builder(
+                                            itemCount:
+                                                clickTask.attachment.length,
+                                            scrollDirection: Axis.horizontal,
+                                            shrinkWrap: true,
+                                            itemBuilder: (context, index) {
+                                              return Container(
+                                                height: size.height * 0.2,
+                                                width: size.width * 0.9,
+                                                decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    image: DecorationImage(
+                                                      fit: BoxFit.fitHeight,
+                                                      image: NetworkImage(
+                                                          "https://api-zukses.yokesen.com/" +
+                                                              clickTask
+                                                                  .attachment[
+                                                                      index]
+                                                                  .attachment),
+                                                    )),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      //_showPicker(context);
+                                                    },
+                                                    child: Container(
+                                                      alignment:
+                                                          Alignment.bottomLeft,
+                                                      height:
+                                                          size.height * 0.045,
+                                                      decoration: BoxDecoration(
+                                                        color: colorNeutral3,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            10),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        10)),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          upload
+                                                              ? "Upload Success"
+                                                              : "Click Here to Upload",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  colorBackground),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      )
+                                    : Container(),
                           ),
+                          SizedBox(height: 5),
                           SizedBox(
                             height: 20,
                           ),

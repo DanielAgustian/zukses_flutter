@@ -24,7 +24,6 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts:
-  circular_check_box:
   font_awesome_flutter:
   intl: 
   image_picker:

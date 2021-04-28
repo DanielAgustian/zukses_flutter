@@ -28,7 +28,6 @@ class _RequestInboxState extends State<RequestInbox>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     timer();
