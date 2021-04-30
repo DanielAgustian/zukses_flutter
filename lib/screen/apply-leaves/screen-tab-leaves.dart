@@ -59,6 +59,9 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
               BlocListener<LeaveBloc, LeaveState>(
                 listener: (context, state) {
                   if (state is LeaveStateSuccessLoad) {
+                    listAccepted.clear();
+                    listWaiting.clear();
+                    listRejected.clear();
                     for (int i = 0; i < state.leave.length; i++) {
                       if (state.leave[i].status == "accepted") {
                         listAccepted.add(state.leave[i]);
@@ -92,6 +95,9 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
               BlocListener<OvertimeBloc, OvertimeState>(
                 listener: (context, state) {
                   if (state is OvertimeStateSuccessLoad) {
+                    listAcceptedOvertime.clear();
+                    listRejectedOvertime.clear();
+                    listWaitingOvertime.clear();
                     for (int i = 0; i < state.overtime.length; i++) {
                       if (state.overtime[i].status == "accepted") {
                         listAcceptedOvertime.add(state.overtime[i]);
@@ -209,16 +215,11 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                       status: list[index].status,
                       time: list[index].startTime == null
                           ? ""
-                          : cutTime(list[index].startTime) +
+                          : Util().cutTime(list[index].startTime) +
                               "-" +
-                              cutTime(list[index].endTime)),
+                              Util().cutTime(list[index].endTime)),
                 );
               }),
     );
-  }
-
-  String cutTime(String time) {
-    var temp = Util().stringToTimeOfDay(time);
-    return Util().changeTimeToString(temp);
   }
 }

@@ -62,6 +62,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   List<String> taskList = ["Front End", "Back End", "Design"];
   String dateDisplay = "";
   List<String> dateDisplayList = [];
+  AttendanceModel user = AttendanceModel();
   List<AttendanceModel> userModel = [];
   String attendanceId = "";
   bool isLoading2 = false;
@@ -166,20 +167,9 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         children: [
                           BlocListener<LeaveBloc, LeaveState>(
                               listener: (context, state) {
+                                
                                 if (state is LeaveStateSuccess) {
-                                  Util().showToast(
-                                      context: this.context,
-                                      msg: "Leave Created",
-                                      color: colorPrimary,
-                                      txtColor: colorBackground);
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              (ScreenListLeaves(
-                                                permission: "leaves",
-                                                animate: true,
-                                              ))));
+                                  _gotoLeavesList();
                                 } else if (state is LeaveStateFail) {
                                   Util().showToast(
                                       context: this.context,
@@ -447,14 +437,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 BlocListener<OvertimeBloc, OvertimeState>(
                   listener: (context, state) {
                     if (state is OvertimeStateSuccess) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  (ScreenListLeaves(
-                                    permission: "overtime",
-                                    animate: true,
-                                  ))));
+                      _gotoOvertimeList();
                     }
                   },
                   child: Container(),
@@ -465,6 +448,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                       dateDisplayList.clear();
                       userModel.clear();
                       userModel.addAll(state.attendanceList);
+
                       int i = 0;
                       state.attendanceList.forEach((element) {
                         dateDisplayList.add(element.clockOut.toString());
@@ -477,13 +461,14 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         }
                       });
                       setState(() {
+                        user = userModel.first;
                         isLoading2 = true;
                       });
                     } else {}
                   },
                   child: Container(),
                 ),
-                isLoading2
+                /*isLoading2
                     ? AddScheduleRow2(
                         fontSize: size.height <= 569 ? 14 : 16,
                         title: "Date",
@@ -496,9 +481,23 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             dateDisplay = val;
                           });
                         })
+                    : CircularProgressIndicator(),*/
+                isLoading2
+                    ? AddScheduleRowOvertimeDate(
+                        fontSize: size.height <= 569 ? 14 : 16,
+                        title: "Date",
+                        attendance: user,
+                        attendanceList: userModel,
+                        onSelectedItem: (val) {
+                          //_changeDate();
+                          setState(() {
+                            user = val;
+                          });
+                        })
                     : CircularProgressIndicator(),
                 isLoading2
                     ? AddScheduleRow(
+                        lowerOpacity: true,
                         arrowRight: "false",
                         title: "Duration",
                         textItem: durationOvertime == ""
@@ -615,33 +614,11 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     }
   }
 
-  _changeDate() {
-    userModel.forEach((element) {
-      if (element.clockOut.toString() == dateDisplay) {
-        setState(() {
-          attendanceId = element.id;
-          durationOvertime = element.overtime == null ? "" : element.overtime;
-
-          print("duration : " + durationOvertime);
-        });
-      }
-    });
-  }
-
   _createOvertime() async {
-    bool result = await showDialog(
-        context: context,
-        builder: (context) => _buildCupertino(
-            context: context,
-            title: "Are you sure with this data to apply overtime?"));
-    if (result != null) {
-      if (result) {
-        BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-            attendanceId: int.parse(attendanceId),
-            project: project,
-            reason: textReason.text));
-      }
-    }
+    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+        attendanceId: int.parse(user.id),
+        project: project,
+        reason: textReason.text));
   }
 
   Future<void> _createLeaves() async {
@@ -674,37 +651,25 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           leaveDateEnd: "",
           reason: textReason.text);
     }
-    bool result2 = await showDialog(
-        context: context,
-        builder: (context) => _buildCupertino(
-            context: context,
-            title: "Are you sure you wanted to apply leaves?"));
-    if (result2 != null) {
-      if (result2) {
-        BlocProvider.of<LeaveBloc>(context)
-            .add(AddLeaveEvent(leaveModel: sentLeave, leaveId: result.id));
-      }
-    }
+
+    BlocProvider.of<LeaveBloc>(context)
+        .add(AddLeaveEvent(leaveModel: sentLeave, leaveId: result.id));
   }
 
   Widget _buildCupertino({BuildContext context, String title}) {
     return new CupertinoAlertDialog(
       title: new Text(
+        "Application Submitted!",
+        style: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      content: Text(
         title,
       ),
-      //content: wData,
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "No",
-              style: TextStyle(color: colorError),
-            ),
-            onPressed: () {
-              Navigator.pop(context, false);
-            }),
-        CupertinoDialogAction(
-            child: Text(
-              "Yes",
+              "See List",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {
@@ -712,5 +677,56 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
             }),
       ],
     );
+  }
+
+  _gotoOvertimeList() async {
+    bool result = await showDialog(
+        context: context,
+        builder: (context) => _buildCupertino(
+            context: context, title: "You successfully applied for Overtime"));
+
+    if (result == null) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => (ScreenListLeaves(
+                    permission: "overtime",
+                    animate: true,
+                  ))));
+    } else if (result) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => (ScreenListLeaves(
+                    permission: "overtime",
+                    animate: true,
+                  ))));
+    }
+  }
+
+  _gotoLeavesList() async {
+    bool result = await showDialog(
+        context: context,
+        builder: (context) => _buildCupertino(
+            context: context, title: "You successfully applied for leave"));
+    if (result == null) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => (ScreenListLeaves(
+                    permission: "leaves",
+                    animate: true,
+                  ))));
+    } else {
+      if (result) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => (ScreenListLeaves(
+                      permission: "leaves",
+                      animate: true,
+                    ))));
+      }
+    }
   }
 }

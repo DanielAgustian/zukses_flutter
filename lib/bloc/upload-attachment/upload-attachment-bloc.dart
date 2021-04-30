@@ -19,12 +19,27 @@ class UploadAttachBloc extends Bloc<UploadAttachEvent, UploadAttachState> {
 
     // return checkbox handler
 
-
     // directly throw into success load or fail load
-    if (res == 200) {
+    if (res != null) {
       yield UploadAttachStateSuccess(kode: res);
     } else {
       yield UploadAttachStateFail();
+    }
+  }
+
+  Stream<UploadAttachState> mapGetAttachment(
+      UploadAttachGetEvent event) async* {
+    yield UploadAttachStateLoading();
+    // return list user model
+    var res = await _task.getAttachment(event.idTask);
+
+    // return checkbox handler
+
+    // directly throw into success load or fail load
+    if (res != null) {
+      yield UploadAttachStateSuccessLoad(attach: res);
+    } else {
+      yield UploadAttachStateFailLoad();
     }
   }
 
@@ -32,6 +47,8 @@ class UploadAttachBloc extends Bloc<UploadAttachEvent, UploadAttachState> {
   Stream<UploadAttachState> mapEventToState(UploadAttachEvent event) async* {
     if (event is UploadAttachNewEvent) {
       yield* mapUploadAttach(event);
+    } else if (event is UploadAttachGetEvent) {
+      yield* mapGetAttachment(event);
     }
   }
 

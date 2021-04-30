@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/model/attachment-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
 import 'package:http/http.dart' as http;
 
@@ -114,8 +115,7 @@ class TaskServicesHTTP {
     }
   }
 
-  Future<List<TaskModel>> fetchTaskByPriority(
-       String priority) async {
+  Future<List<TaskModel>> fetchTaskByPriority(String priority) async {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
@@ -143,6 +143,38 @@ class TaskServicesHTTP {
             .map((p) => TaskModel.fromJson(p))
             .toList();
       }
+    } else {
+      // IF the server return everything except 200, it will gte exception.
+      print("Failed TO Load Alubm");
+      return null;
+    }
+  }
+
+  Future<int> updateTask(
+    TaskModel task,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var res = await http.put(Uri.https(baseURI, 'api/task'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'taskId': task.idTask,
+          'progress': task.taskType,
+          'dueDate': task.date,
+          'labelId': task.idLabel
+        }));
+    //print(res.body);
+    print(res.statusCode);
+    print(res.body);
+    if (res.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      //var responseJson = jsonDecode(res.body);
+      return res.statusCode;
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
@@ -196,8 +228,46 @@ class TaskServicesHTTP {
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      //var responseJson = jsonDecode(res.body);
+
       return res.statusCode;
+    } else {
+      // IF the server return everything except 200, it will gte exception.
+      print("Failed TO Load Alubm");
+      return null;
+    }
+  }
+
+  Future<List<AttachmentModel>> getAttachment(String taskId) async {
+    //Token from Login
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    //Query to API
+    //
+    var queryParameters = {
+      'taskId': taskId,
+    };
+    var res = await http.get(
+        Uri.https(baseURI, 'api/attachment', queryParameters),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        });
+    print(res.body);
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var responseJson = jsonDecode(res.body);
+      if (responseJson['Data'].toString() == "[]") {
+        List<AttachmentModel> attach;
+        return attach;
+      } else {
+        return (responseJson['Data'] as List)
+            .map((p) => AttachmentModel.fromJson(p))
+            .toList();
+      }
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");

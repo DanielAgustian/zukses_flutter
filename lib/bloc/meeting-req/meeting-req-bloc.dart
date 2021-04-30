@@ -32,7 +32,7 @@ class MeetingReqBloc extends Bloc<MeetingReqEvent, MeetingReqState> {
       yield MeetingReqStateFailLoad();
     }
   }
-
+  
   Stream<MeetingReqState> mapUpdatingMeetingReqState(
       MeetingReqEventDidUpdated event) async* {
     yield MeetingReqStateSuccessLoad(schedule: event.schedule);
@@ -44,7 +44,7 @@ class MeetingReqBloc extends Bloc<MeetingReqEvent, MeetingReqState> {
       yield* mapAllMeetingReq();
     } else if (event is MeetingReqEventDidUpdated) {
       yield* mapUpdatingMeetingReqState(event);
-    }
+    } 
   }
   @override
   Future<void> close() {

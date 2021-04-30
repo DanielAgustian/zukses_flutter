@@ -13,6 +13,7 @@ class LoadAllMeetingReqEvent extends MeetingReqEvent {
   List<Object> get props => [];
 }
 
+
 class MeetingReqEventDidUpdated extends MeetingReqEvent {
   final List<ScheduleModel> schedule;
   const MeetingReqEventDidUpdated(this.schedule);

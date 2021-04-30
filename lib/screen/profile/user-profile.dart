@@ -19,6 +19,12 @@ class UserProfile extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _UserProfileScreen extends State<UserProfile> {
   @override
+    void initState() {
+      // TODO: implement initState
+      super.initState();
+      
+    }
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -447,6 +448,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
 
           BlocProvider.of<CLTBloc>(context)
               .add(LoadAllCLTEvent(item.idTask.toString()));
+          BlocProvider.of<UploadAttachBloc>(context)
+              .add(UploadAttachGetEvent(item.idTask.toString()));
           _onClickItem(item);
         },
       ),
@@ -542,6 +545,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       topRight: Radius.circular(20))),
               child: Column(
                 children: [
+                  BlocListener<UploadAttachBloc, UploadAttachState>(
+                      listener: (context, state) {
+                        if (state is UploadAttachStateSuccess) {
+                          setState(() {
+                            //clickTask.attachment = state.attach;
+                          });
+                        }
+                      },
+                      child: Container()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -755,22 +767,56 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ),
                             ],
                           ),
-                          Container(
-                            height: 150,
-                            child: clickTask.attachment.length == 0
-                                ? Container(
-                                    height: size.height * 0.2,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: colorNeutral2,
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                            fit: BoxFit.fitHeight,
-                                            image: data == ""
-                                                ? AssetImage(
-                                                    "assets/images/camera.png")
-                                                : FileImage(File(data)))),
-                                    child: Align(
+                          BlocBuilder<UploadAttachBloc, UploadAttachState>(
+                              builder: (context, state) {
+                            if (state is UploadAttachStateSuccessLoad) {
+                              return Container(
+                                height: 150,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      child: ListView.builder(
+                                          itemCount: state.attach.length,
+                                          scrollDirection: Axis.horizontal,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 10),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          _buildCupertino(
+                                                              context: context,
+                                                              link: state
+                                                                  .attach[index]
+                                                                  .attachment));
+                                                },
+                                                child: Container(
+                                                  height: size.height * 0.2,
+                                                  width: size.width * 0.9,
+                                                  decoration: BoxDecoration(
+                                                      color: colorNeutral2,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      image: DecorationImage(
+                                                        fit: BoxFit.fitHeight,
+                                                        image: NetworkImage(
+                                                            "https://api-zukses.yokesen.com/" +
+                                                                state
+                                                                    .attach[
+                                                                        index]
+                                                                    .attachment),
+                                                      )),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    Align(
                                       alignment: Alignment.bottomCenter,
                                       child: InkWell(
                                         onTap: () {
@@ -789,9 +835,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                           ),
                                           child: Center(
                                             child: Text(
-                                              upload
-                                                  ? "Upload Success"
-                                                  : "Click Here to Upload",
+                                              "Click Here to Upload",
                                               style: TextStyle(
                                                   color: colorBackground),
                                             ),
@@ -799,74 +843,58 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         ),
                                       ),
                                     ),
-                                  )
-                                : clickTask.attachment.length > 0
-                                    ? SizedBox(
-                                        child: ListView.builder(
-                                            itemCount:
-                                                clickTask.attachment.length,
-                                            scrollDirection: Axis.horizontal,
-                                            shrinkWrap: true,
-                                            itemBuilder: (context, index) {
-                                              return Container(
-                                                height: size.height * 0.2,
-                                                width: size.width * 0.9,
-                                                decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    image: DecorationImage(
-                                                      fit: BoxFit.fitHeight,
-                                                      image: NetworkImage(
-                                                          "https://api-zukses.yokesen.com/" +
-                                                              clickTask
-                                                                  .attachment[
-                                                                      index]
-                                                                  .attachment),
-                                                    )),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      //_showPicker(context);
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.bottomLeft,
-                                                      height:
-                                                          size.height * 0.045,
-                                                      decoration: BoxDecoration(
-                                                        color: colorNeutral3,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            10),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        10)),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          upload
-                                                              ? "Upload Success"
-                                                              : "Click Here to Upload",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  colorBackground),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }),
-                                      )
-                                    : Container(),
-                          ),
+                                  ],
+                                ),
+                              );
+                            } else if (state is UploadAttachStateFailLoad) {
+                              return Container(
+                                height: size.height * 0.2,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: colorNeutral2,
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitHeight,
+                                        image: data == ""
+                                            ? AssetImage(
+                                                "assets/images/camera.png")
+                                            : FileImage(File(data)))),
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _showPicker(context);
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.bottomLeft,
+                                      height: size.height * 0.045,
+                                      decoration: BoxDecoration(
+                                        color: colorNeutral3,
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10)),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          upload
+                                              ? "Upload Success"
+                                              : "Click Here to Upload",
+                                          style:
+                                              TextStyle(color: colorBackground),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            } else if (state is UploadAttachStateSuccess) {
+                              BlocProvider.of<UploadAttachBloc>(context).add(
+                                  UploadAttachGetEvent(
+                                      clickTask.idTask.toString()));
+                              return Container();
+                            }
+                            return Container();
+                          }),
                           SizedBox(height: 5),
                           SizedBox(
                             height: 20,
@@ -1255,5 +1283,24 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _uploadAttachment(File image) {
     BlocProvider.of<UploadAttachBloc>(context)
         .add(UploadAttachNewEvent(clickTask.idTask.toString(), image));
+  }
+
+  Widget _buildCupertino({BuildContext context, String link}) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Attachment Picture",
+      ),
+      content: Image.network("https://api-zukses.yokesen.com/${link}"),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Close",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+      ],
+    );
   }
 }

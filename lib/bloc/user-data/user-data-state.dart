@@ -23,3 +23,19 @@ class UserDataStateSuccessLoad extends UserDataState {
     return 'Data : { Authentication List: $userModel }';
   }
 }
+class UserDataStateUpdateFail extends UserDataState {}
+
+class UserDataStateUpdateSuccess extends UserDataState {
+  final int kode;
+
+  UserDataStateUpdateSuccess(this.kode);
+
+ 
+
+  List<Object> get props => [kode];
+
+  @override
+  String toString() {
+    return 'Data : { Authentication List: $kode }';
+  }
+}

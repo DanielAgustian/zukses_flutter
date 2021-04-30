@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
@@ -14,7 +15,7 @@ import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
-import 'package:zukses_app_1/screen/apply-leaves/screen-inbetween.dart';
+
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -36,14 +37,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   AttendanceModel selected;
   DateTime _currentDate = DateTime.now();
   WeeklyCalendar _selectedWeek;
- 
+
   List<AttendanceModel> absensiList = [];
   bool isLoadingAttendance = false;
   void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
       _currentDate = date;
       selected = absence;
-      
+
       kata = "$_currentDate";
     });
   }
@@ -91,7 +92,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               backgroundColor: colorBackground,
               automaticallyImplyLeading: false,
               title: Text(
-                "Attendance Detail",
+                "Attendance",
                 style: TextStyle(
                     color: colorPrimary,
                     fontWeight: FontWeight.bold,
@@ -125,21 +126,46 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     });
                   },
                 ),
-                IconButton(
-                  splashColor: Colors.transparent,
-                  icon: FaIcon(
-                    FontAwesomeIcons.calendarWeek,
-                    color: colorPrimary,
-                    size: size.height <= 569 ? 16 : 20,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                    child: Container(
+                      child: SvgPicture.asset(
+                        "assets/images/leave-symbol.svg",
+                        height: size.height <= 569 ? 20 : 25,
+                        width: size.height <= 569 ? 20 : 25,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ScreenListLeaves(permission: "leaves")),
+                      );
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenInBetween()),
-                    );
-                  },
-                )
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                    child: SvgPicture.asset(
+                      "assets/images/overtime-symbol.svg",
+                      height: size.height <= 569 ? 20 : 25,
+                      width: size.height <= 569 ? 20 : 25,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ScreenListLeaves(permission: "overtime")),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
             body: Container(
@@ -301,7 +327,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         backgroundColor: colorBackground,
         automaticallyImplyLeading: false,
         title: Text(
-          "Attendance Detail",
+          "Attendance",
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
@@ -321,20 +347,46 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               });
             },
           ),
-          IconButton(
-            splashColor: Colors.transparent,
-            icon: FaIcon(
-              FontAwesomeIcons.calendarWeek,
-              color: colorPrimary,
-              size: size.height <= 569 ? 16 : 20,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              child: Container(
+                child: SvgPicture.asset(
+                  "assets/images/leave-symbol.svg",
+                  height: size.height <= 569 ? 20 : 25,
+                  width: size.height <= 569 ? 20 : 25,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenListLeaves(permission: "leaves")),
+                );
+              },
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ScreenListLeaves()),
-              );
-            },
-          )
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              child: SvgPicture.asset(
+                "assets/images/overtime-symbol.svg",
+                height: size.height <= 569 ? 20 : 25,
+                width: size.height <= 569 ? 20 : 25,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenListLeaves(permission: "overtime")),
+                );
+              },
+            ),
+          ),
         ],
       ),
       body: Container(

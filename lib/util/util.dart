@@ -77,6 +77,10 @@ class Util {
         minute: int.parse(tod.split(":")[1]));
   }
 
+  String cutTime(String time) {
+    var temp = Util().stringToTimeOfDay(time);
+    return Util().changeTimeToString(temp);
+  }
   String dateNumbertoCalendar(DateTime date) {
     return DateFormat('yMMMd').format(date);
   }

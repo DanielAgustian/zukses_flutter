@@ -14,3 +14,10 @@ class UploadAttachNewEvent extends UploadAttachEvent {
   UploadAttachNewEvent(this.idTask, this.image);
   List<Object> get props => [];
 }
+
+class UploadAttachGetEvent extends UploadAttachEvent {
+  final String idTask;
+ 
+  UploadAttachGetEvent(this.idTask);
+  List<Object> get props => [];
+}

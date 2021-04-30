@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -391,20 +392,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       children: [
                         InkWell(
                           onTap: () {
-                            /*print("Container clicked $isClockIn");
-                          if (isClockIn == 1) {
-                            confirmClockOut(size: size);
-                          } else if (isClockIn == 2) {
-                            print("masuk sini");
-                            // DO nothing
-                            // lock repeatable checkin in the same day
-                          } else {*/
                             if (stringTap != enumTap[2]) {
                               if (_authModel.maxClockIn != null &&
                                   _authModel.attendance != null) {
                                 if (_authModel.maxClockIn == "false") {
                                   if (_authModel.attendance == "false") {
-                                    //Clock In
                                     if (instruction == true) {
                                       pushToCamera();
                                     } else {
@@ -473,12 +465,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             fontWeight: FontWeight.w500),
                                       );
                                     }),
-                                    Text(
-                                      stringTap,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              size.height < 600 ? 14 : 18),
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: colorBackground,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                              "assets/images/tap-clock-in.svg",
+                                              width:
+                                                  size.height < 569 ? 20 : 25,
+                                              height:
+                                                  size.height < 569 ? 20 : 25),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            stringTap,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: colorPrimary,
+                                                fontSize: size.height < 600
+                                                    ? 14
+                                                    : 16),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ]))),
                         ),

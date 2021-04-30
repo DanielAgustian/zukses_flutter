@@ -18,6 +18,7 @@ import 'package:zukses_app_1/bloc/forgot-password/forgot-password-bloc.dart';
 import 'package:zukses_app_1/bloc/label-task/business-scope-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting-search/meeting-search-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/payment/payment-bloc.dart';
 import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
@@ -126,6 +127,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<ChangeTaskBloc>(create: (context) => ChangeTaskBloc()),
         BlocProvider<UploadAttachBloc>(create: (context) => UploadAttachBloc()),
         BlocProvider<TaskPriorityBloc>(create: (context) => TaskPriorityBloc()),
+        BlocProvider<MeetingSearchBloc>(
+          create: (context) => MeetingSearchBloc(),
+        ),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{

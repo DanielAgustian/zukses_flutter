@@ -123,10 +123,12 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                 textItem: overtimeModel.status,
               ),
               AddScheduleRowNonArrow(
+                lowerOpacity: true,
                 title: "Date",
                 textItem: util.dateNumbertoCalendar(overtimeModel.clockIn),
               ),
               AddScheduleRowNonArrow(
+                lowerOpacity: true,
                 title: "Duration",
                 textItem: "00:00", //nanti get dari OvertimeModel
               ),
@@ -283,6 +285,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                 title: "Duration",
                 textItem: leaveModel.duration, //nanti get dari OvertimeModel
               ),
+              datePeriod(context, size, leaveModel.duration, leaveModel),
               SizedBox(
                 height: 15,
               ),
@@ -360,5 +363,33 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
         ),
       ),
     );
+  }
+
+  Widget datePeriod(
+      BuildContext context, Size size, String duration, LeaveModel leave) {
+    switch (duration) {
+      case "Half Day":
+        return AddScheduleRowNonArrow(
+          lowerOpacity: true,
+          title: "Hour",
+          textItem: Util().cutTime(leaveModel.startTime) +
+              "-" +
+              Util().cutTime(leaveModel.endTime), //nanti get dari OvertimeModel
+        );
+        break;
+      case "Multiple Day":
+        return AddScheduleRowNonArrow(
+            lowerOpacity: true,
+            title: "Period",
+            textItem: Util().dateNumbertoCalendar(
+                    DateTime.parse(leaveModel.leaveDate)) +
+                "-" //+
+            //Util().dateNumbertoCalendar(DateTime.parse(leaveModel.leaveDateEnd)), //nanti get dari OvertimeModel
+            );
+        break;
+      default:
+        return Container();
+        break;
+    }
   }
 }
