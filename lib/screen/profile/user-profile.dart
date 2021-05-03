@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/company-model.dart';
@@ -18,12 +22,18 @@ class UserProfile extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _UserProfileScreen extends State<UserProfile> {
+  UserModel user = UserModel();
   @override
-    void initState() {
-      // TODO: implement initState
-      super.initState();
-      
-    }
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getProfile();
+  }
+
+  _getProfile() {
+    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -38,7 +48,7 @@ class _UserProfileScreen extends State<UserProfile> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => EditProfile(
-                          user: widget.user,
+                          user: user,
                         )));
           },
         ),
@@ -75,131 +85,171 @@ class _UserProfileScreen extends State<UserProfile> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                paddingHorizontal, 0, paddingHorizontal, 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: size.height < 569 ? 5 : 10),
-                Row(
-                  children: [
-                    Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                          child: Container(
-                              width: size.height < 569 ? 68 : 72,
-                              height: size.height < 569 ? 68 : 72,
-                              decoration: BoxDecoration(
-                                color: colorNeutral2,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.camera,
-                                  color: colorNeutral3,
-                                ),
-                              )),
-                        ),
-                        /*Positioned(
-                            right: 0.0,
-                            bottom: 0.0,
-                            child: InkWell(
-                              onTap: () {},
-                              child: Container(
-                                width: size.height < 569 ? 28 : 32,
-                                height: size.height < 569 ? 28 : 32,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.black,
-                                ),
-                                child: Center(
-                                  child: FaIcon(FontAwesomeIcons.pencilAlt,
-                                      color: colorBackground,
-                                      size: size.height < 569 ? 12 : 14),
-                                ),
-                              ),
-                            ))*/
-                      ],
-                    ),
-                    SizedBox(
-                      width: size.height < 569 ? 10 : 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.user.name,
-                          style: TextStyle(
-                              color: colorPrimary,
-                              fontSize: size.height < 569 ? 16 : 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text("Personal",
-                            style: TextStyle(
-                                color: colorPrimary,
-                                fontSize: size.height < 569 ? 14 : 16))
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: size.height < 569 ? 10 : 15,
-                ),
-                _dataCompany(context, size),
-                SizedBox(
-                  height: size.height < 569 ? 10 : 15,
-                ),
-                Container(
-                  width: size.width,
-                  padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom:
-                              BorderSide(width: 3, color: Color(0xFFF4F4F4)))),
-                  child: Text(
-                    "Personal Information",
-                    style: TextStyle(
-                        color: colorPrimary,
-                        fontSize: size.height < 569 ? 14 : 16,
-                        fontWeight: FontWeight.bold),
+              padding: EdgeInsets.fromLTRB(
+                  paddingHorizontal, 0, paddingHorizontal, 20),
+              child: Stack(
+                children: [
+                  BlocListener<UserDataBloc, UserDataState>(
+                    listener: (context, state) {
+                      if (state is UserDataStateSuccessLoad) {
+                        setState(() {
+                          user = state.userModel;
+                        });
+                        print(user.imgUrl);
+                      }
+                    },
+                    child: Container(),
                   ),
-                ),
-                TextFormat1(
-                  size: size,
-                  title: "Name",
-                  data: widget.user.name,
-                ),
-                TextFormat1(
-                    size: size,
-                    title: "Username",
-                    data: widget.user.email //"Harus Diisi ",
-                    ),
-                TextFormat1(
-                  size: size,
-                  title: "Zukses ID",
-                  data: widget.user.userID,
-                ),
-                TextFormat1(
-                  size: size,
-                  title: "Phone Number",
-                  data: widget.user.phone == null
-                      ? "Not Registered"
-                      : widget.user.phone,
-                ),
-                TextFormat1(
-                  size: size,
-                  title: "Personal Email",
-                  data: widget.user.email,
-                ),
-              ],
-            ),
-          ),
+                  BlocBuilder<UserDataBloc, UserDataState>(
+                    builder: (context, state) {
+                      if (state is UserDataStateSuccessLoad) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: size.height < 569 ? 5 : 10),
+                            Row(
+                              children: [
+                                Stack(
+                                  children: [
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 5, 5, 5),
+                                        child: state.userModel.imgUrl == "" ||
+                                                state.userModel.imgUrl == null
+                                            ? Container(
+                                                width:
+                                                    size.height < 569 ? 68 : 72,
+                                                height:
+                                                    size.height < 569 ? 68 : 72,
+                                                decoration: BoxDecoration(
+                                                  color: colorNeutral2,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Center(
+                                                    child: FaIcon(
+                                                  FontAwesomeIcons.camera,
+                                                  color: colorNeutral3,
+                                                )))
+                                            : Container(
+                                                width:
+                                                    size.height < 569 ? 68 : 72,
+                                                height:
+                                                    size.height < 569 ? 68 : 72,
+                                                decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    shape: BoxShape.circle,
+                                                    image: DecorationImage(
+                                                        image: NetworkImage(
+                                                          "https://api-zukses.yokesen.com/${state.userModel.imgUrl}",
+                                                        ),
+                                                        fit: BoxFit.fill)),
+                                              )),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: size.height < 569 ? 10 : 15,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      state.userModel.name,
+                                      style: TextStyle(
+                                          color: colorPrimary,
+                                          fontSize: size.height < 569 ? 16 : 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text("Personal",
+                                        style: TextStyle(
+                                            color: colorPrimary,
+                                            fontSize:
+                                                size.height < 569 ? 14 : 16))
+                                  ],
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.height < 569 ? 10 : 15,
+                            ),
+                            _dataCompany(context, size),
+                            SizedBox(
+                              height: size.height < 569 ? 10 : 15,
+                            ),
+                            Container(
+                              width: size.width,
+                              padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 3, color: Color(0xFFF4F4F4)))),
+                              child: Text(
+                                "Personal Information",
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height < 569 ? 14 : 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            TextFormat1(
+                              size: size,
+                              title: "Name",
+                              data: state.userModel.name,
+                            ),
+                            TextFormat1(
+                                size: size,
+                                title: "Username",
+                                data: state.userModel.email //"Harus Diisi ",
+                                ),
+                            TextFormat1(
+                                size: size,
+                                title: "Zukses ID",
+                                data: state.userModel.userID),
+                            TextFormat1(
+                              size: size,
+                              title: "Phone Number",
+                              data: state.userModel.phone == null
+                                  ? "Not Registered"
+                                  : state.userModel.phone,
+                            ),
+                            TextFormat1(
+                              size: size,
+                              title: "Personal Email",
+                              data: state.userModel.email,
+                            ),
+                          ],
+                        );
+                      } else if (state is UserDataStateLoading) {
+                        return Container(
+                          width: size.width,
+                          height: 0.8 * size.height,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else if (state is UserDataStateFailLoad) {
+                        return Container(
+                          width: size.width,
+                          height: 0.8 * size.height,
+                          child: Center(
+                            child: Text(
+                              "Oops Something Wrong. Please try again.",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      } else if (state is UserDataStateUpdateSuccess) {
+                        _getProfile();
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
+              )),
         ));
   }
 
@@ -232,11 +282,11 @@ class _UserProfileScreen extends State<UserProfile> {
           title: "ID Number",
           data: widget.company.code,
         ),
-        TextFormat1(
+        /*TextFormat1(
           size: size,
           title: "Position",
           data: "Manager TechTeam",
-        ),
+        ),*/
         TextFormat1(
           size: size,
           title: "Company Email",

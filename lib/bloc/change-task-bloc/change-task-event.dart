@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-
+import 'package:zukses_app_1/model/task-model.dart';
 
 abstract class ChangeTaskEvent extends Equatable {
   const ChangeTaskEvent();
@@ -11,6 +11,7 @@ abstract class ChangeTaskEvent extends Equatable {
 class ChangeTaskUpdateEvent extends ChangeTaskEvent {
   final String idTask;
   final String progress;
+  
   ChangeTaskUpdateEvent(this.idTask, this.progress);
   List<Object> get props => [];
 }
@@ -18,6 +19,7 @@ class ChangeTaskUpdateEvent extends ChangeTaskEvent {
 class ChangeTaskUpdateByDropdownEvent extends ChangeTaskEvent {
   final String idTask;
   final String progress;
+  
   ChangeTaskUpdateByDropdownEvent(this.idTask, this.progress);
   List<Object> get props => [];
 }

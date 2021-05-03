@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({Key key, this.title, this.user}) : super(key: key);
@@ -16,7 +23,22 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileScreen extends State<EditProfile> {
   final picker = ImagePicker();
-  bool data = false;
+  //bool data = false;
+  bool uploading = false;
+  String data = "";
+  UserModel userModel = UserModel();
+
+  _editData() {
+    BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+        File(data), widget.user.name, widget.user.phone));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userModel = widget.user;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -43,144 +65,207 @@ class _EditProfileScreen extends State<EditProfile> {
         actions: [
           InkWell(
               child: Container(
-                padding: EdgeInsets.only(right: paddingHorizontal),
-                child: Text("Done",
-                    style: TextStyle(
-                        fontSize: size.height <= 569 ? 15 : 18,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.bold)),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Text("Done",
+                        style: TextStyle(
+                            fontSize: size.height <= 569 ? 15 : 18,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ),
               ),
               onTap: () {
+                _editData();
                 /*Navigator.push(context,
                     MaterialPageRoute(builder: (context) => UserSettings()));*/
               })
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-          width: size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Layout for Edit Profile here.
-              Center(
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                      child: Container(
-                          width: size.height < 569 ? 75 : 90,
-                          height: size.height < 569 ? 75 : 90,
-                          decoration: BoxDecoration(
-                            color: colorNeutral2,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: FaIcon(
-                              FontAwesomeIcons.camera,
-                              color: colorNeutral3,
-                            ),
-                          )),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+              width: size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BlocListener<UserDataBloc, UserDataState>(
+                    listener: (context, state) {
+                      if (state is UserDataStateUpdateSuccess) {
+                        setState(() {
+                          uploading = false;
+                        });
+                        Navigator.pop(context);
+                      } else if (state is UserDataStateUpdateFail) {
+                        setState(() {
+                          uploading = false;
+                        });
+                        Util().showToast(
+                            duration: 3,
+                            context: context,
+                            msg: "Update Data Wrong",
+                            color: colorError,
+                            txtColor: colorBackground);
+                      } else if (state is UserDataStateLoading) {
+                        setState(() {
+                          uploading = true;
+                        });
+                      }
+                    },
+                    child: Container(),
+                  ),
+                  //Layout for Edit Profile here.
+                  Center(
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                          child: widget.user.imgUrl == "" ||
+                                  widget.user.imgUrl == null
+                              ? Container(
+                                  width: size.height < 569 ? 75 : 90,
+                                  height: size.height < 569 ? 75 : 90,
+                                  decoration: BoxDecoration(
+                                    color: colorNeutral2,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: FaIcon(
+                                      FontAwesomeIcons.camera,
+                                      color: colorNeutral3,
+                                    ),
+                                  ))
+                              : Container(
+                                  width: size.height < 569 ? 75 : 90,
+                                  height: size.height < 569 ? 75 : 90,
+                                  decoration: BoxDecoration(
+                                      color: colorNeutral2,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: data != ""
+                                              ? FileImage(File(data))
+                                              : NetworkImage(
+                                                  "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
+                                ),
+                        ),
+                        Positioned(
+                            right: 0.0,
+                            bottom: 0.0,
+                            child: InkWell(
+                              onTap: () {
+                                _showPicker(context);
+                              },
+                              child: Container(
+                                width: size.height < 569 ? 28 : 32,
+                                height: size.height < 569 ? 28 : 32,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black,
+                                ),
+                                child: Center(
+                                  child: FaIcon(FontAwesomeIcons.pencilAlt,
+                                      color: colorBackground,
+                                      size: size.height < 569 ? 12 : 14),
+                                ),
+                              ),
+                            ))
+                      ],
                     ),
-                    Positioned(
-                        right: 0.0,
-                        bottom: 0.0,
-                        child: InkWell(
-                          onTap: () {
-                            _showPicker(context);
-                          },
-                          child: Container(
-                            width: size.height < 569 ? 28 : 32,
-                            height: size.height < 569 ? 28 : 32,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black,
-                            ),
-                            child: Center(
-                              child: FaIcon(FontAwesomeIcons.pencilAlt,
-                                  color: colorBackground,
-                                  size: size.height < 569 ? 12 : 14),
-                            ),
-                          ),
-                        ))
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: size.height < 569 ? 10 : 15,
-              ),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.user.name,
+                  ),
+                  SizedBox(
+                    width: size.height < 569 ? 10 : 15,
+                  ),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.user.name,
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 569 ? 16 : 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text("Personal",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontSize: size.height < 569 ? 14 : 16))
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height < 569 ? 10 : 15,
+                  ),
+                  Container(
+                    width: size.width,
+                    padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 3, color: Color(0xFFF4F4F4)))),
+                    child: Text(
+                      "Personal Information",
                       style: TextStyle(
                           color: colorPrimary,
-                          fontSize: size.height < 569 ? 16 : 18,
+                          fontSize: size.height < 569 ? 14 : 16,
                           fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text("Personal",
-                        style: TextStyle(
-                            color: colorPrimary,
-                            fontSize: size.height < 569 ? 14 : 16))
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: size.height < 569 ? 10 : 15,
-              ),
-              Container(
-                width: size.width,
-                padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                decoration: BoxDecoration(
-                    border: Border(
-                        bottom:
-                            BorderSide(width: 3, color: Color(0xFFF4F4F4)))),
-                child: Text(
-                  "Personal Information",
-                  style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: size.height < 569 ? 14 : 16,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextFormat1(
-                size: size,
-                title: "Name",
-                data: widget.user.name,
-              ),
-              TextFormat1(
-                  size: size,
-                  title: "Username",
-                  data: widget.user.email //"Harus Diisi ",
                   ),
-              TextFormat1(
-                size: size,
-                title: "Zukses ID",
-                data: widget.user.userID,
+                  TextFormat1(
+                    size: size,
+                    title: "Name",
+                    data: widget.user.name,
+                  ),
+                  TextFormat1(
+                      size: size,
+                      title: "Username",
+                      data: widget.user.email //"Harus Diisi ",
+                      ),
+                  TextFormat1(
+                    size: size,
+                    title: "Zukses ID",
+                    data: widget.user.userID,
+                  ),
+                  TextFormat1(
+                    size: size,
+                    title: "Phone Number",
+                    data: widget.user.phone == null
+                        ? "Not Registered"
+                        : widget.user.phone,
+                  ),
+                  TextFormat1(
+                    size: size,
+                    title: "Personal Email",
+                    data: widget.user.email,
+                  ),
+                ],
               ),
-              TextFormat1(
-                size: size,
-                title: "Phone Number",
-                data: widget.user.phone == null
-                    ? "Not Registered"
-                    : widget.user.phone,
-              ),
-              TextFormat1(
-                size: size,
-                title: "Personal Email",
-                data: widget.user.email,
-              ),
-            ],
+            ),
           ),
-        ),
+          uploading
+              ? Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.black38.withOpacity(0.5),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: colorPrimary70,
+                      // strokeWidth: 0,
+                      valueColor: AlwaysStoppedAnimation(colorBackground),
+                    ),
+                  ),
+                )
+              : Container()
+        ],
       ),
     );
   }
@@ -194,7 +279,7 @@ class _EditProfileScreen extends State<EditProfile> {
 
       if (pickedFile != null) {
         setState(() {
-          String data = pickedFile.path;
+          data = pickedFile.path;
         });
         //Camera
       }
@@ -204,7 +289,7 @@ class _EditProfileScreen extends State<EditProfile> {
           source: ImageSource.camera, maxWidth: maxWidth, maxHeight: maxHeight);
       if (pickedFile != null) {
         setState(() {
-          String data = pickedFile.path;
+          data = pickedFile.path;
         });
       }
     }

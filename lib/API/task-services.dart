@@ -25,8 +25,8 @@ class TaskServicesHTTP {
         });
     Uri uri = Uri.https(baseURI, 'api/task?projectId=$projectId');
     print(uri.toString());
-    print(res.statusCode);
-    print(res.body);
+    //print(res.statusCode);
+    //print(res.body);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -101,8 +101,8 @@ class TaskServicesHTTP {
           'notes': task.notes
         }));
     //print(res.body);
-    print(res.statusCode);
-    print(res.body);
+    //print(res.statusCode);
+
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -129,8 +129,8 @@ class TaskServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    print(res.statusCode);
-    print(res.body);
+    //print(res.statusCode);
+    //print(res.body);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -163,17 +163,16 @@ class TaskServicesHTTP {
         },
         body: jsonEncode(<String, dynamic>{
           'taskId': task.idTask,
-          'progress': task.taskType,
           'dueDate': task.date,
-          'labelId': task.idLabel
+          'labelId': task.idLabel,
+          'priority': task.priority
         }));
-    //print(res.body);
     print(res.statusCode);
-    print(res.body);
+    
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
-      // then parse the JSON.
-      //var responseJson = jsonDecode(res.body);
+
+      
       return res.statusCode;
     } else {
       // IF the server return everything except 200, it will gte exception.
@@ -187,7 +186,7 @@ class TaskServicesHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     //Query to API
-    var res = await http.put(Uri.https(baseURI, 'api/task'),
+    var res = await http.put(Uri.https(baseURI, 'api/task/progress'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
@@ -223,8 +222,7 @@ class TaskServicesHTTP {
         },
         body: jsonEncode(
             <String, dynamic>{'taskId': taskId, 'image': base64Image}));
-    print(res.body);
-    print(res.statusCode);
+
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -254,8 +252,7 @@ class TaskServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    print(res.body);
-    print(res.statusCode);
+
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

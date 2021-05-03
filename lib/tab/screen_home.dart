@@ -599,6 +599,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
+                                              
                                               Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
@@ -643,9 +644,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                             image: DecorationImage(
                                                                 fit:
                                                                     BoxFit.fill,
-                                                                image: Image.asset(
-                                                                        "assets/images/ava.png")
-                                                                    .image)))
+                                                                image: state.userModel.imgUrl ==
+                                                                            null ||
+                                                                        state.userModel.imgUrl ==
+                                                                            ""
+                                                                    ? Image.asset(
+                                                                            "assets/images/ava.png")
+                                                                        .image
+                                                                    : NetworkImage(
+                                                                        "https://api-zukses.yokesen.com/${state.userModel.imgUrl}"))))
                                                   ],
                                                 )),
                                           ],
@@ -653,7 +660,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       ]),
                                 ),
                               );
-                            } else if (state is UserDataFailLoad) {
+                            } else if (state is UserDataStateFailLoad) {
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 20),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SkeletonAnimation(
+                                              shimmerColor: colorNeutral170,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: colorNeutral2,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                width: size.width * 0.6,
+                                                height: 20,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            SkeletonAnimation(
+                                              shimmerColor: colorNeutral170,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: colorNeutral2,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                width: size.width * 0.6,
+                                                height: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SkeletonAvatar()
+                                    ]),
+                              );
+                            } else if (state is UserDataStateUpdateSuccess) {
+                              getUserProfile();
                               return Container(
                                 margin: EdgeInsets.symmetric(horizontal: 20),
                                 child: Row(
@@ -712,7 +765,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Hi, Finley Khouwira",
+                                            "Data Error",
                                             style: TextStyle(
                                               color: colorPrimary,
                                               letterSpacing: 0,

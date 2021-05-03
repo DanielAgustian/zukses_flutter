@@ -16,6 +16,9 @@ import 'package:zukses_app_1/bloc/checklist-task/checklist-task-state.dart';
 import 'package:zukses_app_1/bloc/comment/comment-bloc.dart';
 import 'package:zukses_app_1/bloc/comment/comment-event.dart';
 import 'package:zukses_app_1/bloc/comment/comment-state.dart';
+import 'package:zukses_app_1/bloc/label-task/business-scope-bloc.dart';
+import 'package:zukses_app_1/bloc/label-task/label-task-event.dart';
+import 'package:zukses_app_1/bloc/label-task/label-task-state.dart';
 import 'package:zukses_app_1/bloc/task/task-bloc.dart';
 import 'package:zukses_app_1/bloc/task/task-event.dart';
 import 'package:zukses_app_1/bloc/task/task-state.dart';
@@ -27,6 +30,7 @@ import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/comment-model.dart';
+import 'package:zukses_app_1/model/label-task-model.dart';
 import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
@@ -57,6 +61,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   TextEditingController textEditingController = TextEditingController();
   final textAddCheckBox = TextEditingController();
   final picker = ImagePicker();
+  DateTime date;
   String data = "";
   //==================Method to Move =====================//
   String moveTo = "";
@@ -68,8 +73,10 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   var priorityList = ["High", "Medium", "Low"];
   String priority = "";
 
-  var label = "";
-  var labelList = ["Front End", "Back End", "Design"];
+  List<LabelTaskModel> label = [];
+  List<String> labelList = [];
+  String chooseLabel = "";
+  //var label = "";
 
   //=======================================================//
 
@@ -103,7 +110,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   void initState() {
     super.initState();
 
-    label = labelList[0];
     priority = priorityList[0];
     moveTo = moveToList[0];
     _animationController =
@@ -112,9 +118,13 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     tabController.addListener(_getTabIndex);
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
-
+    _getLabel();
     BlocProvider.of<TaskBloc>(context)
         .add(GetAllTaskEvent(projectId: widget.project.id));
+  }
+
+  _getLabel() {
+    BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
   }
 
   _postComment(CommentModel comment) {
@@ -127,7 +137,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _searchEnum(String moving, String idtask) {
     for (int i = 0; i < moveToList.length; i++) {
       if (moving == moveToList[i]) {
-        if (moving != historyMoveTo) {
+        print(moving + " - " + moveToList[i]);
+        if (dbEnum[i] != historyMoveTo) {
           _changeProgressbyDropdown(dbEnum[i], idtask);
         }
       }
@@ -192,6 +203,36 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                BlocListener<LabelTaskBloc, LabelTaskState>(
+                  listener: (context, state) {
+                    if (state is LabelTaskStateSuccessLoad) {
+                      labelList.clear();
+                      //labelList.add("Click Here for Label");
+
+                      setState(() {
+                        label = state.labelTask;
+                        state.labelTask.forEach((element) {
+                          labelList.add(element.name);
+                        });
+                        //labelList.add("+ New Label");
+                        //textLabel = labelList[0];
+                        //waitingLabel = false;
+                      });
+                    } else if (state is LabelTaskStateFailLoad) {
+                      setState(() {
+                        //freeLabel = true;
+                      });
+                      labelList.clear();
+                      //labelList.add("Click Here for Label");
+                      //labelList.add("+ New Label");
+                      print("Data Error");
+                    } else if (state is LabelTaskAddStateSuccessLoad) {
+                      BlocProvider.of<LabelTaskBloc>(context)
+                          .add(LoadAllLabelTaskEvent());
+                    }
+                  },
+                  child: Container(),
+                ),
                 BlocListener<ChangeTaskBloc, ChangeTaskState>(
                   listener: (context, state) {
                     if (state is ChangeTaskStateDropdownSuccessLoad) {
@@ -251,6 +292,12 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       setState(() {
                         isLoading = false;
                       });
+                    } else if (state is TaskStateUpdateSuccess) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<TaskBloc>(context)
+                          .add(GetAllTaskEvent(projectId: widget.project.id));
                     }
                   },
                   child: Container(),
@@ -441,7 +488,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
 
           setState(() {
             clickTask = item;
+            chooseLabel = item.label;
             priority = item.priority;
+            print("Priorrity:" + item.priority);
           });
           BlocProvider.of<CommentBloc>(context)
               .add(LoadAllCommentEvent(item.idTask.toString()));
@@ -524,6 +573,30 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         checkBoxClick = newValue;
       });
 
+  _clickDoneScroller(TaskModel clickTask) {
+    _searchEnum(moveTo, clickTask.idTask.toString());
+
+    int idLabel;
+    label.forEach((element) {
+      if (element.name == chooseLabel) {
+        setState(() {
+          idLabel = element.id;
+        });
+      }
+    });
+    if (priority != clickTask.priority ||
+        idLabel != clickTask.idLabel ||
+        date != DateTime.parse(clickTask.date)) {
+      TaskModel taskUpdate = TaskModel(
+          idTask: clickTask.idTask,
+          priority: priority,
+          date: date.toString(),
+          idLabel: idLabel);
+      BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(taskUpdate));
+    }
+    _animationController.reverse();
+  }
+
   Widget scrollerSheet(TaskModel clickTask) {
     Size size = MediaQuery.of(context).size;
     print("clickTask Attachment" + clickTask.attachment.length.toString());
@@ -568,8 +641,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       ),
                       InkWell(
                         onTap: () {
-                          _searchEnum(moveTo, clickTask.idTask.toString());
-                          _animationController.reverse();
+                          _clickDoneScroller(clickTask);
                         },
                         child: Text("Done",
                             style: TextStyle(
@@ -704,12 +776,23 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ),
                           InkWell(
                             onTap: () {
-                              //pickTime(context, 1);
+                              DateTime dateDB = DateTime.parse(clickTask.date);
+                              dateUpdatePicker(
+                                  dateDB, TimeOfDay.fromDateTime(dateDB));
                             },
                             child: RowTaskUndroppable(
                               title: "End Time",
-                              textItem: clickTask.date,
+                              textItem: date != null
+                                  ? util.dateNumbertoCalendar(date) +
+                                      " at " +
+                                      util.dateTimeToTimeOfDay(date)
+                                  : util.dateNumbertoCalendar(
+                                          DateTime.parse(clickTask.date)) +
+                                      " at " +
+                                      util.dateTimeToTimeOfDay(
+                                          DateTime.parse(clickTask.date)),
                               fontSize: size.height <= 600 ? 12 : 14,
+                              needArrow: true,
                             ),
                           ),
                           SizedBox(
@@ -730,21 +813,31 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ),
                           clickTask.label == null
                               ? Container()
-                              : RowTaskUndroppable(
-                                  title: "Label",
-                                  textItem: clickTask.label,
-                                  fontSize: size.height <= 600 ? 12 : 14,
-                                ),
+                              : TaskRow(
+                                  fontSize: size.height <= 569 ? 12 : 14,
+                                  title: "label",
+                                  textItem: chooseLabel,
+                                  items: labelList,
+                                  onSelectedItem: (val) {
+                                    setState(() {
+                                      chooseLabel = val;
+                                    });
+                                  }),
                           clickTask.label == null
                               ? Container()
                               : SizedBox(
                                   height: 10,
                                 ),
-                          RowTaskUndroppable(
+                          TaskRow(
+                            items: priorityList,
                             title: "Priority",
-                            textItem: clickTask.priority,
+                            textItem: priority,
                             fontSize: size.height <= 600 ? 12 : 14,
-                            priority: true,
+                            onSelectedItem: (val) {
+                              setState(() {
+                                priority = val;
+                              });
+                            },
                           ),
                           SizedBox(
                             height: 20,
@@ -1302,5 +1395,23 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
             }),
       ],
     );
+  }
+
+  dateUpdatePicker(DateTime initDate, TimeOfDay initTime) async {
+    final DateTime datePicked = await showDatePicker(
+        context: context,
+        initialDate: initDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100));
+    if (datePicked != null) {
+      final TimeOfDay timePicked =
+          await showTimePicker(context: context, initialTime: initTime);
+      if (timePicked != null) {
+        setState(() {
+          date = DateTime(datePicked.year, datePicked.month, datePicked.day,
+              timePicked.hour, timePicked.minute);
+        });
+      }
+    }
   }
 }

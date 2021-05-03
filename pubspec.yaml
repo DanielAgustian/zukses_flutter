@@ -41,7 +41,7 @@ dependencies:
   searchable_dropdown:
   shared_preferences:
   flutter_typeahead:
-  device_preview: ^0.6.2-beta
+  #device_preview: ^0.6.2-beta
   timer_builder:
   skeleton_text:
   flutter_slidable:
@@ -51,6 +51,7 @@ dependencies:
   flutter_switch:
   # cloud_firestore: 
   # firebase_auth:
+  # firebase_messaging:
   firebase_core: any
   firebase_dynamic_links: any
   url_launcher:

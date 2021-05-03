@@ -16,7 +16,7 @@ class UserModel {
     map["email"] = user.email;
     map["name"] = user.name;
     map["company_id"] = user.companyID;
-    map["imgUrl"] = user.imgUrl;
+    map["image"] = user.imgUrl;
     map["accepted"] = user.accepted;
     return map;
   }
@@ -26,7 +26,7 @@ class UserModel {
     this.userIDSchedule = map["userId"].toString();
     this.email = map["email"];
     this.name = map["name"];
-    this.imgUrl = map["imgUrl"] == null ? "" : map["imgUrl"];
+    this.imgUrl = map["image"] == null ? "" : map["image"];
     this.companyID = map["company_id"].toString();
     this.accepted = map["accepted"] == null ? 100 : map["accepted"];
   }
