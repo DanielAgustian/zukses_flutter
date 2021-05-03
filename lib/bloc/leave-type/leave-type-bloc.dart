@@ -12,7 +12,7 @@ class LeaveTypeBloc extends Bloc<LeaveTypeEvent, LeaveTypeState> {
   final LeaveTypeServiceHTTP _leaveTypeServiceHTTP = LeaveTypeServiceHTTP();
 
   LeaveTypeBloc() : super(null);
-
+  
   // Bloc for loadd all LeaveType
   Stream<LeaveTypeState> mapAllLeaveType() async* {
     yield LeaveTypeStateLoading();

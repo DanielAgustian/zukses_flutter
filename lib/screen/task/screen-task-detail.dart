@@ -1,63 +1,110 @@
-import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task-bloc.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task-event.dart';
+import 'package:zukses_app_1/bloc/change-task-bloc/change-task.state.dart';
+import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-bloc.dart';
+import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-event.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-bloc.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-event.dart';
+import 'package:zukses_app_1/bloc/checklist-task/checklist-task-state.dart';
+import 'package:zukses_app_1/bloc/comment/comment-bloc.dart';
+import 'package:zukses_app_1/bloc/comment/comment-event.dart';
+import 'package:zukses_app_1/bloc/comment/comment-state.dart';
+import 'package:zukses_app_1/bloc/task/task-bloc.dart';
+import 'package:zukses_app_1/bloc/task/task-event.dart';
+import 'package:zukses_app_1/bloc/task/task-state.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-event.dart';
+import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-state.dart';
+
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/comment-model.dart';
+import 'package:zukses_app_1/model/project-model.dart';
+import 'package:zukses_app_1/model/task-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
 
-class InnerList {
+import 'package:zukses_app_1/util/util.dart';
+
+/*class InnerList {
   final String name;
   List<String> children;
   InnerList({this.name, this.children});
-}
+}*/
 
+// ignore: must_be_immutable
 class TaskDetailScreen extends StatefulWidget {
-  TaskDetailScreen({Key key, this.title, this.projectName}) : super(key: key);
+  TaskDetailScreen({Key key, this.title, this.project}) : super(key: key);
   final String title;
-  final String projectName;
+  ProjectModel project;
+  //final String projectName;
   @override
   _TaskDetailScreen createState() => _TaskDetailScreen();
 }
 
-/// This is the stateless widget that the main application instantiates.
 class _TaskDetailScreen extends State<TaskDetailScreen>
     with TickerProviderStateMixin {
-  var taskName = ["task 1", "Task 2", "Task4", "Task 6"];
-  var taskDone = ["task 3", "task 5"];
-  var taskDetail = ["Dadada", "nananan", "mamammaa", "lalalla"];
-  var taskDate = ["02/19/2020", "08/19/2020", "12/11/2019", "02/15/2021"];
-  var taskHour = ["19.00", "17.00", "15.00", "16.00"];
-  var moveToList = ["To Do", "In Progress", "Done"];
+  TextEditingController textEditingController = TextEditingController();
+  final textAddCheckBox = TextEditingController();
+  final picker = ImagePicker();
+  String data = "";
+  //==================Method to Move =====================//
   String moveTo = "";
+  String historyMoveTo = "";
+  String changeMoveTo = "";
+  var moveToList = ["To Do", "In Progress", "Done"];
+  var dbEnum = ["to-do", "in-progress", "done"];
+
+  var priorityList = ["High", "Medium", "Low"];
+  String priority = "";
+
+  var label = "";
+  var labelList = ["Front End", "Back End", "Design"];
+
+  //=======================================================//
+
+  bool historyClick = true;
+
   int count = 4, activeIndex = 0;
   ScrollController _controller;
-  List<InnerList> _lists = [];
+  Util util = Util();
+
+  List<TaskModel> taskToDo = [];
+  List<TaskModel> taskInProgress = [];
+  List<TaskModel> taskDone = [];
+  TaskModel clickTask = TaskModel();
+  List<List<TaskModel>> dataTask = [];
+  int checkClick = 0;
+
   AnimationController _animationController;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   bool checkBoxClick = false;
+  bool postCommentValidator = false;
+  bool upload = false;
   Size size;
+
   var projectTask = [1, 5, 2, 0];
   TabController tabController;
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    timer();
+
+    label = labelList[0];
+    priority = priorityList[0];
     moveTo = moveToList[0];
     _animationController =
         AnimationController(vsync: this, duration: _duration);
@@ -65,32 +112,42 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     tabController.addListener(_getTabIndex);
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
-    _lists = List.generate(3, (outerIndex) {
-      return InnerList(
-        name: outerIndex.toString(),
-        children: List.generate(10, (innerIndex) => '$outerIndex.$innerIndex'),
-      );
+
+    BlocProvider.of<TaskBloc>(context)
+        .add(GetAllTaskEvent(projectId: widget.project.id));
+  }
+
+  _postComment(CommentModel comment) {
+    setState(() {
+      textEditingController.text = "";
     });
+    BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
+  }
+
+  _searchEnum(String moving, String idtask) {
+    for (int i = 0; i < moveToList.length; i++) {
+      if (moving == moveToList[i]) {
+        if (moving != historyMoveTo) {
+          _changeProgressbyDropdown(dbEnum[i], idtask);
+        }
+      }
+    }
+  }
+
+  _changeProgressbyDropdown(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateByDropdownEvent(idTask, progress));
+  }
+
+  _changeProgress(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateEvent(idTask, progress));
   }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-        /*floatingActionButton: FloatingActionButton(
-          backgroundColor: colorPrimary,
-          child: FaIcon(
-            FontAwesomeIcons.plus,
-            color: colorBackground,
-            size: size.height < 570 ? 25 : 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddTaskScreen()),
-            );
-          },
-        ),*/
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -98,14 +155,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: colorPrimary),
+            icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            widget.projectName,
+            widget.project.name,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 22 : 25,
+                fontSize: size.height < 570 ? 18 : 22,
                 color: colorPrimary),
           ),
           actions: [
@@ -120,7 +177,10 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddTaskScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => AddTaskScreen(
+                            projectId: widget.project.id,
+                          )),
                 );
               },
             ),
@@ -128,14 +188,76 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         ),
         body: Stack(
           children: [
-            SingleChildScrollView(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                BlocListener<ChangeTaskBloc, ChangeTaskState>(
+                  listener: (context, state) {
+                    if (state is ChangeTaskStateDropdownSuccessLoad) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<TaskBloc>(context)
+                          .add(GetAllTaskEvent(projectId: widget.project.id));
+                    }
+                  },
+                  child: Container(),
+                ),
+                BlocListener<UploadAttachBloc, UploadAttachState>(
+                  listener: (context, state) {
+                    if (state is UploadAttachStateSuccess) {
+                      setState(() {
+                        upload = true;
+                      });
+                    }
+                  },
+                  child: Container(),
+                ),
+                BlocListener<TaskBloc, TaskState>(
+                  listener: (context, state) {
+                    if (state is TaskStateSuccessLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      taskToDo.clear();
+                      taskInProgress.clear();
+                      taskDone.clear();
+                      state.task.forEach((element) {
+                        if (element.taskType.toLowerCase() == "to-do") {
+                          taskToDo.add(element);
+                        } else if (element.taskType.toLowerCase() ==
+                            "in-progress") {
+                          taskInProgress.add(element);
+                        } else if (element.taskType.toLowerCase() == "done") {
+                          taskDone.add(element);
+                        }
+                      });
+                      dataTask = List.generate(3, (index) {
+                        if (index == 0) {
+                          return taskToDo;
+                        } else if (index == 1) {
+                          return taskInProgress;
+                        }
+                        return taskDone;
+                      });
+                    } else if (state is TaskStateAddSuccessLoad) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<TaskBloc>(context)
+                          .add(GetAllTaskEvent(projectId: widget.project.id));
+                    } else if (state is TaskStateFailLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
+                  },
+                  child: Container(),
+                ),
                 SizedBox(
                   width: double.infinity,
-                  height: size.height,
+                  height: size.height * 0.8,
                   child: DefaultTabController(
                     length: 3,
                     child: Container(
@@ -176,7 +298,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                     ])),
                           ),
                           body: Container(
-                            height: double.infinity,
                             width: double.infinity,
                             child: Column(
                               children: [
@@ -194,7 +315,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                 Expanded(
                                   child: DragAndDropLists(
                                     scrollController: _controller,
-                                    children: List.generate(_lists.length,
+                                    children: List.generate(dataTask.length,
                                         (index) => _buildList(index)),
                                     onItemReorder: _onItemReorder,
                                     onListReorder: _onListReorder,
@@ -224,8 +345,22 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   ),
                 ),
               ],
-            )),
-            scrollerSheet(),
+            ),
+            clickTask.idTask == null ? Container() : scrollerSheet(clickTask),
+            isLoading
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.black38.withOpacity(0.5),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        // strokeWidth: 0,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                    ),
+                  )
+                : Container()
           ],
         ));
   }
@@ -248,7 +383,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   _buildList(int outerIndex) {
-    var innerList = _lists[outerIndex];
+    var innerList = dataTask[outerIndex];
     dataIndex(outerIndex);
     return DragAndDropList(
       header: Container(
@@ -267,23 +402,55 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         color: colorPrimary,
       ),
       canDrag: false,
-      children: List.generate(innerList.children.length,
-          (index) => _buildItem(innerList.children[index], index)),
+      children: List.generate(
+          innerList.length, (index) => _buildItem(innerList[index], index)),
     );
   }
 
-  _buildItem(String item, index) {
+  _buildItem(TaskModel item, index) {
     return DragAndDropItem(
       child: ListTaskDetail2(
+        label: item.label == null ? "" : item.label,
         size: size,
-        title: item,
-        detail: index.toString(),
-        date: "19-02-2019",
-        hour: "15:22",
+        title: item.taskName,
+        detail: item.details,
+        date: util.yearFormat(DateTime.parse(item.date)),
+        hour: util.hourFormat(DateTime.parse(item.date)),
         index: index,
         onClick: () {
-          print(item);
-          _onClickItem();
+          setState(() {
+            if (item.taskType.toLowerCase() == "in progress") {
+              historyMoveTo = dbEnum[1];
+            } else {
+              historyMoveTo = item.taskType.toLowerCase();
+            }
+          });
+          for (int i = 0; i < dbEnum.length; i++) {
+            if (item.taskType.toLowerCase() == dbEnum[i]) {
+              setState(() {
+                moveTo = moveToList[i];
+              });
+            } else {
+              if (item.taskType.toLowerCase() == "in progress") {
+                setState(() {
+                  moveTo = moveToList[1];
+                });
+              }
+            }
+          }
+
+          setState(() {
+            clickTask = item;
+            priority = item.priority;
+          });
+          BlocProvider.of<CommentBloc>(context)
+              .add(LoadAllCommentEvent(item.idTask.toString()));
+
+          BlocProvider.of<CLTBloc>(context)
+              .add(LoadAllCLTEvent(item.idTask.toString()));
+          BlocProvider.of<UploadAttachBloc>(context)
+              .add(UploadAttachGetEvent(item.idTask.toString()));
+          _onClickItem(item);
         },
       ),
     );
@@ -292,15 +459,18 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     setState(() {
-      var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
-      _lists[newListIndex].children.insert(newItemIndex, movedItem);
+      var movedItem = dataTask[oldListIndex].removeAt(oldItemIndex);
+
+      dataTask[newListIndex].insert(newItemIndex, movedItem);
+
+      _changeProgress(dbEnum[newListIndex], movedItem.idTask.toString());
     });
   }
 
   _onListReorder(int oldListIndex, int newListIndex) {
     setState(() {
-      var movedList = _lists.removeAt(oldListIndex);
-      _lists.insert(newListIndex, movedList);
+      var movedList = dataTask.removeAt(oldListIndex);
+      dataTask.insert(newListIndex, movedList);
     });
   }
 
@@ -342,7 +512,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     }
   }
 
-  _onClickItem() {
+  _onClickItem(TaskModel task) {
     if (_animationController.isDismissed) {
       _animationController.forward();
     } else if (_animationController.isCompleted) {
@@ -354,9 +524,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         checkBoxClick = newValue;
       });
 
-  Widget scrollerSheet() {
-    bool temp = false;
+  Widget scrollerSheet(TaskModel clickTask) {
     Size size = MediaQuery.of(context).size;
+    print("clickTask Attachment" + clickTask.attachment.length.toString());
     return SizedBox.expand(
       child: SlideTransition(
         position: _tween.animate(_animationController),
@@ -373,432 +543,764 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            _animationController.reverse();
-                          },
-                          child: Text("Cancel",
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                        InkWell(
-                          onTap: () {},
-                          child: Text("Done",
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  fontWeight: FontWeight.bold)),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Task Title",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        Text(
-                          "Task ID",
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: colorPrimary50,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                      child: Text(
-                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Senectus in nascetur massa aliquam sollicitudin tellus. Tincidunt tellus a hac aliquam pharetra, massa laoreet. Varius adipiscing at neque venenatis quam mattis dui odio mi. Vitae euismod blandit. (Note)",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: colorNeutral3,
-                          )),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Reporter",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  color: colorNeutral3, shape: BoxShape.circle),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "Member 1",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Assignee",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  color: colorNeutral3, shape: BoxShape.circle),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "Member 5",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Due Date",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              "Date at Hour",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            SizedBox(width: 10),
-                            InkWell(
-                                child: Icon(Icons.arrow_drop_down,
-                                    color: colorPrimary),
-                                onTap: () {})
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TaskRow(
-                        fontSize: size.height <= 569 ? 12 : 14,
-                        title: "Move To",
-                        textItem: moveTo,
-                        items: moveToList,
-                        onSelectedItem: (val) {
+              child: Column(
+                children: [
+                  BlocListener<UploadAttachBloc, UploadAttachState>(
+                      listener: (context, state) {
+                        if (state is UploadAttachStateSuccess) {
                           setState(() {
-                            moveTo = val;
+                            //clickTask.attachment = state.attach;
                           });
-                        }),
-                    /*
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Move To",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              "To Do",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            SizedBox(width: 10),
-                            InkWell(
-                                child: Icon(Icons.arrow_drop_down,
-                                    color: colorPrimary),
-                                onTap: () {})
-                          ],
-                        ),
-                      ],
-                    ),*/
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Label",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                              color: colorSecondaryYellow,
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "Front End",
-                            style: TextStyle(color: colorBackground),
+                        }
+                      },
+                      child: Container()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          _animationController.reverse();
+                        },
+                        child: Text("Cancel",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _searchEnum(moveTo, clickTask.idTask.toString());
+                          _animationController.reverse();
+                        },
+                        child: Text("Done",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold)),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        clickTask.taskName,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        clickTask.idTask.toString(),
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: colorPrimary50,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 5,
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Priority",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  color: colorSecondaryRed,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.chevronUp,
-                                  color: colorBackground,
-                                  size: 18,
-                                ),
+                          Container(
+                            child: Text(clickTask.details,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorNeutral3,
+                                )),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Reporter",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: colorPrimary,
+                                    fontWeight: FontWeight.w500),
                               ),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "High",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            SizedBox(width: 10),
-                            InkWell(
-                                child: Icon(Icons.arrow_drop_down,
-                                    color: colorPrimary),
-                                onTap: () {})
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: colorNeutral3),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "Attachement",
-                          style: TextStyle(color: colorPrimary, fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      height: size.height * 0.2,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: colorNeutral2,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          alignment: Alignment.bottomLeft,
-                          height: size.height * 0.045,
-                          decoration: BoxDecoration(
-                            color: colorNeutral3,
-                            borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        color: colorNeutral3,
+                                        shape: BoxShape.circle),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    clickTask.reporter.name,
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          child: Center(
-                            child: Text(
-                              "StatusImage.jpg",
-                              style: TextStyle(color: colorBackground),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          clickTask.assignment.length > 0
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Assignee",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorPrimary,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: ListView.builder(
+                                          itemCount:
+                                              clickTask.assignment.length,
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                      color: colorNeutral3,
+                                                      shape: BoxShape.circle),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  clickTask
+                                                      .assignment[index].name,
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                              ],
+                                            );
+                                          }),
+                                    )
+                                  ],
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              //pickTime(context, 1);
+                            },
+                            child: RowTaskUndroppable(
+                              title: "End Time",
+                              textItem: clickTask.date,
+                              fontSize: size.height <= 600 ? 12 : 14,
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TaskRow(
+                              fontSize: size.height <= 569 ? 12 : 14,
+                              title: "Move To",
+                              textItem: moveTo,
+                              items: moveToList,
+                              onSelectedItem: (val) {
+                                setState(() {
+                                  moveTo = val;
+                                });
+                              }),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          clickTask.label == null
+                              ? Container()
+                              : RowTaskUndroppable(
+                                  title: "Label",
+                                  textItem: clickTask.label,
+                                  fontSize: size.height <= 600 ? 12 : 14,
+                                ),
+                          clickTask.label == null
+                              ? Container()
+                              : SizedBox(
+                                  height: 10,
+                                ),
+                          RowTaskUndroppable(
+                            title: "Priority",
+                            textItem: clickTask.priority,
+                            fontSize: size.height <= 600 ? 12 : 14,
+                            priority: true,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: colorNeutral3),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "Attachment",
+                                style: TextStyle(
+                                    color: colorPrimary, fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          BlocBuilder<UploadAttachBloc, UploadAttachState>(
+                              builder: (context, state) {
+                            if (state is UploadAttachStateSuccessLoad) {
+                              return Container(
+                                height: 150,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      child: ListView.builder(
+                                          itemCount: state.attach.length,
+                                          scrollDirection: Axis.horizontal,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 10),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          _buildCupertino(
+                                                              context: context,
+                                                              link: state
+                                                                  .attach[index]
+                                                                  .attachment));
+                                                },
+                                                child: Container(
+                                                  height: size.height * 0.2,
+                                                  width: size.width * 0.9,
+                                                  decoration: BoxDecoration(
+                                                      color: colorNeutral2,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      image: DecorationImage(
+                                                        fit: BoxFit.fitHeight,
+                                                        image: NetworkImage(
+                                                            "https://api-zukses.yokesen.com/" +
+                                                                state
+                                                                    .attach[
+                                                                        index]
+                                                                    .attachment),
+                                                      )),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _showPicker(context);
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.bottomLeft,
+                                          height: size.height * 0.045,
+                                          decoration: BoxDecoration(
+                                            color: colorNeutral3,
+                                            borderRadius: BorderRadius.only(
+                                                bottomRight:
+                                                    Radius.circular(10),
+                                                bottomLeft:
+                                                    Radius.circular(10)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Click Here to Upload",
+                                              style: TextStyle(
+                                                  color: colorBackground),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (state is UploadAttachStateFailLoad) {
+                              return Container(
+                                height: size.height * 0.2,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: colorNeutral2,
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitHeight,
+                                        image: data == ""
+                                            ? AssetImage(
+                                                "assets/images/camera.png")
+                                            : FileImage(File(data)))),
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _showPicker(context);
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.bottomLeft,
+                                      height: size.height * 0.045,
+                                      decoration: BoxDecoration(
+                                        color: colorNeutral3,
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10)),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          upload
+                                              ? "Upload Success"
+                                              : "Click Here to Upload",
+                                          style:
+                                              TextStyle(color: colorBackground),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            } else if (state is UploadAttachStateSuccess) {
+                              BlocProvider.of<UploadAttachBloc>(context).add(
+                                  UploadAttachGetEvent(
+                                      clickTask.idTask.toString()));
+                              return Container();
+                            }
+                            return Container();
+                          }),
+                          SizedBox(height: 5),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: colorNeutral3),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "CheckList",
+                                    style: TextStyle(
+                                        color: colorPrimary, fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.transparent),
+                                    child: Center(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.plus,
+                                        color: colorBackground,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ))
+                            ],
+                          ),
+                          BlocBuilder<CLTBloc, CLTState>(
+                              builder: (context, state) {
+                            if (state is CLTStateGetSuccessLoad) {
+                              return ListView.builder(
+                                padding: EdgeInsets.all(0),
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    state.listCheckList.length + 1, //+ 1,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  if (index == state.listCheckList.length) {
+                                    return Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: CheckboxListTile(
+                                          value: checkBoxClick,
+                                          onChanged: _onCheckBoxClick,
+                                          controlAffinity:
+                                              ListTileControlAffinity.leading,
+                                          title: _textBoxCheck(
+                                              context, clickTask.idTask)),
+                                    );
+                                  }
+                                  return Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: CheckboxListTile(
+                                      value: state.boolCheckList[index],
+                                      onChanged: (val) {
+                                        setState(() {
+                                          state.boolCheckList[index] =
+                                              !state.boolCheckList[index];
+                                        });
+                                        BlocProvider.of<CLTPBloc>(context).add(
+                                            PutCLTPEvent(state
+                                                .listCheckList[index].id
+                                                .toString()));
+                                      },
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      title: state.boolCheckList[index]
+                                          ? Text(
+                                              state.listCheckList[index]
+                                                  .checkList,
+                                              style:
+                                                  TextStyle(
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontSize:
+                                                          size.height <= 569
+                                                              ? 12
+                                                              : 14,
+                                                      color: colorPrimary,
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                          : Text(
+                                              state.listCheckList[index]
+                                                  .checkList,
+                                              style: TextStyle(
+                                                  fontSize: size.height <= 569
+                                                      ? 12
+                                                      : 14,
+                                                  color: colorPrimary,
+                                                  fontWeight: FontWeight.bold)),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else if (state is CLTStateGetFailLoad) {
+                              return Container(
+                                alignment: Alignment.centerLeft,
+                                child: CheckboxListTile(
+                                    value: checkBoxClick,
+                                    onChanged: _onCheckBoxClick,
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                    title: _textBoxCheck(
+                                        context, clickTask.idTask)),
+                              );
+                            } else if (state is CLTStateAddSuccessLoad) {
+                              BlocProvider.of<CLTBloc>(context).add(
+                                  LoadAllCLTEvent(clickTask.idTask.toString()));
+                            }
+                            return Container();
+                          }),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: colorNeutral3),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    historyClick
+                                        ? "Activity Log - Comment"
+                                        : "Activity Log - History",
+                                    style: TextStyle(
+                                        color: colorPrimary, fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      historyClick = !historyClick;
+                                    });
+                                  },
+                                  child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                          color: historyClick
+                                              ? colorPrimary
+                                              : colorPrimary30,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: Text(
+                                        historyClick ? "History" : "Comment",
+                                        style: TextStyle(
+                                            color: historyClick
+                                                ? colorBackground
+                                                : colorPrimary,
+                                            fontSize: 14,
+                                            fontWeight: historyClick
+                                                ? FontWeight.bold
+                                                : FontWeight.w500),
+                                      )))
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          historyClick
+                              ? BlocBuilder<CommentBloc, CommentState>(
+                                  builder: (context, state) {
+                                    if (state is CommentStateGetSuccessLoad) {
+                                      return ListView.builder(
+                                          padding: EdgeInsets.all(0),
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: state.comment.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            return CommentBox(
+                                                size: size,
+                                                comment: state
+                                                    .comment[index].content,
+                                                user: state
+                                                    .comment[index].nameUser,
+                                                date: util.dateNumbertoCalendar(
+                                                        state.comment[index]
+                                                            .date) +
+                                                    " at " +
+                                                    util.hourFormat(state
+                                                        .comment[index].date));
+                                          });
+                                    } else if (state
+                                        is CommentStateGetFailLoad) {
+                                      return Center(
+                                          child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          "No Comment Yet.",
+                                          style: TextStyle(
+                                              color: colorPrimary,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ));
+                                    } else if (state
+                                        is CommentStateAddSuccessLoad) {
+                                      BlocProvider.of<CommentBloc>(context).add(
+                                          LoadAllCommentEvent(
+                                              clickTask.idTask.toString()));
+                                      return CircularProgressIndicator();
+                                    }
+                                    return Container();
+                                  },
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.all(0),
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: 2,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return HistoryBox(
+                                        size: size,
+                                        history:
+                                            "Lorem ipsum dolor sit amet, cboboa sl anapisna pna pindo aoad n[oa k doa a[ da[on a",
+                                        user: "Finley Khouwira",
+                                        date: DateTime.now());
+                                  }),
+                          PostBox(
+                              date: DateTime.now(),
+                              onPost: () {
+                                if (textEditingController.text != "") {
+                                  setState(() {
+                                    postCommentValidator = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    postCommentValidator = true;
+                                  });
+                                }
+                                if (!postCommentValidator) {
+                                  CommentModel commentModel = CommentModel(
+                                      taskID: clickTask.idTask,
+                                      content: textEditingController.text);
+                                  _postComment(commentModel);
+                                }
+                              },
+                              user: UserModel(userID: "41", name: "Daniel"),
+                              size: size,
+                              textEditController: textEditingController)
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: colorNeutral3),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "CheckList",
-                              style:
-                                  TextStyle(color: colorPrimary, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        InkWell(
-                            onTap: () {},
-                            child: Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: colorPrimary),
-                              child: Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.plus,
-                                  color: colorBackground,
-                                  size: 14,
-                                ),
-                              ),
-                            ))
-                      ],
-                    ),
-                    ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: 2,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          alignment: Alignment.centerLeft,
-                          child: CheckboxListTile(
-                            value: checkBoxClick,
-                            onChanged: _onCheckBoxClick,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text("Tile" + index.toString(),
-                                style: TextStyle(
-                                    fontSize: size.height <= 569 ? 12 : 14,
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                        );
-                      },
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: colorNeutral3),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "Activity Log - Comment",
-                              style:
-                                  TextStyle(color: colorPrimary, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        InkWell(
-                            onTap: () {},
-                            child: Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: colorPrimary70,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Text(
-                                  "History",
-                                  style: TextStyle(
-                                      color: colorPrimary30,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                )))
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: 2,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return CommentBox(
-                            size: size,
-                            comment:
-                                "Lorem ipsum dolor sit amet, cboboa sl anapisna pna pindo aoad n[oa k doa a[ da[on a[oa [aomd [omfn lk  kh ahbd la[ß",
-                            user: "Finley Khowira",
-                            date: "14 Jan 2021");
-                      },
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
         ),
       ),
+    );
+  }
+
+  Widget _textBoxCheck(context, int taskId) {
+    return Container(
+      width: 0.5 * size.width,
+      decoration: BoxDecoration(
+        boxShadow: [boxShadowStandard],
+        color: colorBackground,
+        border: Border.all(width: 1, color: colorPrimary),
+      ),
+      child: TextField(
+        style: TextStyle(fontSize: 16, height: 1.0),
+        textInputAction: TextInputAction.next,
+        onChanged: (val) {},
+        controller: textAddCheckBox,
+        decoration: InputDecoration(
+            isDense: true,
+            contentPadding: EdgeInsets.only(top: 15, left: 10),
+            hintText: "Add new list...",
+            hintStyle: TextStyle(
+              color: colorNeutral1,
+            ),
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            suffixIcon: TextButton(
+                child: Text(
+                  "Post",
+                  style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: size.height < 569 ? 14 : 16,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  if (textAddCheckBox.text != "") {
+                    BlocProvider.of<CLTBloc>(context).add(
+                        AddCLTEvent(taskId.toString(), textAddCheckBox.text));
+                    setState(() {
+                      textAddCheckBox.text = "";
+                    });
+                  }
+                })),
+      ),
+    );
+  }
+
+  _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imagePicker();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imagePickerCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.cancel),
+                    title: new Text('Cancel'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _imagePicker() async {
+    //ImagePicker for gallery
+
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    } else {}
+  }
+
+  _imagePickerCamera() async {
+    //ImagePicker for Camera
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    }
+  }
+
+  _uploadAttachment(File image) {
+    BlocProvider.of<UploadAttachBloc>(context)
+        .add(UploadAttachNewEvent(clickTask.idTask.toString(), image));
+  }
+
+  Widget _buildCupertino({BuildContext context, String link}) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Attachment Picture",
+      ),
+      content: Image.network("https://api-zukses.yokesen.com/${link}"),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "Close",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+      ],
     );
   }
 }

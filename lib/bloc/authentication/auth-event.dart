@@ -14,7 +14,13 @@ class AuthEventLoginManual extends AuthenticationEvent {
   @override
   List<Object> get props => [email, password];
 }
+class AuthEventLoginTeam extends AuthenticationEvent{
+  final String email, password, link;
+  const AuthEventLoginTeam({this.email, this.password, this.link});
 
+  @override
+  List<Object> get props => [email, password,link];
+}
 class AuthEventWithGoogle extends AuthenticationEvent {
   const AuthEventWithGoogle();
 
@@ -22,6 +28,12 @@ class AuthEventWithGoogle extends AuthenticationEvent {
   List<Object> get props => [];
 }
 
+class AuthEventWithFacebook extends AuthenticationEvent {
+  const AuthEventWithFacebook();
+
+  @override
+  List<Object> get props => [];
+}
 class AuthEventUpdated extends AuthenticationEvent {
   final AuthModel user;
   const AuthEventUpdated(this.user);

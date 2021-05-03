@@ -1,4 +1,11 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
 import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -6,8 +13,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-tab-leaves.dart';
 
 class ScreenListLeaves extends StatefulWidget {
-  ScreenListLeaves({Key key, this.title, this.permission}) : super(key: key);
-
+  ScreenListLeaves({Key key, this.title, this.permission, this.animate})
+      : super(key: key);
+  final bool animate;
   final String title;
   final String permission;
   @override
@@ -17,7 +25,8 @@ class ScreenListLeaves extends StatefulWidget {
 class _ScreenListLeaves extends State<ScreenListLeaves>
     with SingleTickerProviderStateMixin {
   TabController tabController;
-  var status = [0, 1, 2, 1];
+  List<int> permissionTotal = [0, 0, 0];
+  bool isLoading = true;
   var statusString = [];
   //0=> pending, 1 => accepted , 2 => Rejected
   int activeIndex = 0;
@@ -28,6 +37,14 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
     tabController.addListener(() {
       _getTabIndex();
     });
+    if (widget.animate != null) {
+      tabController.animateTo(1);
+    }
+    if (widget.permission == "leaves") {
+      BlocProvider.of<LeaveBloc>(context).add(LoadAllLeaveEvent());
+    } else if (widget.permission == "overtime") {
+      BlocProvider.of<OvertimeBloc>(context).add(LoadAllOvertimeEvent());
+    }
   }
 
   _getTabIndex() {
@@ -36,6 +53,14 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
     });
 
     print(activeIndex);
+  }
+
+  _toAddLeaveOvertime() async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ApplyLeavesFormScreen(permission: widget.permission)));
   }
 
   Widget build(BuildContext context) {
@@ -69,73 +94,192 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                     size: size.height < 570 ? 18 : 23,
                   ),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ApplyLeavesFormScreen(
-                                permission: widget.permission)));
+                    _toAddLeaveOvertime();
                   },
                 ),
               ),
             ]),
-        body: DefaultTabController(
-            length: 3,
-            child: Scaffold(
-              backgroundColor: colorBackground,
-              appBar: AppBar(
-                backgroundColor: colorBackground,
-                automaticallyImplyLeading: false,
-                elevation: 0,
-                flexibleSpace: Container(
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: colorNeutral150,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: TabBar(
+        body: Stack(
+          children: [
+            widget.permission == "leaves"
+                ? BlocListener<LeaveBloc, LeaveState>(
+                    listener: (context, state) {
+                      if (state is LeaveStateSuccessLoad) {
+                        setState(() {
+                          permissionTotal = [0, 0, 0];
+                        });
+                        state.leave.forEach((element) {
+                          if (element.status.toLowerCase() == "accepted") {
+                            setState(() {
+                              permissionTotal[0] = permissionTotal[0] + 1;
+                            });
+                          } else if (element.status.toLowerCase() ==
+                              "pending") {
+                            setState(() {
+                              permissionTotal[1] = permissionTotal[1] + 1;
+                            });
+                          } else if (element.status.toLowerCase() ==
+                              "rejected") {
+                            setState(() {
+                              permissionTotal[2] = permissionTotal[2] + 1;
+                            });
+                          }
+                        });
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+                    child: Container(),
+                  )
+                : BlocListener<OvertimeBloc, OvertimeState>(
+                    listener: (context, state) {
+                      if (state is OvertimeStateSuccessLoad) {
+                        setState(() {
+                          permissionTotal = [0, 0, 0];
+                        });
+                        state.overtime.forEach((element) {
+                          if (element.status.toLowerCase() == "accepted") {
+                            setState(() {
+                              permissionTotal[0] = permissionTotal[0] + 1;
+                            });
+                          } else if (element.status.toLowerCase() ==
+                              "pending") {
+                            setState(() {
+                              permissionTotal[1] = permissionTotal[1] + 1;
+                            });
+                          } else if (element.status.toLowerCase() ==
+                              "rejected") {
+                            setState(() {
+                              permissionTotal[2] = permissionTotal[2] + 1;
+                            });
+                          }
+                        });
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+                    child: Container(),
+                  ),
+            DefaultTabController(
+                length: 3,
+                child: Scaffold(
+                  backgroundColor: colorBackground,
+                  appBar: AppBar(
+                    backgroundColor: colorBackground,
+                    automaticallyImplyLeading: false,
+                    elevation: 0,
+                    flexibleSpace: Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: colorNeutral150,
+                          borderRadius: BorderRadius.circular(5)),
+                      child: TabBar(
+                        controller: tabController,
+                        labelColor: colorBackground,
+                        unselectedLabelColor: colorPrimary,
+                        labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                        indicator: BoxDecoration(
+                            color: colorPrimary,
+                            borderRadius: BorderRadius.circular(5)),
+                        tabs: [
+                          Tab(
+                            child: Container(
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: Text("Accepted"),
+                                  ),
+                                  positionedDot(
+                                      context, size, permissionTotal[0])
+                                ],
+                              ),
+                            ),
+                          ),
+                          Tab(
+                            child: Container(
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: Text("Waiting"),
+                                  ),
+                                  positionedDot(
+                                      context, size, permissionTotal[1])
+                                ],
+                              ),
+                            ),
+                          ),
+                          Tab(
+                            child: Container(
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: Text("Rejected"),
+                                  ),
+                                  positionedDot(
+                                      context, size, permissionTotal[2])
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  body: TabBarView(
                     controller: tabController,
-                    labelColor: colorBackground,
-                    unselectedLabelColor: colorPrimary,
-                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                    indicator: BoxDecoration(
-                        color: colorPrimary,
-                        borderRadius: BorderRadius.circular(5)),
-                    tabs: [
-                      Tab(
-                        child: Container(
-                          child: Center(
-                            child: Text("Accepted"),
-                          ),
-                        ),
-                      ),
-                      Tab(
-                        child: Container(
-                          child: Center(
-                            child: Text("Waiting"),
-                          ),
-                        ),
-                      ),
-                      Tab(
-                        child: Container(
-                          child: Center(
-                            child: Text("Rejected"),
-                          ),
-                        ),
-                      ),
+                    children: [
+                      ScreenTabLeaves(
+                          permission: widget.permission, tab: "accepted"),
+                      ScreenTabLeaves(
+                          permission: widget.permission, tab: "pending"),
+                      ScreenTabLeaves(
+                          permission: widget.permission, tab: "rejected")
                     ],
+                  ),
+                )),
+            isLoading
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.black38.withOpacity(0.5),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        // strokeWidth: 0,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                    ),
+                  )
+                : Container()
+          ],
+        ));
+  }
+
+  Widget positionedDot(BuildContext context, Size size, int value) {
+    return value < 1
+        ? Container()
+        : Positioned(
+            top: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.only(left: 5),
+              child: Container(
+                padding: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colorSecondaryRed,
+                ),
+                child: Center(
+                  child: Text(
+                    value.toString(),
+                    style: TextStyle(
+                        color: colorBackground,
+                        fontSize: size.height < 569 ? 8 : 10),
                   ),
                 ),
               ),
-              body: TabBarView(
-                controller: tabController,
-                children: [
-                  ScreenTabLeaves(
-                      permission: widget.permission, tab: "accepted"),
-                  ScreenTabLeaves(
-                      permission: widget.permission, tab: "pending"),
-                  ScreenTabLeaves(
-                      permission: widget.permission, tab: "rejected")
-                ],
-              ),
-            )));
+            ));
   }
 }

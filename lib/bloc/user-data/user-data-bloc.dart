@@ -24,6 +24,19 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
     }
   }
 
+  Stream<UserDataState> mapUpdateProfile(
+      UserDataUpdateProfileEvent event) async* {
+    yield UserDataStateLoading();
+    // return user model
+    var res = await _userDataService.fetchUserProfile();
+    // directly throw into success load or fail load
+    if (res is UserModel && res != null) {
+      yield UserDataStateSuccessLoad(res);
+    } else {
+      yield UserDataFailLoad();
+    }
+  }
+
   Stream<UserDataState> mapUpdatingUserDataState(
       UserDataEventDidUpdated event) async* {
     yield UserDataStateSuccessLoad(event.user);
@@ -35,6 +48,14 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
       yield* mapUserIn(event);
     } else if (event is UserDataEventDidUpdated) {
       yield* mapUpdatingUserDataState(event);
+    } else if (event is UserDataUpdateProfileEvent) {
+      yield* mapUpdateProfile(event);
     }
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }

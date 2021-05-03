@@ -1,10 +1,16 @@
-import 'dart:async';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/project/project-bloc.dart';
+import 'package:zukses_app_1/bloc/project/project-event.dart';
+import 'package:zukses_app_1/bloc/project/project-state.dart';
+import 'package:zukses_app_1/bloc/task/task-bloc.dart';
+import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/task/screen-add-project.dart';
-import 'package:zukses_app_1/screen/task/screen-task-detail.dart'; 
+import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key key, this.title}) : super(key: key);
@@ -14,16 +20,7 @@ class TaskScreen extends StatefulWidget {
 }
 
 /// This is the stateless widget that the main application instantiates.
-class _TaskScreen extends State<TaskScreen>
-    with SingleTickerProviderStateMixin {
-  var projectName = ["Project 1", "Project 2", "Project 3", "Project 4"];
-  var projectDetail = [
-    "Project 1: Batman",
-    "Project 2: Golor",
-    "Project 3: Dummy Project",
-    "Project 4: Liar"
-  ];
-  TabController tabController;
+class _TaskScreen extends State<TaskScreen> {
   TextEditingController textSearch = new TextEditingController();
   var projectTask = [1, 5, 2, 0];
   int count = 4;
@@ -32,22 +29,11 @@ class _TaskScreen extends State<TaskScreen>
 
   bool isLoading = true;
 
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
-  }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
-    timer();
+
+    BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 
   @override
@@ -64,7 +50,7 @@ class _TaskScreen extends State<TaskScreen>
             "Project List",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 20 : 25,
+                fontSize: size.height <= 569 ? 18 : 22,
                 color: colorPrimary),
           ),
           actions: [
@@ -85,78 +71,127 @@ class _TaskScreen extends State<TaskScreen>
             ),
           ],
         ),
-        body: SingleChildScrollView(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        body: Stack(
           children: [
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              height: 50,
-              //width: MediaQuery.of(context).size.width * 0.45,
-              decoration: BoxDecoration(
-                  color: colorBackground,
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorNeutral1.withOpacity(1),
-                      blurRadius: 15,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(5)),
-              child: Center(
-                child: TextFormField(
-                  controller: textSearch,
-                  textInputAction: TextInputAction.go,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                        icon: FaIcon(FontAwesomeIcons.search,
-                            color: colorPrimary),
-                        onPressed: () {
-                          setState(() {
-                            searchTask(textSearch.text);
-                          });
-                        },
-                      ),
-                      contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-                      hintText: "Search..",
-                      hintStyle: TextStyle(),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
+            SingleChildScrollView(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                BlocListener<ProjectBloc, ProjectState>(
+                  listener: (context, state) {
+                    if (state is ProjectStateAddSuccessLoad) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      BlocProvider.of<ProjectBloc>(context)
+                          .add(GetAllProjectEvent());
+                    } else if (state is ProjectStateSuccessLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    } else if (state is ProjectStateFailLoad) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
+                  },
+                  child: Container(),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ListView.builder(
-              itemCount: projectName.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                    onTap: () {
-                      print(projectName[index]);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TaskDetailScreen(
-                                  projectName: projectName[index],
-                                )),
-                      );
-                    },
-                    child: ListReviseProject(
-                      title: projectName[index],
-                      detail: projectDetail[index],
-                      jumlahTask: projectTask[index],
-                    ));
-              },
-            ),
+                BlocListener<TaskBloc, TaskState>(
+                  listener: (context, state) {
+                    if (state is TaskStateSuccessLoad) {
+                      BlocProvider.of<ProjectBloc>(context)
+                          .add(GetAllProjectEvent());
+                    }
+                  },
+                  child: Container(),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                BlocBuilder<ProjectBloc, ProjectState>(
+                    builder: (context, state) {
+                  if (state is ProjectStateSuccessLoad) {
+                    return ListView.builder(
+                      itemCount: state.project.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                            onTap: () {
+                              //print(projectName[index]);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TaskDetailScreen(
+                                          project: state.project[index],
+                                        )),
+                              );
+                            },
+                            child: ListReviseProject(
+                              tag: state.bools[index],
+                              image: state.project[index].imgUrl,
+                              title: state.project[index].name,
+                              detail: state.project[index].details,
+                              jumlahTask: state.project[index].totalTask,
+                              onTapStar: () {
+                                print("OnTapStar");
+                                setState(() {
+                                  state.bools[index] = !state.bools[index];
+                                });
+                              },
+                            ));
+                      },
+                    );
+                  } else if (state is ProjectStateFailLoad) {
+                    return Container(
+                      width: size.width,
+                      height: size.height * 0.75,
+                      child: Center(
+                          child: RichText(
+                        text: TextSpan(
+                          text: 'No Project Here. Click ',
+                          style: TextStyle(color: colorPrimary),
+                          children: <TextSpan>[
+                            TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddProject()));
+                                  },
+                                text: 'here',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorPrimary)),
+                            TextSpan(text: ' to continue'),
+                          ],
+                        ),
+                      )),
+                    );
+                  }
+                  return Container();
+                }),
+              ],
+            )),
+            isLoading
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.black38.withOpacity(0.5),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        // strokeWidth: 0,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                    ),
+                  )
+                : Container()
           ],
-        )));
+        ));
   }
 
   void searchTask(String word) {}

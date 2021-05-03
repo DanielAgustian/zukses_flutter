@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:zukses_app_1/model/team-model.dart';
 
+import 'package:zukses_app_1/model/team-model.dart';
 
 abstract class TeamState extends Equatable {
   const TeamState();
@@ -15,7 +15,6 @@ class TeamStateFailLoad extends TeamState {}
 
 class TeamStateSuccessLoad extends TeamState {
   final List<TeamModel> team;
-  
 
   TeamStateSuccessLoad({this.team});
 
@@ -26,3 +25,4 @@ class TeamStateSuccessLoad extends TeamState {
     return 'Data : { employee List: $team }';
   }
 }
+

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/model/facebook_auth-model.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 
@@ -32,6 +33,14 @@ class AuthenticationBloc
     //   yield AuthStateFailLoad();
     // }
   }
+  Stream<AuthenticationState> mapLoginFacebook() async* {
+    var res = await _authenticationService.fbLogin();
+    if (res is FBAuthModel && res != null) {
+      yield AuthStateFacebookSuccessLoad(res);
+    } else {
+      yield AuthStateFacebookFailLoad();
+    }
+  }
 
   // BLOC for login manually using email and password
   Stream<AuthenticationState> mapLoginManual(
@@ -42,8 +51,25 @@ class AuthenticationBloc
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {
+      print("AuthStateSuccessLoad");
       yield AuthStateSuccessLoad(res);
     } else {
+      print("AuthStateFailLoad");
+      yield AuthStateFailLoad();
+    }
+  }
+
+  Stream<AuthenticationState> mapLoginTeam(AuthEventLoginTeam event) async* {
+    // return auth model
+    var res =
+        await _authenticationService.createLoginTeam(event.email, event.password, event.link);
+
+    // directly throw into success load or fail load
+    if (res is AuthModel && res != null) {
+      print("AuthStateSuccessTeamLoad");
+      yield AuthStateSuccessTeamLoad(res);
+    } else {
+      print("AuthStateFailLoad");
       yield AuthStateFailLoad();
     }
   }
@@ -63,6 +89,10 @@ class AuthenticationBloc
       yield* mapLoginManual(event);
     } else if (event is AuthEventUpdated) {
       yield* mapUpdatingAuthState(event);
+    } else if (event is AuthEventWithFacebook) {
+      yield* mapLoginFacebook();
+    } else if (event is AuthEventLoginTeam) {
+      yield* mapLoginTeam(event);
     }
   }
 

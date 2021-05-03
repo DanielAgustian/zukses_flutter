@@ -36,7 +36,7 @@ class Skeleton3R2C extends StatelessWidget {
                     width: size.height <= 570 ? 180 : 220,
                     height: 10,
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -50,7 +50,7 @@ class Skeleton3R2C extends StatelessWidget {
                     width: size.height <= 570 ? 180 : 220,
                     height: 10,
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -64,7 +64,7 @@ class Skeleton3R2C extends StatelessWidget {
                     width: size.height <= 570 ? 180 : 220,
                     height: 10,
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -80,7 +80,7 @@ class Skeleton3R2C extends StatelessWidget {
                       width: 20,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: colorNeutral2,
+                        color: colorSkeleton,
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
@@ -92,7 +92,7 @@ class Skeleton3R2C extends StatelessWidget {
                     shimmerColor: colorNeutral170,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: colorNeutral2,
+                        color: colorSkeleton,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       width: 20,

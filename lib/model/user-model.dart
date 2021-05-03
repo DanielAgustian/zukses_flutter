@@ -1,5 +1,5 @@
 class UserModel {
-  String userID, name, email, phone, imgUrl, companyID;
+  String userID, name, email, phone, imgUrl, companyID, userIDSchedule;
   int accepted;
   UserModel(
       {this.userID,
@@ -7,7 +7,8 @@ class UserModel {
       this.email,
       this.imgUrl,
       this.companyID,
-      this.accepted});
+      this.accepted,
+      this.userIDSchedule});
 
   Map<String, dynamic> toJson(UserModel user) {
     var map = Map<String, dynamic>();
@@ -22,6 +23,7 @@ class UserModel {
 
   UserModel.fromJson(Map<String, dynamic> map) {
     this.userID = map["id"].toString();
+    this.userIDSchedule = map["userId"].toString();
     this.email = map["email"];
     this.name = map["name"];
     this.imgUrl = map["imgUrl"] == null ? "" : map["imgUrl"];

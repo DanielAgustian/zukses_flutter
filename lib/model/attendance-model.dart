@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/util/util.dart';
+
 
 class AttendanceModel {
   DateTime clockIn, clockOut;
@@ -22,6 +22,8 @@ class AttendanceModel {
         : DateTime.parse(map['clock_out_time']);
     this.isLate = map['late'];
     this.id = map['id'].toString();
-    this.overtime = map['minuteOvertime'] == null ? "" : map["minuteOvertime"];
+    this.overtime = map['minuteOvertime'] == null
+        ? null
+        : map["minuteOvertime"];
   }
 }

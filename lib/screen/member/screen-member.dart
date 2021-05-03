@@ -22,7 +22,7 @@ class _MemberScreenState extends State<MemberScreen> {
   Util util = Util();
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
   }
@@ -131,40 +131,4 @@ class _MemberScreenState extends State<MemberScreen> {
       ),
     );
   }
-
-//   AppBar customAppBar(BuildContext context, Size size) {
-//     return AppBar(
-//       elevation: 0,
-//       backgroundColor: colorBackground,
-//       leading: IconButton(
-//         icon: FaIcon(
-//           FontAwesomeIcons.chevronLeft,
-//           color: colorPrimary,
-//         ),
-//         onPressed: () {
-//           Navigator.pop(context);
-//         },
-//       ),
-//       centerTitle: true,
-//       title: Text(
-//         "Team Member",
-//         style: TextStyle(
-//             color: colorPrimary,
-//             fontWeight: FontWeight.bold,
-//             fontSize: size.height <= 569 ? 20 : 25),
-//       ),
-//       actions: [
-//         IconButton(
-//           padding: EdgeInsets.only(right: 20),
-//           splashColor: Colors.transparent,
-//           icon: FaIcon(
-//             FontAwesomeIcons.plusCircle,
-//             color: colorPrimary,
-//             size: size.height < 570 ? 18 : 23,
-//           ),
-//           onPressed: () {},
-//         ),
-//       ],
-//     );
-//   }
 }

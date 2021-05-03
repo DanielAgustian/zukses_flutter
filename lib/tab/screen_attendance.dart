@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
@@ -14,7 +15,7 @@ import 'package:zukses_app_1/component/attendance/time-box.dart';
 import 'package:zukses_app_1/component/title-date-formated.dart';
 import 'package:zukses_app_1/module/weekly-calendar-widget.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
-import 'package:zukses_app_1/screen/apply-leaves/screen-inbetween.dart';
+
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -36,16 +37,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   AttendanceModel selected;
   DateTime _currentDate = DateTime.now();
   WeeklyCalendar _selectedWeek;
-  DateTime _selectedDate;
-  List<AttendanceModel> absensiList;
+
+  List<AttendanceModel> absensiList = [];
   bool isLoadingAttendance = false;
   void selectDate(DateTime date, AttendanceModel absence) {
     setState(() {
       _currentDate = date;
-      if (absence.clockIn != null) {
-        selected = absence;
-        isLoadingAttendance = true;
-      }
+      selected = absence;
+
       kata = "$_currentDate";
     });
   }
@@ -85,6 +84,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         builder: (context, state) {
       // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
+        print("AttendanceList  = " + state.attendanceList.isEmpty.toString());
         return Scaffold(
             backgroundColor: colorBackground,
             appBar: AppBar(
@@ -92,11 +92,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               backgroundColor: colorBackground,
               automaticallyImplyLeading: false,
               title: Text(
-                "Attendance Detail",
+                "Attendance",
                 style: TextStyle(
                     color: colorPrimary,
                     fontWeight: FontWeight.bold,
-                    fontSize: size.height <= 569 ? 20 : 25),
+                    fontSize: size.height <= 569 ? 18 : 22),
               ),
               actions: [
                 IconButton(
@@ -108,8 +108,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                   ),
                   onPressed: () {
                     setState(() {
+                      print(state.attendanceList);
                       monthly = !monthly;
-                      if (state.attendanceList != null && monthly == false) {
+                      if (state.attendanceList != null &&
+                          state.attendanceList.length > 0 &&
+                          monthly == false) {
                         absensiList = state.attendanceList.where((data) {
                           var day = CustomCalendar()
                               .findFirstDateOfTheWeek(data.clockIn);
@@ -123,26 +126,46 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                     });
                   },
                 ),
-                IconButton(
-                  splashColor: Colors.transparent,
-                  icon: FaIcon(
-                    FontAwesomeIcons.calendarWeek,
-                    color: colorPrimary,
-                    size: size.height <= 569 ? 16 : 20,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                    child: Container(
+                      child: SvgPicture.asset(
+                        "assets/images/leave-symbol.svg",
+                        height: size.height <= 569 ? 20 : 25,
+                        width: size.height <= 569 ? 20 : 25,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ScreenListLeaves(permission: "leaves")),
+                      );
+                    },
                   ),
-                  onPressed: () {
-                    /*Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenListLeaves()),
-                    );*/
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenInBetween()),
-                    );
-                  },
-                )
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                    child: SvgPicture.asset(
+                      "assets/images/overtime-symbol.svg",
+                      height: size.height <= 569 ? 20 : 25,
+                      width: size.height <= 569 ? 20 : 25,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ScreenListLeaves(permission: "overtime")),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
             body: Container(
@@ -153,20 +176,23 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          CalendarWidget(
-                            fontSize: size.height <= 600 ? textSizeSmall16 : 16,
-                            // When select the date
-                            onSelectDate: (date, absence) {
-                              selectDate(date, absence);
-                            },
-                            // When change the month
-                            onClickToggle: (DateTime val) {
-                              _attendanceBloc
-                                  .add(LoadUserAttendanceEvent(date: val));
-                            },
-                            data: state.attendanceList,
-                            size: size,
-                          ),
+                          state.attendanceList == null
+                              ? Center(child: CircularProgressIndicator())
+                              : CalendarWidget(
+                                  fontSize:
+                                      size.height <= 600 ? textSizeSmall16 : 16,
+                                  // When select the date
+                                  onSelectDate: (date, absence) {
+                                    selectDate(date, absence);
+                                  },
+                                  // When change the month
+                                  onClickToggle: (DateTime val) {
+                                    _attendanceBloc.add(
+                                        LoadUserAttendanceEvent(date: val));
+                                  },
+                                  data: state.attendanceList,
+                                  size: size,
+                                ),
                           SizedBox(height: 20),
                           TitleDayFormatted(
                             currentDate: _currentDate,
@@ -179,31 +205,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             fontSize: size.height <= 569 ? textSizeSmall18 : 18,
                           ),
                           SizedBox(height: 15),
-                          isLoadingAttendance
-                              ? Container(
-                                  child: Text(
-                                  selected.overtime == ""
-                                      ? "Overtime : 0 Hrs"
-                                      : "Overtime : " +
-                                          selected.overtime.substring(0, 2) +
-                                          " hours " +
-                                          selected.overtime.substring(3, 5) +
-                                          " minutes",
-                                  style: TextStyle(
-                                      color: colorPrimary,
-                                      fontSize: size.width <= 569
-                                          ? textSizeSmall18
-                                          : 18),
-                                ))
-                              : Container(
-                                  child: Text(
-                                  "Overtime : 0 Hrs",
-                                  style: TextStyle(
-                                      color: colorPrimary,
-                                      fontSize: size.width <= 569
-                                          ? textSizeSmall18
-                                          : 18),
-                                ))
+                          OvertimeText(selected: selected, size: size)
                         ],
                       ),
                     )
@@ -262,11 +264,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                 color: colorBackground,
                                                 borderRadius:
                                                     BorderRadius.circular(5),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      blurRadius: 15,
-                                                      color: colorNeutral150)
-                                                ]),
+                                                boxShadow: [boxShadowStandard]),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -329,11 +327,11 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         backgroundColor: colorBackground,
         automaticallyImplyLeading: false,
         title: Text(
-          "Attendance Detail",
+          "Attendance",
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
-              fontSize: size.height <= 569 ? 20 : 25),
+              fontSize: size.height <= 569 ? 18 : 22),
         ),
         actions: [
           IconButton(
@@ -349,20 +347,46 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               });
             },
           ),
-          IconButton(
-            splashColor: Colors.transparent,
-            icon: FaIcon(
-              FontAwesomeIcons.calendarWeek,
-              color: colorPrimary,
-              size: size.height <= 569 ? 16 : 20,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              child: Container(
+                child: SvgPicture.asset(
+                  "assets/images/leave-symbol.svg",
+                  height: size.height <= 569 ? 20 : 25,
+                  width: size.height <= 569 ? 20 : 25,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenListLeaves(permission: "leaves")),
+                );
+              },
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ScreenListLeaves()),
-              );
-            },
-          )
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              child: SvgPicture.asset(
+                "assets/images/overtime-symbol.svg",
+                height: size.height <= 569 ? 20 : 25,
+                width: size.height <= 569 ? 20 : 25,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenListLeaves(permission: "overtime")),
+                );
+              },
+            ),
+          ),
         ],
       ),
       body: Container(

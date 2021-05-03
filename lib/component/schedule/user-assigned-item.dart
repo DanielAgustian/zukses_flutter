@@ -15,8 +15,6 @@ class UserAssignedItem extends StatelessWidget {
   final Size size;
   final String status, name;
 
-  //final Function onClick;
-  //final int index;
   @override
   Widget build(BuildContext context) {
     return Container(

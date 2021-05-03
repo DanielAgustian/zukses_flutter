@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:zukses_app_1/model/user-model.dart';
@@ -17,6 +18,7 @@ class UserDataServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
+    print("UserProfile " + res.statusCode.toString());
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -24,7 +26,8 @@ class UserDataServiceHTTP {
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load album');
+      return null;
+      //throw Exception('Failed to load album');
     }
   }
 
@@ -44,6 +47,9 @@ class UserDataServiceHTTP {
       // then parse the JSON.
       print("data user ${res.body}");
       var responseJson = jsonDecode(res.body);
+      if (responseJson['user'] == null) {
+        return null;
+      }
       return (responseJson['user'] as List)
           .map((p) => UserModel.fromJson(p))
           .toList();
@@ -51,7 +57,34 @@ class UserDataServiceHTTP {
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load album');
+      return null;
     }
   }
+
+  Future<int> updateUserProfile(File image, String name, String phone) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    String base64Image = base64Encode(image.readAsBytesSync());
+
+    print(token);
+    int code = 0;
+    await http.post("https://api-zukses.yokesen.com/api/edit-profile", body: {
+      'image': base64Image,
+      'name': name,
+      'phone': phone
+    }, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+      'Authorization': 'Bearer $token'
+    }).then((res) {
+      print(res.body);
+      print(res.statusCode);
+      code = res.statusCode;
+      return code;
+    }).catchError((err) {
+      print(err);
+    });
+    return null;
+  }
+  
 }

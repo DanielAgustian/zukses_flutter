@@ -25,13 +25,14 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     
     
     // directly throw into success load or fail load
-    if (res.length > 0 && res != null) {
+    if (res != null ) {
       yield TeamStateSuccessLoad(team: res);
     } else {
       yield TeamStateFailLoad();
     }
   }
-
+  
+  
   Stream<TeamState> mapUpdatingTeamState(
       TeamEventDidUpdated event) async* {
     yield TeamStateSuccessLoad(team: event.team);

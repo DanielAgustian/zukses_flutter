@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
+import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
+
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/button/button-small-outlined.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:zukses_app_1/component/schedule/schedule-item-request.dart'; 
-import 'package:zukses_app_1/component/schedule/user-assigned-item.dart'; 
+import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
+import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -29,66 +35,94 @@ class ScreenTabRequest extends StatefulWidget {
 class _ScreenTabRequestState extends State<ScreenTabRequest>
     with SingleTickerProviderStateMixin {
   TextEditingController _textReasonReject = TextEditingController();
+  
   // Dragable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   Util util = Util();
   ScheduleModel model = ScheduleModel();
+  bool shade = false;
+  bool isLoading = true;
+  void timer() {
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    BlocProvider.of<MeetingBloc>(context).add(GetUnresponseMeetingEvent());
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
     _controller = AnimationController(vsync: this, duration: _duration);
+    timer();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
-      if (state is MeetingStateSuccessLoad) {
-        int panjang = state.meetings.length;
+    return BlocBuilder<MeetingReqBloc, MeetingReqState>(
+        builder: (context, state) {
+      if (state is MeetingReqStateSuccessLoad) {
+        int panjang = state.schedule.length;
         return panjang >= 1
             ? Stack(
                 children: [
                   Container(
-                      child: widget.loading
+                      child: isLoading
                           ? ListView.builder(
-                              itemCount: state.meetings.length,
+                              itemCount: state.schedule.length,
                               itemBuilder: (context, index) =>
                                   SkeletonLess3WithAvatar(
                                     size: size,
                                     row: 2,
                                   ))
                           : ListView.builder(
-                              itemCount: state.meetings.length,
+                              itemCount: state.schedule.length,
                               itemBuilder: (context, index) =>
                                   ScheduleItemRequest(
                                       count:
-                                          state.meetings[index].members.length,
-                                      date: util.yearFormat(
-                                          state.meetings[index].date),
+                                          state.schedule[index].members.length,
+                                      date: util.dateNumbertoCalendar(
+                                          state.schedule[index].date),
                                       size: size,
                                       onClick: () {
                                         if (_controller.isDismissed) {
                                           _controller.forward();
                                           setState(() {
-                                            model = state.meetings[index];
+                                            model = state.schedule[index];
+                                            shade = true;
                                           });
-                                        } else if (_controller.isCompleted)
+                                        } else if (_controller.isCompleted) {
                                           _controller.reverse();
+                                          setState(() {
+                                            shade = false;
+                                          });
+                                        }
                                       },
                                       time1: util.hourFormat(
-                                          state.meetings[index].date),
+                                          state.schedule[index].date),
                                       time2: util.hourFormat(
-                                          state.meetings[index].meetingEndTime),
-                                      title: state.meetings[index].title))),
+                                          state.schedule[index].meetingEndTime),
+                                      title: state.schedule[index].title))),
+                  shade
+                      ? Container(
+                          width: size.width,
+                          height: size.height,
+                          color: Colors.black38.withOpacity(0.5),
+                        )
+                      : Container(),
                   scrollerSheet()
                 ],
               )
             : Center(
-                child: Text("N0 Meeting For Now"),
+                child: Text(
+                  "No Meeting Request.",
+                  style: TextStyle(
+                      color: colorPrimary, fontWeight: FontWeight.bold),
+                ),
               );
       } else {
         return Container();
@@ -101,7 +135,6 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   }
 
   Widget scrollerSheet() {
-    bool temp = false;
     Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
       child: SlideTransition(
@@ -123,13 +156,41 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    model.title,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w700),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        model.title,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          child: FaIcon(
+                            FontAwesomeIcons.times,
+                            color: colorPrimary,
+                          ),
+                          onTap: () {
+                            _controller.reverse();
+                            setState(() {
+                              shade = false;
+                            });
+                          },
+                        ),
+                      )
+                    ],
                   ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(util.dateNumbertoCalendar(model.date),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorNeutral2,
+                      )),
                   SizedBox(
                     height: 5,
                   ),
@@ -190,6 +251,9 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                               accept: "1",
                               reason: ""));
                       _controller.reverse();
+                      setState(() {
+                        shade = false;
+                      });
                       loadBeginningData();
                     },
                   ),
@@ -219,7 +283,6 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   }
 
   Widget _dialog(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return AlertDialog(
       //title: const Text('Popup example'),
       content: new Column(

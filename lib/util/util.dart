@@ -1,10 +1,18 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
+import 'package:zukses_app_1/screen/screen_login.dart';
+import 'package:zukses_app_1/screen/screen_signup.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 
 class Util {
-  static String getHourNow() {
+  String getHourNow() {
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat.Hm();
     final String formatted = formatter.format(now);
@@ -64,38 +72,216 @@ class Util {
   }
 
   TimeOfDay stringToTimeOfDay(String tod) {
-    final format = DateFormat.jm(); //"6:00 AM"
-    return TimeOfDay.fromDateTime(format.parse(tod));
+    return TimeOfDay(
+        hour: int.parse(tod.split(":")[0]),
+        minute: int.parse(tod.split(":")[1]));
   }
 
-  // void getLocationData() async {
-  //   Location location = new Location();
+  String cutTime(String time) {
+    var temp = Util().stringToTimeOfDay(time);
+    return Util().changeTimeToString(temp);
+  }
+  String dateNumbertoCalendar(DateTime date) {
+    return DateFormat('yMMMd').format(date);
+  }
 
-  //   bool _serviceEnabled;
-  //   PermissionStatus _permissionGranted;
-  //   LocationData _locationData;
+  String generateMd5(String input) {
+    return md5.convert(utf8.encode(input)).toString();
+  }
 
-  //   _serviceEnabled = await location.serviceEnabled();
-  //   if (!_serviceEnabled) {
-  //     _serviceEnabled = await location.requestService();
-  //     if (!_serviceEnabled) {
-  //       return;
-  //     }
-  //   }
+  saveSharedPreferences(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
 
-  //   _permissionGranted = await location.hasPermission();
-  //   if (_permissionGranted == PermissionStatus.denied) {
-  //     _permissionGranted = await location.requestPermission();
-  //     if (_permissionGranted != PermissionStatus.granted) {
-  //       return;
-  //     }
-  //   }
+  Future<String> createDynamicLink2({bool short, String link}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://zuksesapplication.page.link',
+      link: Uri.parse(link),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.zukses_app_1',
+        minimumVersion: 0,
+      ),
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
 
-  //   _locationData = await location.getLocation();
-  //   print(_locationData);
-  //   print(_locationData.latitude);
-  //   print(_locationData.longitude);
-  // }
+    Uri url;
+    if (short) {
+      final ShortDynamicLink shortLink = await parameters.buildShortLink();
+      url = shortLink.shortUrl;
+    } else {
+      url = await parameters.buildUrl();
+    }
+
+    return url.toString();
+  }
+
+  Future<String> createDynamicLink(
+      {bool short = false, String value, String key, String page}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://zuksesapplication.page.link',
+      link: Uri.parse('https://zuksesapplication.page.link/$page?'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.zukses_app_1',
+        minimumVersion: 0,
+      ),
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
+
+    Uri url;
+    if (short) {
+      final ShortDynamicLink shortLink = await parameters.buildShortLink();
+      url = shortLink.shortUrl;
+    } else {
+      url = await parameters.buildUrl();
+    }
+
+    return url.toString();
+  }
+
+  clearSharedPrefString(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
+
+  Future<void> initDynamicLinks(BuildContext context) async {
+    //print("INIT DYNAMIC LINK");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String sprefToken = prefs.getString("token");
+
+
+
+    //================TO GET DYNAMIC LINK WHEN APP IS OPEN==============///
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+      //print(deepLink.path);
+      print(deepLink);
+      if (deepLink != null) {
+        print("OnLink Data:");
+        if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
+          String token = deepLink.queryParameters['token'];
+          print("Onlink token" + token);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ResetPassword(
+                        token: token,
+                      )));
+        } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
+          print("register");
+          if (deepLink.queryParameters['token'] != null) {
+            //if he has account
+            String token = deepLink.queryParameters['token'];
+            print("Onlink token + " + token);
+
+            if (sprefToken != null) {
+              //if he has logged in 
+              print("Saved Token = " + sprefToken);
+              Util().saveSharedPreferences("link", deepLink.toString());
+
+              if (token == sprefToken) {
+                //if he is already login and the session hasnt expired.
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScreenTab(index:0, link: deepLink)));
+              } else {
+                //if he has login but the session has expired.
+                clearSharedPrefString("token");
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScreenLogin(link: deepLink)));
+              }
+            } else {
+              //if he has not login
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ScreenLogin(link: deepLink)));
+            }
+          } else {
+            //if he deosnt have any account
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ScreenSignUp(link: deepLink)));
+          }
+        }
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+
+//=========================TO GET DYNAMIC LINK WHEN APP CLOSED.====================///
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+    print(deepLink);
+    if (deepLink != null) {
+      print("GetInitialLink");
+
+      print("Init" + deepLink.path);
+      if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
+        String token = deepLink.queryParameters['token'];
+        print("Initial Link = " + token);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ResetPassword(
+                      token: token,
+                    )));
+      } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
+
+
+        if (deepLink.queryParameters['token'] != null) {
+            //if he has account
+            String token = deepLink.queryParameters['token'];
+            print("Onlink token + " + token);
+
+            if (sprefToken != null) {
+              //if he has login 
+              print("Saved Token = " + sprefToken);
+              Util().saveSharedPreferences("link", deepLink.toString());
+              if (token == sprefToken) {
+
+                //if he has already login and session not expired
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScreenTab(index:0, link: deepLink)));
+              } else {
+                // if he has already login but session expired
+                clearSharedPrefString("token");
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScreenLogin(link: deepLink)));
+              }
+            } else {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ScreenLogin(link: deepLink)));
+            }
+          } else {
+            Util().saveSharedPreferences("link", deepLink.toString());
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ScreenSignUp(link: deepLink)));
+          }
+      }
+    }
+  }
 
   void showToast(
       {BuildContext context,

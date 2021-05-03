@@ -4,21 +4,25 @@ import 'package:zukses_app_1/constant/constant.dart';
 
 // ignore: must_be_immutable
 class ListReviseProject extends StatelessWidget {
-  ListReviseProject({
-    Key key,
-    this.title,
-    this.detail,
-    this.jumlahTask,
-  }) : super(key: key);
+  ListReviseProject(
+      {Key key,
+      this.title,
+      this.detail,
+      this.jumlahTask,
+      this.image,
+      this.tag,
+      this.onTapStar})
+      : super(key: key);
 
   final String title, detail;
   final int jumlahTask;
-
+  final String image;
+  final bool tag;
+  final Function onTapStar;
   DateFormat dateFormat = DateFormat.yMMMMd();
 
   @override
   Widget build(BuildContext context) {
-    bool tag = true;
     return Padding(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
         child: Container(
@@ -39,23 +43,29 @@ class ListReviseProject extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
-                      child: Container(
-                        child: Icon(
-                          tag ? Icons.star_border : Icons.star,
-                          color: colorPrimary,
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          
+                          child: Icon(
+                            tag ? Icons.star : Icons.star_border,
+                            color: colorPrimary,
+                          ),
                         ),
-                      ),
-                      onTap: () {
-                        tag = !tag;
-                      },
-                    ),
+                        onTap: onTapStar),
                     SizedBox(width: 10),
                     Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                          color: Colors.grey, shape: BoxShape.circle),
-                    ),
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: NetworkImage(
+                                "https://api-zukses.yokesen.com/" + image),
+                          ),
+                        )),
                     SizedBox(width: 10),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,

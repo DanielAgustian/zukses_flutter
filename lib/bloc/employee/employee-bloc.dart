@@ -16,15 +16,19 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     yield EmployeeStateLoading();
     // return list user model
     var res = await _userDataService.fetchEmployeeData();
-
+    print("AllEmployee" + res.toString());
     // return checkbox handler
     List<bool> bools = [];
     // directly throw into success load or fail load
-    if (res.length > 0 && res != null) {
-      for (var i = 0; i < res.length; i++) {
-        bools.add(false);
+    if (res != null) {
+      if (res.length > 0) {
+        for (var i = 0; i < res.length; i++) {
+          bools.add(false);
+        }
+        yield EmployeeStateSuccessLoad(employees: res, checklist: bools);
+      } else {
+        yield EmployeeStateFailLoad();
       }
-      yield EmployeeStateSuccessLoad(employees: res, checklist: bools);
     } else {
       yield EmployeeStateFailLoad();
     }
@@ -42,5 +46,10 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     } else if (event is EmployeeEventDidUpdated) {
       yield* mapUpdatingEmployeeState(event);
     }
+  }
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }

@@ -1,21 +1,37 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/register/register-event.dart';
+import 'package:zukses_app_1/bloc/register/register-state.dart';
+import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
-import 'package:zukses_app_1/screen/screen-login-perusahaan.dart';
+import 'package:zukses_app_1/model/register-model.dart';
+import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
+import 'package:zukses_app_1/screen/register/screen-setup.dart';
+
+import 'package:zukses_app_1/screen/screen_login.dart';
+import 'package:recase/recase.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ScreenSignUp extends StatefulWidget {
-  ScreenSignUp({Key key, this.title}) : super(key: key);
+  ScreenSignUp({Key key, this.title, this.link}) : super(key: key);
 
   final String title;
-
+  final Uri link;
   @override
   _ScreenSignUp createState() => _ScreenSignUp();
 }
 
-class _ScreenSignUp extends State<ScreenSignUp> {
+class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   bool _obscureText1 = true;
   bool _obscureText2 = true;
   TextEditingController textConfirmPassword = new TextEditingController();
@@ -27,6 +43,9 @@ class _ScreenSignUp extends State<ScreenSignUp> {
   bool _usernameValidator = false;
   bool _passValidator = false;
   bool _emailValidator = false;
+  bool _linkValidator = false;
+  List<bool> empty = [false, false, false, false];
+  String failedRegister = "";
 
   void register() {
     if (textEmail.text == "") {
@@ -34,21 +53,29 @@ class _ScreenSignUp extends State<ScreenSignUp> {
         _emailValidator = true;
       });
     } else {
+      print(textUsername.text.titleCase);
       Pattern pattern =
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(textEmail.text)) {
+      if (textEmail.text == "") {
         setState(() {
-          _emailValidator = true;
+          empty[0] = true;
         });
       } else {
-        setState(() {
-          _emailValidator = false;
-        });
+        if (!regex.hasMatch(textEmail.text)) {
+          setState(() {
+            _emailValidator = true;
+          });
+        } else {
+          setState(() {
+            _emailValidator = false;
+          });
+        }
       }
     }
     if (textUsername.text == "") {
       setState(() {
+        empty[1] = true;
         _usernameValidator = true;
       });
     } else {
@@ -58,6 +85,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
     }
     if (textPassword.text == "") {
       setState(() {
+        empty[2] = true;
         _passValidator = true;
       });
     } else {
@@ -67,6 +95,7 @@ class _ScreenSignUp extends State<ScreenSignUp> {
     }
     if (textConfirmPassword.text == "") {
       setState(() {
+        empty[3] = true;
         _confirmPassValidator = true;
       });
     } else {
@@ -75,117 +104,169 @@ class _ScreenSignUp extends State<ScreenSignUp> {
           _confirmPassValidator = true;
           _passValidator = true;
         });
+      } else {
+        setState(() {
+          _confirmPassValidator = false;
+        });
       }
+    }
+
+    if (widget.link == null) {
       setState(() {
-        _confirmPassValidator = false;
+        _linkValidator = true;
+      });
+    } else {
+      setState(() {
+        _linkValidator = false;
       });
     }
     if (!_emailValidator &&
         !_usernameValidator &&
         !_passValidator &&
         !_confirmPassValidator) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPerusahaan()),
-      );
-      /*
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ScreenTab()),
-      );*/
+      RegisterModel register = RegisterModel(
+          email: textEmail.text,
+          username: textUsername.text.titleCase,
+          password: textPassword.text,
+          confirmPassword: textConfirmPassword.text);
+
+      if (_linkValidator) {
+        registerIndividu(register);
+      } else {
+        registerTeamMember(register);
+      }
     }
+  }
+
+  registerIndividu(RegisterModel register) async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email : " + textEmail.text),
+                Text("Full Name: " + textUsername.text.titleCase),
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterIndividuEvent(register));
+    }
+  }
+
+  registerTeamMember(RegisterModel register) async {
+    String link = await Util()
+        .createDynamicLink2(short: false, link: widget.link.toString());
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email : " + textEmail.text),
+                Text("Full Name: " + textUsername.text.titleCase),
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterTeamMemberEvent(register, link));
+    }
+  }
+
+  gotoLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ScreenLogin()),
+    );
+  }
+
+  _sharedPrefLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userLogin", textEmail.text);
+    await prefs.setString("passLogin", textPassword.text);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Util util = Util();
+    util.initDynamicLinks(context);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        appBar: appBarOutside,
         backgroundColor: colorBackground,
         body: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 alignment: Alignment.topCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: size.height * 0.04,
-                      ),
-                      Text(
-                        "ZUKSES",
-                        style: GoogleFonts.lato(
-                            textStyle: TextStyle(
-                                color: colorPrimary, letterSpacing: 1.5),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: size.width * 0.3),
-                      LongButtonIcon(
-                        size: size,
-                        title: "Sign Up with Google",
-                        bgColor: colorGoogle,
-                        textColor: colorBackground,
-                        iconWidget: Image.asset(
-                          'icon/google_icon.png',
-                          scale: 0.6,
-                        ),
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenSignUp()),
-                          );
+                      BlocListener<RegisterBloc, RegisterState>(
+                        listener: (context, state) {
+                          if (state is RegisterStateSuccess) {
+                            _sharedPrefLogin();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SetupRegister(
+                                        token: state.authUser.token,
+                                      )),
+                            );
+                          } else if (state is RegisterStateFailed) {
+                            setState(() {
+                              failedRegister =
+                                  "Email already used. Please try another email.";
+                              _emailValidator = true;
+                            });
+                          } else if (state is RegisterStateTeamMemberSuccess) {
+                            _sharedPrefLogin();
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisApproved()),
+                                (route) => false);
+                          }
                         },
+                        child: Container(),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      LongButtonIcon(
+                      TitleFormat(
                         size: size,
-                        title: "Sign Up with Google",
-                        bgColor: colorFacebook,
-                        textColor: colorBackground,
-                        iconWidget: Image.asset(
-                          'icon/facebook_icon.png',
-                          scale: 0.6,
-                        ),
-                        onClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenSignUp()),
-                          );
-                        },
+                        title: "Welcome!",
+                        detail:
+                            "Please Fill In This Form to Create Your Account",
                       ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Text(
-                        "OR",
-                        style:
-                            TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
-                      ),
-                      SizedBox(height: 25),
                       Form(
                         child: Column(
                           children: [
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _emailValidator
+                                  border: _emailValidator || empty[0]
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[0] = false;
+                                    });
+                                  }
+                                },
                                 keyboardType: TextInputType.emailAddress,
                                 controller: textEmail,
                                 decoration: InputDecoration(
@@ -207,25 +288,26 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _usernameValidator
+                                  border: _usernameValidator || empty[1]
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 textInputAction: TextInputAction.next,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[1] = false;
+                                    });
+                                  }
+                                },
                                 controller: textUsername,
                                 decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.symmetric(horizontal: 20),
-                                    hintText: "Username",
+                                    hintText: "Full Name",
                                     hintStyle: TextStyle(
                                       color: _usernameValidator
                                           ? colorError
@@ -241,21 +323,31 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _passValidator
+                                  border: _passValidator || empty[2]
                                       ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                      : Border.all(color: colorBorder),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 obscureText: _obscureText1,
                                 textInputAction: TextInputAction.next,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[2] = false;
+                                    });
+                                  }
+                                  if (val.length >= 0 && val.length < 6) {
+                                    setState(() {
+                                      _passValidator = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _passValidator = false;
+                                    });
+                                  }
+                                },
                                 controller: textPassword,
                                 decoration: InputDecoration(
                                     contentPadding:
@@ -270,11 +362,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                     focusedBorder: InputBorder.none,
                                     suffixIcon: IconButton(
                                       icon: FaIcon(
-                                        _obscureText1
-                                            ? FontAwesomeIcons.solidEye
-                                            : FontAwesomeIcons.solidEyeSlash,
-                                        color: colorNeutral2,
-                                      ),
+                                          _obscureText1
+                                              ? FontAwesomeIcons.solidEye
+                                              : FontAwesomeIcons.solidEyeSlash,
+                                          color: colorNeutral2,
+                                          size: size.height < 569 ? 15 : 20),
                                       onPressed: () {
                                         setState(() {
                                           _obscureText1 = !_obscureText1;
@@ -289,21 +381,23 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                  border: _passValidator
-                                      ? Border.all(color: colorError)
-                                      : Border.all(color: Colors.transparent),
+                                  border: _confirmPassValidator || empty[3]
+                                      ? Border.all(color: colorError, width: 1)
+                                      : Border.all(
+                                          color: colorBorder, width: 1),
                                   color: colorBackground,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        color: Color.fromRGBO(240, 239, 242, 1),
-                                        blurRadius: 15),
-                                  ],
+                                  boxShadow: [boxShadowStandard],
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
                                 obscureText: _obscureText2,
                                 textInputAction: TextInputAction.go,
-                                onChanged: (val) {},
+                                onChanged: (val) {
+                                  if (val.length > 0) {
+                                    setState(() {
+                                      empty[3] = false;
+                                    });
+                                  }
+                                },
                                 controller: textConfirmPassword,
                                 decoration: InputDecoration(
                                     contentPadding:
@@ -318,11 +412,11 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                     focusedBorder: InputBorder.none,
                                     suffixIcon: IconButton(
                                       icon: FaIcon(
-                                        _obscureText2
-                                            ? FontAwesomeIcons.solidEye
-                                            : FontAwesomeIcons.solidEyeSlash,
-                                        color: colorNeutral2,
-                                      ),
+                                          _obscureText2
+                                              ? FontAwesomeIcons.solidEye
+                                              : FontAwesomeIcons.solidEyeSlash,
+                                          color: colorNeutral2,
+                                          size: size.height < 569 ? 15 : 20),
                                       onPressed: () {
                                         setState(() {
                                           _obscureText2 = !_obscureText2;
@@ -331,10 +425,57 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                                     )),
                               ),
                             ),
+                            empty[0] || empty[1] || empty[2] || empty[3]
+                                ? Center(
+                                    child: Text(
+                                      "Please fill the textfield.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: colorError, fontSize: 10),
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      failedRegister != ""
+                                          ? Center(
+                                              child: Text(
+                                                failedRegister,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: colorError,
+                                                    fontSize: 10),
+                                              ),
+                                            )
+                                          : Container(),
+                                      _passValidator &&
+                                              textPassword.text.length < 6
+                                          ? Center(
+                                              child: Text(
+                                                "Short password easy to guess. Try one at least 6 characters.",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: colorError,
+                                                    fontSize: 10),
+                                              ),
+                                            )
+                                          : Container(),
+                                      _passValidator && _confirmPassValidator
+                                          ? Center(
+                                              child: Text(
+                                                "Those passwords didn't match. Please make sure your password match.",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: colorError,
+                                                    fontSize: 10),
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  )
                           ],
                         ),
                       ),
-                      SizedBox(height: 40),
+                      SizedBox(height: 20),
                       LongButton(
                         title: "Sign Up",
                         bgColor: colorPrimary,
@@ -342,6 +483,119 @@ class _ScreenSignUp extends State<ScreenSignUp> {
                         onClick: register,
                         size: size,
                       ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Center(
+                        child: Text(
+                          "OR",
+                          style:
+                              TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      LongButtonIcon(
+                        size: size,
+                        title: "Sign In with Google",
+                        bgColor: colorGoogle,
+                        textColor: colorBackground,
+                        iconWidget: Image.asset(
+                          'assets/images/google-logo.png',
+                          scale: 0.6,
+                        ),
+                        onClick: () {
+                          /*Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenSignUp()),
+                          );*/
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      LongButtonIcon(
+                        size: size,
+                        title: "Sign In with Facebook",
+                        bgColor: colorFacebook,
+                        textColor: colorBackground,
+                        iconWidget: Image.asset(
+                          'assets/images/facebook-logo.png',
+                          scale: 0.6,
+                        ),
+                        onClick: () {
+                          BlocProvider.of<AuthenticationBloc>(context)
+                              .add(AuthEventWithFacebook());
+                          /*Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenSignUp()),
+                          );*/
+                        },
+                      ),
+                      SizedBox(
+                        height: 0.02 * size.height,
+                      ),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                                fontSize: size.height < 569 ? 12 : 14,
+                                color: Colors.black),
+                            children: <TextSpan>[
+                              new TextSpan(text: "Already have an account? "),
+                              TextSpan(
+                                  text: 'Log In',
+                                  style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorPrimary),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      gotoLogin();
+                                    }),
+                            ],
+                          ),
+                        ),
+                      ),
+                      BlocListener<AuthenticationBloc, AuthenticationState>(
+                        listener: (context, state) {
+                          if (state is AuthStateFacebookSuccessLoad) {
+                            print(state.fbauth.email);
+                          } else if (state is AuthStateFacebookFailLoad) {
+                            print("Get Data from Facebook Failed");
+                          } else {
+                            print("No way going here -facebook");
+                          }
+                        },
+                        child: Container(),
+                      )
                     ]))));
+  }
+
+  Widget _buildCupertino({BuildContext context, Widget wData}) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Are you sure to register with this data?",
+      ),
+      content: wData,
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "No",
+              style: TextStyle(color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context, false);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Yes",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
+      ],
+    );
   }
 }

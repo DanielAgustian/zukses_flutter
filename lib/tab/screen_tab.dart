@@ -5,11 +5,13 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/tab/screen_meeting.dart';
 import 'package:zukses_app_1/tab/screen_attendance.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ScreenTab extends StatefulWidget {
-  ScreenTab({Key key, this.title, this.index}) : super(key: key);
+  ScreenTab({Key key, this.title, this.index, this.link}) : super(key: key);
   final String title;
   final int index;
+  final Uri link;
   @override
   _ScreenTab createState() => _ScreenTab();
 }
@@ -17,9 +19,10 @@ class ScreenTab extends StatefulWidget {
 class _ScreenTab extends State<ScreenTab> {
   List<Widget> screenList = [];
   int _currentScreenIndex;
+  
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     if (widget.index != null) {
       _currentScreenIndex = widget.index;
@@ -29,15 +32,11 @@ class _ScreenTab extends State<ScreenTab> {
 
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
-    //screenList.add(TaskScreen());
-
-    //screenList.add(MeetingScreen());
-    screenList.add(Center(
-      child: Text("Under Development."),
-    ));
-    screenList.add(Center(
-      child: Text("Under Development."),
-    ));
+    
+    screenList.add(TaskScreen());
+    screenList.add(MeetingScreen());
+    Util util = Util();
+    util.initDynamicLinks(context);
   }
 
   void onTabTapped(int index) {
@@ -57,14 +56,11 @@ class _ScreenTab extends State<ScreenTab> {
             _currentScreenIndex, // this will be set when a new tab is tapped
         items: [
           BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.home_filled,
-              size: 27,
-            ),
+            icon: ImageIcon(AssetImage('assets/images/home.png')),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidCalendarAlt),
+            icon: ImageIcon(AssetImage('assets/images/attendance-icon.png')),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(

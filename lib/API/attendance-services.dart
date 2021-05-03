@@ -12,7 +12,7 @@ class AttendanceService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     String base64Image = base64Encode(image.readAsBytesSync());
-    String imageName = image.path.split("/").last;
+   
     print(token);
     int code = 0;
     await http
@@ -41,7 +41,7 @@ class AttendanceService {
       headers: <String, String>{'Authorization': 'Bearer $token'},
       body: jsonEncode(<String, dynamic>{}),
     );
-    print(response.statusCode);
+    print("ClockOut " + response.statusCode.toString());
     print(response.body);
 
     // if success pas the attendance id
@@ -74,12 +74,16 @@ class AttendanceService {
       var jsonResult = jsonDecode(res.body);
       print(res.body);
       List<AttendanceModel> results = [];
+      /*
       if (jsonResult["attendance"] != null) {
         jsonResult["attendance"].forEach((data) {
           results.add(AttendanceModel.fromJson(data));
         });
-      }
-
+      }*/
+      results = (jsonResult['attendance'] as List)
+          .map((p) => AttendanceModel.fromJson(p))
+          .toList();
+      
       return results;
     } else {
       return null;

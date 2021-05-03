@@ -14,6 +14,8 @@ class LoadAllTeamEvent extends TeamEvent {
   List<Object> get props => [];
 }
 
+
+
 class TeamEventDidUpdated extends TeamEvent {
   final List<TeamModel> team;
   const TeamEventDidUpdated(this.team);

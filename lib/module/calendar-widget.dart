@@ -222,16 +222,18 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
-          return widget.data == null || widget.data.length == 0
+          return widget.data.toString() == "null"
               ? _calendarDates(_sequentialDates[index], index: index)
-              : widget.data[0] is ScheduleModel
-                  // calendar for `schedule screen`
-                  ? _calendarDates(_sequentialDates[index],
-                      index: index, data2: widget.data)
+              : widget.data.isEmpty
+                  ? _calendarDates(_sequentialDates[index], index: index)
+                  : widget.data[0] is ScheduleModel
+                      // calendar for `schedule screen`
+                      ? _calendarDates(_sequentialDates[index],
+                          index: index, data2: widget.data)
 
-                  // calendar for `attendance screen`
-                  : _calendarDates(_sequentialDates[index],
-                      index: index, data: widget.data);
+                      // calendar for `attendance screen`
+                      : _calendarDates(_sequentialDates[index],
+                          index: index, data: widget.data);
         },
       ),
     );

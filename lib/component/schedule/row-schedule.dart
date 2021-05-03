@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/model/attendance-model.dart';
+import 'package:zukses_app_1/model/leave-type-model.dart';
+
+import 'package:zukses_app_1/util/util.dart';
 
 class AddScheduleRow extends StatelessWidget {
   const AddScheduleRow({
@@ -10,11 +14,12 @@ class AddScheduleRow extends StatelessWidget {
     this.textItem,
     this.fontSize: 16,
     this.arrowRight,
+    this.lowerOpacity = false,
   }) : super(key: key);
 
   final String title, textItem, arrowRight;
   final double fontSize;
-
+  final bool lowerOpacity;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,15 +33,12 @@ class AddScheduleRow extends StatelessWidget {
           ),
           Row(
             children: [
-              SizedBox(
-                width: 90,
-                child: Text(
-                  textItem,
-                  style: TextStyle(
-                      fontSize: fontSize,
-                      color: colorPrimary,
-                      fontWeight: FontWeight.w700),
-                ),
+              Text(
+                textItem,
+                style: TextStyle(
+                    fontSize: fontSize,
+                    color: lowerOpacity ? colorPrimary50 : colorPrimary,
+                    fontWeight: FontWeight.w700),
               ),
               SizedBox(
                 width: 10,
@@ -50,6 +52,93 @@ class AddScheduleRow extends StatelessWidget {
                     )
                   : Container()
             ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AddScheduleRowStatus extends StatelessWidget {
+  const AddScheduleRowStatus({
+    Key key,
+    this.title,
+    this.textItem,
+    this.fontSize: 16,
+    this.arrowRight,
+  }) : super(key: key);
+
+  final String title, textItem, arrowRight;
+  final double fontSize;
+
+  Widget _buildText(BuildContext context) {
+    String textHasil = "";
+    Color colorText;
+    if (textItem == "pending") {
+      textHasil = "Requested";
+      colorText = colorSecondaryYellow;
+    } else if (textItem == "approved") {
+      textHasil = "Approval";
+      colorText = colorClear;
+    } else if (textItem == "rejected") {
+      textHasil = "Rejected";
+      colorText = colorError;
+    }
+    return Text(
+      textHasil,
+      style: TextStyle(
+          color: colorText, fontWeight: FontWeight.bold, fontSize: 16),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          _buildText(context)
+        ],
+      ),
+    );
+  }
+}
+
+class AddScheduleRowNonArrow extends StatelessWidget {
+  const AddScheduleRowNonArrow(
+      {Key key,
+      this.title,
+      this.textItem,
+      this.fontSize: 16,
+      this.arrowRight,
+      this.lowerOpacity = false})
+      : super(key: key);
+
+  final String title, textItem, arrowRight;
+  final double fontSize;
+  final bool lowerOpacity;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          Text(
+            textItem,
+            style: TextStyle(
+                fontSize: fontSize,
+                color: lowerOpacity ? colorPrimary50 : colorPrimary,
+                fontWeight: FontWeight.w700),
           )
         ],
       ),
@@ -83,39 +172,121 @@ class AddScheduleRow2 extends StatelessWidget {
             "$title",
             style: TextStyle(fontSize: fontSize, color: colorPrimary),
           ),
-          DropdownButton(
-            value: textItem,
-            icon: FaIcon(
-              FontAwesomeIcons.chevronRight,
-              color: colorPrimary,
-            ),
-            elevation: 16,
-            style: TextStyle(
+          ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButton(
+              value: textItem,
+              icon: FaIcon(
+                FontAwesomeIcons.chevronRight,
                 color: colorPrimary,
-                fontWeight: FontWeight.w700,
-                fontSize: fontSize),
-            underline: Container(),
-            onChanged: (String newValue) {
-              onSelectedItem(newValue);
-            },
-            items: items.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: SizedBox(
-                  width: 100,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                          fontSize: fontSize,
-                          color: colorPrimary,
-                          fontWeight: FontWeight.w700),
+              ),
+              elevation: 16,
+              style: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: fontSize),
+              underline: Container(),
+              onChanged: (String newValue) {
+                onSelectedItem(newValue);
+              },
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: SizedBox(
+                    width: 100,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          value,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                              fontSize: fontSize,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AddScheduleRowOvertimeDate extends StatelessWidget {
+  const AddScheduleRowOvertimeDate(
+      {Key key,
+      this.title,
+      this.attendance,
+      this.fontSize,
+      this.onSelectedItem,
+      this.attendanceList})
+      : super(key: key);
+
+  final String title;
+  final AttendanceModel attendance;
+  final double fontSize;
+  final Function onSelectedItem;
+  final List<AttendanceModel> attendanceList;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "$title",
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButton<AttendanceModel>(
+              value: attendance,
+              icon: FaIcon(
+                FontAwesomeIcons.chevronRight,
+                color: colorPrimary,
+              ),
+              elevation: 16,
+              style: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: fontSize),
+              underline: Container(),
+              onChanged: (AttendanceModel newValue) {
+                onSelectedItem(newValue);
+              },
+              items: attendanceList.map<DropdownMenuItem<AttendanceModel>>(
+                  (AttendanceModel value) {
+                return DropdownMenuItem<AttendanceModel>(
+                  value: value,
+                  child: SizedBox(
+                    width: 100,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          Util().dateNumbertoCalendar(value.clockOut),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                              fontSize: fontSize,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
           )
         ],
       ),
@@ -176,6 +347,81 @@ class AddScheduleRow3 extends StatelessWidget {
                 ),
               );
             }).toList(),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AddScheduleLeaveType extends StatelessWidget {
+  const AddScheduleLeaveType({
+    Key key,
+    this.title,
+    this.textItem,
+    this.fontSize,
+    this.onSelectedItem,
+    this.items,
+  }) : super(key: key);
+
+  final String title;
+  final LeaveTypeModel textItem;
+  final double fontSize;
+  final Function onSelectedItem;
+  final List<LeaveTypeModel> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "$title",
+            style: TextStyle(fontSize: fontSize, color: colorPrimary),
+          ),
+          ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButton(
+              value: textItem,
+              icon: FaIcon(
+                FontAwesomeIcons.chevronRight,
+                color: colorPrimary,
+              ),
+              elevation: 16,
+              style: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: fontSize),
+              underline: Container(),
+              onChanged: (newValue) {
+                onSelectedItem(newValue);
+              },
+              items: items.map<DropdownMenuItem<LeaveTypeModel>>(
+                  (LeaveTypeModel value) {
+                return DropdownMenuItem<LeaveTypeModel>(
+                  value: value,
+                  child: SizedBox(
+                    width: 100,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          value.typeName,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                              fontSize: fontSize,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
           )
         ],
       ),

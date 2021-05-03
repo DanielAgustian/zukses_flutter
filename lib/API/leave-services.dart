@@ -19,9 +19,9 @@ class LeaveServiceHTTP {
       'duration': duration,
       'leaveDate': leaveDate,
       'reason': reason,
-      'startTime': startTime == null?"":startTime,
-      'endTime': endTime == null?"":endTime,
-      'leaveDateEnd':leaveDateEnd == null?"":leaveDateEnd
+      'startTime': startTime == null ? "" : startTime,
+      'endTime': endTime == null ? "" : endTime,
+      'leaveDateEnd': leaveDateEnd == null ? "" : leaveDateEnd
     };
     final response = await http.post(
       Uri.https(baseURI, '/api/leave'),
@@ -34,6 +34,7 @@ class LeaveServiceHTTP {
     );
     print(response.statusCode.toString());
     //print(response.body);
+    print(response.body);
     if (response.statusCode == 200) {
       //print("response.body:" + response.body);
       return response.statusCode;
@@ -51,7 +52,7 @@ class LeaveServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    
+
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

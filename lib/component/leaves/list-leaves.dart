@@ -10,12 +10,12 @@ class ListLeavesInside extends StatelessWidget {
       this.detail,
       this.status,
       this.screen,
-      this.date,
+      this.time,
       this.onClick})
       : super(key: key);
 
   final String title, detail, screen;
-  final String status, date;
+  final String status, time;
   final Function onClick;
   DateFormat dateFormat = DateFormat.yMMMMd();
 
@@ -30,12 +30,7 @@ class ListLeavesInside extends StatelessWidget {
               decoration: BoxDecoration(
                   color: colorBackground,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorNeutral1.withOpacity(1),
-                      blurRadius: 15,
-                    )
-                  ]),
+                  boxShadow: [boxShadowStandard]),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -66,18 +61,16 @@ class ListLeavesInside extends StatelessWidget {
                               ),
                             ),
                           ),
-                          screen == "leaves"
-                              ? Padding(
-                                  padding: EdgeInsets.fromLTRB(5, 6, 5, 5),
-                                  child: Text(
-                                    date,
-                                    style: TextStyle(
-                                      color: colorPrimary50,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                )
-                              : Container()
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(5, 6, 5, 5),
+                            child: Text(
+                              time,
+                              style: TextStyle(
+                                color: colorPrimary50,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],

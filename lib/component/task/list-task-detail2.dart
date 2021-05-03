@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:zukses_app_1/constant/constant.dart'; 
+import 'package:zukses_app_1/constant/constant.dart';
 
 // ignore: must_be_immutable
 class ListTaskDetail2 extends StatelessWidget {
@@ -12,10 +12,11 @@ class ListTaskDetail2 extends StatelessWidget {
       this.date,
       this.hour,
       this.index = 1,
-      this.onClick})
+      this.onClick,
+      this.label})
       : super(key: key);
   final Size size;
-  final String title, detail, date, hour;
+  final String title, detail, date, hour, label;
   final int index;
   final Function onClick;
   DateFormat dateFormat = DateFormat.yMMMMd();
@@ -82,7 +83,7 @@ class ListTaskDetail2 extends StatelessWidget {
                           color: colorSecondaryYellow,
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
-                        child: Text(" Front End  ",
+                        child: Text(label,
                             style: TextStyle(
                                 color: colorBackground,
                                 fontSize: size.height < 600 ? 10 : 12,

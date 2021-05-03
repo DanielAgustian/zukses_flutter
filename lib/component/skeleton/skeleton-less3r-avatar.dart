@@ -37,7 +37,7 @@ class SkeletonLess3WithAvatar extends StatelessWidget {
             shimmerColor: colorNeutral170,
             child: Container(
               decoration: BoxDecoration(
-                color: colorNeutral2,
+                color: colorSkeleton,
                 borderRadius: BorderRadius.circular(10),
               ),
               width: size.width,
@@ -52,7 +52,7 @@ class SkeletonLess3WithAvatar extends StatelessWidget {
                   shimmerColor: colorNeutral170,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     width: size.width,

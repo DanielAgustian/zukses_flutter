@@ -29,21 +29,17 @@ class BoxHome extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: colorNeutral150,
-              blurRadius: 5,
-            )
-          ]),
+          boxShadow: [boxShadowStandard]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           loading
               ? SkeletonAnimation(
                   shimmerColor: colorNeutral170,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     width: 20,
@@ -51,7 +47,7 @@ class BoxHome extends StatelessWidget {
                   ),
                 )
               : Text(
-                  "8",
+                  total.toString(),
                   style: TextStyle(
                       color: numberColor,
                       fontSize: fontSize,
@@ -64,20 +60,23 @@ class BoxHome extends StatelessWidget {
                   shimmerColor: colorNeutral170,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: colorNeutral2,
+                      color: colorSkeleton,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     width: 80,
                     height: 10,
                   ),
                 )
-              : Text(
-                  title,
-                  style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: fontSize - 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0),
+              : Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                        color: colorPrimary,
+                        fontSize: fontSize - 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0),
+                  ),
                 ),
         ],
       ),

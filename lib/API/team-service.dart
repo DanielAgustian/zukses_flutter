@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/model/team-model.dart';
 
 class TeamServiceHTTP {
@@ -19,7 +20,7 @@ class TeamServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-   
+
     print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -31,7 +32,24 @@ class TeamServiceHTTP {
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      return null;
+      //throw Exception('Failed to load album');
+    }
+  }
+
+  Future<TeamDetailModel> fetchDetailTeam(String id) async {
+    var res = await http
+        .get(Uri.https(baseURI, 'api/team/$id'), headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+    });
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      final auth = TeamDetailModel.fromJson(data["team"]);
+      return auth;
+    } else {
+      return null;
     }
   }
 }
