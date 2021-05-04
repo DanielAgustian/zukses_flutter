@@ -58,14 +58,14 @@ void main() async {
   token = prefs.getString("token");
   onboarding = prefs.getBool("onboarding");
   runApp(
-  //DevicePreview(
-     // builder: (context) => 
+      //DevicePreview(
+      // builder: (context) =>
       MyApp(
-            token: token,
-            onboarding: onboarding,
-          )
-         // )
-          );
+    token: token,
+    onboarding: onboarding,
+  )
+      // )
+      );
 }
 
 class MyApp extends StatelessWidget {

@@ -367,7 +367,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                   'assets/images/google-logo.png',
                                   scale: 0.6,
                                 ),
-                                onClick: () {},
+                                onClick: googleLogin,
                               ),
                               SizedBox(
                                 height: 10,

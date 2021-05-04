@@ -52,10 +52,10 @@ dependencies:
   # cloud_firestore: 
   # firebase_auth:
   # firebase_messaging:
-  firebase_core: any
+  firebase_core: 
   firebase_dynamic_links: any
   url_launcher:
-  #google_sign_in: any
+  google_sign_in:
   flutter_facebook_login:
   
 dev_dependencies:

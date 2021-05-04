@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "338622488807-otm4960l5lve5n08q8h1iojpksn5os7v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zukses_app_1",
+            "certificate_hash": "2fc9b9330875b6efa5edc0e303be64d0d7bab176"
+          }
+        },
+        {
           "client_id": "338622488807-9djn94dnfgm3786petbsk2arqkmdl6m5.apps.googleusercontent.com",
           "client_type": 3
         }
