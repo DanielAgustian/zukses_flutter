@@ -54,3 +54,17 @@ class TaskStateLowPrioritySuccessLoad extends TaskState {
     return 'Data : { employee List: $task }';
   }
 }
+class TaskStateUpdateSuccess extends TaskState {
+  final int kode;
+
+  TaskStateUpdateSuccess({this.kode});
+
+  List<Object> get props => [kode];
+
+  @override
+  String toString() {
+    return 'Data : { employee List: $kode }';
+  }
+}
+
+class TaskStateUpdateFail extends TaskState {}

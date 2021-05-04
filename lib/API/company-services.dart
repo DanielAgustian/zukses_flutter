@@ -13,7 +13,7 @@ class CompanyServiceHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     var res = await http
-        .get(fullBaseURI + "/api/user-company", headers: <String, String>{
+        .get(Uri.https(baseURI, "/api/user-company"), headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
@@ -36,11 +36,11 @@ class CompanyServiceHTTP {
   }
 
   Future<CompanyModel> fetchCompanyCode(String kode) async {
-    var res = await http
-        .get(fullBaseURI + "/api/company-code/$kode", headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Charset': 'utf-8',
-    });
+    var res = await http.get(Uri.https(baseURI, "/api/company-code/$kode"),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+        });
     //print(res.statusCode.toString());
     //print(res.body);
     print(res.statusCode);
@@ -64,7 +64,7 @@ class CompanyServiceHTTP {
   Future<int> addOrganization(
       CompanyModel company, String token, String scope) async {
     print("addOrganization ");
-    var res = await http.post(fullBaseURI + "/api/organization",
+    var res = await http.post(Uri.https(baseURI, "/api/organization"),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',

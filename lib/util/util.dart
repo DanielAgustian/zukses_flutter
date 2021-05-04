@@ -56,6 +56,11 @@ class Util {
     }
   }
 
+  String dateTimeToTimeOfDay(DateTime date) {
+    TimeOfDay time = TimeOfDay.fromDateTime(date);
+    return changeTimeToString(time);
+  }
+
   String changeTimeToString(TimeOfDay time) {
     String hour = "", minutes = "";
     if (time.hour < 10) {
@@ -81,6 +86,7 @@ class Util {
     var temp = Util().stringToTimeOfDay(time);
     return Util().changeTimeToString(temp);
   }
+
   String dateNumbertoCalendar(DateTime date) {
     return DateFormat('yMMMd').format(date);
   }
@@ -153,8 +159,6 @@ class Util {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String sprefToken = prefs.getString("token");
 
-
-
     //================TO GET DYNAMIC LINK WHEN APP IS OPEN==============///
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
@@ -180,7 +184,7 @@ class Util {
             print("Onlink token + " + token);
 
             if (sprefToken != null) {
-              //if he has logged in 
+              //if he has logged in
               print("Saved Token = " + sprefToken);
               Util().saveSharedPreferences("link", deepLink.toString());
 
@@ -189,7 +193,8 @@ class Util {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ScreenTab(index:0, link: deepLink)));
+                        builder: (context) =>
+                            ScreenTab(index: 0, link: deepLink)));
               } else {
                 //if he has login but the session has expired.
                 clearSharedPrefString("token");
@@ -219,7 +224,6 @@ class Util {
       print(e.message);
     });
 
-
 //=========================TO GET DYNAMIC LINK WHEN APP CLOSED.====================///
     final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
@@ -240,45 +244,43 @@ class Util {
                       token: token,
                     )));
       } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
-
-
         if (deepLink.queryParameters['token'] != null) {
-            //if he has account
-            String token = deepLink.queryParameters['token'];
-            print("Onlink token + " + token);
+          //if he has account
+          String token = deepLink.queryParameters['token'];
+          print("Onlink token + " + token);
 
-            if (sprefToken != null) {
-              //if he has login 
-              print("Saved Token = " + sprefToken);
-              Util().saveSharedPreferences("link", deepLink.toString());
-              if (token == sprefToken) {
-
-                //if he has already login and session not expired
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScreenTab(index:0, link: deepLink)));
-              } else {
-                // if he has already login but session expired
-                clearSharedPrefString("token");
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScreenLogin(link: deepLink)));
-              }
+          if (sprefToken != null) {
+            //if he has login
+            print("Saved Token = " + sprefToken);
+            Util().saveSharedPreferences("link", deepLink.toString());
+            if (token == sprefToken) {
+              //if he has already login and session not expired
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenTab(index: 0, link: deepLink)));
             } else {
+              // if he has already login but session expired
+              clearSharedPrefString("token");
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ScreenLogin(link: deepLink)));
             }
           } else {
-            Util().saveSharedPreferences("link", deepLink.toString());
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ScreenSignUp(link: deepLink)));
+                    builder: (context) => ScreenLogin(link: deepLink)));
           }
+        } else {
+          Util().saveSharedPreferences("link", deepLink.toString());
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ScreenSignUp(link: deepLink)));
+        }
       }
     }
   }

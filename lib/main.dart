@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:device_preview/device_preview.dart';
+//import 'package:device_preview/device_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -57,11 +57,15 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
   onboarding = prefs.getBool("onboarding");
-  runApp(DevicePreview(
-      builder: (context) => MyApp(
+  runApp(
+  //DevicePreview(
+     // builder: (context) => 
+      MyApp(
             token: token,
             onboarding: onboarding,
-          )));
+          )
+         // )
+          );
 }
 
 class MyApp extends StatelessWidget {
@@ -140,8 +144,8 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: colorBackground,
             fontFamily: 'Lato',
             accentColor: colorPrimary),
-        locale: DevicePreview.locale(context), // Add the locale here
-        builder: DevicePreview.appBuilder, // Add the builder here
+        //locale: DevicePreview.locale(context), // Add the locale here
+        //builder: DevicePreview.appBuilder, // Add the builder here
         home: SplashScreen(
           token: token,
           onboarding: onboarding,

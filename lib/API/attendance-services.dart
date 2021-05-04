@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/attendance-model.dart';
 
 class AttendanceService {
-  final baseURI = "api-zukses.yokesen.com/api";
+  final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com/api";
   // Clock in user
   Future<int> createClockIn(File image) async {
@@ -15,8 +15,7 @@ class AttendanceService {
    
     print(token);
     int code = 0;
-    await http
-        .post(Uri.https('api-zukses.yokesen.com', '/api/clock-out'), body: {
+    await http.post(Uri.https(baseURI, "/api/clock-in"), body: {
       'image': base64Image,
     }, headers: <String, String>{
       'Authorization': 'Bearer $token'
@@ -60,10 +59,9 @@ class AttendanceService {
 
     var month = date.month;
     var year = date.year;
-
+    
     // get data
-    ;
-    var res = await http.get(fullBaseURI + "/user-attendance/$month/$year",
+    var res = await http.get(Uri.https(baseURI, "/api/user-attendance/$month/$year"),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',

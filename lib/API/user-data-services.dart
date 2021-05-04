@@ -35,12 +35,8 @@ class UserDataServiceHTTP {
   Future<List<UserModel>> fetchEmployeeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var res = await http
-        .get(Uri.https(baseURI, 'api/all-user'), headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Charset': 'utf-8',
-      'Authorization': 'Bearer $token'
-    });
+    var res = await http.get(Uri.https(baseURI, 'api/all-user'),
+        headers: <String, String>{'Authorization': 'Bearer $token'});
     print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -65,26 +61,28 @@ class UserDataServiceHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     String base64Image = base64Encode(image.readAsBytesSync());
-
+    print(base64Image);
+    print("Update Name: " + name);
+    print("Update Phone: " + phone.toString());
     print(token);
-    int code = 0;
-    await http.post("https://api-zukses.yokesen.com/api/edit-profile", body: {
-      'image': base64Image,
-      'name': name,
-      'phone': phone
-    }, headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Charset': 'utf-8',
-      'Authorization': 'Bearer $token'
-    }).then((res) {
-      print(res.body);
-      print(res.statusCode);
-      code = res.statusCode;
-      return code;
-    }).catchError((err) {
-      print(err);
-    });
-    return null;
+
+    var res = await http.post(Uri.https(baseURI, 'api/edit-profile'),
+        body: jsonEncode(<String, dynamic>{
+          'image': base64Image,
+          'name': name,
+          'phone': phone
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        });
+    print(res.statusCode);
+    print(res.body);
+    if (res.statusCode == 200) {
+      return res.statusCode;
+    } else {
+      return null;
+    }
   }
-  
 }

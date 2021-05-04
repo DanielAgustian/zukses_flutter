@@ -9,7 +9,7 @@ abstract class UserDataState extends Equatable {
 
 class UserDataStateLoading extends UserDataState {}
 
-class UserDataFailLoad extends UserDataState {}
+class UserDataStateFailLoad extends UserDataState {}
 
 class UserDataStateSuccessLoad extends UserDataState {
   final UserModel userModel;

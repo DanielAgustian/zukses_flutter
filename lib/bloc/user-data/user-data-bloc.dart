@@ -20,7 +20,7 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
     if (res is UserModel && res != null) {
       yield UserDataStateSuccessLoad(res);
     } else {
-      yield UserDataFailLoad();
+      yield UserDataStateFailLoad();
     }
   }
 
@@ -28,12 +28,13 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
       UserDataUpdateProfileEvent event) async* {
     yield UserDataStateLoading();
     // return user model
-    var res = await _userDataService.fetchUserProfile();
+    var res = await _userDataService.updateUserProfile(
+        event.image, event.name, event.phone);
     // directly throw into success load or fail load
-    if (res is UserModel && res != null) {
-      yield UserDataStateSuccessLoad(res);
+    if (res == 200) {
+      yield UserDataStateUpdateSuccess(res);
     } else {
-      yield UserDataFailLoad();
+      yield UserDataStateUpdateFail();
     }
   }
 

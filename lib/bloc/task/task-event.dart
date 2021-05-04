@@ -34,3 +34,9 @@ class LoadLowPriorityTaskEvent extends TaskEvent{
   LoadLowPriorityTaskEvent(this.priority);
 
 }
+class UpdateTaskEvent extends TaskEvent{
+  final TaskModel task;
+
+  UpdateTaskEvent(this.task);
+
+}
