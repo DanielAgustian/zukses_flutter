@@ -38,8 +38,6 @@ class ChangeTaskBloc extends Bloc<ChangeTaskEvent, ChangeTaskState> {
     var res =
         await _taskServices.changeProgressTask(event.idTask, event.progress);
 
-    // return checkbox handler
-
     // directly throw into success load or fail load
     if (res == 200) {
       yield ChangeTaskStateDropdownSuccessLoad(code: res);

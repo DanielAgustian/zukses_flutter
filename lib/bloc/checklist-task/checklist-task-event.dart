@@ -35,3 +35,16 @@ class CLTEventDidUpdated extends CLTEvent {
   @override
   List<Object> get props => [model];
 }
+
+class EditCLTEvent extends CLTEvent {
+  final String checkListId;
+  final String checkListName;
+  EditCLTEvent(this.checkListId, this.checkListName);
+  List<Object> get props => [];
+}
+class DeleteCLTEvent extends CLTEvent {
+  final String checkListId;
+  
+  DeleteCLTEvent(this.checkListId);
+  List<Object> get props => [];
+}

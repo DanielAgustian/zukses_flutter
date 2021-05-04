@@ -60,7 +60,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     with TickerProviderStateMixin {
   TextEditingController textEditingController = TextEditingController();
   final textAddCheckBox = TextEditingController();
+  final textEditCheckList = TextEditingController();
   final picker = ImagePicker();
+
   DateTime date;
   String data = "";
   //==================Method to Move =====================//
@@ -1069,12 +1071,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                       },
                                       controlAffinity:
                                           ListTileControlAffinity.leading,
-                                      title: state.boolCheckList[index]
-                                          ? Text(
-                                              state.listCheckList[index]
-                                                  .checkList,
-                                              style:
-                                                  TextStyle(
+                                      title: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          state.boolCheckList[index]
+                                              ? Text(
+                                                  state.listCheckList[index]
+                                                      .checkList,
+                                                  style: TextStyle(
                                                       decoration: TextDecoration
                                                           .lineThrough,
                                                       fontSize:
@@ -1084,15 +1089,23 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                                       color: colorPrimary,
                                                       fontWeight:
                                                           FontWeight.bold))
-                                          : Text(
-                                              state.listCheckList[index]
-                                                  .checkList,
-                                              style: TextStyle(
-                                                  fontSize: size.height <= 569
-                                                      ? 12
-                                                      : 14,
-                                                  color: colorPrimary,
-                                                  fontWeight: FontWeight.bold)),
+                                              : Text(
+                                                  state.listCheckList[index]
+                                                      .checkList,
+                                                  style: TextStyle(
+                                                      fontSize:
+                                                          size.height <= 569
+                                                              ? 12
+                                                              : 14,
+                                                      color: colorPrimary,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                          popUpButtonCheckList(
+                                              context,
+                                              state.listCheckList[index].id
+                                                  .toString())
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -1109,6 +1122,12 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         context, clickTask.idTask)),
                               );
                             } else if (state is CLTStateAddSuccessLoad) {
+                              BlocProvider.of<CLTBloc>(context).add(
+                                  LoadAllCLTEvent(clickTask.idTask.toString()));
+                            } else if (state is CLTStateDeleteSuccessLoad) {
+                              BlocProvider.of<CLTBloc>(context).add(
+                                  LoadAllCLTEvent(clickTask.idTask.toString()));
+                            } else if (state is CLTStateEditSuccessLoad) {
                               BlocProvider.of<CLTBloc>(context).add(
                                   LoadAllCLTEvent(clickTask.idTask.toString()));
                             }
@@ -1378,6 +1397,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         .add(UploadAttachNewEvent(clickTask.idTask.toString(), image));
   }
 
+  //TO make alertdialog for picture preview
   Widget _buildCupertino({BuildContext context, String link}) {
     return new CupertinoAlertDialog(
       title: new Text(
@@ -1397,6 +1417,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     );
   }
 
+  //Widget to pick dateTime in ScrollerSheet
   dateUpdatePicker(DateTime initDate, TimeOfDay initTime) async {
     final DateTime datePicked = await showDatePicker(
         context: context,
@@ -1413,5 +1434,94 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         });
       }
     }
+  }
+
+  //Widget for PopUp BUtton in CheckList Task
+  Widget popUpButtonCheckList(BuildContext context, String idCheckList) {
+    return PopupMenuButton<int>(
+      onSelected: (val) {
+        switch (val) {
+          case 1:
+            showDialog(
+                context: context,
+                builder: (context) => _buildCupertinoEditCheckList(
+                    context: context, idCheckList: idCheckList));
+            break;
+          case 2:
+            BlocProvider.of<CLTBloc>(context).add(DeleteCLTEvent(idCheckList));
+            break;
+          default:
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          child: Text(
+            "Edit Name",
+            style: TextStyle(color: colorPrimary, fontWeight: FontWeight.w700),
+          ),
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Text(
+            "Delete",
+            style: TextStyle(color: colorError, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+      child: Container(
+        height: 20,
+        width: 20,
+        decoration: BoxDecoration(
+            color: colorBackground, borderRadius: BorderRadius.circular(5)),
+        child: Center(
+          child: FaIcon(
+            FontAwesomeIcons.ellipsisH,
+            color: colorPrimary,
+            size: 18,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCupertinoEditCheckList(
+      {BuildContext context, String idCheckList}) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "Edit Your CheckList Name",
+      ),
+      content: Container(
+        decoration: BoxDecoration(border: Border.all(color: colorNeutral2)),
+        child: CupertinoTextField(
+          controller: textEditCheckList,
+          style: TextStyle(fontSize: 16, height: 1.0),
+          textInputAction: TextInputAction.next,
+          placeholder: "New Name",
+        ),
+      ),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text("Cancel",
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: colorError)),
+            onPressed: () {
+              Navigator.pop(context, false);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "Edit",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              if (textEditCheckList.text != null ||
+                  textEditCheckList.text != "") {
+                BlocProvider.of<CLTBloc>(context)
+                    .add(EditCLTEvent(idCheckList, textEditCheckList.text));
+                Navigator.pop(context, true);
+              }
+            }),
+      ],
+    );
   }
 }

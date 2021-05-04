@@ -51,6 +51,27 @@ class CLTBloc extends Bloc<CLTEvent, CLTState> {
     }
   }
 
+  Stream<CLTState> mapDeleteCLT(DeleteCLTEvent event) async* {
+    yield CLTStateLoading();
+    var res = await _checkListTask.deleteCheckList(event.checkListId);
+    if (res == 200) {
+      yield CLTStateDeleteSuccessLoad(res);
+    } else {
+      yield CLTStateDeleteFailLoad();
+    }
+  }
+
+  Stream<CLTState> mapEditCLT(EditCLTEvent event) async* {
+    yield CLTStateLoading();
+    var res = await _checkListTask.editCheckListName(
+        event.checkListId, event.checkListName);
+    if (res == 200) {
+      yield CLTStateEditSuccessLoad(res);
+    } else {
+      yield CLTStateEditFailLoad();
+    }
+  }
+
   Stream<CLTState> mapPutCLT(PutCLTEvent event) async* {
     yield CLTStateLoading();
     var res = await _checkListTask.putCheckList(event.checkListId);
@@ -69,13 +90,14 @@ class CLTBloc extends Bloc<CLTEvent, CLTState> {
   Stream<CLTState> mapEventToState(CLTEvent event) async* {
     if (event is LoadAllCLTEvent) {
       yield* mapAllCLT(event);
-    } /*else if (event is CLTEventDidUpdated) {
-      yield* mapUpdatingCLTState(event);
-    } */
-    else if (event is AddCLTEvent) {
+    } else if (event is AddCLTEvent) {
       yield* mapAddCLT(event);
     } else if (event is PutCLTEvent) {
       yield* mapPutCLT(event);
+    } else if (event is DeleteCLTEvent) {
+      yield* mapDeleteCLT(event);
+    } else if (event is EditCLTEvent) {
+      yield* mapEditCLT(event);
     }
   }
 

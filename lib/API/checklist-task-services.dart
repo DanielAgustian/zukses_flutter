@@ -81,4 +81,39 @@ class CheckListTaskService {
       return null;
     }
   }
+
+  Future<int> deleteCheckList(String checkListId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var res = await http.delete(Uri.https(baseURI, 'api/checklist'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{'checklistId': checkListId}));
+    print(res.statusCode);
+    print(res.body);
+    return res.statusCode;
+  }
+
+  Future<int> editCheckListName(
+      String checkListId, String checkListName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    print(checkListName);
+    var res = await http.put(Uri.https(baseURI, 'api/checklist'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'checklistId': checkListId,
+          'checklist': checkListName
+        }));
+    print(res.body);
+    print(res.statusCode);
+    return res.statusCode;
+  }
 }

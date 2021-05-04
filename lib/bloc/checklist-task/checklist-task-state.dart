@@ -53,3 +53,30 @@ class CLTStatePutSuccessLoad extends CLTState {
     return 'Data : { employee List: $model }';
   }
 }
+
+class CLTStateDeleteFailLoad extends CLTState {}
+
+class CLTStateDeleteSuccessLoad extends CLTState {
+  final int kode;
+
+  CLTStateDeleteSuccessLoad(this.kode);
+  List<Object> get props => [kode];
+
+  @override
+  String toString() {
+    return 'Data : { employee List: $kode }';
+  }
+}
+class CLTStateEditFailLoad extends CLTState {}
+
+class CLTStateEditSuccessLoad extends CLTState {
+  final int kode;
+
+  CLTStateEditSuccessLoad(this.kode);
+  List<Object> get props => [kode];
+
+  @override
+  String toString() {
+    return 'Data : { employee List: $kode }';
+  }
+}
