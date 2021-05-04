@@ -6,13 +6,15 @@ import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarListWidget extends StatefulWidget {
-  const CalendarListWidget({Key key, this.onSelectDate, this.fontSize = 14})
+  const CalendarListWidget(
+      {Key key, this.onSelectDate, this.fontSize = 14, this.data})
       : super(key: key);
 
   @override
   _CalendarListWidgetState createState() => _CalendarListWidgetState();
   final Function onSelectDate;
   final double fontSize;
+  final List data;
 }
 
 enum CalendarViews { dates, months, year }
@@ -194,7 +196,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
         itemBuilder: (context, index) {
           // if (_sequentialDates[index].date == _selectedDateTime)
           //   return _selector(_sequentialDates[index]);
-          return _calendarDates(_sequentialDates[index]);
+          return _calendarDates(_sequentialDates[index], data: widget.data);
         },
       ),
     );
