@@ -16,17 +16,19 @@ class LoadAllRegisterEvent extends RegisterEvent {
 
 class AddRegisterIndividuEvent extends RegisterEvent {
   final RegisterModel register;
-
-  AddRegisterIndividuEvent(this.register);
+  final String tokenFCM;
+  AddRegisterIndividuEvent(this.register, {this.tokenFCM});
   List<Object> get props => [register];
 }
 
 class AddRegisterTeamMemberEvent extends RegisterEvent {
   final RegisterModel register;
   final String link;
-  AddRegisterTeamMemberEvent(this.register, this.link);
+  final String tokenFCM;
+  AddRegisterTeamMemberEvent(this.register, this.link, {this.tokenFCM});
   List<Object> get props => [register, link];
 }
+
 class AddRegisterTeamEvent extends RegisterEvent {
   final String link;
   final List<String> email;

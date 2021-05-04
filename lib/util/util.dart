@@ -1,5 +1,7 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,6 +102,27 @@ class Util {
     await prefs.setString(key, value);
   }
 
+  //TO Get FCM TOken
+  Future<String> getTokenFCM() async {
+    print("Fetching Token FCM");
+
+    if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      String token = await FirebaseMessaging.instance.getAPNSToken();
+
+      print("Token FCM for IOS Gadget $token");
+
+      return token;
+    } else {
+      String token = await FirebaseMessaging.instance.getToken();
+
+      print("Token FCM for Android $token");
+
+      return token;
+    }
+  }
+
+  //To Make Dynamic Link With A ready link.
   Future<String> createDynamicLink2({bool short, String link}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://zuksesapplication.page.link',
@@ -124,6 +147,7 @@ class Util {
     return url.toString();
   }
 
+  //To Make Dynamic Link based on page.
   Future<String> createDynamicLink(
       {bool short = false, String value, String key, String page}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(

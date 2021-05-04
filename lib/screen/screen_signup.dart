@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,6 +48,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   bool _linkValidator = false;
   List<bool> empty = [false, false, false, false];
   String failedRegister = "";
+  String tokenFCM = "";
 
   void register() {
     if (textEmail.text == "") {
@@ -57,6 +60,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
       Pattern pattern =
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
       RegExp regex = new RegExp(pattern);
+
       if (textEmail.text == "") {
         setState(() {
           empty[0] = true;
@@ -73,6 +77,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
         }
       }
     }
+
     if (textUsername.text == "") {
       setState(() {
         empty[1] = true;
@@ -102,6 +107,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
       if (textConfirmPassword.text != textPassword.text) {
         setState(() {
           _confirmPassValidator = true;
+
           _passValidator = true;
         });
       } else {
@@ -191,11 +197,19 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
     await prefs.setString("passLogin", textPassword.text);
   }
 
+  _getFCMToken() async {
+    tokenFCM = await Util().getTokenFCM();
+  }
+
   @override
   void initState() {
     super.initState();
+
     Util util = Util();
+
     util.initDynamicLinks(context);
+
+    _getFCMToken();
   }
 
   @override

@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
@@ -30,12 +32,14 @@ class ScreenLogin extends StatefulWidget {
 
 class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
   //Future<AuthModel> _futureLogin;
+  String tokenFCM = "";
   bool _obscureText = true;
   AuthServiceHTTP authService = AuthServiceHTTP();
   TextEditingController textUsername = new TextEditingController();
   TextEditingController textPassword = new TextEditingController();
   TextEditingController textUsernameScroll = new TextEditingController();
   TextEditingController textPasswordScroll = new TextEditingController();
+
   bool _usernameValidator = false;
   bool _passValidator = false;
   bool _userScrollValidator = false;
@@ -119,7 +123,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
         _passValidator.toString());
     if (!_usernameValidator && !_passValidator) {
       BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
-          email: textUsername.text, password: textPassword.text));
+          email: textUsername.text, password: textPassword.text, tokenFCM: tokenFCM));
     }
   }
 
@@ -148,6 +152,8 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
         context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
   }
 
+  
+
   @override
   void initState() {
     super.initState();
@@ -158,8 +164,29 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
     if (widget.link != null) {
       _controller.forward();
     }
+    getTokenFCM();
   }
+  Future<void> getTokenFCM() async {
+    print("Fetching Token FCM");
+  
+    if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      String token = await FirebaseMessaging.instance.getAPNSToken();
 
+      setState(() {
+        tokenFCM = token;
+      });
+
+      print("Token FCM for IOS Gadget $tokenFCM");
+    } else {
+      String token = await FirebaseMessaging.instance.getToken();
+
+      setState(() {
+        tokenFCM = token;
+      });
+      print("Token FCM for Android $tokenFCM");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

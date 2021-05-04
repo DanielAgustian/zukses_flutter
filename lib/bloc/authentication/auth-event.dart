@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/auth-model.dart'; 
+import 'package:zukses_app_1/model/auth-model.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
@@ -9,18 +9,21 @@ abstract class AuthenticationEvent extends Equatable {
 
 class AuthEventLoginManual extends AuthenticationEvent {
   final String email, password;
-  const AuthEventLoginManual({this.email, this.password});
+  final String tokenFCM;
+  const AuthEventLoginManual({this.email, this.password, this.tokenFCM});
 
   @override
   List<Object> get props => [email, password];
 }
-class AuthEventLoginTeam extends AuthenticationEvent{
+
+class AuthEventLoginTeam extends AuthenticationEvent {
   final String email, password, link;
   const AuthEventLoginTeam({this.email, this.password, this.link});
 
   @override
-  List<Object> get props => [email, password,link];
+  List<Object> get props => [email, password, link];
 }
+
 class AuthEventWithGoogle extends AuthenticationEvent {
   const AuthEventWithGoogle();
 
@@ -34,6 +37,7 @@ class AuthEventWithFacebook extends AuthenticationEvent {
   @override
   List<Object> get props => [];
 }
+
 class AuthEventUpdated extends AuthenticationEvent {
   final AuthModel user;
   const AuthEventUpdated(this.user);

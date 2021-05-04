@@ -88,7 +88,7 @@ class AuthenticationBloc
       AuthEventLoginManual event) async* {
     // return auth model
     var res =
-        await _authenticationService.createLogin(event.email, event.password);
+        await _authenticationService.createLogin(event.email, event.password, event.tokenFCM);
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {

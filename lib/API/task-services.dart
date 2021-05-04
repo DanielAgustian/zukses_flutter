@@ -51,6 +51,7 @@ class TaskServicesHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     //Query to API
+    print("Task Assginee" + task.assignee.toString());
     var res = await http.post(Uri.https(baseURI, '/api/task'),
         headers: <String, String>{
           'Content-Type': 'application/json',
@@ -168,11 +169,10 @@ class TaskServicesHTTP {
           'priority': task.priority
         }));
     print(res.statusCode);
-    
+
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
 
-      
       return res.statusCode;
     } else {
       // IF the server return everything except 200, it will gte exception.

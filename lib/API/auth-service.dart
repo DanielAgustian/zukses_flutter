@@ -13,14 +13,15 @@ class AuthServiceHTTP {
   final fullBaseURI = "https://api-zukses.yokesen.com";
   final facebookLogin = FacebookLogin();
   //GoogleSignIn gsi = GoogleSignIn.standard();
-  Future<AuthModel> createLogin(String email, password) async {
+  Future<AuthModel> createLogin(String email, password, String tokenFCM) async {
+    
     final response = await http.post(
       Uri.https(baseURI, '/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Charset': 'utf-8'
       },
-      body: jsonEncode(<String, String>{'email': email, 'password': password}),
+      body: jsonEncode(<String, String>{'email': email, 'password': password, 'fcmToken': tokenFCM}),
     );
     print("email: " + email);
     print("Auth Code: " + response.statusCode.toString());

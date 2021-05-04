@@ -6,7 +6,7 @@ class TaskModel {
   int idTask, idProject, idLabel;
   String taskName, details;
   UserModel reporter;
-  List<int> assignee;
+  List<String> assignee;
   List<AssignmentModel> assignment;
   String date;
   String taskType, label, priority, idComment;
