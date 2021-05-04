@@ -531,6 +531,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                       onSelectDate: (date) {
                                         selectDate(date);
                                       },
+                                      data: state.meetings,
                                     ),
                                   ),
                                   SizedBox(height: 30),
