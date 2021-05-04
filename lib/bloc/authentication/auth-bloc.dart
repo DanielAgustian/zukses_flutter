@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
@@ -15,6 +16,7 @@ class AuthenticationBloc
   final AuthenticationRepository _authenticationRepository;
 
   final AuthServiceHTTP _authenticationService = AuthServiceHTTP();
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   AuthenticationBloc({@required AuthenticationRepository authRepo})
       : assert(authRepo != null),
@@ -23,16 +25,55 @@ class AuthenticationBloc
 
   // BLOC for login with google
   Stream<AuthenticationState> mapLoginGoogle() async* {
-    // return user model
-    // var res = await _authenticationRepository.signInWithGoogle();
+    GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
-    // // directly throw into success load or fail load
-    // if (res is AuthModel && res != null) {
-    //   yield AuthStateSuccessLoad(res);
-    // } else {
-    //   yield AuthStateFailLoad();
-    // }
+    String name, token, email, image;
+
+    // try catch google sign in
+    try {
+      // get all data from google
+      print("LOGIN GOOGLE ==============+> ON GOING . . .");
+      await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await _googleSignIn.currentUser.authentication;
+
+      name = _googleSignIn.currentUser.displayName;
+      token = googleSignInAuthentication.idToken;
+      email = _googleSignIn.currentUser.email;
+      image = _googleSignIn.currentUser.photoUrl;
+
+      print("GOOGLE LOGIN ==================+>");
+      print(name);
+      print(email);
+      print(image);
+
+      // Integrate to api backend
+      // var res = await _authenticationService.loginGoogle(
+      //     email: email,
+      //     name: name,
+      //     photo: image,
+      //     tokenID: token,
+      //     tokenFCM: event.fcmToken);
+
+      // directly throw into success load or fail load
+      // if (res != null && res is AuthModel) {
+      //   // Save token and id user
+      //   await prefs.setString("token", res.token);
+      //   await prefs.setInt("userID", res.user.userID);
+
+      //   // Save is user login via google or not
+      //   await prefs.setString("via", "google");
+
+      //   yield AuthStateSuccessLoad(res);
+      // } else {
+      //   yield AuthStateFailLoad();
+      // }
+    } catch (err) {
+      print("Error Google Try Catch $err");
+      yield AuthStateFailLoad();
+    }
   }
+
   Stream<AuthenticationState> mapLoginFacebook() async* {
     var res = await _authenticationService.fbLogin();
     if (res is FBAuthModel && res != null) {
@@ -61,8 +102,8 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> mapLoginTeam(AuthEventLoginTeam event) async* {
     // return auth model
-    var res =
-        await _authenticationService.createLoginTeam(event.email, event.password, event.link);
+    var res = await _authenticationService.createLoginTeam(
+        event.email, event.password, event.link);
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {
