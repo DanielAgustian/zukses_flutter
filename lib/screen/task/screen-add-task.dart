@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -62,6 +63,16 @@ class _AddTaskScreen extends State<AddTaskScreen> {
   bool _priorityValidator = false;
   bool freeLabel = false;
   bool freeAssignTo = false;
+  String myID = "";
+
+  sharedPrefId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      myID = prefs.getString("myID");
+    });
+    print("This is my Id" + myID);
+  }
+
   _addNewTask() {
     print("Click here");
     if (textTitle.text != "") {
@@ -168,7 +179,11 @@ class _AddTaskScreen extends State<AddTaskScreen> {
         List<int> idUser = [];
         for (int i = 0; i < hasilMultiple.length; i++) {
           int temp = hasilMultiple[i];
-          idUser.add(int.parse(allUser[temp].userID));
+          if (temp == 0) {
+            idUser.add(int.parse(myID));
+          } else {
+            idUser.add(int.parse(allUser[temp - 1].userID));
+          }
         }
         int idLabel;
         for (int i = 0; i < label.length; i++) {
@@ -197,7 +212,7 @@ class _AddTaskScreen extends State<AddTaskScreen> {
   void initState() {
     super.initState();
     textItem = priorityList[0];
-
+    sharedPrefId();
     BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
     BlocProvider.of<EmployeeBloc>(context).add(LoadAllEmployeeEvent());
   }
@@ -376,6 +391,10 @@ class _AddTaskScreen extends State<AddTaskScreen> {
                       builder: (context, state) {
                     if (state is EmployeeStateSuccessLoad) {
                       dropdownItem.clear();
+                      dropdownItem.add(DropdownMenuItem(
+                        child: Text("Myself"),
+                        value: "Myself",
+                      ));
                       allUser = state.employees;
                       for (int i = 0; i < state.employees.length; i++) {
                         dropdownItem.add(DropdownMenuItem(

@@ -51,7 +51,7 @@ dependencies:
   flutter_switch:
   # cloud_firestore: 
   # firebase_auth:
-  # firebase_messaging:
+  firebase_messaging:
   firebase_core: any
   firebase_dynamic_links: any
   url_launcher:

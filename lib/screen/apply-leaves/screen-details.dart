@@ -177,35 +177,37 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                       focusedBorder: InputBorder.none),
                 ),
               ),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: size.height < 569 ? 15 : 20,
-                    ),
-                    LongButton(
-                      size: size,
-                      onClick: () {},
-                      title: "Contact Supervisor",
-                      bgColor: colorPrimary,
-                      textColor: colorBackground,
-                    ),
-                    SizedBox(
-                      height: size.height < 569 ? 5 : 10,
-                    ),
-                    LongButtonOutline(
-                      size: size,
-                      onClick: () {},
-                      title: "Re-Submit",
-                      bgColor: colorBackground,
-                      textColor: colorPrimary,
-                      outlineColor: colorPrimary,
-                    ),
-                  ],
-                ),
-              )
+              overtimeModel.status == "rejected"
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: size.height < 569 ? 15 : 20,
+                          ),
+                          LongButton(
+                            size: size,
+                            onClick: () {},
+                            title: "Contact Supervisor",
+                            bgColor: colorPrimary,
+                            textColor: colorBackground,
+                          ),
+                          SizedBox(
+                            height: size.height < 569 ? 5 : 10,
+                          ),
+                          LongButtonOutline(
+                            size: size,
+                            onClick: () {},
+                            title: "Re-Submit",
+                            bgColor: colorBackground,
+                            textColor: colorPrimary,
+                            outlineColor: colorPrimary,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container()
             ],
           ),
         ),

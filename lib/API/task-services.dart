@@ -51,7 +51,7 @@ class TaskServicesHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     //Query to API
-    var res = await http.post(Uri.https(baseURI, 'api/task'),
+    var res = await http.post(Uri.https(baseURI, '/api/task'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
