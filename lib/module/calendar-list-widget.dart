@@ -1,7 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:zukses_app_1/constant/constant.dart'; 
+import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/module/calendar-model.dart';
 
 class CalendarListWidget extends StatefulWidget {
@@ -56,7 +57,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
   }
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
@@ -199,8 +200,65 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
     );
   }
 
+  // function to check the calendar date
+  // is it less than 15 or no
+  // `true` if less than 15, `false` is more than or equal to 15
+  bool checkTheDate({Calendar calendarDate}) {
+    // If the date is less than 15
+    // Or it's a date from previous month
+    // Or it's a date from previous year
+    if (calendarDate.date.day < 15 ||
+        calendarDate.date.month - 1 < calendarDate.date.month ||
+        calendarDate.date.year - 1 < calendarDate.date.year) {
+      return true;
+    }
+
+    // If the date is more than or equal 15
+    // Or it's a date from next month
+    // Or it's a date from next year
+    return false;
+  }
+
   // calendar element
-  Widget _calendarDates(Calendar calendarDate) {
+  Widget _calendarDates(Calendar calendarDate, {List<ScheduleModel> data}) {
+    Widget dot = Container();
+
+    // Condition for calendar in Screen `Schedule`
+    if (data != null) {
+      if (checkTheDate(calendarDate: calendarDate)) {
+        for (var d in data) {
+          if (d.date.day == calendarDate.date.day &&
+              d.date.month == calendarDate.date.month &&
+              d.date.year == calendarDate.date.year) {
+            _selectedDateTime != calendarDate.date
+                ? dot = dotBlue
+                : dot = dotWhite;
+            break;
+          }
+        }
+      } else {
+        var i = 0;
+        while (i < data.length) {
+          // if the data founded
+          if (data[i].date.day == calendarDate.date.day &&
+              data[i].date.month == calendarDate.date.month &&
+              data[i].date.year == calendarDate.date.year) {
+            _selectedDateTime != calendarDate.date
+                ? dot = dotBlue
+                : dot = dotWhite;
+            break;
+          }
+
+          // if `calendar date day` - 15 > 5, then iteration + 3
+          if (15 - data[i].date.day > 5 && i + 3 < data.length) {
+            i = i + 3;
+          } else {
+            i++;
+          }
+        }
+      }
+    }
+
     return InkWell(
         onTap: () {
           if (_selectedDateTime != calendarDate.date) {
@@ -243,6 +301,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
                               ? colorPrimary
                               : colorNeutral2,
                         )),
+                    dot
                   ],
                 ),
               )
@@ -274,6 +333,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
                               ? colorBackground
                               : colorNeutral2,
                         )),
+                    dot
                   ],
                 ),
               ));
