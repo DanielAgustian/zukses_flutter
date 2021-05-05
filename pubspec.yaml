@@ -57,7 +57,7 @@ dependencies:
   url_launcher:
   google_sign_in:
   flutter_facebook_login:
-  
+  flutter_local_notifications:
 dev_dependencies:
   flutter_test:
     sdk: flutter

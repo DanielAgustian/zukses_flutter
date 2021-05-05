@@ -164,29 +164,14 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
     if (widget.link != null) {
       _controller.forward();
     }
-    getTokenFCM();
+    _getTokenFCM();
   }
-  Future<void> getTokenFCM() async {
-    print("Fetching Token FCM");
+
+
+  _getTokenFCM() async {
+    tokenFCM = await Util().getTokenFCM();
+  }
   
-    if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
-      String token = await FirebaseMessaging.instance.getAPNSToken();
-
-      setState(() {
-        tokenFCM = token;
-      });
-
-      print("Token FCM for IOS Gadget $tokenFCM");
-    } else {
-      String token = await FirebaseMessaging.instance.getToken();
-
-      setState(() {
-        tokenFCM = token;
-      });
-      print("Token FCM for Android $tokenFCM");
-    }
-  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 // ignore: must_be_immutable
 class ListReviseProject extends StatelessWidget {
@@ -46,7 +47,6 @@ class ListReviseProject extends StatelessWidget {
                         child: Container(
                           width: 30,
                           height: 30,
-                          
                           child: Icon(
                             tag ? Icons.star : Icons.star_border,
                             color: colorPrimary,
@@ -54,18 +54,35 @@ class ListReviseProject extends StatelessWidget {
                         ),
                         onTap: onTapStar),
                     SizedBox(width: 10),
-                    Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: NetworkImage(
-                                "https://api-zukses.yokesen.com/" + image),
-                          ),
-                        )),
+                    image == null || image == ""
+                        ? Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: colorPrimary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                Util().getInitials(title),
+                                style: TextStyle(
+                                    color: colorBackground,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ))
+                        : Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(
+                                    "https://api-zukses.yokesen.com/" + image),
+                              ),
+                            )),
                     SizedBox(width: 10),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -98,13 +115,18 @@ class ListReviseProject extends StatelessWidget {
                 jumlahTask < 1
                     ? Container()
                     : Container(
+                        width: 20,
+                        height: 20,
+                        //padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                            color: colorSecondaryRed, shape: BoxShape.circle),
-                        child: Padding(
-                          padding: EdgeInsets.all(3),
+                            color: colorError, shape: BoxShape.circle),
+                        child: Center(
                           child: Text(
                             jumlahTask.toString(),
-                            style: TextStyle(color: colorBackground),
+                            style: TextStyle(
+                                color: colorBackground,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
                           ),
                         ))
               ],

@@ -44,7 +44,24 @@ class ProjectServicesHTTP {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    String base64Image = base64Encode(image.readAsBytesSync());
+    String base64Image;
+    var jsonData;
+
+    print(image.path);
+    if (image.path.length > 0) {
+      base64Image = base64Encode(image.readAsBytesSync());
+      jsonData = jsonEncode(<String, dynamic>{
+        'projectName': project.name,
+        'projectKey': project.details,
+        'image': base64Image
+      });
+    } else {
+      jsonData = jsonEncode(<String, dynamic>{
+        'projectName': project.name,
+        'projectKey': project.details,
+      });
+    }
+
     //Query to API
     var res = await http.post(Uri.https(baseURI, 'api/project'),
         headers: <String, String>{
@@ -52,12 +69,9 @@ class ProjectServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         },
-        body: jsonEncode(<String, dynamic>{
-          'projectName': project.name,
-          'projectKey': project.details,
-          'image': base64Image
-        }));
-
+        body: jsonData);
+    print(res.body);
+    print(res.statusCode);
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -66,7 +80,7 @@ class ProjectServicesHTTP {
     } else {
       // IF the server return everything except 200, it will gte exception.
       print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      return null;
     }
   }
 }

@@ -26,7 +26,7 @@ class RegisterServicesHTTP {
         'email': regis.email,
         'name': regis.username,
         'password': regis.password,
-        'password_confirmation': regis.confirmPassword
+        'password_confirmation': regis.confirmPassword,
       }),
     );
     print("RegisterIndividu:" + response.statusCode.toString());

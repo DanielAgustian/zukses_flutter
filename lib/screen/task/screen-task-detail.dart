@@ -830,7 +830,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               : SizedBox(
                                   height: 10,
                                 ),
-                          TaskRow(
+                          TaskRow2(
                             items: priorityList,
                             title: "Priority",
                             textItem: priority,

@@ -13,13 +13,13 @@ import 'package:zukses_app_1/bloc/task/task-bloc.dart';
 import 'package:zukses_app_1/bloc/task/task-event.dart';
 import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
-import 'package:zukses_app_1/component/button/button-long.dart';
+
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:zukses_app_1/model/label-task-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
@@ -510,75 +510,89 @@ class _AddTaskScreen extends State<AddTaskScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
-                            width: size.height < 600
-                                ? size.width * 0.4
-                                : size.width * 0.45,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: _dateValidator
-                                        ? colorError
-                                        : Colors.transparent),
-                                color: colorBackground,
-                                boxShadow: [boxShadowStandard],
-                                borderRadius: BorderRadius.circular(5)),
-                            child: TextFormField(
-                              readOnly: true,
-                              controller: textDueDate,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              onChanged: (val) {},
-                              decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                    icon: FaIcon(FontAwesomeIcons.chevronDown,
-                                        color: colorPrimary),
-                                    onPressed: () {
-                                      _selectDate(context);
-                                      setState(() {});
-                                    },
-                                  ),
-                                  hintText: "Set Due Date",
-                                  hintStyle: TextStyle(),
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none),
+                          InkWell(
+                            onTap: () {
+                              _selectDate(context);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
+                              width: size.height < 600
+                                  ? size.width * 0.4
+                                  : size.width * 0.45,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: _dateValidator
+                                          ? colorError
+                                          : Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [boxShadowStandard],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: IgnorePointer(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  controller: textDueDate,
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (val) {},
+                                  decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        icon: FaIcon(
+                                            FontAwesomeIcons.chevronDown,
+                                            color: colorPrimary),
+                                        onPressed: () {
+                                          _selectDate(context);
+                                        },
+                                      ),
+                                      hintText: "Set Due Date",
+                                      hintStyle: TextStyle(),
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none),
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
                             width: 10,
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            width: size.width * 0.40,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: _timeValidator
-                                        ? colorError
-                                        : Colors.transparent),
-                                color: colorBackground,
-                                boxShadow: [boxShadowStandard],
-                                borderRadius: BorderRadius.circular(5)),
-                            child: TextFormField(
-                              readOnly: true,
-                              controller: textTime,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              onChanged: (val) {},
-                              decoration: InputDecoration(
-                                  prefixIcon: IconButton(
-                                    icon: FaIcon(FontAwesomeIcons.clock,
-                                        color: colorPrimary),
-                                    onPressed: () {
-                                      _selectTime();
-                                    },
-                                  ),
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(20, 15, 20, 0),
-                                  hintText: "Time",
-                                  hintStyle: TextStyle(),
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none),
+                          InkWell(
+                            onTap: () {
+                              _selectTime();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              width: size.width * 0.40,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: _timeValidator
+                                          ? colorError
+                                          : Colors.transparent),
+                                  color: colorBackground,
+                                  boxShadow: [boxShadowStandard],
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: IgnorePointer(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  controller: textTime,
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (val) {},
+                                  decoration: InputDecoration(
+                                      prefixIcon: IconButton(
+                                        icon: FaIcon(FontAwesomeIcons.clock,
+                                            color: colorPrimary),
+                                        onPressed: () {
+                                          _selectTime();
+                                        },
+                                      ),
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(20, 15, 20, 0),
+                                      hintText: "Time",
+                                      hintStyle: TextStyle(),
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none),
+                                ),
+                              ),
                             ),
                           ),
                         ],

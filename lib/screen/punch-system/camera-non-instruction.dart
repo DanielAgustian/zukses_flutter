@@ -24,6 +24,7 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
 
   void getImage() async {
     final pickedFile = await picker.getImage(
+        preferredCameraDevice: CameraDevice.front,
         source: ImageSource.camera,
         imageQuality: imageQualityCamera,
         maxHeight: maxHeight,

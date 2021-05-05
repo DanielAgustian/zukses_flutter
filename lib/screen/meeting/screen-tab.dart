@@ -35,7 +35,7 @@ class ScreenTabRequest extends StatefulWidget {
 class _ScreenTabRequestState extends State<ScreenTabRequest>
     with SingleTickerProviderStateMixin {
   TextEditingController _textReasonReject = TextEditingController();
-  
+
   // Dragable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
@@ -63,71 +63,82 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocBuilder<MeetingReqBloc, MeetingReqState>(
-        builder: (context, state) {
-      if (state is MeetingReqStateSuccessLoad) {
-        int panjang = state.schedule.length;
-        return panjang >= 1
-            ? Stack(
-                children: [
-                  Container(
-                      child: isLoading
-                          ? ListView.builder(
-                              itemCount: state.schedule.length,
-                              itemBuilder: (context, index) =>
-                                  SkeletonLess3WithAvatar(
-                                    size: size,
-                                    row: 2,
-                                  ))
-                          : ListView.builder(
-                              itemCount: state.schedule.length,
-                              itemBuilder: (context, index) =>
-                                  ScheduleItemRequest(
-                                      count:
-                                          state.schedule[index].members.length,
-                                      date: util.dateNumbertoCalendar(
-                                          state.schedule[index].date),
-                                      size: size,
-                                      onClick: () {
-                                        if (_controller.isDismissed) {
-                                          _controller.forward();
-                                          setState(() {
-                                            model = state.schedule[index];
-                                            shade = true;
-                                          });
-                                        } else if (_controller.isCompleted) {
-                                          _controller.reverse();
-                                          setState(() {
-                                            shade = false;
-                                          });
-                                        }
-                                      },
-                                      time1: util.hourFormat(
-                                          state.schedule[index].date),
-                                      time2: util.hourFormat(
-                                          state.schedule[index].meetingEndTime),
-                                      title: state.schedule[index].title))),
-                  shade
-                      ? Container(
-                          width: size.width,
-                          height: size.height,
-                          color: Colors.black38.withOpacity(0.5),
-                        )
-                      : Container(),
-                  scrollerSheet()
-                ],
-              )
-            : Center(
-                child: Text(
-                  "No Meeting Request.",
-                  style: TextStyle(
-                      color: colorPrimary, fontWeight: FontWeight.bold),
-                ),
-              );
-      } else {
-        return Container();
-      }
-    });
+    return Stack(
+      children: [
+        BlocBuilder<MeetingReqBloc, MeetingReqState>(builder: (context, state) {
+          if (state is MeetingReqStateSuccessLoad) {
+            int panjang = state.schedule.length;
+            return panjang >= 1
+                ? Stack(
+                    children: [
+                      Container(
+                          child: isLoading
+                              ? ListView.builder(
+                                  itemCount: state.schedule.length,
+                                  itemBuilder: (context, index) =>
+                                      SkeletonLess3WithAvatar(
+                                        size: size,
+                                        row: 2,
+                                      ))
+                              : ListView.builder(
+                                  itemCount: state.schedule.length,
+                                  itemBuilder: (context, index) =>
+                                      ScheduleItemRequest(
+                                          count: state
+                                              .schedule[index].members.length,
+                                          date: util.dateNumbertoCalendar(
+                                              state.schedule[index].date),
+                                          size: size,
+                                          onClick: () {
+                                            if (_controller.isDismissed) {
+                                              _controller.forward();
+                                              setState(() {
+                                                model = state.schedule[index];
+                                                shade = true;
+                                              });
+                                            } else if (_controller
+                                                .isCompleted) {
+                                              _controller.reverse();
+                                              setState(() {
+                                                shade = false;
+                                              });
+                                            }
+                                          },
+                                          time1: util.hourFormat(
+                                              state.schedule[index].date),
+                                          time2: util.hourFormat(state
+                                              .schedule[index].meetingEndTime),
+                                          title: state.schedule[index].title))),
+                      shade
+                          ? Container(
+                              width: size.width,
+                              height: size.height,
+                              color: Colors.black38.withOpacity(0.5),
+                            )
+                          : Container(),
+                      scrollerSheet()
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      "No Meeting Request.",
+                      style: TextStyle(
+                          color: colorPrimary, fontWeight: FontWeight.bold),
+                    ),
+                  );
+          } else if (state is MeetingReqStateFailLoad) {
+            return Center(
+              child: Text(
+                "No Meeting Request.",
+                style:
+                    TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
+              ),
+            );
+          }
+          return Container();
+        }),
+      ],
+    );
   }
 
   void loadBeginningData() {

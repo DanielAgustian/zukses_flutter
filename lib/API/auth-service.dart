@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,18 +13,22 @@ class AuthServiceHTTP {
   final facebookLogin = FacebookLogin();
   //GoogleSignIn gsi = GoogleSignIn.standard();
   Future<AuthModel> createLogin(String email, password, String tokenFCM) async {
-    
+    print("tokenFCM" + tokenFCM);
     final response = await http.post(
       Uri.https(baseURI, '/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Charset': 'utf-8'
       },
-      body: jsonEncode(<String, String>{'email': email, 'password': password, 'fcmToken': tokenFCM}),
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+        'fcmToken': tokenFCM
+      }),
     );
     print("email: " + email);
     print("Auth Code: " + response.statusCode.toString());
-
+    
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -37,7 +40,7 @@ class AuthServiceHTTP {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
       await prefs.setString("myID", user.user.userID);
-      
+
       return user;
     } else {
       // If the server did not return a 201 CREATED response,

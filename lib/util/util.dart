@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
+
 import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
@@ -93,8 +92,15 @@ class Util {
     return DateFormat('yMMMd').format(date);
   }
 
-  String generateMd5(String input) {
-    return md5.convert(utf8.encode(input)).toString();
+  String getInitials(String name) {
+    List<String> splitString = name.split(" ");
+    String initialName = "";
+    splitString.forEach((element) {
+      if (initialName.length < 2) {
+        initialName = initialName + element[0];
+      }
+    });
+    return initialName.toUpperCase();
   }
 
   saveSharedPreferences(String key, String value) async {
@@ -115,9 +121,10 @@ class Util {
       return token;
     } else {
       String token = await FirebaseMessaging.instance.getToken();
-
+     
       print("Token FCM for Android $token");
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("fcmToken", token);
       return token;
     }
   }

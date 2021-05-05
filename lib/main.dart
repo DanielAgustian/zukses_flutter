@@ -1,5 +1,7 @@
 import 'dart:async';
 //import 'package:device_preview/device_preview.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -31,10 +33,10 @@ import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
-//import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
+
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
@@ -46,10 +48,38 @@ import 'bloc/overtime/overtime-bloc.dart';
 import 'bloc/task/task-bloc.dart';
 import 'bloc/team/team-bloc.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
+
+/// Create a [AndroidNotificationChannel] for heads up notifications
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel', // id
+  'High Importance Notifications', // title
+  'This channel is used for important notifications.', // description
+  importance: Importance.high,
+);
+
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+
+IOSInitializationSettings initializationSettingsIOs =
+    IOSInitializationSettings();
+
+InitializationSettings initSetttings = InitializationSettings(
+    android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = BlocObserver();
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
 
   // check is user have been login
   String token;
@@ -57,15 +87,31 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   token = prefs.getString("token");
   onboarding = prefs.getBool("onboarding");
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  /*AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/traderindo_logo');*/
+
+  /// Update the iOS foreground notification presentation options to allow
+  /// heads up notifications.
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
   runApp(
-  //DevicePreview(
-     // builder: (context) => 
+      //DevicePreview(
+      // builder: (context) =>
       MyApp(
-            token: token,
-            onboarding: onboarding,
-          )
-         // )
-          );
+    token: token,
+    onboarding: onboarding,
+  )
+      // )
+      );
 }
 
 class MyApp extends StatelessWidget {

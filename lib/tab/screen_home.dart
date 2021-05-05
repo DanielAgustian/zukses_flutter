@@ -122,6 +122,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
 
+  DateTime backbuttonpressedTime;
+
+  String tokenFCM = "";
   void timer() {
     Timer(Duration(seconds: 2), () {
       if (mounted) {
@@ -163,12 +166,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void getAuthData() async {
+    await _getTokenFCM();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("userLogin");
     String password = prefs.getString("passLogin");
     print("username " + username);
-    BlocProvider.of<AuthenticationBloc>(context)
-        .add(AuthEventLoginManual(email: username, password: password));
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
+        email: username, password: password, tokenFCM: tokenFCM));
   }
 
   void loginTeam() async {
@@ -206,6 +210,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         .add(LoadHighPriorityEvent("high"));
   }
 
+  Future<void> _getTokenFCM() async {
+    tokenFCM = await util.getTokenFCM();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -230,6 +238,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
+  Future<bool> onWillPop() async {
+    DateTime currentTime = DateTime.now();
+    //Statement 1 Or statement2
+    bool backButton = backbuttonpressedTime == null ||
+        currentTime.difference(backbuttonpressedTime) > Duration(seconds: 3);
+    if (backButton) {
+      backbuttonpressedTime = currentTime;
+      util.showToast(
+          msg: "Double Click to exit app",
+          duration: 3,
+          context: context,
+          txtColor: colorBackground,
+          color: Colors.black);
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -240,345 +266,280 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         },
       ),*/
       backgroundColor: colorBackground,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              BlocListener<MeetingReqBloc, MeetingReqState>(
-                listener: (context, state) async {
-                  if (state is MeetingReqStateSuccessLoad) {
-                    setState(() {
-                      scheduleReqLength = state.schedule.length;
-                    });
-                  }
-                },
-                child: Container(),
-              ),
-              BlocListener<MeetingBloc, MeetingState>(
+      body: WillPopScope(
+        onWillPop: onWillPop,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                BlocListener<MeetingReqBloc, MeetingReqState>(
                   listener: (context, state) async {
-                    if (state is MeetingStateSuccessLoad) {
+                    if (state is MeetingReqStateSuccessLoad) {
                       setState(() {
-                        _scheduleAccepted.clear();
-                        state.meetings.forEach((element) {
-                          if (util.yearFormat(now) ==
-                              util.yearFormat(element.date)) {
-                            _scheduleAccepted.add(element);
+                        scheduleReqLength = state.schedule.length;
+                      });
+                    }
+                  },
+                  child: Container(),
+                ),
+                BlocListener<MeetingBloc, MeetingState>(
+                    listener: (context, state) async {
+                      if (state is MeetingStateSuccessLoad) {
+                        setState(() {
+                          _scheduleAccepted.clear();
+                          state.meetings.forEach((element) {
+                            if (util.yearFormat(now) ==
+                                util.yearFormat(element.date)) {
+                              _scheduleAccepted.add(element);
+                            }
+                          });
+                          if (_scheduleAccepted.length < 1) {
+                            print("No Data");
                           }
                         });
-                        if (_scheduleAccepted.length < 1) {
-                          print("No Data");
+                      }
+                    },
+                    child: Container()),
+                BlocListener<AuthenticationBloc, AuthenticationState>(
+                    listener: (context, state) async {
+                      if (state is AuthStateFailLoad) {
+                        Util().showToast(
+                            context: context,
+                            msg: "Something Wrong!",
+                            duration: 3,
+                            color: colorError,
+                            txtColor: colorBackground);
+                      } else if (state is AuthStateSuccessLoad) {
+                        setState(() {
+                          _authModel = state.authUser;
+                          isLoadingAuth = true;
+                        });
+
+                        if (_authModel.maxClockIn == "true") {
+                          setState(() {
+                            stringTap = enumTap[2];
+                          });
                         }
-                      });
-                    }
-                  },
-                  child: Container()),
-              BlocListener<AuthenticationBloc, AuthenticationState>(
+                        if (_authModel.maxClockIn == "false") {
+                          if (_authModel.attendance == "false") {
+                            setState(() {
+                              //stringTap = enumTap[0];
+                            });
+                          } else if (_authModel.attendance == "true") {
+                            setState(() {
+                              stringTap = enumTap[1];
+                            });
+                          }
+                        } else if (_authModel.maxClockIn == "true") {
+                          setState(() {
+                            stringTap = enumTap[2];
+                          });
+                        } else {
+                          print("Get Auth Data Error");
+                        }
+                        checkStatusClock("Get Auth Data");
+                      } else if (state is AuthStateSuccessTeamLoad) {
+                        _controller.reverse();
+                      }
+                    },
+                    child: Container()),
+                BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) async {
-                    if (state is AuthStateFailLoad) {
+                    getAuthData();
+                    if (state is AttendanceStateFailed) {
                       Util().showToast(
-                          context: context,
-                          msg: "Something Wrong!",
-                          duration: 3,
+                          context: this.context,
+                          msg: "Something Wrong !",
                           color: colorError,
                           txtColor: colorBackground);
-                    } else if (state is AuthStateSuccessLoad) {
+                    } else if (state is AttendanceStateSuccessClockIn) {
+                      // sharedPref();
                       setState(() {
-                        _authModel = state.authUser;
-                        isLoadingAuth = true;
+                        stringTap = enumTap[1];
                       });
+                    } else if (state is AttendanceStateSuccessClockOut) {
+                      print("clock out");
 
-                      if (_authModel.maxClockIn == "true") {
-                        setState(() {
-                          stringTap = enumTap[2];
-                        });
-                      }
-                      if (_authModel.maxClockIn == "false") {
-                        if (_authModel.attendance == "false") {
-                          setState(() {
-                            //stringTap = enumTap[0];
-                          });
-                        } else if (_authModel.attendance == "true") {
-                          setState(() {
-                            stringTap = enumTap[1];
-                          });
-                        }
-                      } else if (_authModel.maxClockIn == "true") {
-                        setState(() {
-                          stringTap = enumTap[2];
-                        });
-                      } else {
-                        print("Get Auth Data Error");
-                      }
-                      checkStatusClock("Get Auth Data");
-                    } else if (state is AuthStateSuccessTeamLoad) {
-                      _controller.reverse();
+                      setState(() {
+                        isClockIn = 2;
+                        attendanceID = state.attendanceID;
+                        stringTap = enumTap[2];
+                      });
+                      // // show confirm dialog success clock out
+                      showDialog(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  _buildPopupDialog(context, "_BlocListener"))
+                          .then((value) => stringTap = enumTap[2]);
                     }
                   },
-                  child: Container()),
-              BlocListener<AttendanceBloc, AttendanceState>(
-                listener: (context, state) async {
-                  getAuthData();
-                  if (state is AttendanceStateFailed) {
-                    Util().showToast(
-                        context: this.context,
-                        msg: "Something Wrong !",
-                        color: colorError,
-                        txtColor: colorBackground);
-                  } else if (state is AttendanceStateSuccessClockIn) {
-                    // sharedPref();
-                    setState(() {
-                      stringTap = enumTap[1];
-                    });
-                  } else if (state is AttendanceStateSuccessClockOut) {
-                    print("clock out");
+                  child: Container(),
 
-                    setState(() {
-                      isClockIn = 2;
-                      attendanceID = state.attendanceID;
-                      stringTap = enumTap[2];
-                    });
-                    // // show confirm dialog success clock out
-                    showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                _buildPopupDialog(context, "_BlocListener"))
-                        .then((value) => stringTap = enumTap[2]);
-                  }
-                },
-                child: Container(),
-
-                ///
-              ),
-              BlocListener<CompanyBloc, CompanyState>(
-                listener: (context, state) async {
-                  if (state is CompanyStateSuccessLoad) {
-                    _company = state.company;
-                    print("Company Model: " + _company.name);
-                  } else if (state is CompanyStateLoading) {
-                  } else {}
-                },
-                child: Container(),
-              ),
-              BlocListener<TaskBloc, TaskState>(
-                listener: (context, state) {
-                  if (state is TaskStateLowPrioritySuccessLoad) {
-                    setState(() {
-                      lengthLowPriority = state.task.length;
-                    });
-                  }
-                },
-                child: Container(),
-              ),
-              BlocListener<TaskPriorityBloc, TaskPriorityState>(
-                listener: (context, state) {
-                  if (state is TaskPriorityStateSuccessLoad) {
-                    setState(() {
-                      lengthHighPriority = state.task.length;
-                    });
-                    for (int i = 0; i < state.task.length; i++) {
-                      _taskHighPriority.add(state.task[i]);
+                  ///
+                ),
+                BlocListener<CompanyBloc, CompanyState>(
+                  listener: (context, state) async {
+                    if (state is CompanyStateSuccessLoad) {
+                      _company = state.company;
+                      print("Company Model: " + _company.name);
+                    } else if (state is CompanyStateLoading) {
+                    } else {}
+                  },
+                  child: Container(),
+                ),
+                BlocListener<TaskBloc, TaskState>(
+                  listener: (context, state) {
+                    if (state is TaskStateLowPrioritySuccessLoad) {
+                      setState(() {
+                        lengthLowPriority = state.task.length;
+                      });
                     }
-                  }
-                },
-                child: Container(),
-              ),
-              isLoading
-                  // FOR SKELETON LOADING
-                  ? skeletonSection(size)
-                  // LIMIT FOR THE REAL COMPONENT
-                  : Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            if (stringTap != enumTap[2]) {
-                              if (_authModel.maxClockIn != null &&
-                                  _authModel.attendance != null) {
-                                if (_authModel.maxClockIn == "false") {
-                                  if (_authModel.attendance == "false") {
-                                    if (instruction == true) {
-                                      pushToCamera();
+                  },
+                  child: Container(),
+                ),
+                BlocListener<TaskPriorityBloc, TaskPriorityState>(
+                  listener: (context, state) {
+                    if (state is TaskPriorityStateSuccessLoad) {
+                      setState(() {
+                        lengthHighPriority = state.task.length;
+                      });
+                      for (int i = 0; i < state.task.length; i++) {
+                        _taskHighPriority.add(state.task[i]);
+                      }
+                    }
+                  },
+                  child: Container(),
+                ),
+                isLoading
+                    // FOR SKELETON LOADING
+                    ? skeletonSection(size)
+                    // LIMIT FOR THE REAL COMPONENT
+                    : Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              if (stringTap != enumTap[2]) {
+                                if (_authModel.maxClockIn != null &&
+                                    _authModel.attendance != null) {
+                                  if (_authModel.maxClockIn == "false") {
+                                    if (_authModel.attendance == "false") {
+                                      if (instruction == true) {
+                                        pushToCamera();
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CameraInstruction()),
+                                        );
+                                      }
+                                    } else if (_authModel.attendance ==
+                                        "true") {
+                                      //Clock Out
+                                      int diff = timeCalculation(
+                                          _company.endOfficeTime);
+                                      //if employee clock out before office closing time
+                                      if (diff < 0) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                _buildClockOutNotFinished(
+                                                    context, size));
+                                      } else {
+                                        confirmClockOut(size: size);
+                                      }
                                     } else {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CameraInstruction()),
-                                      );
-                                    }
-                                  } else if (_authModel.attendance == "true") {
-                                    //Clock Out
-                                    int diff =
-                                        timeCalculation(_company.endOfficeTime);
-                                    //if employee clock out before office closing time
-                                    if (diff < 0) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              _buildClockOutNotFinished(
-                                                  context, size));
-                                    } else {
-                                      confirmClockOut(size: size);
+                                      print(_authModel.attendance);
+                                      print("Error Data");
                                     }
                                   } else {
-                                    print(_authModel.attendance);
-                                    print("Error Data");
+                                    //Have A Good Day!
+                                    setState(() {
+                                      stringTap = enumTap[2];
+                                    });
                                   }
                                 } else {
-                                  //Have A Good Day!
-                                  setState(() {
-                                    stringTap = enumTap[2];
-                                  });
+                                  getAuthData();
                                 }
-                              } else {
-                                getAuthData();
                               }
-                            }
 
-                            //}
-                          },
-                          // Bloc listener for attendance
-                          child: Container(
-                              width: double.infinity,
-                              height: size.height * 0.40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    bottomRight: Radius.circular(40),
-                                    bottomLeft: Radius.circular(40)),
-                                color: colorPrimary,
-                              ),
-                              child: Center(
-                                  child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                    TimerBuilder.periodic(Duration(seconds: 1),
-                                        builder: (context) {
-                                      return Text(
-                                        getSystemTime(),
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            letterSpacing: 1.5,
-                                            fontSize:
-                                                size.height < 600 ? 56 : 72,
-                                            fontWeight: FontWeight.w500),
-                                      );
-                                    }),
-                                    Container(
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: colorBackground,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
+                              //}
+                            },
+                            // Bloc listener for attendance
+                            child: Container(
+                                width: double.infinity,
+                                height: size.height * 0.40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(40),
+                                      bottomLeft: Radius.circular(40)),
+                                  color: colorPrimary,
+                                ),
+                                child: Center(
+                                    child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
                                         children: [
-                                          SvgPicture.asset(
-                                              "assets/images/tap-clock-in.svg",
-                                              width:
-                                                  size.height < 569 ? 20 : 25,
-                                              height:
-                                                  size.height < 569 ? 20 : 25),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            stringTap,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: colorPrimary,
-                                                fontSize: size.height < 600
-                                                    ? 14
-                                                    : 16),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ]))),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        //======================BlocBuilder===========================
-                        BlocBuilder<UserDataBloc, UserDataState>(
-                          builder: (context, state) {
-                            if (state is UserDataStateLoading) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
+                                      TimerBuilder.periodic(
+                                          Duration(seconds: 1),
+                                          builder: (context) {
+                                        return Text(
+                                          getSystemTime(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              letterSpacing: 1.5,
+                                              fontSize:
+                                                  size.height < 600 ? 56 : 72,
+                                              fontWeight: FontWeight.w500),
+                                        );
+                                      }),
                                       Container(
-                                        child: Column(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: colorBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment.center,
                                           children: [
-                                            SkeletonAnimation(
-                                              shimmerColor: colorNeutral170,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                width: size.width * 0.6,
-                                                height: 20,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            SkeletonAnimation(
-                                              shimmerColor: colorNeutral170,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                width: size.width * 0.6,
-                                                height: 10,
-                                              ),
+                                            SvgPicture.asset(
+                                                "assets/images/tap-clock-in.svg",
+                                                width:
+                                                    size.height < 569 ? 20 : 25,
+                                                height: size.height < 569
+                                                    ? 20
+                                                    : 25),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              stringTap,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: colorPrimary,
+                                                  fontSize: size.height < 600
+                                                      ? 14
+                                                      : 16),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      SkeletonAvatar()
-                                    ]),
-                              );
-                            } else if (state is UserDataStateSuccessLoad) {
-                              String name = state.userModel.name == null
-                                  ? "Username"
-                                  : state.userModel.name;
-                              if (name.length > 15) {
-                                var parts = name.split(" ");
-                                name = parts[0];
-                              }
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (_company != null) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => UserProfile(
-                                                company: _company,
-                                                user: state.userModel),
-                                          ));
-                                    } else {
-                                      Util().showToast(
-                                          msg: "Company Empty!",
-                                          color: colorError,
-                                          txtColor: colorBackground,
-                                          context: context,
-                                          duration: 3);
-                                    }
-                                  },
+                                    ]))),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          //======================BlocBuilder===========================
+                          BlocBuilder<UserDataBloc, UserDataState>(
+                            builder: (context, state) {
+                              if (state is UserDataStateLoading) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
                                   child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -588,461 +549,551 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                "Hi, $name",
-                                                style: TextStyle(
-                                                    color: colorPrimary,
-                                                    letterSpacing: 0,
-                                                    fontSize: size.width <= 600
-                                                        ? 20
-                                                        : 24,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  "WELCOME BACK! ",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                    letterSpacing: 0,
-                                                    fontSize: size.width <= 600
-                                                        ? 12
-                                                        : 14,
+                                              SkeletonAnimation(
+                                                shimmerColor: colorNeutral170,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
                                                   ),
+                                                  width: size.width * 0.6,
+                                                  height: 20,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              SkeletonAnimation(
+                                                shimmerColor: colorNeutral170,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  width: size.width * 0.6,
+                                                  height: 10,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        Row(
-                                          children: [
-                                            FaIcon(
-                                              FontAwesomeIcons.solidBell,
-                                              size: size.height < 569 ? 18 : 25,
-                                              color: colorPrimary,
-                                            ),
-                                            SizedBox(
-                                              width:
-                                                  size.height < 569 ? 10 : 15,
-                                            ),
-                                            Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 0, 10, 0),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Container(
-                                                        height: 45,
-                                                        width: 45,
-                                                        decoration: BoxDecoration(
-                                                            color: colorPrimary,
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            image: DecorationImage(
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                image: state.userModel.imgUrl ==
-                                                                            null ||
-                                                                        state.userModel.imgUrl ==
-                                                                            ""
-                                                                    ? Image.asset(
-                                                                            "assets/images/ava.png")
-                                                                        .image
-                                                                    : NetworkImage(
-                                                                        "https://api-zukses.yokesen.com/${state.userModel.imgUrl}"))))
-                                                  ],
-                                                )),
-                                          ],
-                                        )
+                                        SkeletonAvatar()
                                       ]),
-                                ),
-                              );
-                            } else if (state is UserDataStateFailLoad) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SkeletonAnimation(
-                                              shimmerColor: colorNeutral170,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
+                                );
+                              } else if (state is UserDataStateSuccessLoad) {
+                                String name = state.userModel.name == null
+                                    ? "Username"
+                                    : state.userModel.name;
+                                if (name.length > 15) {
+                                  var parts = name.split(" ");
+                                  name = parts[0];
+                                }
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  child: InkWell(
+                                    onTap: () {
+                                      if (_company != null) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => UserProfile(
+                                                  company: _company,
+                                                  user: state.userModel),
+                                            ));
+                                      } else {
+                                        Util().showToast(
+                                            msg: "Company Empty!",
+                                            color: colorError,
+                                            txtColor: colorBackground,
+                                            context: context,
+                                            duration: 3);
+                                      }
+                                    },
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Hi, $name",
+                                                  style: TextStyle(
+                                                      color: colorPrimary,
+                                                      letterSpacing: 0,
+                                                      fontSize:
+                                                          size.width <= 600
+                                                              ? 20
+                                                              : 24,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
-                                                width: size.width * 0.6,
-                                                height: 20,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            SkeletonAnimation(
-                                              shimmerColor: colorNeutral170,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    "WELCOME BACK! ",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      letterSpacing: 0,
+                                                      fontSize:
+                                                          size.width <= 600
+                                                              ? 12
+                                                              : 14,
+                                                    ),
+                                                  ),
                                                 ),
-                                                width: size.width * 0.6,
-                                                height: 10,
-                                              ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              FaIcon(
+                                                FontAwesomeIcons.solidBell,
+                                                size:
+                                                    size.height < 569 ? 18 : 25,
+                                                color: colorPrimary,
+                                              ),
+                                              SizedBox(
+                                                width:
+                                                    size.height < 569 ? 10 : 15,
+                                              ),
+                                              Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      0, 0, 10, 0),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Container(
+                                                          height: 45,
+                                                          width: 45,
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  colorPrimary,
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image: DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image: state.userModel.imgUrl ==
+                                                                              null ||
+                                                                          state.userModel.imgUrl ==
+                                                                              ""
+                                                                      ? Image.asset(
+                                                                              "assets/images/ava.png")
+                                                                          .image
+                                                                      : NetworkImage(
+                                                                          "https://api-zukses.yokesen.com/${state.userModel.imgUrl}"))))
+                                                    ],
+                                                  )),
+                                            ],
+                                          )
+                                        ]),
+                                  ),
+                                );
+                              } else if (state is UserDataStateFailLoad) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SkeletonAnimation(
+                                                shimmerColor: colorNeutral170,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  width: size.width * 0.6,
+                                                  height: 20,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              SkeletonAnimation(
+                                                shimmerColor: colorNeutral170,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  width: size.width * 0.6,
+                                                  height: 10,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SkeletonAvatar()
-                                    ]),
-                              );
-                            } else if (state is UserDataStateUpdateSuccess) {
-                              getUserProfile();
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SkeletonAnimation(
-                                              shimmerColor: colorNeutral170,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
+                                        SkeletonAvatar()
+                                      ]),
+                                );
+                              } else if (state is UserDataStateUpdateSuccess) {
+                                getUserProfile();
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SkeletonAnimation(
+                                                shimmerColor: colorNeutral170,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  width: size.width * 0.6,
+                                                  height: 20,
                                                 ),
-                                                width: size.width * 0.6,
-                                                height: 20,
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            SkeletonAnimation(
-                                              shimmerColor: colorNeutral170,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              SkeletonAnimation(
+                                                shimmerColor: colorNeutral170,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: colorNeutral2,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  width: size.width * 0.6,
+                                                  height: 10,
                                                 ),
-                                                width: size.width * 0.6,
-                                                height: 10,
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SkeletonAvatar()
-                                    ]),
-                              );
-                            }
+                                        SkeletonAvatar()
+                                      ]),
+                                );
+                              }
 
-                            return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 20),
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 20),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Data Error",
+                                              style: TextStyle(
+                                                color: colorPrimary,
+                                                letterSpacing: 0,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize:
+                                                    size.width <= 600 ? 20 : 24,
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "WELCOME BACK! ",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  letterSpacing: 0,
+                                                  fontSize: size.width <= 600
+                                                      ? 12
+                                                      : 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Container(
+                                                  height: 45,
+                                                  width: 45,
+                                                  decoration: BoxDecoration(
+                                                      color: colorPrimary,
+                                                      shape: BoxShape.circle,
+                                                      image: DecorationImage(
+                                                          fit: BoxFit.fill,
+                                                          image: Image.asset(
+                                                                  "assets/images/ava.png")
+                                                              .image)))
+                                            ],
+                                          ))
+                                    ]),
+                              );
+                            },
+                          ),
+
+                          //====================BlocBuilder=================================///
+                          SizedBox(height: 20),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MemberScreen()));
+                            },
+                            child: BlocBuilder<TeamBloc, TeamState>(
+                              builder: (context, state) {
+                                if (state is TeamStateSuccessLoad) {
+                                  return Container(
+                                    width: size.width,
+                                    padding: EdgeInsets.all(10),
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 15),
+                                    decoration: BoxDecoration(
+                                        color: colorBackground,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [boxShadowStandard]),
+                                    child: Center(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Data Error",
+                                            "Team Member",
                                             style: TextStyle(
-                                              color: colorPrimary,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                                  size.width <= 600 ? 20 : 24,
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              "WELCOME BACK! ",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                                                color: colorPrimary,
                                                 letterSpacing: 0,
                                                 fontSize:
-                                                    size.width <= 600 ? 12 : 14,
-                                              ),
+                                                    size.width <= 600 ? 18 : 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Container(
+                                            height: 20,
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: state.team.length,
+                                              itemBuilder: (context, index) =>
+                                                  index >= 9
+                                                      ? UserAvatar(
+                                                          value: "+" +
+                                                              (state.team.length -
+                                                                      9)
+                                                                  .toString(),
+                                                        )
+                                                      : UserAvatar(dotSize: 7),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Container(
-                                                height: 45,
-                                                width: 45,
-                                                decoration: BoxDecoration(
-                                                    color: colorPrimary,
-                                                    shape: BoxShape.circle,
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.fill,
-                                                        image: Image.asset(
-                                                                "assets/images/ava.png")
-                                                            .image)))
-                                          ],
-                                        ))
-                                  ]),
-                            );
-                          },
-                        ),
-
-                        //====================BlocBuilder=================================///
-                        SizedBox(height: 20),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MemberScreen()));
-                          },
-                          child: BlocBuilder<TeamBloc, TeamState>(
-                            builder: (context, state) {
-                              if (state is TeamStateSuccessLoad) {
-                                return Container(
-                                  width: size.width,
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.symmetric(horizontal: 15),
-                                  decoration: BoxDecoration(
-                                      color: colorBackground,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [boxShadowStandard]),
-                                  child: Center(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Team Member",
-                                          style: TextStyle(
-                                              color: colorPrimary,
-                                              letterSpacing: 0,
-                                              fontSize:
-                                                  size.width <= 600 ? 18 : 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          height: 20,
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: state.team.length,
-                                            itemBuilder: (context, index) =>
-                                                index >= 9
-                                                    ? UserAvatar(
-                                                        value: "+" +
-                                                            (state.team.length -
-                                                                    9)
-                                                                .toString(),
-                                                      )
-                                                    : UserAvatar(dotSize: 7),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Container();
-                              }
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Task List",
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  letterSpacing: 0,
-                                  fontSize: size.width <= 600 ? 20 : 22,
-                                  fontWeight: FontWeight.bold),
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-
-                        Container(
-                            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                BoxHome(
-                                  loading: isLoading,
-                                  title: "High Priority Task",
-                                  total: lengthHighPriority,
-                                  numberColor: colorSecondaryRed,
-                                  fontSize: size.width <= 600 ? 34 : 36,
-                                ),
-                                BoxHome(
-                                    loading: isLoading,
-                                    title: "Low Priority Task",
-                                    total: lengthLowPriority,
-                                    numberColor: colorClear,
-                                    fontSize: size.width <= 600 ? 34 : 36),
-                              ],
-                            )),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            decoration: BoxDecoration(
-                                color: colorBackground,
-                                boxShadow: [boxShadowStandard]),
-                            child: Column(
-                              children: [
-                                _taskHighPriority.length < 1
-                                    ? Center(
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.symmetric(vertical: 5),
-                                          child: Text(
-                                            "No High Priority Task",
-                                            style: TextStyle(
-                                                color: colorPrimary,
-                                                fontSize:
-                                                    size.height < 569 ? 12 : 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      )
-                                    : ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.all(1.0),
-                                        itemCount: _taskHighPriority.length > 2
-                                            ? 2
-                                            : _taskHighPriority.length,
-                                        scrollDirection: Axis.vertical,
-                                        shrinkWrap: true,
-                                        itemBuilder: (context, index) {
-                                          return ListViewBox(
-                                            title: _taskHighPriority[index]
-                                                .taskName,
-                                            detail: _taskHighPriority[index]
-                                                .details,
-                                            viewType: "task",
-                                          );
-                                        },
-                                      ),
-                                Padding(
-                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    child: TextButton(
-                                        style: TextButton.styleFrom(
-                                            padding: EdgeInsets.fromLTRB(
-                                                10, 0, 10, 0),
-                                            primary: colorBackground),
-                                        onPressed: () {
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ScreenTab(index: 2)));
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text("Show All Task Schedule",
-                                                style: TextStyle(
-                                                    color: colorPrimary,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: colorPrimary,
-                                            )
-                                          ],
-                                        )))
-                              ],
-                            )),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Meeting List",
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  letterSpacing: 0,
-                                  fontSize: size.width <= 600 ? 20 : 22,
-                                  fontWeight: FontWeight.bold),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Task List",
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    letterSpacing: 0,
+                                    fontSize: size.width <= 600 ? 20 : 22,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                BoxHome(
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          Container(
+                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  BoxHome(
                                     loading: isLoading,
-                                    title: "Meeting Schedule",
-                                    total: _scheduleAccepted.length,
+                                    title: "High Priority Task",
+                                    total: lengthHighPriority,
                                     numberColor: colorSecondaryRed,
-                                    fontSize: size.width <= 600 ? 34 : 36),
-                                BoxHome(
-                                    loading: isLoading,
-                                    title: "Meeting Request",
-                                    total: scheduleReqLength,
-                                    numberColor: colorSecondaryYellow,
-                                    fontSize: size.width <= 600 ? 34 : 36),
-                              ],
-                            )),
-                        SizedBox(
-                          height: 15,
-                        ),
+                                    fontSize: size.width <= 600 ? 34 : 36,
+                                  ),
+                                  BoxHome(
+                                      loading: isLoading,
+                                      title: "Low Priority Task",
+                                      total: lengthLowPriority,
+                                      numberColor: colorClear,
+                                      fontSize: size.width <= 600 ? 34 : 36),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              decoration: BoxDecoration(
+                                  color: colorBackground,
+                                  boxShadow: [boxShadowStandard]),
+                              child: Column(
+                                children: [
+                                  _taskHighPriority.length < 1
+                                      ? Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5),
+                                            child: Text(
+                                              "No High Priority Task",
+                                              style: TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: size.height < 569
+                                                      ? 12
+                                                      : 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        )
+                                      : ListView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          padding: EdgeInsets.all(1.0),
+                                          itemCount:
+                                              _taskHighPriority.length > 2
+                                                  ? 2
+                                                  : _taskHighPriority.length,
+                                          scrollDirection: Axis.vertical,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            return ListViewBox(
+                                              title: _taskHighPriority[index]
+                                                  .taskName,
+                                              detail: _taskHighPriority[index]
+                                                  .details,
+                                              viewType: "task",
+                                            );
+                                          },
+                                        ),
+                                  Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      child: TextButton(
+                                          style: TextButton.styleFrom(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 0, 10, 0),
+                                              primary: colorBackground),
+                                          onPressed: () {
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ScreenTab(index: 2)));
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Show All Task Schedule",
+                                                  style: TextStyle(
+                                                      color: colorPrimary,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: colorPrimary,
+                                              )
+                                            ],
+                                          )))
+                                ],
+                              )),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Meeting List",
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    letterSpacing: 0,
+                                    fontSize: size.width <= 600 ? 20 : 22,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  BoxHome(
+                                      loading: isLoading,
+                                      title: "Meeting Schedule",
+                                      total: _scheduleAccepted.length,
+                                      numberColor: colorSecondaryRed,
+                                      fontSize: size.width <= 600 ? 34 : 36),
+                                  BoxHome(
+                                      loading: isLoading,
+                                      title: "Meeting Request",
+                                      total: scheduleReqLength,
+                                      numberColor: colorSecondaryYellow,
+                                      fontSize: size.width <= 600 ? 34 : 36),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 15,
+                          ),
 
-                        _listViewMeeting(_scheduleAccepted, size),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    )
-            ],
-          )),
-          BlocBuilder<TeamDetailBloc, TeamDetailState>(
-              builder: (context, state) {
-            if (state is TeamDetailStateSuccess) {
-              return scrollInvitation(context, size, state.team);
-            }
-            return Container();
-          })
-        ],
+                          _listViewMeeting(_scheduleAccepted, size),
+                          SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      )
+              ],
+            )),
+            BlocBuilder<TeamDetailBloc, TeamDetailState>(
+                builder: (context, state) {
+              if (state is TeamDetailStateSuccess) {
+                return scrollInvitation(context, size, state.team);
+              }
+              return Container();
+            })
+          ],
+        ),
       ),
     );
   }

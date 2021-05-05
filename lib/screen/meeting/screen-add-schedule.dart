@@ -211,6 +211,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         startMeeting != null &&
         endMeeting != null &&
         !_timeValidator) {
+      print(repeat);
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,
@@ -235,7 +236,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     _employeeBloc.add(LoadAllEmployeeEvent());
 
     _controller = AnimationController(vsync: this, duration: _duration);
-    
+
     // Handle view of `time2` on condition auto set 30 minutes after `time1`
     // if hour = 24, tjhen it should be 00
     // and if minutes = 60, it should be 00

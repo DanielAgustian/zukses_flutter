@@ -3,20 +3,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class TaskRow extends StatelessWidget {
-  const TaskRow({
-    Key key,
-    this.title,
-    this.textItem,
-    this.fontSize,
-    this.onSelectedItem,
-    this.items,
-  }) : super(key: key);
+  const TaskRow(
+      {Key key,
+      this.title,
+      this.textItem,
+      this.fontSize,
+      this.onSelectedItem,
+      this.items,
+      this.priority = false})
+      : super(key: key);
 
   final String title, textItem;
   final double fontSize;
   final Function onSelectedItem;
   final List<String> items;
-
+  final bool priority;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,6 +64,11 @@ class TaskRow extends StatelessWidget {
                                 color: colorPrimary,
                                 fontWeight: FontWeight.w700),
                           ),
+                          priority
+                              ? SizedBox(
+                                  width: 10,
+                                )
+                              : Container(),
                           SizedBox(
                             width: 10,
                           )
@@ -184,96 +190,7 @@ class TaskRow2 extends StatelessWidget {
     } else if (priority.toLowerCase() == "medium") {
       return colorSecondaryYellow;
     } else {
-      return colorSecondaryYellow;
-    }
-  }
-}
-
-class TaskRowLabel extends StatelessWidget {
-  const TaskRowLabel({
-    Key key,
-    this.title,
-    this.textItem,
-    this.fontSize,
-    this.onSelectedItem,
-    this.items,
-  }) : super(key: key);
-
-  final String title, textItem;
-  final double fontSize;
-  final Function onSelectedItem;
-  final List<String> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "$title",
-            style: TextStyle(fontSize: fontSize, color: colorPrimary),
-          ),
-          DropdownButton(
-            value: textItem,
-            icon: FaIcon(
-              FontAwesomeIcons.chevronDown,
-              color: colorPrimary,
-              size: 18,
-            ),
-            elevation: 16,
-            style: TextStyle(
-                color: colorPrimary,
-                fontWeight: FontWeight.w700,
-                fontSize: fontSize),
-            underline: Container(),
-            onChanged: (String newValue) {
-              onSelectedItem(newValue);
-            },
-            items: items.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: colorChange(value),
-                          borderRadius: BorderRadius.circular(5)),
-                      width: 90,
-                      height: 30,
-                      child: Center(
-                        child: Text(
-                          value,
-                          style: TextStyle(
-                              fontSize: fontSize,
-                              color: colorBackground,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    )
-                  ],
-                ),
-              );
-            }).toList(),
-          )
-        ],
-      ),
-    );
-  }
-
-  Color colorChange(String label) {
-    if (label == "Front End") {
-      return colorSecondaryYellow;
-    } else if (label == "Back End") {
       return colorClear;
-    } else if (label == "Design") {
-      return colorSecondaryRed;
-    } else {
-      return colorError;
     }
   }
 }

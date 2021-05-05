@@ -1,9 +1,12 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/main.dart';
 import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-data-company.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
@@ -115,6 +118,62 @@ class WaitRegisApproved extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
+      if (message != null) {
+        print("MESSAGE ========================");
+        print(message.data);
+        notificationChecker(message);
+      }
+    });
+
+    // handle click notif from foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        print("MASUK ==========================================++>");
+        // print(notification.body);
+        flutterLocalNotificationsPlugin.initialize(
+          initSetttings,
+          onSelectNotification: (payload) {
+            notificationChecker(message);
+            return;
+          },
+        );
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                //icon: '@mipmap/traderindo_logo',
+              ),
+            ),
+            payload: notification.body);
+      }
+    });
+  }
+
+  void notificationChecker(RemoteMessage message) {
+    if (message.notification.title.toLowerCase().contains("new signal") ) {
+    }
+    // push to user screen if [new follower]
+    else if (message.notification.title
+        .toLowerCase()
+        .contains("new follower")) {}
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -186,7 +245,8 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
 }
 
 class PaymentApproved extends StatefulWidget {
-  PaymentApproved({Key key, this.title, this.token, this.paketID}) : super(key: key);
+  PaymentApproved({Key key, this.title, this.token, this.paketID})
+      : super(key: key);
   final String title;
   final String token;
   final String paketID;
@@ -270,8 +330,9 @@ class _PaymentApprovedScreen extends State<PaymentApproved> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    DataCompany(token: widget.token, paketID: widget.paketID)));
+                                builder: (context) => DataCompany(
+                                    token: widget.token,
+                                    paketID: widget.paketID)));
                       },
                     ),
                   )

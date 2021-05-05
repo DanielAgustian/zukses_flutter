@@ -28,7 +28,8 @@ class _AddProjectScreen extends State<AddProject> {
   final picker = ImagePicker();
   bool _titleValidator = false;
   bool _detailValidator = false;
-  bool _pictureValidator = false;
+  
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -120,12 +121,12 @@ class _AddProjectScreen extends State<AddProject> {
                           color: colorPrimary),
                     ),
                   ),
-                  _pictureValidator
+                  /*_pictureValidator
                       ? Text(
                           "Please Choose a Picture as Your Group Picture",
                           style: TextStyle(color: colorError),
                         )
-                      : Container(),
+                      : Container(),*/
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: Container(
@@ -260,16 +261,8 @@ class _AddProjectScreen extends State<AddProject> {
         _detailValidator = true;
       });
     }
-    if (data != null && data != "") {
-      setState(() {
-        _pictureValidator = false;
-      });
-    } else {
-      setState(() {
-        _pictureValidator = true;
-      });
-    }
-    if (!_titleValidator && !_detailValidator && !_pictureValidator) {
+   
+    if (!_titleValidator && !_detailValidator) {
       setState(() {
         loading = true;
       });
@@ -277,6 +270,10 @@ class _AddProjectScreen extends State<AddProject> {
       if (data != null) {
         setState(() {
           image = File(data);
+        });
+      } else {
+        setState(() {
+          image = null;
         });
       }
       ProjectModel project = ProjectModel(

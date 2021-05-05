@@ -79,6 +79,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
 
   void retakeButton() async {
     final pickedFile = await picker.getImage(
+        preferredCameraDevice: CameraDevice.front,
         source: ImageSource.camera,
         imageQuality: imageQualityCamera,
         maxHeight: maxHeight,

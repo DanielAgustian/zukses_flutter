@@ -168,6 +168,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
       waiting = false;
     });
     final pickedFile = await picker.getImage(
+        preferredCameraDevice: CameraDevice.front,
         source: ImageSource.camera,
         imageQuality: imageQualityCamera,
         maxHeight: maxHeight,
