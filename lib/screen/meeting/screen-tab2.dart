@@ -118,9 +118,10 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                       color: colorPrimary, fontWeight: FontWeight.bold),
                 ),
               );
-      } else {
-        return Container();
+      } else if (state is MeetingStateSuccess) {
+        BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
       }
+      return Container();
     });
   }
 

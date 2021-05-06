@@ -37,6 +37,7 @@ import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 
 import 'package:zukses_app_1/util/util.dart';
 
@@ -160,45 +161,81 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    AppBar appBar = AppBar(
+      elevation: 0,
+      backgroundColor: colorBackground,
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      leading: IconButton(
+          icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
+          onPressed: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ScreenTab(
+                          index: 2,
+                        )));
+          }),
+      title: Text(
+        widget.project.name,
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: size.height < 570 ? 18 : 22,
+            color: colorPrimary),
+      ),
+      actions: [
+        IconButton(
+          padding: EdgeInsets.only(right: 20),
+          splashColor: Colors.transparent,
+          icon: FaIcon(
+            FontAwesomeIcons.plusCircle,
+            color: colorPrimary,
+            size: size.height < 570 ? 20 : 25,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddTaskScreen(
+                        projectId: widget.project.id,
+                      )),
+            );
+          },
+        ),
+      ],
+    );
+    AppBar insideAppBar = AppBar(
+      leading: Container(),
+      elevation: 0,
+      backgroundColor: colorBackground,
+      flexibleSpace: Container(
+          color: colorNeutral150,
+          height: 30,
+          child: TabBar(
+              onTap: (index) {
+                _onTapIndex(index);
+              },
+              controller: tabController,
+              labelColor: colorNeutral150,
+              unselectedLabelColor: colorFacebook.withOpacity(0.2),
+              labelStyle: TextStyle(fontWeight: FontWeight.bold),
+              indicator: BoxDecoration(
+                  color: colorPrimary, borderRadius: BorderRadius.circular(5)),
+              tabs: [
+                Tab(
+                  text: "ToDo",
+                ),
+                Tab(
+                  text: "In Progress",
+                ),
+                Tab(
+                  text: "Done",
+                ),
+              ])),
+    );
     return Scaffold(
         backgroundColor: colorBackground,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: colorBackground,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          leading: IconButton(
-            icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            widget.project.name,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 18 : 22,
-                color: colorPrimary),
-          ),
-          actions: [
-            IconButton(
-              padding: EdgeInsets.only(right: 20),
-              splashColor: Colors.transparent,
-              icon: FaIcon(
-                FontAwesomeIcons.plusCircle,
-                color: colorPrimary,
-                size: size.height < 570 ? 20 : 25,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddTaskScreen(
-                            projectId: widget.project.id,
-                          )),
-                );
-              },
-            ),
-          ],
-        ),
+        appBar: appBar,
         body: Stack(
           children: [
             Column(
@@ -306,7 +343,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                 ),
                 SizedBox(
                   width: double.infinity,
-                  height: size.height * 0.8,
+                  height:
+                      size.height * 0.95 - (appBar.preferredSize.height + 10),
                   child: DefaultTabController(
                     length: 3,
                     child: Container(
@@ -314,37 +352,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
                       child: Scaffold(
-                          appBar: AppBar(
-                            leading: Container(),
-                            elevation: 0,
-                            backgroundColor: colorBackground,
-                            flexibleSpace: Container(
-                                color: colorNeutral150,
-                                height: 30,
-                                child: TabBar(
-                                    onTap: (index) {
-                                      _onTapIndex(index);
-                                    },
-                                    controller: tabController,
-                                    labelColor: colorNeutral150,
-                                    unselectedLabelColor:
-                                        colorFacebook.withOpacity(0.2),
-                                    labelStyle:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                    indicator: BoxDecoration(
-                                        color: colorPrimary,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    tabs: [
-                                      Tab(
-                                        text: "ToDo",
-                                      ),
-                                      Tab(
-                                        text: "In Progress",
-                                      ),
-                                      Tab(
-                                        text: "Done",
-                                      ),
-                                    ])),
+                          appBar: PreferredSize(
+                            preferredSize: Size.fromHeight(35),
+                            child: insideAppBar,
                           ),
                           body: Container(
                             width: double.infinity,

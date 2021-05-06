@@ -152,7 +152,7 @@ class MeetingServicesHTTP {
       }),
     );
     print(response.statusCode.toString());
-
+    print(response.body);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.

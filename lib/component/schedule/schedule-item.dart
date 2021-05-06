@@ -10,6 +10,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ScheduleItem extends StatelessWidget {
@@ -21,7 +22,8 @@ class ScheduleItem extends StatelessWidget {
       this.time2,
       this.onClick,
       this.meetingId,
-      this.count})
+      this.count,
+      this.status})
       : super(key: key);
 
   final Size size;
@@ -29,6 +31,7 @@ class ScheduleItem extends StatelessWidget {
   final String time1, time2;
   final Function onClick;
   final int count;
+  final List<UserModel> status;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -74,7 +77,12 @@ class ScheduleItem extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: count,
                     itemBuilder: (context, index) {
-                      return UserAvatar();
+                      return status == null
+                          ? UserAvatarSchedule()
+                          : UserAvatarSchedule(
+                              status: Util()
+                                  .acceptancePrint(status[index].accepted),
+                            );
                     },
                   ))
             ],

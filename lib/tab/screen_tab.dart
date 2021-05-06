@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
+import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:zukses_app_1/tab/screen_task.dart';
 import 'package:zukses_app_1/tab/screen_home.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -13,10 +14,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../main.dart';
 
 class ScreenTab extends StatefulWidget {
-  ScreenTab({Key key, this.title, this.index, this.link}) : super(key: key);
+  ScreenTab(
+      {Key key,
+      this.title,
+      this.index,
+      this.link,
+      this.projectId,
+      this.meetingId})
+      : super(key: key);
   final String title;
   final int index;
   final Uri link;
+  final String projectId;
+  final String meetingId;
   @override
   _ScreenTab createState() => _ScreenTab();
 }
@@ -36,9 +46,21 @@ class _ScreenTab extends State<ScreenTab> {
 
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
+    if (widget.projectId != null) {
+      screenList.add(TaskScreen(
+        projectId: widget.projectId,
+      ));
+    } else {
+      screenList.add(TaskScreen());
+    }
+    if (widget.meetingId != null) {
+      screenList.add(MeetingScreen(
+        meetingId: widget.meetingId,
+      ));
+    } else {
+      screenList.add(MeetingScreen());
+    }
 
-    screenList.add(TaskScreen());
-    screenList.add(MeetingScreen());
     Util util = Util();
     util.initDynamicLinks(context);
 
@@ -102,10 +124,31 @@ class _ScreenTab extends State<ScreenTab> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => RequestInbox()));
     }
-    // push to user screen if [new follower]
+    // push to task screen if create task
     else if (message.notification.title
         .toLowerCase()
-        .contains("new follower")) {}
+        .contains("task assignment")) {
+      print("Masuk task assignment");
+      print(message.data["projectId"]);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ScreenTab(
+                    index: 2,
+                    projectId: message.data["projectId"],
+                  )));
+    } else if (message.notification.title
+        .toLowerCase()
+        .contains("meeting response")) {
+      print(message.data);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ScreenTab(
+                    index: 3,
+                    meetingId: message.data["meetingId"],
+                  )));
+    }
   }
 
   Widget build(BuildContext context) {

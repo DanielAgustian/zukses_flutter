@@ -9,14 +9,15 @@ import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-project.dart';
 import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 
-
 class TaskScreen extends StatefulWidget {
-  TaskScreen({Key key, this.title}) : super(key: key);
+  TaskScreen({Key key, this.title, this.projectId}) : super(key: key);
   final String title;
+  final String projectId;
   @override
   _TaskScreen createState() => _TaskScreen();
 }
@@ -102,6 +103,23 @@ class _TaskScreen extends State<TaskScreen> {
                       } else if (state is ProjectStateSuccessLoad) {
                         setState(() {
                           isLoading = false;
+                          if (widget.projectId != null) {
+                            ProjectModel project;
+                            if (widget.projectId != null) {
+                              for (int i = 0; i < state.project.length; i++) {
+                                if (state.project[i].id.toString() ==
+                                    widget.projectId) {
+                                  project = state.project[i];
+                                }
+                              }
+                            }
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TaskDetailScreen(
+                                          project: project,
+                                        )));
+                          }
                         });
                       } else if (state is ProjectStateFailLoad) {
                         setState(() {

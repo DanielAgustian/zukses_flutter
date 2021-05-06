@@ -418,9 +418,10 @@ class _AddTaskScreen extends State<AddTaskScreen>
                             _controller.reverse();
                           }
                         },
-                        bgColor: colorBackground,
-                        outlineColor: colorPrimary,
-                        textColor: colorPrimary,
+                        bgColor: Colors.white,
+                        outlineColor: colorNeutral2,
+                        textColor: Colors.black,
+                        bold: false,
                       ),
                       hasilMultiple.length < 1
                           ? Container()

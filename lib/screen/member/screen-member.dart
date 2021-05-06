@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import 'package:zukses_app_1/bloc/team/team-bloc.dart';
 import 'package:zukses_app_1/bloc/team/team-event.dart';
 import 'package:zukses_app_1/bloc/team/team-state.dart';
@@ -22,7 +22,6 @@ class _MemberScreenState extends State<MemberScreen> {
   Util util = Util();
   @override
   void initState() {
-    
     super.initState();
     BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
   }
@@ -93,7 +92,11 @@ class _MemberScreenState extends State<MemberScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            UserAvatar(avatarRadius: 20, dotSize: 10),
+                            UserAvatar(
+                              avatarRadius: 20,
+                              dotSize: 10,
+                              status: state.team[index].late,
+                            ),
                             Text(
                               state.team[index].name,
                               style: TextStyle(

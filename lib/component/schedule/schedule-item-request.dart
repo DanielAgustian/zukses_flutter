@@ -10,6 +10,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ScheduleItemRequest extends StatelessWidget {
@@ -22,6 +23,7 @@ class ScheduleItemRequest extends StatelessWidget {
       this.onClick,
       this.date,
       this.meetingId,
+      this.listMember,
       this.count})
       : super(key: key);
 
@@ -30,6 +32,7 @@ class ScheduleItemRequest extends StatelessWidget {
   final String time1, time2, date;
   final Function onClick;
   final int count;
+  final List<UserModel> listMember;
   @override
   Widget build(BuildContext context) {
     return InkWell(

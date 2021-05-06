@@ -906,7 +906,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                                       9)
                                                                   .toString(),
                                                         )
-                                                      : UserAvatar(dotSize: 7),
+                                                      : UserAvatar(dotSize: 7, status: state.team[index].late),
                                             ),
                                           ),
                                         ],

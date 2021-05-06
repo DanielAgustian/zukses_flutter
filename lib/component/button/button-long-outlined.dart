@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class LongButtonOutline extends StatelessWidget {
-  const LongButtonOutline({
-    Key key,
-    @required this.size,
-    this.onClick,
-    this.title,
-    this.bgColor,
-    this.textColor,
-    this.outlineColor,
-    this.loading = false,
-  }) : super(key: key);
+  const LongButtonOutline(
+      {Key key,
+      @required this.size,
+      this.onClick,
+      this.title,
+      this.bgColor,
+      this.textColor,
+      this.outlineColor,
+      this.loading = false,
+      this.bold = true})
+      : super(key: key);
 
   final Size size;
   final Function onClick;
   final String title;
   final Color bgColor, textColor, outlineColor;
   final bool loading;
-
+  final bool bold;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -30,7 +31,6 @@ class LongButtonOutline extends StatelessWidget {
           border: Border.all(color: outlineColor),
           color: bgColor,
         ),
-        
         child: AnimatedContainer(
           width: size.width,
           duration: Duration(milliseconds: 700),
@@ -44,7 +44,10 @@ class LongButtonOutline extends StatelessWidget {
                   )
                 : Text(
                     title,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: textColor),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
+                        color: textColor),
                   ),
           ),
         ),

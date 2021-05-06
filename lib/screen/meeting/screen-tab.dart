@@ -9,6 +9,7 @@ import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
@@ -65,6 +66,17 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
+        BlocListener<MeetingBloc, MeetingState>(
+            listener: (context, state) {
+              if (state is MeetingStateSuccess) {
+                BlocProvider.of<MeetingReqBloc>(context)
+                    .add(LoadAllMeetingReqEvent());
+                setState(() {
+                  shade = false;
+                });
+              }
+            },
+            child: Container()),
         BlocBuilder<MeetingReqBloc, MeetingReqState>(builder: (context, state) {
           if (state is MeetingReqStateSuccessLoad) {
             int panjang = state.schedule.length;
@@ -92,8 +104,10 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                                           onClick: () {
                                             if (_controller.isDismissed) {
                                               _controller.forward();
+
                                               setState(() {
                                                 model = state.schedule[index];
+                                                print(model.meetingID);
                                                 shade = true;
                                               });
                                             } else if (_controller

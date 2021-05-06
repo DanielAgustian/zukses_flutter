@@ -28,7 +28,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     var res = await _taskServicesHTTP.fetchTask(event.projectId);
 
     if (res != null) {
-      print(res);
       yield TaskStateSuccessLoad(task: res);
       //print(state);
     } else {

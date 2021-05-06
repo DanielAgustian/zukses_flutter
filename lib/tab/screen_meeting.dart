@@ -29,8 +29,9 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class MeetingScreen extends StatefulWidget {
-  MeetingScreen({Key key, this.title}) : super(key: key);
+  MeetingScreen({Key key, this.title, this.meetingId}) : super(key: key);
   final String title;
+  final String meetingId;
   @override
   _MeetingScreenState createState() => _MeetingScreenState();
 }
@@ -40,12 +41,13 @@ class _MeetingScreenState extends State<MeetingScreen>
   DateTime _selectedDate;
   ScheduleModel scheduleClick = ScheduleModel();
   final textSearch = TextEditingController();
-  // List<AbsenceTime> absensiList = dummy;
+
   int week;
   DateTime _currentDate = DateTime.now();
   bool grid = true;
   bool removeBackgroundDialog = false;
   bool isVisible = true;
+
   // Draggable scroll controller
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 800);
@@ -111,11 +113,16 @@ class _MeetingScreenState extends State<MeetingScreen>
     }
   }
 
-  Future<bool> onWillPop()async{
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ScreenTab(index: 0,)));
+  Future<bool> onWillPop() async {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ScreenTab(
+                  index: 0,
+                )));
     return false;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -247,60 +254,89 @@ class _MeetingScreenState extends State<MeetingScreen>
           onWillPop: onWillPop,
           child: searching
               ? searchingData(context, size)
-              : BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
-                  if (state is MeetingStateSuccessLoad) {
-                    return Stack(
-                      children: [
-                        grid
-                            ? Container(
-                                margin: EdgeInsets.all(10),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        child: CalendarWidget(
-                                          fontSize: size.height <= 600
-                                              ? textSizeSmall16
-                                              : 16,
-                                          onSelectDate: (date, absence) {
-                                            selectDate(date);
-                                          },
-                                          data: state.meetings,
-                                          size: size,
-                                        ),
-                                      ),
-                                      SizedBox(height: 30),
-                                      TitleDayFormatted(
-                                        currentDate: _selectedDate,
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Container(
-                                        width: size.width,
-                                        child: isLoading
-                                            ? ListView.builder(
-                                                shrinkWrap: true,
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
-                                                itemCount: state.meetings.length,
-                                                itemBuilder: (context, index) =>
-                                                    SkeletonLess3WithAvatar(
-                                                        size: size, row: 2))
-                                            : ListView.builder(
-                                                shrinkWrap: true,
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
-                                                itemCount: state.meetings.length,
-                                                itemBuilder: (context, index) =>
-                                                    util.yearFormat(
-                                                                _selectedDate) ==
-                                                            util.yearFormat(state
-                                                                .meetings[index]
-                                                                .date)
+              : Stack(
+                  children: [
+                    BlocListener<MeetingBloc, MeetingState>(
+                      listener: (context, state) {
+                        if (state is MeetingStateSuccessLoad) {
+                          if (widget.meetingId != null) {
+                            state.meetings.forEach((element) {
+                              if (widget.meetingId == element.meetingID) {
+                                print("Go Here" + widget.meetingId);
+                                setState(() {
+                                  scheduleClick = element;
+                                });
+                                _controller.forward();
+                              }
+                            });
+                          }
+                        }
+                      },
+                      child: Container(),
+                    ),
+                    BlocBuilder<MeetingBloc, MeetingState>(
+                        builder: (context, state) {
+                      if (state is MeetingStateSuccessLoad) {
+                        return Stack(
+                          children: [
+                            grid
+                                ? Container(
+                                    margin: EdgeInsets.all(10),
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.vertical,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            child: CalendarWidget(
+                                              fontSize: size.height <= 600
+                                                  ? textSizeSmall16
+                                                  : 16,
+                                              onSelectDate: (date, absence) {
+                                                selectDate(date);
+                                              },
+                                              data: state.meetings,
+                                              size: size,
+                                            ),
+                                          ),
+                                          SizedBox(height: 30),
+                                          TitleDayFormatted(
+                                            currentDate: _selectedDate,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Container(
+                                            width: size.width,
+                                            child: isLoading
+                                                ? ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        state.meetings.length,
+                                                    itemBuilder: (context,
+                                                            index) =>
+                                                        SkeletonLess3WithAvatar(
+                                                            size: size, row: 2))
+                                                : ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        state.meetings.length,
+                                                    itemBuilder: (context, index) => util
+                                                                .yearFormat(
+                                                                    _selectedDate) ==
+                                                            util.yearFormat(
+                                                                state
+                                                                    .meetings[
+                                                                        index]
+                                                                    .date)
                                                         ? ScheduleItem(
+                                                            status: state
+                                                                .meetings[index]
+                                                                .members,
                                                             count: state
                                                                 .meetings[index]
                                                                 .members
@@ -346,125 +382,133 @@ class _MeetingScreenState extends State<MeetingScreen>
                                                             },
                                                           )
                                                         : Container()),
-                                      )
-                                    ],
-                                  ),
-                                ))
-                            : Container(
-                                child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: size.width,
-                                      height: size.height <= 569
-                                          ? size.height * 0.21
-                                          : size.height * 0.17,
-                                      child: CalendarListWidget(
-                                        fontSize: size.height <= 569
-                                            ? textSizeSmall14
-                                            : 16,
-                                        onSelectDate: (date) {
-                                          selectDate(date);
-                                        },
-                                        data: state.meetings,
-                                      ),
-                                    ),
-                                    SizedBox(height: 30),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      width: size.width,
-                                      height: size.height,
-                                      child: Column(
-                                        children: [
-                                          TitleDayFormatted(
-                                            currentDate: _selectedDate,
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Expanded(
-                                              child: Container(
-                                            width: size.width,
-                                            child: isLoading
-                                                ? ListView.builder(
-                                                    shrinkWrap: true,
-                                                    itemCount:
-                                                        state.meetings.length,
-                                                    itemBuilder: (context,
-                                                            index) =>
-                                                        SkeletonLess3WithAvatar(
-                                                            size: size, row: 2))
-                                                : ListView.builder(
-                                                    shrinkWrap: true,
-                                                    itemCount:
-                                                        state.meetings.length,
-                                                    itemBuilder: (context, index) => util
-                                                                .yearFormat(
-                                                                    _selectedDate) ==
-                                                            util.yearFormat(state
-                                                                .meetings[index]
-                                                                .date)
-                                                        ? ScheduleItem(
-                                                            count: state
-                                                                .meetings[index]
-                                                                .members
-                                                                .length,
-                                                            size: size,
-                                                            title: state
-                                                                .meetings[index]
-                                                                .title,
-                                                            time1: util
-                                                                .hourFormat(state
-                                                                    .meetings[
-                                                                        index]
-                                                                    .date),
-                                                            time2: util
-                                                                .hourFormat(state
-                                                                    .meetings[
-                                                                        index]
-                                                                    .meetingEndTime),
-                                                            onClick: () {
-                                                              if (_controller
-                                                                  .isDismissed) {
-                                                                setState(() {
-                                                                  meetingID = state
-                                                                      .meetings[
-                                                                          index]
-                                                                      .meetingID;
-                                                                  scheduleClick =
-                                                                      state.meetings[
-                                                                          index];
-                                                                });
-
-                                                                _controller
-                                                                    .forward();
-                                                              } else if (_controller
-                                                                  .isCompleted)
-                                                                _controller
-                                                                    .reverse();
-                                                            },
-                                                          )
-                                                        : Container()),
-                                          ))
+                                          )
                                         ],
                                       ),
+                                    ))
+                                : Container(
+                                    child: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          width: size.width,
+                                          height: size.height <= 569
+                                              ? size.height * 0.21
+                                              : size.height * 0.17,
+                                          child: CalendarListWidget(
+                                            fontSize: size.height <= 569
+                                                ? textSizeSmall14
+                                                : 16,
+                                            onSelectDate: (date) {
+                                              selectDate(date);
+                                            },
+                                            data: state.meetings,
+                                          ),
+                                        ),
+                                        SizedBox(height: 30),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          width: size.width,
+                                          height: size.height,
+                                          child: Column(
+                                            children: [
+                                              TitleDayFormatted(
+                                                currentDate: _selectedDate,
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Expanded(
+                                                  child: Container(
+                                                width: size.width,
+                                                child: isLoading
+                                                    ? ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount: state
+                                                            .meetings.length,
+                                                        itemBuilder:
+                                                            (context, index) =>
+                                                                SkeletonLess3WithAvatar(
+                                                                    size: size,
+                                                                    row: 2))
+                                                    : ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount: state
+                                                            .meetings.length,
+                                                        itemBuilder: (context,
+                                                                index) =>
+                                                            util.yearFormat(_selectedDate) ==
+                                                                    util.yearFormat(
+                                                                        state.meetings[index].date)
+                                                                ? ScheduleItem(
+                                                                    status: state
+                                                                        .meetings[
+                                                                            index]
+                                                                        .members,
+                                                                    count: state
+                                                                        .meetings[
+                                                                            index]
+                                                                        .members
+                                                                        .length,
+                                                                    size: size,
+                                                                    title: state
+                                                                        .meetings[
+                                                                            index]
+                                                                        .title,
+                                                                    time1: util.hourFormat(state
+                                                                        .meetings[
+                                                                            index]
+                                                                        .date),
+                                                                    time2: util.hourFormat(state
+                                                                        .meetings[
+                                                                            index]
+                                                                        .meetingEndTime),
+                                                                    onClick:
+                                                                        () {
+                                                                      if (_controller
+                                                                          .isDismissed) {
+                                                                        setState(
+                                                                            () {
+                                                                          meetingID = state
+                                                                              .meetings[index]
+                                                                              .meetingID;
+                                                                          scheduleClick =
+                                                                              state.meetings[index];
+                                                                        });
+
+                                                                        _controller
+                                                                            .forward();
+                                                                      } else if (_controller
+                                                                          .isCompleted)
+                                                                        _controller
+                                                                            .reverse();
+                                                                    },
+                                                                  )
+                                                                : Container()),
+                                              ))
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              )),
-                        showDraggableSheet(size, scheduleClick),
-                      ],
-                    );
-                  } else if (state is MeetingStateFailLoad) {
-                    return Text("Get Data Error");
-                  } else if (state is MeetingStateSuccess) {
-                    _meetingBloc.add(GetAcceptedMeetingEvent());
-                    return Container();
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                }),
+                                  )),
+                          ],
+                        );
+                      } else if (state is MeetingStateFailLoad) {
+                        return Text("Get Data Error");
+                      } else if (state is MeetingStateSuccess) {
+                        _meetingBloc.add(GetAcceptedMeetingEvent());
+                        return Container();
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    }),
+                    scheduleClick != null
+                        ? showDraggableSheet(size, scheduleClick)
+                        : Container(),
+                  ],
+                ),
         ));
   }
 
@@ -604,7 +648,11 @@ class _MeetingScreenState extends State<MeetingScreen>
                                           children: [
                                             Row(
                                               children: [
-                                                UserAvatar(
+                                                UserAvatarSchedule(
+                                                  status: util.acceptancePrint(
+                                                      scheduleModel
+                                                          .members[index]
+                                                          .accepted),
                                                   avatarRadius:
                                                       size.height <= 570
                                                           ? 15
