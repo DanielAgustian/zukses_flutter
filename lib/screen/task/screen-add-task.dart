@@ -167,9 +167,14 @@ class _AddTaskScreen extends State<AddTaskScreen>
           !_timeValidator &&
           !_priorityValidator) {
         int idLabel;
+        print("textLabel" + textLabel);
         for (int i = 0; i < label.length; i++) {
           if (label[i].name == textLabel) {
-            idLabel = label[i].id;
+            setState(() {
+              idLabel = label[i].id;
+            });
+
+            print("idLabel" + idLabel.toString());
           }
         }
         DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
@@ -205,6 +210,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
         for (int i = 0; i < label.length; i++) {
           if (label[i].name == textLabel) {
             idLabel = label[i].id;
+            print("IdLabel" + idLabel.toString());
           }
         }
         DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
@@ -408,21 +414,23 @@ class _AddTaskScreen extends State<AddTaskScreen>
                       SizedBox(
                         height: 10,
                       ),
-                      LongButtonOutline(
-                        size: size,
-                        title: "Assigned To",
-                        onClick: () {
-                          if (_controller.isDismissed) {
-                            _controller.forward();
-                          } else if (_controller.isCompleted) {
-                            _controller.reverse();
-                          }
-                        },
-                        bgColor: Colors.white,
-                        outlineColor: colorNeutral2,
-                        textColor: Colors.black,
-                        bold: false,
-                      ),
+                      freeAssignTo
+                          ? Container()
+                          : LongButtonOutline(
+                              size: size,
+                              title: "Assigned To",
+                              onClick: () {
+                                if (_controller.isDismissed) {
+                                  _controller.forward();
+                                } else if (_controller.isCompleted) {
+                                  _controller.reverse();
+                                }
+                              },
+                              bgColor: Colors.white,
+                              outlineColor: colorNeutral2,
+                              textColor: Colors.black,
+                              bold: false,
+                            ),
                       hasilMultiple.length < 1
                           ? Container()
                           : Container(

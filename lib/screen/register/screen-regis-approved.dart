@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/bloc/register/register-bloc.dart';
+import 'package:zukses_app_1/bloc/register/register-event.dart';
+import 'package:zukses_app_1/bloc/register/register-state.dart';
 
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -10,6 +16,8 @@ import 'package:zukses_app_1/main.dart';
 import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-data-company.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class RegisApproved extends StatefulWidget {
   RegisApproved({Key key, this.title, this.register}) : super(key: key);
@@ -117,10 +125,21 @@ class WaitRegisApproved extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
+  bool visible = false;
+  void _timer() {
+    Timer(Duration(seconds: 1), () {
+      _sentAcceptance();
+    });
+  }
+
+  _sentAcceptance() {
+    BlocProvider.of<RegisterBloc>(context).add(PostAcceptanceCompanyEvent());
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _timer();
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage message) {
@@ -165,18 +184,33 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
   }
 
   void notificationChecker(RemoteMessage message) {
-    if (message.notification.title.toLowerCase().contains("new signal") ) {
-    }
-    // push to user screen if [new follower]
-    else if (message.notification.title
+    //push to home if you have Accepted.
+    if (message.notification.title
         .toLowerCase()
-        .contains("new follower")) {}
+        .contains("company acceptance")) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenTab()),
+        (Route<dynamic> route) => false,
+      );
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        floatingActionButton: Visibility(
+          visible: visible,
+          child: FloatingActionButton(
+            onPressed: _sentAcceptance,
+            child: FaIcon(
+              FontAwesomeIcons.redo,
+              color: colorBackground,
+            ),
+          ),
+        ),
         appBar: appBarOutside,
         body: SingleChildScrollView(
           child: Center(
@@ -186,6 +220,18 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  BlocListener<RegisterBloc, RegisterState>(
+                      listener: (context, state) {
+                        if (state is RegisterStateAccCompanyFailed) {
+                          Util().showToast(
+                              context: context,
+                              msg: "PostAcceptance Failed",
+                              duration: 3,
+                              txtColor: colorBackground,
+                              color: colorError);
+                        }
+                      },
+                      child: Container()),
                   SizedBox(
                     height: size.height * 0.1,
                   ),

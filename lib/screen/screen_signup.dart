@@ -130,7 +130,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
         !_passValidator &&
         !_confirmPassValidator) {
       RegisterModel register = RegisterModel(
-          email: textEmail.text,
+          email: textEmail.text.toLowerCase(),
           username: textUsername.text.titleCase,
           password: textPassword.text,
           confirmPassword: textConfirmPassword.text);
@@ -152,13 +152,13 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Email : " + textEmail.text),
+                Text("Email : " + textEmail.text.toLowerCase()),
                 Text("Full Name: " + textUsername.text.titleCase),
               ],
             )));
     if (result) {
       BlocProvider.of<RegisterBloc>(context)
-          .add(AddRegisterIndividuEvent(register));
+          .add(AddRegisterIndividuEvent(register, tokenFCM: tokenFCM));
     }
   }
 

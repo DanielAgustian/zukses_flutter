@@ -124,8 +124,9 @@ class _EditProfileScreen extends State<EditProfile> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                          child: widget.user.imgUrl == "" ||
-                                  widget.user.imgUrl == null
+                          child: (widget.user.imgUrl == "" ||
+                                      widget.user.imgUrl == null) &&
+                                  (data == null || data == "")
                               ? Container(
                                   width: size.height < 569 ? 75 : 90,
                                   height: size.height < 569 ? 75 : 90,
@@ -168,9 +169,9 @@ class _EditProfileScreen extends State<EditProfile> {
                                   color: Colors.black,
                                 ),
                                 child: Center(
-                                  child: FaIcon(FontAwesomeIcons.pencilAlt,
+                                  child: FaIcon(FontAwesomeIcons.image,
                                       color: colorBackground,
-                                      size: size.height < 569 ? 12 : 14),
+                                      size: size.height < 569 ? 16 : 18),
                                 ),
                               ),
                             ))
@@ -226,11 +227,13 @@ class _EditProfileScreen extends State<EditProfile> {
                     data: widget.user.name,
                   ),
                   TextFormat1(
+                      txtColor: colorPrimary70,
                       size: size,
                       title: "Username",
                       data: widget.user.email //"Harus Diisi ",
                       ),
                   TextFormat1(
+                    txtColor: colorPrimary70,
                     size: size,
                     title: "Zukses ID",
                     data: widget.user.userID,
@@ -243,6 +246,7 @@ class _EditProfileScreen extends State<EditProfile> {
                         : widget.user.phone,
                   ),
                   TextFormat1(
+                    txtColor: colorPrimary70,
                     size: size,
                     title: "Personal Email",
                     data: widget.user.email,
@@ -282,6 +286,7 @@ class _EditProfileScreen extends State<EditProfile> {
           data = pickedFile.path;
         });
         //Camera
+
       }
     } else if (index == 1) {
       //Gallery
@@ -293,6 +298,7 @@ class _EditProfileScreen extends State<EditProfile> {
         });
       }
     }
+    print(data);
   }
 
   void _showPicker(context) {

@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/project-bookmark/project-bookmark-bloc.dart';
+import 'package:zukses_app_1/bloc/project-bookmark/project-bookmark-event.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-event.dart';
 import 'package:zukses_app_1/bloc/project/project-state.dart';
@@ -173,6 +175,11 @@ class _TaskScreen extends State<TaskScreen> {
                                   print("OnTapStar");
                                   setState(() {
                                     state.bools[index] = !state.bools[index];
+                                    BlocProvider.of<ProjectBookmarkBloc>(
+                                            context)
+                                        .add(DoProjectBookmarkEvent(state
+                                            .project[index].id
+                                            .toString()));
                                   });
                                 },
                               ));

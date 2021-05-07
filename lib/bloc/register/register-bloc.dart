@@ -11,7 +11,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   StreamSubscription _subscription;
   @override
   Stream<RegisterState> mapEventToState(RegisterEvent event) async* {
-    
     if (event is AddRegisterIndividuEvent) {
       yield* mapAddRegisIndividual(event);
     } else if (event is AddRegisterTeamEvent) {
@@ -20,6 +19,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       yield* mapAddRegisCompany(event);
     } else if (event is AddRegisterTeamMemberEvent) {
       yield* mapAddRegisTeamMember(event);
+    } else if (event is PostAcceptanceCompanyEvent) {
+      yield* mapRegisterIntoCompanyAcceptance(event);
     }
   }
 
@@ -27,11 +28,22 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       AddRegisterIndividuEvent event) async* {
     yield RegisterStateLoading();
     var res =
-        await _registerServicesHTTP.createRegisterIndividual(event.register);
+        await _registerServicesHTTP.createRegisterIndividual(event.register, tokenFCM: event.tokenFCM);
     if (res != null) {
       yield RegisterStateSuccess(res);
     } else {
       yield RegisterStateFailed();
+    }
+  }
+
+  Stream<RegisterState> mapRegisterIntoCompanyAcceptance(
+      PostAcceptanceCompanyEvent event) async* {
+    yield RegisterStateLoading();
+    var res = await _registerServicesHTTP.postAcceptanceToCompany();
+    if (res == 200) {
+      yield RegisterStateAccCompanySuccess(res);
+    } else {
+      yield RegisterStateAccCompanyFailed();
     }
   }
 

@@ -24,7 +24,20 @@ class RegisterStateSuccess extends RegisterState {
   }
 }
 
+class RegisterStateAccCompanyFailed extends RegisterState {}
 
+class RegisterStateAccCompanySuccess extends RegisterState {
+  final int kode;
+
+  RegisterStateAccCompanySuccess(this.kode);
+
+  List<Object> get props => [kode];
+
+  @override
+  String toString() {
+    return 'Data : { Authentication List: $kode }';
+  }
+}
 class RegisterStateTeamMemberFailed extends RegisterState {}
 
 class RegisterStateTeamMemberSuccess extends RegisterState {

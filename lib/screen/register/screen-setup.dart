@@ -202,6 +202,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             color: colorError,
                             msg: "Register Failed");
                       } else if (state is RegisterStateCompanySuccess) {
+                        
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

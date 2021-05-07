@@ -176,21 +176,11 @@ class PricingCard2 extends StatelessWidget {
           SizedBox(
             height: size.height < 569 ? 5 : 10,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text("Rp " + price.price.toString(),
-                  style: TextStyle(
-                      fontSize: size.height < 569 ? 16 : 20,
-                      color: colorPrimary,
-                      fontWeight: FontWeight.bold)),
-              Text("/" + price.interval,
-                  style: TextStyle(
-                      fontSize: size.height < 569 ? 10 : 12,
-                      color: colorPrimary)),
-            ],
-          ),
+          Text("Free",
+              style: TextStyle(
+                  fontSize: size.height < 569 ? 16 : 20,
+                  color: colorPrimary,
+                  fontWeight: FontWeight.bold)),
           ListView(
             padding: EdgeInsets.symmetric(horizontal: 5),
             shrinkWrap: true,

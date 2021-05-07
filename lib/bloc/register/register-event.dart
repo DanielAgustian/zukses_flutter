@@ -45,6 +45,11 @@ class AddRegisterCompanyEvent extends RegisterEvent {
   List<Object> get props => [kode, token];
 }
 
+class PostAcceptanceCompanyEvent extends RegisterEvent {
+ 
+  PostAcceptanceCompanyEvent();
+  List<Object> get props => [];
+}
 class RegisterEventDidUpdated extends RegisterEvent {
   final List<RegisterModel> register;
   const RegisterEventDidUpdated(this.register);

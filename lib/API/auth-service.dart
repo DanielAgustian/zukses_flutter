@@ -28,7 +28,7 @@ class AuthServiceHTTP {
     );
     print("email: " + email);
     print("Auth Code: " + response.statusCode.toString());
-    
+
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -76,7 +76,7 @@ class AuthServiceHTTP {
       // Save token
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
-
+      await prefs.setString("myID", user.user.userID);
       return user;
     } else {
       // If the server did not return a 201 CREATED response,

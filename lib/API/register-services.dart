@@ -6,12 +6,11 @@ import 'package:zukses_app_1/model/auth-model.dart';
 
 import 'package:zukses_app_1/model/register-model.dart';
 
-
 class RegisterServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
 
-  Future<AuthModel> createRegisterIndividual(RegisterModel regis) async {
+  Future<AuthModel> createRegisterIndividual(RegisterModel regis, {String tokenFCM}) async {
     print("email " + regis.email);
     print("name " + regis.username);
     print("password " + regis.password);
@@ -27,6 +26,7 @@ class RegisterServicesHTTP {
         'name': regis.username,
         'password': regis.password,
         'password_confirmation': regis.confirmPassword,
+        'fcmToken':tokenFCM
       }),
     );
     print("RegisterIndividu:" + response.statusCode.toString());
@@ -36,7 +36,7 @@ class RegisterServicesHTTP {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
-
+      await prefs.setString("myID", user.user.userID);
       user.where = "individu";
       return user;
     } else {
@@ -111,7 +111,7 @@ class RegisterServicesHTTP {
     }
   }
 
-Future<int> createRegisterToCompany(String token, String kode) async {
+  Future<int> createRegisterToCompany(String token, String kode) async {
     //print("Auth.token = " + auth.token);
     print("Kode" + kode);
     final response = await http.post(
@@ -125,6 +125,24 @@ Future<int> createRegisterToCompany(String token, String kode) async {
     );
     print(response.body);
     print("Register Company: " + response.statusCode.toString());
+    return response.statusCode;
+  }
+
+  Future<int> postAcceptanceToCompany() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    String myID = prefs.getString("myID");
+    final response = await http.post(
+      Uri.https(baseURI, '/api/company/acceptance'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Charset': 'utf-8',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode(<String, dynamic>{'userId': myID}),
+    );
+    print(response.body);
+    print(response.statusCode);
     return response.statusCode;
   }
 }

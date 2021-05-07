@@ -83,4 +83,32 @@ class ProjectServicesHTTP {
       return null;
     }
   }
+
+  Future<int> bookmarkProject(String projectId) async {
+    //Token from Login
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var jsonData = jsonEncode(<String, dynamic>{
+      'projectId': projectId,
+    });
+    //Query to API
+    var res = await http.post(Uri.https(baseURI, 'api/bookmark'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonData);
+    print(res.body);
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return res.statusCode;
+    } else {
+      // IF the server return everything except 200, it will gte exception.
+      print("Failed to bookmarked this project");
+      return null;
+    }
+  }
 }

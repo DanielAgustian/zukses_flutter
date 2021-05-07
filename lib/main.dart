@@ -24,6 +24,7 @@ import 'package:zukses_app_1/bloc/meeting-search/meeting-search-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/payment/payment-bloc.dart';
 import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
+import 'package:zukses_app_1/bloc/project-bookmark/project-bookmark-bloc.dart';
 import 'package:zukses_app_1/bloc/project/project-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
@@ -179,6 +180,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<TaskPriorityBloc>(create: (context) => TaskPriorityBloc()),
         BlocProvider<MeetingSearchBloc>(
           create: (context) => MeetingSearchBloc(),
+        ),
+        BlocProvider<ProjectBookmarkBloc>(
+          create: (context) => ProjectBookmarkBloc(),
         ),
       ],
       child: MaterialApp(

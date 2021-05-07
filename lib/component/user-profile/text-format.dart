@@ -6,11 +6,12 @@ class TextFormat1 extends StatelessWidget {
     Key key,
     this.title,
     this.data,
+    this.txtColor = colorPrimary,
     @required this.size,
   }) : super(key: key);
 
   final String title, data;
-
+  final Color txtColor;
   final Size size;
 
   @override
@@ -35,7 +36,7 @@ class TextFormat1 extends StatelessWidget {
         Text(
           data,
           style: TextStyle(
-            color: colorPrimary,
+            color: txtColor,
             fontSize: size.height < 569 ? 12 : 14,
           ),
         ),

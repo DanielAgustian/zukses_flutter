@@ -247,11 +247,12 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                     if (state is LabelTaskStateSuccessLoad) {
                       labelList.clear();
                       //labelList.add("Click Here for Label");
-
+                      //print("labelTask legth ${state.labelTask.length}");
                       setState(() {
                         label = state.labelTask;
                         state.labelTask.forEach((element) {
                           labelList.add(element.name);
+                          print(element.name);
                         });
                         //labelList.add("+ New Label");
                         //textLabel = labelList[0];
@@ -304,6 +305,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       taskInProgress.clear();
                       taskDone.clear();
                       state.task.forEach((element) {
+                        //print("LAbel in Task" + element.label.toString());
                         if (element.taskType.toLowerCase() == "to-do") {
                           taskToDo.add(element);
                         } else if (element.taskType.toLowerCase() ==

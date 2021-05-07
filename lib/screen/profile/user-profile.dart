@@ -28,6 +28,7 @@ class _UserProfileScreen extends State<UserProfile> {
     // TODO: implement initState
     super.initState();
     _getProfile();
+    print("Id Company " + widget.company.id);
   }
 
   _getProfile() {
@@ -173,10 +174,14 @@ class _UserProfileScreen extends State<UserProfile> {
                                 )
                               ],
                             ),
-                            SizedBox(
-                              height: size.height < 569 ? 10 : 15,
-                            ),
-                            _dataCompany(context, size),
+                            widget.company.id == null || widget.company.id == ""
+                                ? Container()
+                                : SizedBox(
+                                    height: size.height < 569 ? 10 : 15,
+                                  ),
+                            widget.company.id == null || widget.company.id == ""
+                                ? Container()
+                                : _dataCompany(context, size),
                             SizedBox(
                               height: size.height < 569 ? 10 : 15,
                             ),
