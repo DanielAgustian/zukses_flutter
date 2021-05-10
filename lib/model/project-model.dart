@@ -2,7 +2,14 @@ class ProjectModel {
   int id;
   String name, details, imgUrl;
   int totalTask;
-  ProjectModel({this.id, this.name, this.details, this.imgUrl, this.totalTask});
+  int bookmark;
+  ProjectModel(
+      {this.id,
+      this.name,
+      this.details,
+      this.imgUrl,
+      this.totalTask,
+      this.bookmark});
 
   ProjectModel.fromJson(Map<String, dynamic> map) {
     this.id = map["id"];
@@ -10,5 +17,6 @@ class ProjectModel {
     this.details = map["notes"];
     this.imgUrl = map["image"];
     this.totalTask = map["totalTask"];
+    this.bookmark = map["bookmark"];
   }
 }

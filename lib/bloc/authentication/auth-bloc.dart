@@ -1,8 +1,11 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
@@ -16,7 +19,7 @@ class AuthenticationBloc
   final AuthenticationRepository _authenticationRepository;
 
   final AuthServiceHTTP _authenticationService = AuthServiceHTTP();
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  
 
   AuthenticationBloc({@required AuthenticationRepository authRepo})
       : assert(authRepo != null),
@@ -41,6 +44,8 @@ class AuthenticationBloc
       token = googleSignInAuthentication.idToken;
       email = _googleSignIn.currentUser.email;
       image = _googleSignIn.currentUser.photoUrl;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt("google", 1);
 
       print("GOOGLE LOGIN ==================+>");
       print(name);
@@ -74,10 +79,40 @@ class AuthenticationBloc
     }
   }
 
-  Stream<AuthenticationState> mapLoginFacebook() async* {
-    var res = await _authenticationService.fbLogin();
-    if (res is FBAuthModel && res != null) {
-      yield AuthStateFacebookSuccessLoad(res);
+  Stream<AuthenticationState> mapLoginFacebook(
+      AuthEventWithFacebook event) async* {
+    FBAuthModel fbAuthData = FBAuthModel();
+
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+
+    String tokenFacebook = "";
+    print(result.status);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        tokenFacebook = result.accessToken.token;
+        final graphResponse = await http.get(Uri.parse(
+          "https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$tokenFacebook",
+        ));
+        final profile = jsonDecode(graphResponse.body);
+        fbAuthData = FBAuthModel.fromJson(profile);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt("facebook", 1);
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        print("Facebook Login Canceled");
+
+        break;
+      case FacebookLoginStatus.error:
+        print("RFecebook Login Error");
+
+        break;
+      default:
+        break;
+    }
+    if (fbAuthData is FBAuthModel && fbAuthData != null) {
+      yield AuthStateFacebookSuccessLoad(fbAuthData);
     } else {
       yield AuthStateFacebookFailLoad();
     }
@@ -87,8 +122,8 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapLoginManual(
       AuthEventLoginManual event) async* {
     // return auth model
-    var res =
-        await _authenticationService.createLogin(event.email, event.password, event.tokenFCM);
+    var res = await _authenticationService.createLogin(
+        event.email, event.password, event.tokenFCM);
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {
@@ -131,7 +166,7 @@ class AuthenticationBloc
     } else if (event is AuthEventUpdated) {
       yield* mapUpdatingAuthState(event);
     } else if (event is AuthEventWithFacebook) {
-      yield* mapLoginFacebook();
+      yield* mapLoginFacebook(event);
     } else if (event is AuthEventLoginTeam) {
       yield* mapLoginTeam(event);
     }

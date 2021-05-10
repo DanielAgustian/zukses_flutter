@@ -233,7 +233,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
               d.date.month == calendarDate.date.month &&
               d.date.year == calendarDate.date.year) {
             _selectedDateTime != calendarDate.date
-                ? dot = dotBlue
+                ? dot = dotGreen
                 : dot = dotWhite;
             break;
           }
@@ -246,7 +246,7 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
               data[i].date.month == calendarDate.date.month &&
               data[i].date.year == calendarDate.date.year) {
             _selectedDateTime != calendarDate.date
-                ? dot = dotBlue
+                ? dot = dotGreen
                 : dot = dotWhite;
             break;
           }

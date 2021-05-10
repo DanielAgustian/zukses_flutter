@@ -77,10 +77,17 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         date: _currentDate,
         firstWeekDate: CustomCalendar().findFirstDateOfTheWeek(_currentDate));
   }
-  Future<bool> onWillPop()async{
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ScreenTab(index: 0,)));
+
+  Future<bool> onWillPop() async {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ScreenTab(
+                  index: 0,
+                )));
     return false;
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -95,13 +102,13 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               elevation: 0,
               backgroundColor: colorBackground,
               automaticallyImplyLeading: false,
-              title: Text(
+              /*title: Text(
                 "Attendance",
                 style: TextStyle(
                     color: colorPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: size.height <= 569 ? 18 : 22),
-              ),
+              ),*/
               actions: [
                 IconButton(
                   splashColor: Colors.transparent,
@@ -185,8 +192,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             state.attendanceList == null
                                 ? Center(child: CircularProgressIndicator())
                                 : CalendarWidget(
-                                    fontSize:
-                                        size.height <= 600 ? textSizeSmall16 : 16,
+                                    fontSize: size.height <= 600
+                                        ? textSizeSmall16
+                                        : 16,
                                     // When select the date
                                     onSelectDate: (date, absence) {
                                       selectDate(date, absence);
@@ -208,7 +216,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             ),
                             TimeBox(
                               selected: selected,
-                              fontSize: size.height <= 569 ? textSizeSmall18 : 18,
+                              fontSize:
+                                  size.height <= 569 ? textSizeSmall18 : 18,
                             ),
                             SizedBox(height: 15),
                             OvertimeText(selected: selected, size: size)
@@ -222,7 +231,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             width: size.width,
                             height: size.height * 0.06,
                             child: WeekLyCanlendarWidget(
-                              fontSize: size.height <= 569 ? textSizeSmall18 : 18,
+                              fontSize:
+                                  size.height <= 569 ? textSizeSmall18 : 18,
                               onChangeWeek: (WeeklyCalendar val) {
                                 setState(() {
                                   _selectedWeek = val;
@@ -270,7 +280,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                   color: colorBackground,
                                                   borderRadius:
                                                       BorderRadius.circular(5),
-                                                  boxShadow: [boxShadowStandard]),
+                                                  boxShadow: [
+                                                    boxShadowStandard
+                                                  ]),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -278,12 +290,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                 children: [
                                                   Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
                                                           "${getDayName.format(absensiList[index].clockIn)}",
                                                           style: TextStyle(
-                                                              color: colorPrimary,
+                                                              color:
+                                                                  colorPrimary,
                                                               fontSize: size
                                                                           .width <=
                                                                       569
@@ -292,7 +306,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                       Text(
                                                           "${getFormatListDate.format(absensiList[index].clockIn)}",
                                                           style: TextStyle(
-                                                              color: colorPrimary,
+                                                              color:
+                                                                  colorPrimary,
                                                               fontSize: size
                                                                           .width <=
                                                                       569
@@ -301,7 +316,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                     ],
                                                   ),
                                                   TimeBox(
-                                                    selected: absensiList[index],
+                                                    selected:
+                                                        absensiList[index],
                                                     space: size.width * 0.01,
                                                     fontSize: size.width <= 569
                                                         ? textSizeSmall12
@@ -333,13 +349,13 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         elevation: 0,
         backgroundColor: colorBackground,
         automaticallyImplyLeading: false,
-        title: Text(
+        /*title: Text(
           "Attendance",
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
               fontSize: size.height <= 569 ? 18 : 22),
-        ),
+        ),*/
         actions: [
           IconButton(
             splashColor: Colors.transparent,
@@ -470,7 +486,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                     itemCount: absensiList.length,
                                     itemBuilder: (context, index) {
                                       return Container(
-                                        margin: EdgeInsets.symmetric(vertical: 5),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 5),
                                         padding: EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 15),
                                         decoration: BoxDecoration(
@@ -492,18 +509,18 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                                     "${getDayName.format(absensiList[index].clockIn)}",
                                                     style: TextStyle(
                                                         color: colorPrimary,
-                                                        fontSize:
-                                                            size.width <= 569
-                                                                ? textSizeSmall16
-                                                                : 16)),
+                                                        fontSize: size.width <=
+                                                                569
+                                                            ? textSizeSmall16
+                                                            : 16)),
                                                 Text(
                                                     "${getFormatListDate.format(absensiList[index].clockIn)}",
                                                     style: TextStyle(
                                                         color: colorPrimary,
-                                                        fontSize:
-                                                            size.width <= 569
-                                                                ? textSizeSmall14
-                                                                : 14))
+                                                        fontSize: size.width <=
+                                                                569
+                                                            ? textSizeSmall14
+                                                            : 14))
                                               ],
                                             ),
                                             TimeBox(

@@ -126,6 +126,13 @@ class _UserSettingsScreen extends State<UserSettings> {
     prefs.remove("userLogin");
     prefs.remove("passLogin");
     prefs.remove("token");
+    prefs.remove("myID");
+    if (prefs.getInt("facebook") != null) {
+      prefs.remove("facebook");
+    }
+    if (prefs.getInt("google") != null) {
+      prefs.remove("google");
+    }
   }
 
   toLogOut() {

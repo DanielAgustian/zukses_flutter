@@ -317,22 +317,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           isLoadingAuth = true;
                         });
 
-                        if (_authModel.maxClockIn == "true") {
-                          setState(() {
-                            stringTap = enumTap[2];
-                          });
-                        }
+                       //Choose Enum Tap based on DB data.
+
                         if (_authModel.maxClockIn == "false") {
+                          //if they arent clockout today
                           if (_authModel.attendance == "false") {
+                            // if they arent clock in yet 
                             setState(() {
                               //stringTap = enumTap[0];
                             });
                           } else if (_authModel.attendance == "true") {
+                          // if they already clock in.
                             setState(() {
                               stringTap = enumTap[1];
                             });
                           }
+
                         } else if (_authModel.maxClockIn == "true") {
+                          //If they already clock out for today
                           setState(() {
                             stringTap = enumTap[2];
                           });
@@ -355,19 +357,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           color: colorError,
                           txtColor: colorBackground);
                     } else if (state is AttendanceStateSuccessClockIn) {
-                      // sharedPref();
+                      //if they already clock in 
                       setState(() {
                         stringTap = enumTap[1];
                       });
                     } else if (state is AttendanceStateSuccessClockOut) {
                       print("clock out");
-
+                      //if they already clock out
                       setState(() {
                         isClockIn = 2;
                         attendanceID = state.attendanceID;
                         stringTap = enumTap[2];
                       });
-                      // // show confirm dialog success clock out
+                      // show confirm dialog success clock out
                       showDialog(
                               context: context,
                               builder: (BuildContext context) =>
@@ -464,10 +466,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   getAuthData();
                                 }
                               }
-
-                              //}
                             },
-                            // Bloc listener for attendance
+                          
                             child: Container(
                                 width: double.infinity,
                                 height: size.height * 0.40,
@@ -906,7 +906,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                                       9)
                                                                   .toString(),
                                                         )
-                                                      : UserAvatar(dotSize: 7, status: state.team[index].late),
+                                                      : UserAvatar(
+                                                          dotSize: 7,
+                                                          status: state
+                                                              .team[index]
+                                                              .late),
                                             ),
                                           ),
                                         ],

@@ -25,7 +25,7 @@ import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-event.dart';
 import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-state.dart';
-
+import 'package:recase/recase.dart';
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -501,14 +501,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
           }
 
           setState(() {
+            data = "";
+            upload = false;
             clickTask = item;
             chooseLabel = item.label;
-            priority = item.priority;
+            priority = item.priority.titleCase;
             print("Priorrity:" + item.priority);
           });
           BlocProvider.of<CommentBloc>(context)
               .add(LoadAllCommentEvent(item.idTask.toString()));
-
           BlocProvider.of<CLTBloc>(context)
               .add(LoadAllCLTEvent(item.idTask.toString()));
           BlocProvider.of<UploadAttachBloc>(context)
@@ -632,15 +633,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       topRight: Radius.circular(20))),
               child: Column(
                 children: [
-                  BlocListener<UploadAttachBloc, UploadAttachState>(
-                      listener: (context, state) {
-                        if (state is UploadAttachStateSuccess) {
-                          setState(() {
-                            //clickTask.attachment = state.attach;
-                          });
-                        }
-                      },
-                      child: Container()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

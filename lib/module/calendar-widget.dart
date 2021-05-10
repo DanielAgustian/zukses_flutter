@@ -314,7 +314,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           if (d.date.day == calendarDate.date.day &&
               d.date.month == calendarDate.date.month &&
               d.date.year == calendarDate.date.year) {
-            dot = dotBlue;
+            dot = dotGreen;
             break;
           }
         }

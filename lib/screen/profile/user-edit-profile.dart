@@ -23,20 +23,46 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileScreen extends State<EditProfile> {
   final picker = ImagePicker();
+  final textEditName = TextEditingController();
+  final textEditPhone = TextEditingController();
   //bool data = false;
   bool uploading = false;
   String data = "";
   UserModel userModel = UserModel();
+  bool allowDelete = false;
 
   _editData() {
-    BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
-        File(data), widget.user.name, widget.user.phone));
+    if (data != null && data != "") {
+      //Edit Profile with Profile Pic Changes
+      BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+        textEditName.text,
+        textEditPhone.text,
+        image: File(data),
+      ));
+    } else {
+      if (userModel.imgUrl == null || userModel.imgUrl == "" || allowDelete) {
+        //Edit Profile without any Picture
+        BlocProvider.of<UserDataBloc>(context).add(
+            UserDataUpdateProfileEvent(textEditName.text, textEditPhone.text));
+      } else {
+        //Edit Profile with Old Picture inside DB
+        BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+            textEditName.text, textEditPhone.text,
+            link: userModel.imgUrl));
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
     userModel = widget.user;
+    textEditName.text = userModel.name;
+    if (userModel.phone == null || userModel.phone == "") {
+      textEditPhone.text = "";
+    } else {
+      textEditPhone.text = userModel.phone;
+    }
   }
 
   @override
@@ -122,38 +148,54 @@ class _EditProfileScreen extends State<EditProfile> {
                   Center(
                     child: Stack(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                          child: (widget.user.imgUrl == "" ||
-                                      widget.user.imgUrl == null) &&
-                                  (data == null || data == "")
-                              ? Container(
-                                  width: size.height < 569 ? 75 : 90,
-                                  height: size.height < 569 ? 75 : 90,
-                                  decoration: BoxDecoration(
-                                    color: colorNeutral2,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: FaIcon(
-                                      FontAwesomeIcons.camera,
-                                      color: colorNeutral3,
-                                    ),
-                                  ))
-                              : Container(
-                                  width: size.height < 569 ? 75 : 90,
-                                  height: size.height < 569 ? 75 : 90,
-                                  decoration: BoxDecoration(
+                        allowDelete
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                child: Container(
+                                    width: size.height < 569 ? 75 : 90,
+                                    height: size.height < 569 ? 75 : 90,
+                                    decoration: BoxDecoration(
                                       color: colorNeutral2,
                                       shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: data != ""
-                                              ? FileImage(File(data))
-                                              : NetworkImage(
-                                                  "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
-                                ),
-                        ),
+                                    ),
+                                    child: Center(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.camera,
+                                        color: colorNeutral3,
+                                      ),
+                                    )))
+                            : Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                child: (widget.user.imgUrl == "" ||
+                                            widget.user.imgUrl == null) &&
+                                        (data == null || data == "")
+                                    ? Container(
+                                        width: size.height < 569 ? 75 : 90,
+                                        height: size.height < 569 ? 75 : 90,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.camera,
+                                            color: colorNeutral3,
+                                          ),
+                                        ))
+                                    : Container(
+                                        width: size.height < 569 ? 75 : 90,
+                                        height: size.height < 569 ? 75 : 90,
+                                        decoration: BoxDecoration(
+                                            color: colorNeutral2,
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: data != ""
+                                                    ? FileImage(File(data))
+                                                    : NetworkImage(
+                                                        "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
+                                      ),
+                              ),
                         Positioned(
                             right: 0.0,
                             bottom: 0.0,
@@ -221,10 +263,11 @@ class _EditProfileScreen extends State<EditProfile> {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  TextFormat1(
+                  TextFormatEdit(
+                    textEdit: textEditName,
                     size: size,
                     title: "Name",
-                    data: widget.user.name,
+                    onChanged: (val) {},
                   ),
                   TextFormat1(
                       txtColor: colorPrimary70,
@@ -238,12 +281,11 @@ class _EditProfileScreen extends State<EditProfile> {
                     title: "Zukses ID",
                     data: widget.user.userID,
                   ),
-                  TextFormat1(
+                  TextFormatEdit(
                     size: size,
                     title: "Phone Number",
-                    data: widget.user.phone == null
-                        ? "Not Registered"
-                        : widget.user.phone,
+                    textEdit: textEditPhone,
+                    onChanged: (val) {},
                   ),
                   TextFormat1(
                     txtColor: colorPrimary70,
@@ -324,6 +366,15 @@ class _EditProfileScreen extends State<EditProfile> {
                       Navigator.of(context).pop();
                     },
                   ),
+                  new ListTile(
+                      leading: new FaIcon(FontAwesomeIcons.eyeSlash),
+                      title: new Text('Empty Picture'),
+                      onTap: () {
+                        setState(() {
+                          allowDelete = true;
+                        });
+                        Navigator.of(context).pop();
+                      }),
                   new ListTile(
                     leading: new Icon(Icons.cancel),
                     title: new Text('Cancel'),

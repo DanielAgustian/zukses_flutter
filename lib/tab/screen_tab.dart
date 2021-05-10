@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
-import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
+
 import 'package:zukses_app_1/tab/screen_task.dart';
 import 'package:zukses_app_1/tab/screen_home.dart';
 import 'package:zukses_app_1/constant/constant.dart';

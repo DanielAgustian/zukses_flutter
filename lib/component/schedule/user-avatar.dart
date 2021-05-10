@@ -64,6 +64,8 @@ class UserAvatar extends StatelessWidget {
         return colorSecondaryRed;
       } else if (stat.toLowerCase() == "no") {
         return colorClear;
+      } else {
+        return Colors.transparent;
       }
     }
   }

@@ -16,9 +16,9 @@ class UserDataGettingEvent extends UserDataEvent {
 
 class UserDataUpdateProfileEvent extends UserDataEvent {
   final File image;
-  final String name, phone;
+  final String name, phone, link;
 
-  UserDataUpdateProfileEvent(this.image, this.name, this.phone);
+  UserDataUpdateProfileEvent( this.name, this.phone, {this.link, this.image});
   @override
   List<Object> get props => [];
 }

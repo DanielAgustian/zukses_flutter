@@ -34,11 +34,13 @@ class UploadAttachBloc extends Bloc<UploadAttachEvent, UploadAttachState> {
     var res = await _task.getAttachment(event.idTask);
 
     // return checkbox handler
-
+    
     // directly throw into success load or fail load
     if (res != null) {
+      print("GetAttachment Success");
       yield UploadAttachStateSuccessLoad(attach: res);
     } else {
+      print("GetAttachment Failed");
       yield UploadAttachStateFailLoad();
     }
   }

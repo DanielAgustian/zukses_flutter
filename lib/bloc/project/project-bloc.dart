@@ -27,7 +27,12 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
     if (res != null && res is List<ProjectModel>) {
       for (int i = 0; i < res.length; i++) {
-        bools.add(false);
+        int data = res[i].bookmark;
+        if (data == 0) {
+          bools.add(false);
+        } else if (data == 1) {
+          bools.add(true);
+        }
       }
 
       yield ProjectStateSuccessLoad(project: res, bools: bools);

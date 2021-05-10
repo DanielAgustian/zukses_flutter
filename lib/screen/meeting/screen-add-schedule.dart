@@ -33,6 +33,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   bool _titleValidator = false;
   bool _descriptionValidator = false;
   bool _timeValidator = false;
+  bool _dateStartEndValidator = false;
   // Search controlerr
   TextEditingController textSearch = new TextEditingController();
   String searchQuery = "";
@@ -195,6 +196,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         _descriptionValidator = false;
       });
     }
+
     int pembanding =
         (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
     if (pembanding < 0) {
@@ -206,10 +208,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         _timeValidator = false;
       });
     }
+    if (startMeeting != null && endMeeting != null) {
+      setState(() {
+        _dateStartEndValidator = false;
+      });
+    } else {
+      setState(() {
+        _dateStartEndValidator = true;
+      });
+    }
+    print("dateValidator = " + _dateStartEndValidator.toString());
     if (startMeeting != null) if (!_descriptionValidator &&
         !_titleValidator &&
-        startMeeting != null &&
-        endMeeting != null &&
+        !_dateStartEndValidator &&
         !_timeValidator) {
       print(repeat);
       ScheduleModel meeting = ScheduleModel(
@@ -450,7 +461,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                 decoration: BoxDecoration(
                                     color: colorBackground,
                                     border: Border.all(
-                                        color: _timeValidator
+                                        color: _timeValidator ||
+                                                _dateStartEndValidator
                                             ? colorError
                                             : colorBackground)),
                                 child: AddScheduleRow(

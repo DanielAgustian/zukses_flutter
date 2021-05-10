@@ -44,3 +44,58 @@ class TextFormat1 extends StatelessWidget {
     );
   }
 }
+
+class TextFormatEdit extends StatelessWidget {
+  TextFormatEdit(
+      {Key key,
+      this.title,
+      @required this.size,
+      @required this.textEdit,
+      this.onChanged})
+      : super(key: key);
+
+  final String title;
+  final TextEditingController textEdit;
+  final Size size;
+  final Function onChanged;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: size.height < 569 ? 10 : 15,
+        ),
+        Text(
+          title,
+          style: TextStyle(
+              color: colorPrimary,
+              fontSize: size.height < 569 ? 14 : 16,
+              fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: size.height < 569 ? 5 : 10,
+        ),
+        Container(
+          decoration: BoxDecoration(
+              color: colorBackground,
+              border: Border.all(color: colorNeutral2),
+              borderRadius: BorderRadius.circular(5)),
+          child: TextField(
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(5),
+                isDense: true,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none),
+            style: TextStyle(height: 1.1, fontSize: 16),
+            controller: textEdit,
+            onChanged: (val) {
+              onChanged(val);
+            },
+          ),
+        )
+      ],
+    );
+  }
+}

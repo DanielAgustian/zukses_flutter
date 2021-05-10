@@ -29,7 +29,7 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
     yield UserDataStateLoading();
     // return user model
     var res = await _userDataService.updateUserProfile(
-        event.image, event.name, event.phone);
+        event.image, event.name, event.phone, event.link);
     // directly throw into success load or fail load
     if (res == 200) {
       yield UserDataStateUpdateSuccess(res);

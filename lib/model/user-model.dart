@@ -6,6 +6,7 @@ class UserModel {
       this.name,
       this.email,
       this.imgUrl,
+      this.phone,
       this.companyID,
       this.accepted,
       this.userIDSchedule});
@@ -18,6 +19,7 @@ class UserModel {
     map["company_id"] = user.companyID;
     map["image"] = user.imgUrl;
     map["accepted"] = user.accepted;
+
     return map;
   }
 
@@ -29,5 +31,6 @@ class UserModel {
     this.imgUrl = map["image"] == null ? "" : map["image"];
     this.companyID = map["company_id"].toString();
     this.accepted = map["accepted"] == null ? 100 : map["accepted"];
+    this.phone = map["mobile"] == null ? null : map["mobile"];
   }
 }

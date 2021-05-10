@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:zukses_app_1/model/task-model.dart';
 
 abstract class ChangeTaskEvent extends Equatable {
   const ChangeTaskEvent();

@@ -245,6 +245,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+        
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,
@@ -420,6 +421,11 @@ class _AddTaskScreen extends State<AddTaskScreen>
                               size: size,
                               title: "Assigned To",
                               onClick: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
                                 if (_controller.isDismissed) {
                                   _controller.forward();
                                 } else if (_controller.isCompleted) {
@@ -521,6 +527,11 @@ class _AddTaskScreen extends State<AddTaskScreen>
                         children: [
                           InkWell(
                             onTap: () {
+                              FocusScopeNode currentFocus =
+                                  FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
                               _selectDate(context);
                             },
                             child: Container(
@@ -565,6 +576,11 @@ class _AddTaskScreen extends State<AddTaskScreen>
                           ),
                           InkWell(
                             onTap: () {
+                              FocusScopeNode currentFocus =
+                                  FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
                               _selectTime();
                             },
                             child: Container(
@@ -591,6 +607,11 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                         icon: FaIcon(FontAwesomeIcons.clock,
                                             color: colorPrimary),
                                         onPressed: () {
+                                          FocusScopeNode currentFocus =
+                                              FocusScope.of(context);
+                                          if (!currentFocus.hasPrimaryFocus) {
+                                            currentFocus.unfocus();
+                                          }
                                           _selectTime();
                                         },
                                       ),
@@ -619,7 +640,10 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                 setState(() {
                                   textLabel = val;
                                   if (textLabel == "+ New Label") {
-                                    _showPicker(context);
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            buildPopUpNewLabel(context));
                                   }
                                 });
                               },
@@ -706,7 +730,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
     BlocProvider.of<LabelTaskBloc>(context).add(AddLabelTaskEvent(newLabel));
   }
 
-  _showPicker(context) {
+  /*_showPicker(context) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -753,35 +777,105 @@ class _AddTaskScreen extends State<AddTaskScreen>
                       SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SmallButton(
-                            bgColor: colorPrimary,
-                            title: "Add",
-                            textColor: colorBackground,
-                            size: 120,
-                            onClick: () {
-                              _addNewLabel(textNewLabel.text);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          SmallButton(
-                            bgColor: colorError,
-                            title: "Cancel",
-                            textColor: colorBackground,
-                            size: 120,
-                            onClick: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SmallButton(
+                              bgColor: colorPrimary,
+                              title: "Add",
+                              textColor: colorBackground,
+                              size: 120,
+                              onClick: () {
+                                _addNewLabel(textNewLabel.text);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            SmallButton(
+                              bgColor: colorError,
+                              title: "Cancel",
+                              textColor: colorBackground,
+                              size: 120,
+                              onClick: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   )),
             ),
           );
         });
+  }*/
+
+  buildPopUpNewLabel(context) {
+    return AlertDialog(
+      title: Text(
+        "Create New Label",
+        style: TextStyle(
+            color: colorPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 50,
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+              decoration: BoxDecoration(
+                  border: Border.all(color: colorNeutral2),
+                  color: colorBackground,
+                  boxShadow: [boxShadowStandard],
+                  borderRadius: BorderRadius.circular(5)),
+              child: Center(
+                child: TextFormField(
+                  controller: textNewLabel,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      hintText: "New Label",
+                      hintStyle: TextStyle(),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SmallButton(
+                  bgColor: colorError,
+                  title: "Cancel",
+                  textColor: colorBackground,
+                  size: 100,
+                  onClick: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SmallButton(
+                  bgColor: colorPrimary,
+                  title: "Add",
+                  textColor: colorBackground,
+                  size: 100,
+                  onClick: () {
+                    _addNewLabel(textNewLabel.text);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   void searchFunction(String q) {

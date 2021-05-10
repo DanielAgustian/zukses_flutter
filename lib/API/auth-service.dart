@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
@@ -11,7 +12,7 @@ class AuthServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
   final facebookLogin = FacebookLogin();
-  //GoogleSignIn gsi = GoogleSignIn.standard();
+
   Future<AuthModel> createLogin(String email, password, String tokenFCM) async {
     print("tokenFCM" + tokenFCM);
     final response = await http.post(
@@ -85,23 +86,13 @@ class AuthServiceHTTP {
       return null;
     }
   }
-  /*static Future<FirebaseApp> initializeFirebase() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
-    return firebaseApp;
-  }*/
 
-  /*loginWithGoogleSignIn() async {
-    initializeFirebase();
-    final user = await gsi.signIn();
-    if (user != null) {
-      final googleAuth = await user.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-    }
-  }*/
-  void _fbLogOut() async {
+  void googleLogOut() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+    _googleSignIn.signOut();
+  }
+
+  void fbLogOut() async {
     facebookLogin.logOut();
   }
 
@@ -115,7 +106,8 @@ class AuthServiceHTTP {
           "https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token",
         ));
         final profile = jsonDecode(graphResponse.body);
-        return FBAuthModel.fromJson(profile);
+        FBAuthModel fbAuthData = FBAuthModel.fromJson(profile);
+        return fbAuthData;
         break;
 
       case FacebookLoginStatus.cancelledByUser:
@@ -124,6 +116,9 @@ class AuthServiceHTTP {
         break;
       case FacebookLoginStatus.error:
         print("RFecebook Login Error");
+        return null;
+        break;
+      default:
         return null;
         break;
     }

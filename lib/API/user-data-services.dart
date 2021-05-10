@@ -57,21 +57,38 @@ class UserDataServiceHTTP {
     }
   }
 
-  Future<int> updateUserProfile(File image, String name, String phone) async {
+  Future<int> updateUserProfile(
+      File image, String name, String phone, String link) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    String base64Image = base64Encode(image.readAsBytesSync());
-    print(base64Image);
+    var jsonData;
+    if (image != null) {
+      //Sent Image
+      String base64Image = base64Encode(image.readAsBytesSync());
+      print(base64Image);
+      jsonData = jsonEncode(<String, dynamic>{
+        'image': base64Image,
+        'name': name,
+        'phone': phone
+      });
+    } else {
+      if (link == null || link == "") {
+        //Sent Empty Image or Delete Pic
+        jsonData = jsonEncode(<String, dynamic>{'name': name, 'phone': phone});
+      } else {
+        
+        //The Image on Database will stay
+        jsonData = jsonEncode(
+            <String, dynamic>{'image': link, 'name': name, 'phone': phone});
+      }
+    }
+
     print("Update Name: " + name);
     print("Update Phone: " + phone.toString());
     print(token);
 
     var res = await http.post(Uri.https(baseURI, 'api/edit-profile'),
-        body: jsonEncode(<String, dynamic>{
-          'image': base64Image,
-          'name': name,
-          'phone': phone
-        }),
+        body: jsonData,
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
@@ -123,7 +122,9 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
         _passValidator.toString());
     if (!_usernameValidator && !_passValidator) {
       BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
-          email: textUsername.text, password: textPassword.text, tokenFCM: tokenFCM));
+          email: textUsername.text,
+          password: textPassword.text,
+          tokenFCM: tokenFCM));
     }
   }
 
@@ -152,8 +153,6 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
         context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
   }
 
-  
-
   @override
   void initState() {
     super.initState();
@@ -167,11 +166,10 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
     _getTokenFCM();
   }
 
-
   _getTokenFCM() async {
     tokenFCM = await Util().getTokenFCM();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -393,7 +391,10 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                   'assets/images/facebook-logo.png',
                                   fit: BoxFit.contain,
                                 ),
-                                onClick: () {},
+                                onClick: () {
+                                  BlocProvider.of<AuthenticationBloc>(context)
+                                      .add(AuthEventWithFacebook());
+                                },
                               ),
                               SizedBox(
                                 height: 0.02 * size.height,
