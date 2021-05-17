@@ -79,7 +79,7 @@ class TextFormatEdit extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-              color: colorBackground,
+              color: colorNeutral130,
               border: Border.all(color: colorNeutral2),
               borderRadius: BorderRadius.circular(5)),
           child: TextField(
@@ -88,7 +88,8 @@ class TextFormatEdit extends StatelessWidget {
                 isDense: true,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none),
-            style: TextStyle(height: 1.1, fontSize: 16),
+            style:
+                TextStyle(height: 1.2, fontSize: size.height < 569 ? 14 : 16),
             controller: textEdit,
             onChanged: (val) {
               onChanged(val);

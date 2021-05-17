@@ -60,6 +60,7 @@ class TaskRow extends StatelessWidget {
                           Text(
                             value,
                             style: TextStyle(
+                                fontFamily: 'Lato',
                                 fontSize: fontSize,
                                 color: colorPrimary,
                                 fontWeight: FontWeight.w700),
@@ -144,6 +145,7 @@ class TaskRow2 extends StatelessWidget {
                             Text(
                               value,
                               style: TextStyle(
+                                  fontFamily: 'Lato',
                                   fontSize: fontSize,
                                   color: colorPrimary,
                                   fontWeight: FontWeight.w700),

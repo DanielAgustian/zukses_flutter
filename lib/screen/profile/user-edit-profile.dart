@@ -189,7 +189,7 @@ class _EditProfileScreen extends State<EditProfile> {
                                             color: colorNeutral2,
                                             shape: BoxShape.circle,
                                             image: DecorationImage(
-                                                fit: BoxFit.fill,
+                                                fit: BoxFit.fitWidth,
                                                 image: data != ""
                                                     ? FileImage(File(data))
                                                     : NetworkImage(

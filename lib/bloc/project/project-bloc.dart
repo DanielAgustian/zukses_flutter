@@ -26,8 +26,24 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     List<bool> bools = [];
 
     if (res != null && res is List<ProjectModel>) {
+      List<ProjectModel> temp = [];
+      List<int> dataTrue = [], dataFalse = [];
       for (int i = 0; i < res.length; i++) {
-        int data = res[i].bookmark;
+        if (res[i].bookmark == 1) {
+          dataTrue.add(i);
+        } else if (res[i].bookmark == 0) {
+          dataFalse.add(i);
+        }
+      }
+
+      for (int i = 0; i < dataTrue.length; i++) {
+        temp.add(res[dataTrue[i]]);
+      }
+      for (int i = 0; i < dataFalse.length; i++) {
+        temp.add(res[dataFalse[i]]);
+      }
+      for (int i = 0; i < temp.length; i++) {
+        int data = temp[i].bookmark;
         if (data == 0) {
           bools.add(false);
         } else if (data == 1) {
@@ -35,7 +51,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         }
       }
 
-      yield ProjectStateSuccessLoad(project: res, bools: bools);
+      yield ProjectStateSuccessLoad(project: temp, bools: bools);
     } else {
       yield ProjectStateFailLoad();
     }

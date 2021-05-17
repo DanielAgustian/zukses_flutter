@@ -13,6 +13,7 @@ class TeamServiceHTTP {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+    print("Token = " + token);
     //Query to API
     var res = await http
         .get(Uri.https(baseURI, 'api/team-status'), headers: <String, String>{
@@ -21,7 +22,7 @@ class TeamServiceHTTP {
       'Authorization': 'Bearer $token'
     });
 
-    print(res.statusCode);
+    print("FetchTeamMember" + res.statusCode.toString());
     if (res.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

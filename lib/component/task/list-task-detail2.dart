@@ -13,12 +13,14 @@ class ListTaskDetail2 extends StatelessWidget {
       this.hour,
       this.index = 1,
       this.onClick,
+      this.priority,
       this.label})
       : super(key: key);
   final Size size;
   final String title, detail, date, hour, label;
   final int index;
   final Function onClick;
+  final String priority;
   DateFormat dateFormat = DateFormat.yMMMMd();
   Widget build(BuildContext context) {
     return InkWell(
@@ -97,7 +99,7 @@ class ListTaskDetail2 extends StatelessWidget {
                       width: size.width * 0.04,
                       height: 55,
                       decoration: BoxDecoration(
-                          color: colorSecondaryRed,
+                          color: changePriorityColor(priority),
                           borderRadius: new BorderRadius.only(
                               bottomRight: const Radius.circular(5.0),
                               topRight: const Radius.circular(5.0))),
@@ -106,5 +108,21 @@ class ListTaskDetail2 extends StatelessWidget {
                 ],
               ))),
     );
+  }
+
+  Color changePriorityColor(String val) {
+    if (priority == null) {
+      return colorPrimary;
+    } else {
+      if (val.toLowerCase() == "high") {
+        return colorSecondaryRed;
+      } else if (val.toLowerCase() == "medium") {
+        return colorSecondaryYellow;
+      } else if (val.toLowerCase() == "low") {
+        return colorClear;
+      } else {
+        return colorPrimary;
+      }
+    }
   }
 }

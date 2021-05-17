@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -49,6 +50,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
+import 'package:zukses_app_1/model/google-sign-in-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
@@ -83,6 +85,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TextEditingController textReasonOvertime = new TextEditingController();
   TextEditingController textProjectOvertime = new TextEditingController();
+
   final picker = ImagePicker();
   String statusLate = "";
   String statusOvertime = "";
@@ -125,19 +128,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   DateTime backbuttonpressedTime;
 
   String tokenFCM = "";
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
-  }
 
   void checkStatusClock(String where) async {
+    print("CheckStatusClock Jalan");
     if (where == "initState") {
-      getAuthData();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var googleSign = prefs.getInt('google');
+      var facebookSign = prefs.getInt('facebook');
+      print("Allow Google Sign " + googleSign.toString());
+      if (googleSign != null) {
+        getAuthGoogle();
+      } else if (facebookSign != null) {
+      } else {
+        getAuthData();
+      }
     }
     if (isLoadingAuth) {
       setState(() {
@@ -167,12 +171,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void getAuthData() async {
     await _getTokenFCM();
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("userLogin");
     String password = prefs.getString("passLogin");
     print("username " + username);
     BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
         email: username, password: password, tokenFCM: tokenFCM));
+  }
+
+  void getAuthGoogle() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('google_data');
+    GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
+    print("Email from Google = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.image,
+            tokenGoogle: model.token,
+            tokenFCM: tokenFCM));
   }
 
   void loginTeam() async {
@@ -217,15 +236,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // sharedPref();
+
     getMember();
-    //getAuthData();
+    checkStatusClock("initState");
     getCompanyProfile();
     sharedPrefInstruction();
     getUserProfile();
     _getTaskLowPriority();
     _getTaskHighPriority();
-    checkStatusClock("initState");
+
     _getMeetingToday();
     _getMeetingRequest();
 
@@ -317,22 +336,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           isLoadingAuth = true;
                         });
 
-                       //Choose Enum Tap based on DB data.
+                        //Choose Enum Tap based on DB data.
 
                         if (_authModel.maxClockIn == "false") {
                           //if they arent clockout today
                           if (_authModel.attendance == "false") {
-                            // if they arent clock in yet 
+                            // if they arent clock in yet
                             setState(() {
                               //stringTap = enumTap[0];
                             });
                           } else if (_authModel.attendance == "true") {
-                          // if they already clock in.
+                            // if they already clock in.
                             setState(() {
                               stringTap = enumTap[1];
                             });
                           }
-
                         } else if (_authModel.maxClockIn == "true") {
                           //If they already clock out for today
                           setState(() {
@@ -349,7 +367,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: Container()),
                 BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) async {
-                    getAuthData();
                     if (state is AttendanceStateFailed) {
                       Util().showToast(
                           context: this.context,
@@ -357,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           color: colorError,
                           txtColor: colorBackground);
                     } else if (state is AttendanceStateSuccessClockIn) {
-                      //if they already clock in 
+                      //if they already clock in
                       setState(() {
                         stringTap = enumTap[1];
                       });
@@ -462,12 +479,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       stringTap = enumTap[2];
                                     });
                                   }
-                                } else {
-                                  getAuthData();
                                 }
                               }
                             },
-                          
                             child: Container(
                                 width: double.infinity,
                                 height: size.height * 0.40,
@@ -681,7 +695,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                                   .circle,
                                                               image: DecorationImage(
                                                                   fit: BoxFit
-                                                                      .fill,
+                                                                      .fitWidth,
                                                                   image: state.userModel.imgUrl ==
                                                                               null ||
                                                                           state.userModel.imgUrl ==

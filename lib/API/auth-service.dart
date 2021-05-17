@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:http/http.dart' as http;
 import 'package:zukses_app_1/model/facebook_auth-model.dart';
+import 'package:zukses_app_1/model/google-sign-in-model.dart';
 
 class AuthServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
@@ -96,7 +97,64 @@ class AuthServiceHTTP {
     facebookLogin.logOut();
   }
 
-  Future<FBAuthModel> fbLogin() async {
+  Future<GoogleSignInModel> googleSignIn() async {
+    try {
+      GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+      print("LOGIN GOOGLE ==============+> ON GOING . . .");
+      String name, token, email, image;
+      await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await _googleSignIn.currentUser.authentication;
+
+      name = _googleSignIn.currentUser.displayName;
+      token = googleSignInAuthentication.idToken;
+      email = _googleSignIn.currentUser.email;
+      image = _googleSignIn.currentUser.photoUrl;
+
+      print("GOOGLE LOGIN ==================+>");
+      GoogleSignInModel model = GoogleSignInModel(
+          name: name, token: token, email: email, image: image);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt("google", 1);
+      await prefs.setString("google_data", jsonEncode(model));
+      print("Image Link in GoogleSIgnIN" + image);
+      return model;
+    } on Exception catch (e) {
+      print("googleSignInFailed" + e.toString());
+      return null;
+    }
+  }
+
+  Future<AuthModel> googleLoginToAPI(
+      String name, String email, String link_image, String token,
+      {String tokenFCM}) async {
+    try {
+      print("Image Link in GoogleLoginToAPI: " + link_image);
+      final response = await http.post(
+        Uri.https(baseURI, '/api/google-sign-in'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8'
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'name': name,
+          'link_image': link_image,
+          'token': token,
+          'fcmToken': tokenFCM
+        }),
+      );
+      print(response.body);
+      final user = AuthModel.fromJson(jsonDecode(response.body));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("token", user.token);
+      return user;
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
+  }
+  /*Future<FBAuthModel> fbLogin() async {
     final result = await facebookLogin.logIn(['email']);
     print(result.status);
     switch (result.status) {
@@ -122,5 +180,5 @@ class AuthServiceHTTP {
         return null;
         break;
     }
-  }
+  }*/
 }

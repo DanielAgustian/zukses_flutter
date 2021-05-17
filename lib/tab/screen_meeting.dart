@@ -187,10 +187,9 @@ class _MeetingScreenState extends State<MeetingScreen>
                 child: Stack(
                   children: [
                     Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.solidBell,
-                        color: colorPrimary,
-                      ),
+                      child: FaIcon(FontAwesomeIcons.solidBell,
+                          color: colorPrimary,
+                          size: size.height <= 569 ? 18 : 22),
                     ),
                     BlocBuilder<MeetingReqBloc, MeetingReqState>(
                         builder: (context, state) {
@@ -234,7 +233,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                           ? FontAwesomeIcons.columns
                           : FontAwesomeIcons.thLarge,
                       color: colorPrimary,
-                      size: size.height <= 569 ? 16 : 20),
+                      size: size.height <= 569 ? 18 : 22),
                 ),
               ),
             ),

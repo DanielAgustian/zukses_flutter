@@ -25,7 +25,7 @@ class _UserProfileScreen extends State<UserProfile> {
   UserModel user = UserModel();
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     _getProfile();
     print("Id Company " + widget.company.id);
@@ -144,7 +144,7 @@ class _UserProfileScreen extends State<UserProfile> {
                                                         image: NetworkImage(
                                                           "https://api-zukses.yokesen.com/${state.userModel.imgUrl}",
                                                         ),
-                                                        fit: BoxFit.fill)),
+                                                        fit: BoxFit.fitWidth)),
                                               )),
                                   ],
                                 ),

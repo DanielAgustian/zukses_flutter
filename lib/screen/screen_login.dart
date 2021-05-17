@@ -141,7 +141,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
   }
 
   void googleLogin() {
-    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventWithGoogle());
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventWithGoogle(tokenFCM:tokenFCM));
 
     setState(() {
       loading = true;

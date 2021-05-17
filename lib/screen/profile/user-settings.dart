@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/API/auth-service.dart';
 
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -129,9 +130,12 @@ class _UserSettingsScreen extends State<UserSettings> {
     prefs.remove("myID");
     if (prefs.getInt("facebook") != null) {
       prefs.remove("facebook");
+      AuthServiceHTTP().fbLogOut();
     }
     if (prefs.getInt("google") != null) {
       prefs.remove("google");
+      prefs.remove("google_data");
+      AuthServiceHTTP().googleLogOut();
     }
   }
 

@@ -6,8 +6,6 @@ import 'package:zukses_app_1/API/team-service.dart';
 import 'package:zukses_app_1/bloc/team/team-event.dart';
 import 'package:zukses_app_1/bloc/team/team-state.dart';
 
-
-
 class TeamBloc extends Bloc<TeamEvent, TeamState> {
   StreamSubscription _subscription;
 
@@ -22,19 +20,17 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     var res = await _teamServiceHTTP.fetchTeamMember();
 
     // return checkbox handler
-    
-    
+
     // directly throw into success load or fail load
-    if (res != null ) {
+    if (res != null) {
       yield TeamStateSuccessLoad(team: res);
     } else {
+      print("MapAllTeamFailed");
       yield TeamStateFailLoad();
     }
   }
-  
-  
-  Stream<TeamState> mapUpdatingTeamState(
-      TeamEventDidUpdated event) async* {
+
+  Stream<TeamState> mapUpdatingTeamState(TeamEventDidUpdated event) async* {
     yield TeamStateSuccessLoad(team: event.team);
   }
 
@@ -46,6 +42,7 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
       yield* mapUpdatingTeamState(event);
     }
   }
+
   @override
   Future<void> close() {
     _subscription?.cancel();

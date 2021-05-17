@@ -245,7 +245,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-        
         backgroundColor: colorBackground,
         appBar: AppBar(
           elevation: 0,

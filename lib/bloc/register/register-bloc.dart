@@ -1,13 +1,22 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/API/register-services.dart';
+
 import 'package:zukses_app_1/bloc/register/register-event.dart';
 import 'package:zukses_app_1/bloc/register/register-state.dart';
+import 'package:zukses_app_1/model/auth-model.dart';
+import 'package:zukses_app_1/model/facebook_auth-model.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(null);
   RegisterServicesHTTP _registerServicesHTTP = RegisterServicesHTTP();
+  AuthServiceHTTP _authenticationService = AuthServiceHTTP();
   StreamSubscription _subscription;
   @override
   Stream<RegisterState> mapEventToState(RegisterEvent event) async* {
@@ -21,16 +30,78 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       yield* mapAddRegisTeamMember(event);
     } else if (event is PostAcceptanceCompanyEvent) {
       yield* mapRegisterIntoCompanyAcceptance(event);
+    } else if (event is AddRegisterFacebook) {
+      yield* mapRegisterFacebook(event);
+    } else if (event is AddRegisterGoogle) {
+      yield* mapAddRegisGoogle(event);
     }
   }
 
   Stream<RegisterState> mapAddRegisIndividual(
       AddRegisterIndividuEvent event) async* {
     yield RegisterStateLoading();
-    var res =
-        await _registerServicesHTTP.createRegisterIndividual(event.register, tokenFCM: event.tokenFCM);
+    var res = await _registerServicesHTTP
+        .createRegisterIndividual(event.register, tokenFCM: event.tokenFCM);
     if (res != null) {
       yield RegisterStateSuccess(res);
+    } else {
+      yield RegisterStateFailed();
+    }
+  }
+
+  Stream<RegisterState> mapAddRegisGoogle(AddRegisterGoogle event) async* {
+    yield RegisterStateLoading();
+
+    try {
+      var googleData = await _authenticationService.googleSignIn();
+
+      // Integrate to api backend
+      var res = await _authenticationService.googleLoginToAPI(googleData.name,
+          googleData.email, googleData.image, googleData.token);
+      if (res != null && res is AuthModel) {
+        yield RegisterStateSuccess(res);
+      } else {
+        yield RegisterStateFailed();
+      }
+    } catch (err) {
+      yield RegisterStateFailed();
+    }
+  }
+
+  Stream<RegisterState> mapRegisterFacebook(AddRegisterFacebook event) async* {
+    yield RegisterStateLoading();
+    FBAuthModel fbAuthData = FBAuthModel();
+
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+
+    String tokenFacebook = "";
+    print(result.status);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        tokenFacebook = result.accessToken.token;
+        final graphResponse = await http.get(Uri.parse(
+          "https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$tokenFacebook",
+        ));
+        final profile = jsonDecode(graphResponse.body);
+        fbAuthData = FBAuthModel.fromJson(profile);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt("facebook", 1);
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        print("Facebook Login Canceled");
+
+        break;
+      case FacebookLoginStatus.error:
+        print("RFecebook Login Error");
+
+        break;
+      default:
+        break;
+    }
+    if (fbAuthData is FBAuthModel && fbAuthData != null) {
+      //yield RegisterStateSuccess();
     } else {
       yield RegisterStateFailed();
     }

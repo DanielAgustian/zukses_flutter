@@ -16,6 +16,15 @@ class AuthEventLoginManual extends AuthenticationEvent {
   List<Object> get props => [email, password];
 }
 
+class AuthEventDetectGoogleSignIn extends AuthenticationEvent {
+  final String email, name, image, tokenGoogle, tokenFCM;
+
+  AuthEventDetectGoogleSignIn(
+      {this.email, this.name, this.image, this.tokenGoogle, this.tokenFCM});
+  @override
+  List<Object> get props => [email, name, image, tokenGoogle];
+}
+
 class AuthEventLoginTeam extends AuthenticationEvent {
   final String email, password, link;
   const AuthEventLoginTeam({this.email, this.password, this.link});
@@ -25,7 +34,8 @@ class AuthEventLoginTeam extends AuthenticationEvent {
 }
 
 class AuthEventWithGoogle extends AuthenticationEvent {
-  const AuthEventWithGoogle();
+  final String tokenFCM;
+  const AuthEventWithGoogle({this.tokenFCM});
 
   @override
   List<Object> get props => [];

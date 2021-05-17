@@ -122,6 +122,8 @@ class _TaskScreen extends State<TaskScreen> {
                                           project: project,
                                         )));
                           }
+                          
+
                         });
                       } else if (state is ProjectStateFailLoad) {
                         setState(() {
@@ -146,6 +148,7 @@ class _TaskScreen extends State<TaskScreen> {
                   SizedBox(
                     height: 10,
                   ),
+
                   BlocBuilder<ProjectBloc, ProjectState>(
                       builder: (context, state) {
                     if (state is ProjectStateSuccessLoad) {
@@ -156,7 +159,6 @@ class _TaskScreen extends State<TaskScreen> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               onTap: () {
-                                //print(projectName[index]);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

@@ -471,6 +471,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _buildItem(TaskModel item, index) {
     return DragAndDropItem(
       child: ListTaskDetail2(
+        priority: item.priority,
         label: item.label == null ? "" : item.label,
         size: size,
         title: item.taskName,
@@ -700,6 +701,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Reporter",
@@ -708,22 +710,50 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                     color: colorPrimary,
                                     fontWeight: FontWeight.w500),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        color: colorNeutral3,
-                                        shape: BoxShape.circle),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    clickTask.reporter.name,
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ],
+                              Container(
+                                width: size.height < 569 ? 140 : 160,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    clickTask.reporter.imgUrl == null ||
+                                            clickTask.reporter.imgUrl == ""
+                                        ? Container(
+                                            width: 30,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                                /*image: DecorationImage(
+                                            image: NetworkImage()
+                                          ),*/
+                                                color: colorPrimary,
+                                                shape: BoxShape.circle),
+                                            child: Center(
+                                              child: Text(
+                                                util.getInitials(
+                                                    clickTask.reporter.name),
+                                                style: TextStyle(
+                                                    color: colorBackground,
+                                                    fontSize: 12),
+                                              ),
+                                            ))
+                                        : Container(
+                                            width: 30,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    fit: BoxFit.fitWidth,
+                                                    image: NetworkImage(
+                                                        "https://api-zukses.yokesen.com/${clickTask.reporter.imgUrl}")),
+                                                color: colorPrimary,
+                                                shape: BoxShape.circle),
+                                          ),
+                                    SizedBox(width: 10),
+                                    Text(clickTask.reporter.name,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize:
+                                                size.height < 569 ? 12 : 14)),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -734,6 +764,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Assignee",
@@ -752,25 +783,78 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                           physics:
                                               NeverScrollableScrollPhysics(),
                                           itemBuilder: (context, index) {
-                                            return Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Container(
-                                                  width: 30,
-                                                  height: 30,
-                                                  decoration: BoxDecoration(
-                                                      color: colorNeutral3,
-                                                      shape: BoxShape.circle),
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Container(
+                                                  width: size.height < 569
+                                                      ? 140
+                                                      : 160,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      clickTask
+                                                                      .assignment[
+                                                                          index]
+                                                                      .imgUrl ==
+                                                                  null ||
+                                                              clickTask
+                                                                      .assignment[
+                                                                          index]
+                                                                      .imgUrl ==
+                                                                  ""
+                                                          ? Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                              decoration: BoxDecoration(
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  shape: BoxShape
+                                                                      .circle),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  util.getInitials(clickTask
+                                                                      .assignment[
+                                                                          index]
+                                                                      .name),
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          colorBackground,
+                                                                      fontSize:
+                                                                          12),
+                                                                ),
+                                                              ))
+                                                          : Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                              decoration: BoxDecoration(
+                                                                  image: DecorationImage(
+                                                                      fit: BoxFit
+                                                                          .fitWidth,
+                                                                      image: NetworkImage(
+                                                                          "https://api-zukses.yokesen.com/${clickTask.assignment[index].imgUrl}")),
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  shape: BoxShape
+                                                                      .circle),
+                                                            ),
+                                                      SizedBox(width: 10),
+                                                      Text(
+                                                        clickTask
+                                                            .assignment[index]
+                                                            .name,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                SizedBox(width: 10),
-                                                Text(
-                                                  clickTask
-                                                      .assignment[index].name,
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                ),
-                                              ],
+                                              ),
                                             );
                                           }),
                                     )

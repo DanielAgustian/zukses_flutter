@@ -412,6 +412,7 @@ class AddScheduleLeaveType extends StatelessWidget {
                           value.typeName,
                           textAlign: TextAlign.right,
                           style: TextStyle(
+                              fontFamily: 'Lato',
                               fontSize: fontSize,
                               color: colorPrimary,
                               fontWeight: FontWeight.w700),

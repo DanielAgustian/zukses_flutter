@@ -92,6 +92,14 @@ class Util {
     return DateFormat('yMMMd').format(date);
   }
 
+  String shorteningName(String name) {
+    if (name.length > 15) {
+      var parts = name.split(" ");
+      name = parts[0] + " " + parts[1];
+    }
+    return name;
+  }
+
   String getInitials(String name) {
     List<String> splitString = name.split(" ");
     String initialName = "";
@@ -121,7 +129,7 @@ class Util {
       return token;
     } else {
       String token = await FirebaseMessaging.instance.getToken();
-     
+
       print("Token FCM for Android $token");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("fcmToken", token);

@@ -29,6 +29,15 @@ class AddRegisterTeamMemberEvent extends RegisterEvent {
   List<Object> get props => [register, link];
 }
 
+class AddRegisterFacebook extends RegisterEvent {
+  AddRegisterFacebook();
+}
+
+class AddRegisterGoogle extends RegisterEvent {
+  final String tokenFCM;
+  AddRegisterGoogle({this.tokenFCM});
+}
+
 class AddRegisterTeamEvent extends RegisterEvent {
   final String link;
   final List<String> email;
@@ -46,10 +55,10 @@ class AddRegisterCompanyEvent extends RegisterEvent {
 }
 
 class PostAcceptanceCompanyEvent extends RegisterEvent {
- 
   PostAcceptanceCompanyEvent();
   List<Object> get props => [];
 }
+
 class RegisterEventDidUpdated extends RegisterEvent {
   final List<RegisterModel> register;
   const RegisterEventDidUpdated(this.register);
