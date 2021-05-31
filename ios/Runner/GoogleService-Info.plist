@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>338622488807-s37uem7iid38pdcvcrl4i8kumib2jolr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.338622488807-s37uem7iid38pdcvcrl4i8kumib2jolr</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>338622488807-jkt40qfqq1a71e86esdnvgke8aj678ri.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBLYYRl38gLgr5-Dcr6i66Srut_ZqkVz0I</string>
+	<key>GCM_SENDER_ID</key>
+	<string>338622488807</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.yokesen.zuksesapp</string>
+	<key>PROJECT_ID</key>
+	<string>zukses-bd4f7</string>
+	<key>STORAGE_BUCKET</key>
+	<string>zukses-bd4f7.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:338622488807:ios:a9316d6ad68bf2ede48242</string>
+</dict>
+</plist>
