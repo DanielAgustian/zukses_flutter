@@ -104,6 +104,8 @@ void main() async {
     badge: true,
     sound: true,
   );
+  
+
   runApp(
       //DevicePreview(
       // builder: (context) =>
