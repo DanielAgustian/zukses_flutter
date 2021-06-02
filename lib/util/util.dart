@@ -172,6 +172,8 @@ class Util {
         packageName: 'com.example.zukses_app_1',
         minimumVersion: 0,
       ),
+      iosParameters: IosParameters(
+          bundleId: 'com.yokesen.zuksesapp', appStoreId: '1570075964'),
       dynamicLinkParametersOptions: DynamicLinkParametersOptions(
         shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
       ),
