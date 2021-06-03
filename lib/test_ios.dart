@@ -23,6 +23,7 @@ String constructFCMPayload(String token) {
   _messageCount++;
   return jsonEncode({
     'token': token,
+    "to": token,
     'data': {
       'via': 'FlutterFire Cloud Messaging!!!',
       'count': _messageCount.toString(),
