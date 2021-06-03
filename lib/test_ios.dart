@@ -114,37 +114,6 @@ class _TestNotifIOSState extends State<TestNotifIOS> {
     print("TOKEN APNS $tokenFCM");
   }
 
-  NotificationSettings setting;
-
-  void reqPermission() async {
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    setState(() {
-      setting = settings;
-    });
-
-    if (setting.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else if (setting.authorizationStatus == AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
-    } else {
-      print('User declined or has not accepted permission');
-    }
-
-    // Get any messages which caused the application to open from
-    // a terminated state.
-    RemoteMessage initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-  }
-
   /// Initialize the [FlutterLocalNotificationsPlugin] package.
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
