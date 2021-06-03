@@ -510,7 +510,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         );
                                       }),
                                       Container(
-                                        padding: EdgeInsets.all(8),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 8),
                                         decoration: BoxDecoration(
                                           color: colorBackground,
                                           borderRadius:
@@ -530,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                 height: size.height < 569
                                                     ? 20
                                                     : 25),
-                                            SizedBox(width: 10),
+                                            // SizedBox(width: 10),
                                             Text(
                                               stringTap,
                                               style: TextStyle(

@@ -482,7 +482,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                                     BorderRadius.circular(5)),
                                             child: Center(
                                               child: Text(
-                                                "Myswlf",
+                                                "Myself",
                                                 style: TextStyle(
                                                     color: colorBackground,
                                                     fontSize: 14),
@@ -715,12 +715,11 @@ class _AddTaskScreen extends State<AddTaskScreen>
       },
     );
     if (newTime != null) {
+      print("MASUK TIME");
       setState(() {
         _time = newTime;
         String data = _time.format(context);
-        DateTime date = DateFormat.jm().parse(data);
-        String finalTime = DateFormat("HH:mm").format(date);
-        textTime.text = finalTime;
+        textTime.text = data;
       });
     }
   }
