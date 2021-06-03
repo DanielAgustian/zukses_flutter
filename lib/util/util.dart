@@ -122,10 +122,13 @@ class Util {
 
     if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
-      String token = await FirebaseMessaging.instance.getAPNSToken();
+      print('FlutterFire Messaging Example: Getting APNs token...');
+      String apns = await FirebaseMessaging.instance.getAPNSToken();
+      String token = await FirebaseMessaging.instance.getToken();
 
       print("Token FCM for IOS Gadget $token");
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("fcmToken", token);
       return token;
     } else {
       String token = await FirebaseMessaging.instance.getToken();
