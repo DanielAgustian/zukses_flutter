@@ -40,8 +40,7 @@ import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
-import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
-import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:zukses_app_1/component/onboarding/dots-indicator.dart'; 
 import 'package:zukses_app_1/test_ios.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -219,6 +218,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   String version = "v1.0 Beta";
   final splashDelay = 3;
+
   @override
   void initState() {
     super.initState();
@@ -228,6 +228,32 @@ class _SplashScreenState extends State<SplashScreen> {
   _loadWidget() async {
     var _duration = Duration(seconds: splashDelay);
     return Timer(_duration, navigationPage);
+  }
+
+  NotificationSettings setting;
+
+  void reqPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    setState(() {
+      setting = settings;
+    });
+
+    if (setting.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (setting.authorizationStatus == AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
   }
 
   void navigationPage() {
