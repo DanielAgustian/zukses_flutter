@@ -190,7 +190,6 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         routes: <String, WidgetBuilder>{
           '/LoginScreen': (BuildContext context) => new ScreenLogin()
-          // '/LoginScreen': (BuildContext context) => new TestNotifIOS()
         },
         title: 'Zukses: Application for Office',
         theme: ThemeData(
@@ -233,15 +232,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigationPage() {
     if (widget.token != null) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => ScreenTab()));
+      Navigator.pushReplacement(
+          context,
+          // MaterialPageRoute(builder: (BuildContext context) => ScreenTab()));
+          MaterialPageRoute(builder: (BuildContext context) => TestNotifIOS()));
     } else {
       if (widget.onboarding == true) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => ScreenLogin()));
-        // builder: (BuildContext context) => TestNotifIOS()));
+                // builder: (BuildContext context) => ScreenLogin()));
+                builder: (BuildContext context) => TestNotifIOS()));
       } else {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
