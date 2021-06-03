@@ -40,7 +40,7 @@ import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
-import 'package:zukses_app_1/component/onboarding/dots-indicator.dart'; 
+import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
 import 'package:zukses_app_1/test_ios.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -223,6 +223,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _loadWidget();
+    reqPermission();
   }
 
   _loadWidget() async {
