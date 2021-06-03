@@ -24,6 +24,7 @@ String constructFCMPayload(String token) {
   return jsonEncode({
     'token': token,
     "to": token,
+    'content_available': true,
     'data': {
       'via': 'FlutterFire Cloud Messaging!!!',
       'count': _messageCount.toString(),
@@ -189,13 +190,24 @@ class _TestNotifIOSState extends State<TestNotifIOS> {
     }
 
     try {
-      await http.post(
-        Uri.parse('https://api.rnfirebase.io/messaging/send'),
+      // authorization using key from firebase server
+      await http
+          .post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization':
+              'key=AAAATtd5IOc:APA91bGKyAFOT6mPc8w8TnuLtCj3dUmFZSMTKymPR8Hhuikmtpn3Sm3yU2iKRjJsY6IKds6jL4hv2DRAJlkx6_pTIhu2QpGMw_42xGbvPkPNPf3pLlFnuDX_Iba3nDhM7-PHYzSKZIjP'
         },
         body: constructFCMPayload(tokenFCM),
-      );
+      )
+          .then((value) {
+        print(value.statusCode);
+        print(value.body);
+      }).catchError((onError) {
+        print(onError);
+      });
+
       print('FCM request for device sent!');
     } catch (e) {
       print(e);
@@ -228,9 +240,11 @@ class _TestNotifIOSState extends State<TestNotifIOS> {
               defaultTargetPlatform == TargetPlatform.macOS) {
             print('FlutterFire Messaging Example: Getting APNs token...');
             String token = await FirebaseMessaging.instance.getAPNSToken();
+            String token2 = await FirebaseMessaging.instance.getToken();
             print('FlutterFire Messaging Example: Got APNs token: $token');
+            print('FlutterFire Messaging Example: Got token: $token2');
             setState(() {
-              tokenFCM = token;
+              tokenFCM = token2;
             });
           } else {
             print('FlutterFire Messaging Example: Getting android token...');
