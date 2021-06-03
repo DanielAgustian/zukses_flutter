@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:zukses_app_1/main.dart';
+import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class TestNotifIOS extends StatefulWidget {
@@ -135,6 +136,11 @@ class _TestNotifIOSState extends State<TestNotifIOS> {
         print(message.data);
         print(message.notification.title);
         print(message.notification.body);
+
+        if (message.data["count"].toString().contains("6")) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ScreenLogin()));
+        }
       }
     });
 

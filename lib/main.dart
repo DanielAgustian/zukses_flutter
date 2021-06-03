@@ -41,6 +41,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/onboarding/onboarding-card.dart';
 import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
+import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/test_ios.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -259,17 +260,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigationPage() {
     if (widget.token != null) {
-      Navigator.pushReplacement(
-          context,
-          // MaterialPageRoute(builder: (BuildContext context) => ScreenTab()));
-          MaterialPageRoute(builder: (BuildContext context) => TestNotifIOS()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) => ScreenTab()));
+      // MaterialPageRoute(builder: (BuildContext context) => TestNotifIOS()));
     } else {
       if (widget.onboarding == true) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                // builder: (BuildContext context) => ScreenLogin()));
-                builder: (BuildContext context) => TestNotifIOS()));
+                builder: (BuildContext context) => ScreenLogin()));
+        // builder: (BuildContext context) => TestNotifIOS()));
       } else {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
