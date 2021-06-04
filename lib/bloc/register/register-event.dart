@@ -30,7 +30,8 @@ class AddRegisterTeamMemberEvent extends RegisterEvent {
 }
 
 class AddRegisterFacebook extends RegisterEvent {
-  AddRegisterFacebook();
+  final String tokenFCM;
+  AddRegisterFacebook({this.tokenFCM});
 }
 
 class AddRegisterGoogle extends RegisterEvent {

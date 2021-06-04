@@ -144,7 +144,8 @@ class AuthServiceHTTP {
           'fcmToken': tokenFCM
         }),
       );
-      print(response.body);
+      print(response.statusCode);
+      //print(response.body);
       final user = AuthModel.fromJson(jsonDecode(response.body));
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", user.token);
