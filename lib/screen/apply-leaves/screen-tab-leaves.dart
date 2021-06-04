@@ -184,7 +184,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
       child: list.length < 1
           ? Center(
               child: Text(
-              "No Leaves has been " + tab,
+              "No $tab leaves at the moment",
               style: TextStyle(
                   fontSize: size.height < 569 ? 12 : 14,
                   fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                       screen: widget.permission,
                       title: list[index].typeName,
                       detail: list[index].leaveDate == null
-                          ? "Data Cant Be fetch"
+                          ? "Data can't be fetched"
                           : Util().dateNumbertoCalendar(
                               DateTime.parse(list[index].leaveDate)),
                       status: list[index].status,
