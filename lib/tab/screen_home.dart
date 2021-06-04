@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String statusLate = "";
   String statusOvertime = "";
   String key = "clock in";
-  String stringTap = "Tap Here to Clock In";
+  String stringTap = "tap to clock in";
   String teamId = "";
   AuthModel _authModel = AuthModel();
   CompanyModel _company = CompanyModel();
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   var taskDetail = ["Task 1", "task 2"];
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
-  var enumTap = ["Tap Here to Clock In", "Tap Here to Clock Out", "Good Work!"];
+  var enumTap = ["tap to clock in", "tap to clock out", "Good Work !"];
   //bool emptyMeeting = false;
   //bool emptyTask = false;
   // FOR SKELETON -------------------------------------------------------------------------
