@@ -12,6 +12,7 @@ import 'package:zukses_app_1/bloc/register/register-event.dart';
 import 'package:zukses_app_1/bloc/register/register-state.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/facebook_auth-model.dart';
+import 'package:zukses_app_1/model/fb_model_sender.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(null);
@@ -85,17 +86,35 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         ));
         final profile = jsonDecode(graphResponse.body);
         fbAuthData = FBAuthModel.fromJson(profile);
+        var res = await _authenticationService.googleLoginToAPI(fbAuthData.name,
+            fbAuthData.email, fbAuthData.picture.url, tokenFacebook,
+            tokenFCM: event.tokenFCM);
+        FBModelSender fms = FBModelSender(
+          email: fbAuthData.email,
+          name: fbAuthData.name,
+          url: fbAuthData.picture.url,
+          id: fbAuthData.id
+        );
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt("facebook", 1);
+        await prefs.setString("facebook_token", tokenFacebook);
+        await prefs.setString("facebook_data", jsonEncode(fms));
+        if (res is AuthModel && res != null) {
+          yield RegisterStateSuccess(res);
+          print("AuthStateSuccess FAcebook");
+          print(state);
+        } else {
+          yield RegisterStateFailLoad();
+        }
         break;
 
       case FacebookLoginStatus.cancelledByUser:
         print("Facebook Login Canceled");
-
+        yield RegisterStateFailLoad();
         break;
       case FacebookLoginStatus.error:
         print("RFecebook Login Error");
-
+        yield RegisterStateFailLoad();
         break;
       default:
         break;

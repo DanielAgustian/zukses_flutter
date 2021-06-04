@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
 import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
+import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
+import 'package:zukses_app_1/model/google-sign-in-model.dart';
 
 import 'package:zukses_app_1/util/util.dart';
 
@@ -29,6 +33,8 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   bool uploading = false;
   DateTime now = DateTime.now();
   bool closing = false;
+  Util util = Util();
+  String tokenFCM;
   void initState() {
     super.initState();
     imagePath = widget.path;
@@ -109,10 +115,12 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
           addClockInSF();
           uploading = false;
           await showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      _buildPopupDialog(mContext))
-              .then((value) => Navigator.pop(context));
+              context: context,
+              builder: (BuildContext context) =>
+                  _buildPopupDialog(mContext)).then((value) {
+            checkStatusClock();
+            Navigator.pop(context);
+          });
         }
       },
       child: Scaffold(
@@ -228,5 +236,49 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
             })
       ],
     );
+  }
+
+  void getAuthData() async {
+    await _getTokenFCM();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString("userLogin");
+    String password = prefs.getString("passLogin");
+    print("username " + username);
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
+        email: username, password: password, tokenFCM: tokenFCM));
+  }
+
+  void checkStatusClock() async {
+    print("CheckStatusClock Jalan");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var googleSign = prefs.getInt('google');
+    var facebookSign = prefs.getInt('facebook');
+    print("Allow Google Sign " + googleSign.toString());
+    if (googleSign != null) {
+      getAuthGoogle();
+    } else if (facebookSign != null) {
+    } else {
+      getAuthData();
+    }
+  }
+
+  Future<void> _getTokenFCM() async {
+    tokenFCM = await util.getTokenFCM();
+  }
+
+  void getAuthGoogle() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('google_data');
+    GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
+    print("Email from Google = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.image,
+            tokenGoogle: model.token,
+            tokenFCM: tokenFCM));
   }
 }

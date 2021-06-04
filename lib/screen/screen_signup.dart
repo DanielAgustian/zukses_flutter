@@ -540,7 +540,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                         ),
                         onClick: () {
                           BlocProvider.of<RegisterBloc>(context)
-                              .add(AddRegisterFacebook());
+                              .add(AddRegisterFacebook(tokenFCM: tokenFCM));
                           /*Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -42,7 +42,8 @@ class AuthEventWithGoogle extends AuthenticationEvent {
 }
 
 class AuthEventWithFacebook extends AuthenticationEvent {
-  const AuthEventWithFacebook();
+  final String tokenFCM;
+  const AuthEventWithFacebook({this.tokenFCM});
 
   @override
   List<Object> get props => [];

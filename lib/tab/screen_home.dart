@@ -50,6 +50,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
+import 'package:zukses_app_1/model/facebook_auth-model.dart';
+import 'package:zukses_app_1/model/fb_model_sender.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
@@ -104,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool instruction = false;
   int isClockIn;
   int attendanceID;
+  int totalClockOut = 0;
   TimeOfDay _time = TimeOfDay.now();
   Util util = Util();
 
@@ -139,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       if (googleSign != null) {
         getAuthGoogle();
       } else if (facebookSign != null) {
+        getAuthFacebook();
       } else {
         getAuthData();
       }
@@ -191,6 +195,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             name: model.name,
             image: model.image,
             tokenGoogle: model.token,
+            tokenFCM: tokenFCM));
+  }
+
+  void getAuthFacebook() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('facebook_data');
+    
+    String tokenFacebook = prefs.getString('facebook_token');
+    FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
+
+    print("Email from facebook = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.url,
+            tokenGoogle: tokenFacebook,
             tokenFCM: tokenFCM));
   }
 
@@ -387,11 +408,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         stringTap = enumTap[2];
                       });
                       // show confirm dialog success clock out
-                      showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildPopupDialog(context, "_BlocListener"))
-                          .then((value) => stringTap = enumTap[2]);
+                      if (totalClockOut < 1) {
+                        showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    _buildPopupDialog(context, "_BlocListener"))
+                            .then((value) => stringTap = enumTap[2]);
+                      }
+                      totalClockOut = totalClockOut + 1;
                     }
                   },
                   child: Container(),
@@ -446,6 +470,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     if (_authModel.attendance == "false") {
                                       if (instruction == true) {
                                         pushToCamera();
+                                        print("Push To Camera");
                                       } else {
                                         Navigator.push(
                                           context,
@@ -454,6 +479,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                   CameraInstruction()),
                                         );
                                       }
+                                      checkStatusClock("initState");
                                     } else if (_authModel.attendance ==
                                         "true") {
                                       //Clock Out
@@ -1384,7 +1410,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildPopupDialog(BuildContext context, String where) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Clock Out Success!",
+        "Clock Out Success! ",
       ),
       content: new Text("Clock Out in" + getSystemTime()),
       actions: <Widget>[

@@ -64,23 +64,27 @@ class CompanyServiceHTTP {
   Future<int> addOrganization(
       CompanyModel company, String token, String scope) async {
     print("addOrganization ");
-    var res = await http.post(Uri.https(baseURI, "/api/organization"),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Charset': 'utf-8',
-          'Authorization': 'Bearer $token'
-        },
-        body: jsonEncode(<String, dynamic>{
-          'legalName': company.name,
-          'companyPhone': company.phone,
-          'companyEmail': company.email,
-          'companyWebsite': company.website,
-          'companyAddress': company.address,
-          'business_scope': scope,
-          'package_id': company.packageId
-        }));
-    print(res.body);
-    print(res.statusCode);
-    return res.statusCode;
+    try {
+      var res = await http.post(Uri.https(baseURI, "/api/organization"),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Charset': 'utf-8',
+            'Authorization': 'Bearer $token'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'legalName': company.name,
+            'companyPhone': company.phone,
+            'companyEmail': company.email,
+            'companyWebsite': company.website,
+            'companyAddress': company.address,
+            'business_scope': scope,
+            'package_id': company.packageId
+          }));
+      print(res.body);
+      print(res.statusCode);
+      return res.statusCode;
+    } catch (e) {
+      return 0;
+    }
   }
 }
