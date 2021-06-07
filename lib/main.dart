@@ -1,5 +1,6 @@
 import 'dart:async';
 //import 'package:device_preview/device_preview.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -80,6 +81,7 @@ InitializationSettings initSetttings = InitializationSettings(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   Bloc.observer = BlocObserver();
   await Firebase.initializeApp();
 
@@ -106,15 +108,15 @@ void main() async {
     sound: true,
   );
 
-  runApp(
-      //DevicePreview(
-      // builder: (context) =>
-      MyApp(
-    token: token,
-    onboarding: onboarding,
-  )
-      // )
-      );
+  runApp(EasyLocalization(
+    supportedLocales: [Locale('en'), Locale('id')],
+    path: "assets/lang",
+    fallbackLocale: Locale('id'),
+    child: MyApp(
+      token: token,
+      onboarding: onboarding,
+    ),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -188,6 +190,9 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: EasyLocalization.of(context).locale,
         routes: <String, WidgetBuilder>{
           '/LoginScreen': (BuildContext context) => new ScreenLogin()
         },

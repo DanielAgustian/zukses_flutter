@@ -1,8 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/API/auth-service.dart';
+import 'package:zukses_app_1/API/auth-service.dart'; 
 
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -20,8 +21,19 @@ class _UserSettingsScreen extends State<UserSettings> {
   bool isLoading = false;
   bool switchValue = false;
 
+  List<String> langs = ["English", "Indonesia"];
+  String choosedLang;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    choosedLang = EasyLocalization.of(context).locale == Locale('id')
+        ? langs[1]
+        : langs[0];
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
@@ -38,7 +50,7 @@ class _UserSettingsScreen extends State<UserSettings> {
                 },
               ),
               title: Text(
-                "Settings",
+                "setting_text1".tr(),
                 style: TextStyle(
                     color: colorPrimary,
                     fontSize: size.height < 570 ? 18 : 22,
@@ -61,7 +73,7 @@ class _UserSettingsScreen extends State<UserSettings> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Receive Notification",
+                          "setting_text3".tr(),
                           style: TextStyle(
                               color: colorPrimary,
                               fontSize: size.height < 570 ? 14 : 16),
@@ -80,16 +92,88 @@ class _UserSettingsScreen extends State<UserSettings> {
                     ),
                   ),
                 ),
-                TextFormatSettings2(
-                    size: size, title: "Language", detail: "English"),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10, right: 10),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                        color: colorBackground,
+                        border: Border(
+                            bottom:
+                                BorderSide(width: 1, color: colorNeutral2))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "setting_text2".tr(),
+                              style: TextStyle(
+                                  color: colorPrimary,
+                                  fontSize: size.height < 570 ? 14 : 16),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "$choosedLang",
+                              style: TextStyle(
+                                  color: colorNeutral3,
+                                  fontSize: size.height < 570 ? 12 : 14),
+                            )
+                          ],
+                        ),
+                        DropdownButton(
+                          underline: Container(),
+                          onChanged: (value) {
+                            EasyLocalization.of(context).setLocale(
+                                value == "Indonesia"
+                                    ? Locale("id")
+                                    : Locale("en"));
+                            setState(() {
+                              choosedLang = value;
+                            });
+                          },
+                          icon: FaIcon(
+                            FontAwesomeIcons.chevronRight,
+                            color: colorPrimary,
+                          ),
+                          elevation: 16,
+                          items: langs
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: SizedBox(
+                                width: 100,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Text(
+                                      value,
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorPrimary,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
                 TextFormatSettings2(
                     size: size,
-                    title: "Send Feedback",
-                    detail: "We are pleased with your suggestions"),
+                    title: "setting_text4".tr(),
+                    detail: "setting_text5".tr()),
                 InkWell(
                   onTap: () {
-                    print("Try to Log Out");
-                    //toLogOut();
                     showDialog(
                         context: context,
                         builder: (BuildContext context) =>
@@ -98,8 +182,8 @@ class _UserSettingsScreen extends State<UserSettings> {
                   child: TextFormatSettings2(
                       //onClick: toLogOut(),
                       size: size,
-                      title: "Log Out",
-                      detail: "Log out from Your Account"),
+                      title: "setting_text6".tr(),
+                      detail: "setting_text7".tr()),
                 ),
               ],
             )),
