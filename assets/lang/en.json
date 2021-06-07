@@ -131,7 +131,7 @@
     "invite_team_text6": "Skip for now",
 
     "invite_confirm_text1": "Team Invitation",
-    "invite_confirm_text2": "You are invited to “Tech Squad” team. Please confirm to join the team.", 
+    "invite_confirm_text2": "You are invited to “{}” team. Please confirm to join the team.", 
 
     "tab_text1": "Home",
     "tab_text2": "Attendance",
@@ -146,8 +146,8 @@
     "home_text6": "Tasklist",
     "home_text7": "high priority task",
     "home_text8": "low priority task",
-    "home_text9": "Show All",
-    "home_text10": "Meeting Schedule",
+    "home_text9": "Show All {}",
+    "home_text10": "Meeting List",
     "home_text11": "meeting schedule",
     "home_text12": "meeting request",
     "home_text13": "Are you work overtime?",
@@ -156,7 +156,7 @@
     "home_text16": "Project",
     "home_text17": "Overtime Reason",
     "home_text18": "Your work hour not finished yet",
-    "home_text19": "Are you want to clock out?",
+    "home_text19": "Are you sure want to clock out?",
     
     "instruction_text1": "Good lighting",
     "instruction_text2": "Make sure you take the photo with good lighting",
