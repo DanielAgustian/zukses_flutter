@@ -467,8 +467,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                           ),
                         ),
                       ),
-                      _currentPage >= 2
-                          ? Container()
+                      _currentPage > 1
+                          ? Container(
+                              height: 30,
+                            )
                           : Container(
                               padding: EdgeInsets.only(top: 10),
                               height: 30,
@@ -494,28 +496,31 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   ),
                   SizedBox(height: 20),
                   currentIdx < 2
-                      ? RawMaterialButton(
-                          onPressed: () {
-                            if (currentIdx != 2) {
-                              _controller.animateToPage(currentIdx + 1,
-                                  duration: Duration(milliseconds: 400),
-                                  curve: Curves.linear);
-                            } else {
-                              _controller.animateToPage(2,
-                                  duration: Duration(milliseconds: 400),
-                                  curve: Curves.linear);
-                            }
-                          },
-                          elevation: 2.0,
-                          fillColor: Color.fromRGBO(20, 43, 111, 0.9),
-                          child: Container(
-                            width: size.height < 600 ? 40 : 55,
-                            height: size.height < 600 ? 40 : 55,
-                            child: Icon(Icons.arrow_forward,
-                                size: 35.0, color: Colors.white70),
+                      ? Container(
+                          height: size.height < 569 ? 100 : 130,
+                          child: RawMaterialButton(
+                            onPressed: () {
+                              if (currentIdx != 2) {
+                                _controller.animateToPage(currentIdx + 1,
+                                    duration: Duration(milliseconds: 400),
+                                    curve: Curves.linear);
+                              } else {
+                                _controller.animateToPage(2,
+                                    duration: Duration(milliseconds: 400),
+                                    curve: Curves.linear);
+                              }
+                            },
+                            elevation: 2.0,
+                            fillColor: Color.fromRGBO(20, 43, 111, 0.9),
+                            child: Container(
+                              width: size.height < 600 ? 40 : 55,
+                              height: size.height < 600 ? 40 : 55,
+                              child: Icon(Icons.arrow_forward,
+                                  size: 35.0, color: Colors.white70),
+                            ),
+                            padding: EdgeInsets.all(15.0),
+                            shape: CircleBorder(),
                           ),
-                          padding: EdgeInsets.all(15.0),
-                          shape: CircleBorder(),
                         )
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),

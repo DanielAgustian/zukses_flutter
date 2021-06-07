@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
 import 'package:zukses_app_1/tab/screen_task.dart';
@@ -162,11 +163,17 @@ class _ScreenTab extends State<ScreenTab> {
             _currentScreenIndex, // this will be set when a new tab is tapped
         items: [
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/home.png')),
+            icon: SvgPicture.asset(
+              'assets/images/home-icon.svg',
+              color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/attendance-icon.png')),
+            icon: SvgPicture.asset(
+              'assets/images/attendance-icon.svg',
+              color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+            ),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
