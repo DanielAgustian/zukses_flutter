@@ -1,6 +1,6 @@
 class UserModel {
   String userID, name, email, phone, imgUrl, companyID, userIDSchedule;
-  int accepted;
+  int accepted, companyAcceptance;
   UserModel(
       {this.userID,
       this.name,
@@ -19,7 +19,7 @@ class UserModel {
     map["company_id"] = user.companyID;
     map["image"] = user.imgUrl;
     map["accepted"] = user.accepted;
-
+    map["companyAcceptance"] = user.companyAcceptance;
     return map;
   }
 
@@ -32,5 +32,7 @@ class UserModel {
     this.companyID = map["company_id"].toString();
     this.accepted = map["accepted"] == null ? 100 : map["accepted"];
     this.phone = map["mobile"] == null ? null : map["mobile"];
+    this.companyAcceptance =
+        map["companyAcceptance"] == null ? 100 : map["companyAcceptance"];
   }
 }

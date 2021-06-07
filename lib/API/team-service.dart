@@ -14,29 +14,33 @@ class TeamServiceHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     print("Token = " + token);
-    //Query to API
-    var res = await http
-        .get(Uri.https(baseURI, 'api/team-status'), headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Charset': 'utf-8',
-      'Authorization': 'Bearer $token'
-    });
+    try {
+      //Query to API
+      var res = await http
+          .get(Uri.https(baseURI, 'api/team-status'), headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Charset': 'utf-8',
+        'Authorization': 'Bearer $token'
+      });
 
-    print("FetchTeamMember" + res.statusCode.toString());
-    if (res.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      var responseJson = jsonDecode(res.body);
-      return (responseJson['attendance'] as List)
-          .map((p) => TeamModel.fromJson(p))
-          .toList();
-    } else {
-      // IF the server return everything except 200, it will gte exception.
-      print("Failed TO Load Alubm");
+      print("FetchTeamMember" + res.statusCode.toString());
+      if (res.statusCode == 200) {
+        // If the server did return a 200 OK response,
+        // then parse the JSON.
+        var responseJson = jsonDecode(res.body);
+        return (responseJson['attendance'] as List)
+            .map((p) => TeamModel.fromJson(p))
+            .toList();
+      } else {
+        // IF the server return everything except 200, it will gte exception.
+        print("Failed TO Load Alubm");
+        return null;
+        //throw Exception('Failed to load album');
+      }
+    } catch (excpetion) {
       return null;
-      //throw Exception('Failed to load album');
     }
-  }
+}
 
   Future<TeamDetailModel> fetchDetailTeam(String id) async {
     var res = await http

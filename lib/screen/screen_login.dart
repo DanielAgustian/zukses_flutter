@@ -369,6 +369,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                 ),
                               ),
                               SizedBox(height: 25),
+                              
                               LongButtonIcon(
                                 size: size,
                                 title: "Sign In with Google",

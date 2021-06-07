@@ -463,6 +463,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           InkWell(
                             onTap: () {
+                            
                               print(
                                   "maximum clock in ${_authModel.maxClockIn}");
                               print(
