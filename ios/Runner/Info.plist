@@ -40,7 +40,26 @@
 				<string>com.googleusercontent.apps.338622488807-s37uem7iid38pdcvcrl4i8kumib2jolr</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array> 
+				<string>fb300377561454495</string>
+			</array>
+		</dict>
 	</array>
+	
+	<key>FacebookAppID</key> 
+	<string>300377561454495</string>
+	<key>FacebookDisplayName</key> 
+	<string>Zukses Application</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
