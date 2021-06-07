@@ -519,11 +519,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                         onClick: () {
                           BlocProvider.of<RegisterBloc>(context)
                               .add(AddRegisterGoogle(tokenFCM: tokenFCM));
-                          /*Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenSignUp()),
-                          );*/
+                         
                         },
                       ),
                       SizedBox(
@@ -541,11 +537,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                         onClick: () {
                           BlocProvider.of<RegisterBloc>(context)
                               .add(AddRegisterFacebook(tokenFCM: tokenFCM));
-                          /*Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenSignUp()),
-                          );*/
+                          
                         },
                       ),
                       SizedBox(

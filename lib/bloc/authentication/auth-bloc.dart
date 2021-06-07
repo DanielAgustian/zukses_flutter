@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart'; 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
@@ -38,6 +37,8 @@ class AuthenticationBloc
           googleData.name, googleData.email, googleData.image, googleData.token,
           tokenFCM: event.tokenFCM);
       if (res is AuthModel && res != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt("in-company", res.user.companyAcceptance);
         yield AuthStateSuccessLoad(res);
       } else {
         yield AuthStateFailLoad();
@@ -71,19 +72,19 @@ class AuthenticationBloc
             fbAuthData.email, fbAuthData.picture.url, tokenFacebook,
             tokenFCM: event.tokenFCM);
         FBModelSender fms = FBModelSender(
-          email: fbAuthData.email,
-          name: fbAuthData.name,
-          url: fbAuthData.picture.url,
-          id: fbAuthData.id
-        );
+            email: fbAuthData.email,
+            name: fbAuthData.name,
+            url: fbAuthData.picture.url,
+            id: fbAuthData.id);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt("facebook", 1);
         await prefs.setString("facebook_token", tokenFacebook);
         await prefs.setString("facebook_data", jsonEncode(fms));
         if (res is AuthModel && res != null) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setInt("in-company", res.user.companyAcceptance);
           yield AuthStateSuccessLoad(res);
-          print("AuthStateSuccess FAcebook");
-          print(state);
+          ;
         } else {
           yield AuthStateFailLoad();
         }
@@ -111,10 +112,10 @@ class AuthenticationBloc
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {
-      print("AuthStateSuccessLoad");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt("in-company", res.user.companyAcceptance);
       yield AuthStateSuccessLoad(res);
     } else {
-      print("AuthStateFailLoad");
       yield AuthStateFailLoad();
     }
   }
@@ -125,6 +126,8 @@ class AuthenticationBloc
         event.name, event.email, event.image, event.tokenGoogle,
         tokenFCM: event.tokenFCM);
     if (res is AuthModel && res != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt("in-company", res.user.companyAcceptance);
       yield AuthStateSuccessLoad(res);
     } else {
       yield AuthStateFailLoad();
@@ -138,7 +141,8 @@ class AuthenticationBloc
 
     // directly throw into success load or fail load
     if (res is AuthModel && res != null) {
-      print("AuthStateSuccessTeamLoad");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt("in-company", res.user.companyAcceptance);
       yield AuthStateSuccessTeamLoad(res);
     } else {
       print("AuthStateFailLoad");
