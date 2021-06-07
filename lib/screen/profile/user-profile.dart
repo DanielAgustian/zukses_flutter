@@ -10,6 +10,7 @@ import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/profile/user-edit-profile.dart';
 import 'package:zukses_app_1/screen/profile/user-settings.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class UserProfile extends StatefulWidget {
   UserProfile({Key key, this.title, this.company, this.user}) : super(key: key);
@@ -25,7 +26,6 @@ class _UserProfileScreen extends State<UserProfile> {
   UserModel user = UserModel();
   @override
   void initState() {
-    
     super.initState();
     _getProfile();
     print("Id Company " + widget.company.id);
@@ -66,7 +66,7 @@ class _UserProfileScreen extends State<UserProfile> {
           ),
           centerTitle: true,
           title: Text(
-            "Profile",
+            "profile_text1".tr(),
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: size.height < 570 ? 18 : 22,
@@ -165,7 +165,7 @@ class _UserProfileScreen extends State<UserProfile> {
                                     SizedBox(
                                       height: 5,
                                     ),
-                                    Text("Personal",
+                                    Text("profile_text2".tr(),
                                         style: TextStyle(
                                             color: colorPrimary,
                                             fontSize:
@@ -193,7 +193,7 @@ class _UserProfileScreen extends State<UserProfile> {
                                       bottom: BorderSide(
                                           width: 3, color: Color(0xFFF4F4F4)))),
                               child: Text(
-                                "Personal Information",
+                                "profile_text3".tr(),
                                 style: TextStyle(
                                     color: colorPrimary,
                                     fontSize: size.height < 569 ? 14 : 16,
@@ -202,28 +202,28 @@ class _UserProfileScreen extends State<UserProfile> {
                             ),
                             TextFormat1(
                               size: size,
-                              title: "Name",
+                              title: "profile_text4".tr(),
                               data: state.userModel.name,
                             ),
                             TextFormat1(
                                 size: size,
-                                title: "Username",
+                                title: "profile_text5".tr(),
                                 data: state.userModel.email //"Harus Diisi ",
                                 ),
                             TextFormat1(
                                 size: size,
-                                title: "Zukses ID",
+                                title: "profile_text6".tr(),
                                 data: state.userModel.userID),
                             TextFormat1(
                               size: size,
-                              title: "Phone Number",
+                              title: "profile_text7".tr(),
                               data: state.userModel.phone == null
-                                  ? "Not Registered"
+                                  ? "profile_text15".tr()
                                   : state.userModel.phone,
                             ),
                             TextFormat1(
                               size: size,
-                              title: "Personal Email",
+                              title: "profile_text8".tr(),
                               data: state.userModel.email,
                             ),
                           ],
@@ -270,7 +270,7 @@ class _UserProfileScreen extends State<UserProfile> {
               border: Border(
                   bottom: BorderSide(width: 3, color: Color(0xFFF4F4F4)))),
           child: Text(
-            "Company",
+            "profile_text10".tr(),
             style: TextStyle(
                 color: colorPrimary,
                 fontSize: size.height < 569 ? 14 : 16,
@@ -279,12 +279,12 @@ class _UserProfileScreen extends State<UserProfile> {
         ),
         TextFormat1(
           size: size,
-          title: "Company Name",
+          title: "profile_text11".tr(),
           data: widget.company.name,
         ),
         TextFormat1(
           size: size,
-          title: "ID Number",
+          title: "profile_text12".tr(),
           data: widget.company.code,
         ),
         /*TextFormat1(
@@ -294,7 +294,7 @@ class _UserProfileScreen extends State<UserProfile> {
         ),*/
         TextFormat1(
           size: size,
-          title: "Company Email",
+          title: "profile_text14".tr(),
           data: widget.company.email,
         ),
       ],

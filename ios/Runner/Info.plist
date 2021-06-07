@@ -67,7 +67,7 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
-		<string>nb</string>
+		<string>id</string>
 	</array>
 
 	<key>LSRequiresIPhoneOS</key>
