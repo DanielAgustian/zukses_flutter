@@ -7,6 +7,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LeavesDetailScreen extends StatefulWidget {
   LeavesDetailScreen(
@@ -72,7 +73,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               },
               child: Center(
                 child: Text(
-                  "Cancel",
+                  "cancel_text".tr(),
                   style: TextStyle(
                       fontSize: size.height <= 600 ? 14 : 16,
                       color: colorPrimary,
@@ -97,7 +98,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                 },
                 child: Container(
                   child: Text(
-                    "Done",
+                    "done_text".tr(),
                     style: TextStyle(
                         fontSize: size.height <= 600 ? 14 : 16,
                         color: colorPrimary,
@@ -124,23 +125,23 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               ),
               AddScheduleRowNonArrow(
                 lowerOpacity: true,
-                title: "Date",
+                title: "date_text".tr(),
                 textItem: util.dateNumbertoCalendar(overtimeModel.clockIn),
               ),
               AddScheduleRowNonArrow(
                 lowerOpacity: true,
-                title: "Duration",
+                title: "apply_overtime_text2".tr(),
                 textItem: "00:00", //nanti get dari OvertimeModel
               ),
               AddScheduleRowNonArrow(
-                title: "Project",
+                title: "apply_overtime_text3".tr(),
                 textItem: overtimeModel.project,
               ),
               SizedBox(
                 height: 15,
               ),
               Text(
-                "Reason",
+                "apply_overtime_text5".tr(),
                 style: TextStyle(
                   color: colorPrimary,
                   fontSize: size.height < 569 ? 14 : 16,
@@ -169,7 +170,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                   controller: textReason,
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(20),
-                      hintText: "Description",
+                      hintText: "task_text20".tr(),
                       hintStyle: TextStyle(
                         color: colorNeutral1,
                       ),
@@ -189,7 +190,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                           LongButton(
                             size: size,
                             onClick: () {},
-                            title: "Contact Supervisor",
+                            title: "apply_leaves_text13".tr(),
                             bgColor: colorPrimary,
                             textColor: colorBackground,
                           ),
@@ -199,7 +200,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                           LongButtonOutline(
                             size: size,
                             onClick: () {},
-                            title: "Re-Submit",
+                            title: "apply_leaves_text14".tr(),
                             bgColor: colorBackground,
                             textColor: colorPrimary,
                             outlineColor: colorPrimary,
@@ -230,7 +231,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               },
               child: Center(
                 child: Text(
-                  "Cancel",
+                  "cancel_text".tr(),
                   style: TextStyle(
                       fontSize: size.height <= 600 ? 14 : 16,
                       color: colorPrimary,
@@ -253,7 +254,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                 onTap: () {},
                 child: Container(
                   child: Text(
-                    "Done",
+                    "done_text".tr(),
                     style: TextStyle(
                         fontSize: size.height <= 600 ? 14 : 16,
                         color: colorPrimary,
@@ -279,12 +280,12 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                 textItem: leaveModel.status,
               ),
               AddScheduleRowNonArrow(
-                title: "Date",
+                title: "date_text".tr(),
                 textItem: util
                     .dateNumbertoCalendar(DateTime.parse(leaveModel.leaveDate)),
               ),
               AddScheduleRowNonArrow(
-                title: "Duration",
+                title: "apply_overtime_text2".tr(),
                 textItem: leaveModel.duration, //nanti get dari OvertimeModel
               ),
               datePeriod(context, size, leaveModel.duration, leaveModel),
@@ -292,7 +293,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                 height: 15,
               ),
               Text(
-                "Reason",
+                "apply_overtime_text5".tr(),
                 style: TextStyle(
                   color: colorPrimary,
                   fontSize: size.height < 569 ? 14 : 16,
@@ -321,7 +322,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                   controller: textReason2,
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(20),
-                      hintText: "Reason",
+                      hintText: "apply_overtime_text5".tr(),
                       hintStyle: TextStyle(
                         color: colorNeutral1,
                       ),
@@ -341,7 +342,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                           LongButton(
                             size: size,
                             onClick: () {},
-                            title: "Contact Supervisor",
+                            title: "apply_leaves_text13".tr(),
                             bgColor: colorPrimary,
                             textColor: colorBackground,
                           ),
@@ -351,7 +352,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                           LongButtonOutline(
                             size: size,
                             onClick: () {},
-                            title: "Re-Submit",
+                            title: "apply_leaves_text14".tr(),
                             bgColor: colorBackground,
                             textColor: colorPrimary,
                             outlineColor: colorPrimary,
@@ -373,7 +374,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
       case "Half Day":
         return AddScheduleRowNonArrow(
           lowerOpacity: true,
-          title: "Hour",
+          title: "hours_text".tr(),
           textItem: Util().cutTime(leaveModel.startTime) +
               "-" +
               Util().cutTime(leaveModel.endTime), //nanti get dari OvertimeModel
