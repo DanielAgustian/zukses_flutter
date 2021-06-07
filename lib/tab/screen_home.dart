@@ -132,6 +132,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   String tokenFCM = "";
 
+  int companyAcceptance = 0;
+
   void checkStatusClock(String where) async {
     print("CheckStatusClock Jalan");
     if (where == "initState") {
@@ -201,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void getAuthFacebook() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.getString('facebook_data');
-    
+
     String tokenFacebook = prefs.getString('facebook_token');
     FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
 
@@ -268,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     _getMeetingToday();
     _getMeetingRequest();
-
+    getCompanyAcceptance();
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
     if (widget.link != null) {
@@ -276,6 +278,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _controller.forward();
       _getTeamDetail(teamId);
     }
+  }
+
+  getCompanyAcceptance() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      companyAcceptance = prefs.getInt("in-company");
+    });
   }
 
   Future<bool> onWillPop() async {
@@ -463,52 +472,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           InkWell(
                             onTap: () {
-                            
-                              print(
-                                  "maximum clock in ${_authModel.maxClockIn}");
-                              print(
-                                  "maximum clock in ${_authModel.attendance}");
-                              if (stringTap != enumTap[2]) {
-                                if (_authModel.maxClockIn != null &&
-                                    _authModel.attendance != null) {
-                                  if (_authModel.maxClockIn == "false") {
-                                    if (_authModel.attendance == "false") {
-                                      if (instruction == true) {
-                                        pushToCamera();
-                                        print("Push To Camera");
+                              if (companyAcceptance == 1) {
+                                print(
+                                    "maximum clock in ${_authModel.maxClockIn}");
+                                print(
+                                    "maximum clock in ${_authModel.attendance}");
+                                if (stringTap != enumTap[2]) {
+                                  if (_authModel.maxClockIn != null &&
+                                      _authModel.attendance != null) {
+                                    if (_authModel.maxClockIn == "false") {
+                                      if (_authModel.attendance == "false") {
+                                        if (instruction == true) {
+                                          pushToCamera();
+                                          print("Push To Camera");
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CameraInstruction()),
+                                          );
+                                        }
+                                        checkStatusClock("initState");
+                                      } else if (_authModel.attendance ==
+                                          "true") {
+                                        //Clock Out
+                                        int diff = timeCalculation(
+                                            _company.endOfficeTime);
+                                        //if employee clock out before office closing time
+                                        if (diff < 0) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  _buildClockOutNotFinished(
+                                                      context, size));
+                                        } else {
+                                          confirmClockOut(size: size);
+                                        }
                                       } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CameraInstruction()),
-                                        );
-                                      }
-                                      checkStatusClock("initState");
-                                    } else if (_authModel.attendance ==
-                                        "true") {
-                                      //Clock Out
-                                      int diff = timeCalculation(
-                                          _company.endOfficeTime);
-                                      //if employee clock out before office closing time
-                                      if (diff < 0) {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                _buildClockOutNotFinished(
-                                                    context, size));
-                                      } else {
-                                        confirmClockOut(size: size);
+                                        print(_authModel.attendance);
+                                        print("Error Data");
                                       }
                                     } else {
-                                      print(_authModel.attendance);
-                                      print("Error Data");
+                                      //Have A Good Day!
+                                      setState(() {
+                                        stringTap = enumTap[2];
+                                      });
                                     }
-                                  } else {
-                                    //Have A Good Day!
-                                    setState(() {
-                                      stringTap = enumTap[2];
-                                    });
                                   }
                                 }
                               }
@@ -541,40 +551,69 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         );
                                       }),
                                       Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: colorBackground,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                                "assets/images/tap-clock-in.svg",
-                                                width:
-                                                    size.height < 569 ? 20 : 25,
-                                                height: size.height < 569
-                                                    ? 20
-                                                    : 25),
-                                            // SizedBox(width: 10),
-                                            Text(
-                                              stringTap,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: colorPrimary,
-                                                  fontSize: size.height < 600
-                                                      ? 14
-                                                      : 16),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: colorBackground,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: companyAcceptance == 1
+                                              ? Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                        "assets/images/tap-clock-in.svg",
+                                                        width: size.height < 569
+                                                            ? 20
+                                                            : 25,
+                                                        height:
+                                                            size.height < 569
+                                                                ? 20
+                                                                : 25),
+                                                    // SizedBox(width: 10),
+                                                    Text(
+                                                      stringTap,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: colorPrimary,
+                                                          fontSize:
+                                                              size.height < 600
+                                                                  ? 14
+                                                                  : 16),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Center(
+                                                      child: Text(
+                                                        "Welcome to Zukses!",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: colorPrimary,
+                                                            fontSize:
+                                                                size.height <
+                                                                        600
+                                                                    ? 14
+                                                                    : 16),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ))
                                     ]))),
                           ),
                           SizedBox(

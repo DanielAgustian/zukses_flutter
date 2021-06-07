@@ -464,11 +464,11 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                                               textPassword.text.length < 6
                                           ? Center(
                                               child: Text(
-                                                "Short password easy to guess. Try one at least 6 characters.",
+                                                "Short password easy to guess. Try at least 6 characters.",
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: colorError,
-                                                    fontSize: 10),
+                                                    fontSize: 13),
                                               ),
                                             )
                                           : Container(),
@@ -519,7 +519,6 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                         onClick: () {
                           BlocProvider.of<RegisterBloc>(context)
                               .add(AddRegisterGoogle(tokenFCM: tokenFCM));
-                         
                         },
                       ),
                       SizedBox(
@@ -537,7 +536,6 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                         onClick: () {
                           BlocProvider.of<RegisterBloc>(context)
                               .add(AddRegisterFacebook(tokenFCM: tokenFCM));
-                          
                         },
                       ),
                       SizedBox(

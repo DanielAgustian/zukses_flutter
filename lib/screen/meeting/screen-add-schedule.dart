@@ -506,7 +506,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: LongButtonIcon(
+                        child: LongButtonIconShadow(
                           size: size,
                           title: "Add Invitation",
                           bgColor: colorBackground,
@@ -598,7 +598,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             return Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  boxShadow: [BoxShadow(blurRadius: 15)],
+                  boxShadow: [BoxShadow(blurRadius: 10, color: colorNeutral2)],
                   color: colorBackground,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),

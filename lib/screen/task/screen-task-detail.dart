@@ -104,6 +104,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   bool upload = false;
   Size size;
 
+  int lengthTask = 0;
   var projectTask = [1, 5, 2, 0];
   TabController tabController;
   // FOR SKELETON -------------------------------------------------------------------------
@@ -300,6 +301,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                     if (state is TaskStateSuccessLoad) {
                       setState(() {
                         isLoading = false;
+                        lengthTask = state.task.length;
                       });
                       taskToDo.clear();
                       taskInProgress.clear();
@@ -373,32 +375,44 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         Container()
                                       ]),
                                 ),
-                                Expanded(
-                                  child: DragAndDropLists(
-                                    scrollController: _controller,
-                                    children: List.generate(dataTask.length,
-                                        (index) => _buildList(index)),
-                                    onItemReorder: _onItemReorder,
-                                    onListReorder: _onListReorder,
-                                    axis: Axis.horizontal,
-                                    listWidth: size.width * 0.85 - 5,
-                                    listDraggingWidth: 300,
-                                    listDecoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(7.0)),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          color: Colors.black45,
-                                          spreadRadius: 3.0,
-                                          blurRadius: 6.0,
-                                          offset: Offset(2, 3),
+                                lengthTask < 1
+                                    ? Container(
+                                        height: 0.6 * size.height,
+                                        child: Center(
+                                          child: Text(
+                                              "No task done in this project at the moment",
+                                              style: TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold)),
+                                        ))
+                                    : Expanded(
+                                        child: DragAndDropLists(
+                                          scrollController: _controller,
+                                          children: List.generate(
+                                              dataTask.length,
+                                              (index) => _buildList(index)),
+                                          onItemReorder: _onItemReorder,
+                                          onListReorder: _onListReorder,
+                                          axis: Axis.horizontal,
+                                          listWidth: size.width * 0.85 - 5,
+                                          listDraggingWidth: 300,
+                                          listDecoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(7.0)),
+                                            boxShadow: <BoxShadow>[
+                                              BoxShadow(
+                                                color: Colors.black45,
+                                                spreadRadius: 3.0,
+                                                blurRadius: 6.0,
+                                                offset: Offset(2, 3),
+                                              ),
+                                            ],
+                                          ),
+                                          listPadding: EdgeInsets.all(8.0),
                                         ),
-                                      ],
-                                    ),
-                                    listPadding: EdgeInsets.all(8.0),
-                                  ),
-                                ),
+                                      ),
                               ],
                             ),
                           )),

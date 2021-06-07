@@ -527,7 +527,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                       Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: LongButtonIcon(
+                        child: LongButtonIconShadow(
                           size: size,
                           title: "Add Invitation",
                           bgColor: colorBackground,
@@ -557,9 +557,10 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             textColor: colorError,
                             outlineColor: colorError,
                             onClick: () {
-                              BlocProvider.of<MeetingBloc>(context).add(
-                                  DeleteMeetingEvent(
-                                      meetingID: widget.model.meetingID));
+                              showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      _buildPopupClockOut(context, size: size));
                             }),
                       ),
                       SizedBox(
@@ -815,6 +816,49 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
 
           return Container();
         },
+      ),
+    );
+  }
+
+  Widget _buildPopupClockOut(BuildContext context, {size}) {
+    return new AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Are you sure to delete this schedule ?",
+            style: TextStyle(
+                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20),
+          LongButton(
+            size: size,
+            bgColor: colorPrimary,
+            textColor: colorBackground,
+            title: "Yes ",
+            onClick: () {
+              //LOGIC
+              BlocProvider.of<MeetingBloc>(context)
+                  .add(DeleteMeetingEvent(meetingID: widget.model.meetingID));
+              Navigator.pop(context);
+            },
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          LongButtonOutline(
+            size: size,
+            bgColor: colorBackground,
+            textColor: colorPrimary,
+            outlineColor: colorPrimary,
+            title: "No",
+            onClick: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
     );
   }

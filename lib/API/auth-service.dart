@@ -148,7 +148,8 @@ class AuthServiceHTTP {
       //print(response.body);
       final user = AuthModel.fromJson(jsonDecode(response.body));
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("token", user.token);
+      await prefs.setString("token", user.token);
+      await prefs.setString("myID", user.user.userID);
       return user;
     } on Exception catch (e) {
       print(e);

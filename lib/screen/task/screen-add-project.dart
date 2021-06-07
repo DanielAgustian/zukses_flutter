@@ -28,7 +28,6 @@ class _AddProjectScreen extends State<AddProject> {
   final picker = ImagePicker();
   bool _titleValidator = false;
   bool _detailValidator = false;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -95,15 +94,17 @@ class _AddProjectScreen extends State<AddProject> {
                   ),
                   SizedBox(height: 0.02 * size.height),
                   Container(
-                      height: size.height <= 569 ? 100 : 150,
-                      width: size.height <= 569 ? 100 : 150,
+                      height: size.height <= 569 ? 80 : 100,
+                      width: size.height <= 569 ? 80 : 100,
                       decoration: BoxDecoration(
-                          color: colorPrimary,
+                          color: colorNeutral170,
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              fit: BoxFit.fill,
+                              fit: data == "" ? BoxFit.none : BoxFit.fill,
                               image: data == ""
-                                  ? AssetImage("assets/images/ava.png")
+                                  ? AssetImage(
+                                      "assets/images/photo-placeholder.png",
+                                    )
                                   : FileImage(
                                       File(data),
                                     )))),
@@ -179,7 +180,7 @@ class _AddProjectScreen extends State<AddProject> {
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                            labelText: 'Key Value',
+                            labelText: 'Short Description',
                             labelStyle:
                                 TextStyle(fontSize: 14, color: colorNeutral2)),
                       ),
@@ -261,7 +262,7 @@ class _AddProjectScreen extends State<AddProject> {
         _detailValidator = true;
       });
     }
-   
+
     if (!_titleValidator && !_detailValidator) {
       setState(() {
         loading = true;
