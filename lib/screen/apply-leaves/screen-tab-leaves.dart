@@ -166,8 +166,9 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                   child: ListLeavesOvertime(
                     screen: widget.permission,
                     title: list[index].project,
-                    detail: Util().dateNumbertoCalendar(
-                        list[index].clockOut), //list[index].clockOut,
+                    detail: list[index].startTime +
+                        "-" +
+                        list[index].endTime, //list[index].clockOut,
                     status: list[index].status,
                   ),
                 );

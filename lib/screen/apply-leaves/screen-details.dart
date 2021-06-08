@@ -126,12 +126,15 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               AddScheduleRowNonArrow(
                 lowerOpacity: true,
                 title: "date_text".tr(),
-                textItem: util.dateNumbertoCalendar(overtimeModel.clockIn),
+                textItem: util.dateNumbertoCalendar(overtimeModel.date),
               ),
               AddScheduleRowNonArrow(
                 lowerOpacity: true,
                 title: "apply_overtime_text2".tr(),
-                textItem: "00:00", //nanti get dari OvertimeModel
+                textItem: util.cutTime(overtimeModel.startTime) +
+                    " - " +
+                    util.cutTime(
+                        overtimeModel.endTime), //nanti get dari OvertimeModel
               ),
               AddScheduleRowNonArrow(
                 title: "apply_overtime_text3".tr(),

@@ -318,11 +318,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      /*floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _controller.forward();
+          showDialog(
+              context: context,
+              builder: (context) => _buildPopupOvertime(context, size: size));
         },
-      ),*/
+      ),
       backgroundColor: colorBackground,
       body: WillPopScope(
         onWillPop: onWillPop,
@@ -1692,8 +1694,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     setState(() {
                       dialogText = "Clock Out";
                     });
+
                     BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-                        attendanceId: attendanceID,
+                        date: DateTime.now(),
+                        startTime: "18:00:00",
+                        endTime: timeOvertime,
                         project: textProjectOvertime.text,
                         reason: textReasonOvertime.text));
 
