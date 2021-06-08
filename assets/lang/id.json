@@ -1,6 +1,6 @@
 { 
-    import 'package:easy_localization/easy_localization.dart';
-    
+    // import 'package:easy_localization/easy_localization.dart';
+
     "button_sign_in": "Masuk",
     "button_sign_up": "Daftar",
     "button_sign_in_google": "Masuk dengan Google",
@@ -33,7 +33,7 @@
     "day_text": "Hari", 
     "hrs_text": "Jam", 
     "min_text": "Menit", 
-    "contact_us_text": "Hubungi kami",
+    "contact_us_text": "Hubungi kami !",
     "overtime_text": "Lembur", 
     "cancel_text": "Batalkan", 
     "done_text": "Selesai", 
@@ -42,6 +42,7 @@
     "requested_text": "Permintaan", 
     "rejected_text": "Ditolak", 
     "post_text": "Post", 
+    "exploring_text": "Mulai Menjelajahi", 
 
     "title_text": "Judul",
     "date_text": "Tanggal",
@@ -67,11 +68,18 @@
     "setup_account_text2": "Sebagai apa kamu ingin menggunakan Zukses?",
     "setup_account_text3": "Individu",
     "setup_account_text4": "Organisasi",
-    "setup_account_text5": "Apakah organisasimu sudah terdaftar di Zukses?", 
+    "setup_account_text5": "Apakah organisasimu sudah terdaftar di Zukses ?", 
     "setup_account_text6": "Masukkan kode perusahaan",
     "setup_account_text7": "Menunggu persetujuan",
-    "setup_account_text8": "Permintaanmu telah dikirim ke PT. Yokesen Teknologi Indonesia. Kamu akan diberi tahu melalui email ketika admin sudah menyetujui permintaanmu dan diarahkan ke dasbor.",
-    
+    "setup_account_text8": "Permintaanmu telah dikirim ke {}. Kamu akan diberi tahu melalui email ketika admin sudah menyetujui permintaanmu dan diarahkan ke dasbor.",
+    "setup_account_text9": "Sudah mempunyai tim ?",
+    "setup_account_text10": "Siapkan dan lanjutkan",
+    "setup_account_text11": "Apa nama tim Anda? (min. 3 karakter)",
+    "setup_account_text12": "Nama Tim",
+    "setup_account_text13": "Kode Perusahaan",
+    "setup_account_text14": "Ya, tunjukkan skema harga",
+    "setup_account_text15": "Tidak, saya ingin mendaftar sebagai individu bebas",
+
     "regis_success_text1": "Registrasi berhasil",
     "regis_success_text2": "Akun berhasil dibuat!",
 
@@ -88,14 +96,15 @@
     "pricing_text11": "Untuk informasi lebih lanjut atau pertanyaan,", 
     "pricing_text12": "Unlimited",
     "pricing_text13": "Sampai dengan",
+    "pricing_text14": "Untuk informasi lebih lanjut atau pertanyaan,",
 
     "payment_text1": "Masukkan Pembayaran",
     "payment_text2": "Akun perusahaan terdaftar setelah paket bulanan dimulai.",
-    "payment_text3": "Lebih lanjut?",
+    "payment_text3": "Lebih lanjut ?",
     "payment_text4": "ditagih bulanan",
     "payment_text5": "Berlangganan",
     "payment_text6": "+ pajak penjualan",
-    "payment_text7": "Kartu kredit",
+    "payment_text7": "Kartu kredit atau Kartu Debit",
     "payment_text8": "Nomor kartu",
     "payment_text9": "Nama pemegang kartu",
     "payment_text10": "Alamat",
@@ -105,7 +114,8 @@
     "payment_text14": "Konfirmasi dan bayar",
     "payment_text15": "Pembayaran Selesai",
     "payment_text16": "Lanjutkan ke Data Perusahaan",
-    "payment_text17": "Terima kasih, pembayaran Anda telah berhasil. Email konfirmasi dan tanda terima telah dikirim ke yourcompany@gmail.com.",
+    "payment_text17": "Terima kasih, pembayaran Anda telah berhasil. Email konfirmasi dan tanda terima telah dikirim ke email perusahaan anda.",
+    "payment_text18": "Negara",
 
     "company_text1": "Data Perusahaan",
     "company_text2": "Harap melengkapi data perusahaan untuk membantu kami menyiapkan akun perusahaan.",
@@ -114,7 +124,8 @@
     "company_text5": "Alamat email perusahaan",
     "company_text6": "Website perusahaan",
     "company_text7": "Alamat perusahaan",
-    "company_text8": "Lingkup Bisnis",
+    "company_text8": "Lingkup Bisnis Anda",
+    "company_text9": "Apakah anda yakin data perusahaan anda sudah benar ?",
 
     "payment_detail_text1": "Terima kasih, pembayaran Anda untuk",
     "payment_detail_text2": "Enterprise Plan telah berhasil dibuat.",
@@ -128,9 +139,10 @@
     "invite_team_text1": "Siapkan akun",
     "invite_team_text2": "Salin tautan ini dan bagikan ke rekan timmu",
     "invite_team_text3": "Atau gunakan alamat email",
-    "invite_team_text4": "+ Tambahkan email",
+    "invite_team_text4": "+ Tambahkan Tim",
     "invite_team_text5": "Kirim undangan",
     "invite_team_text6": "Lewati untuk sekarang",
+    "invite_team_text7": "Apakah anda yakin data tim yang didaftarkan sudah benar ?",
 
     "invite_confirm_text1": "Undangan Tim",
     "invite_confirm_text2": "Anda diundang ke tim 'Tech Squad'. Mohon konfirmasi untuk bergabung dengan tim.", 

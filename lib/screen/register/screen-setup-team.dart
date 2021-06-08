@@ -10,6 +10,7 @@ import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SetupTeam extends StatefulWidget {
   SetupTeam({Key key, this.title, this.link, this.token, this.namaTeam})
@@ -98,10 +99,10 @@ class _SetupTeamScreen extends State<SetupTeam> {
       }
     }
 
-    print("Click Invitation");
-    print("Jumlah Text Editing:" + jumlahTextEditing.toString());
-    print("TextEmail[0]" + textEmail[0].text);
-    print(errorInvEmail);
+    // print("Click Invitation");
+    // print("Jumlah Text Editing:" + jumlahTextEditing.toString());
+    // print("TextEmail[0]" + textEmail[0].text);
+    // print(errorInvEmail);
     setState(() {
       errorInvEmail = false;
     });
@@ -160,7 +161,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                   padding: const EdgeInsets.only(left: 5),
                   child: TitleFormat(
                     size: size,
-                    title: "Set Up Your Team",
+                    title: "invite_team_text1".tr(),
                     detail: "",
                   ),
                 ),
@@ -169,7 +170,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                 height: 15,
               ),
               Text(
-                "Copy this link and share it to your team mates",
+                "invite_team_text2".tr(),
                 style: TextStyle(
                     color: colorNeutral3,
                     fontSize: size.height < 569 ? 14 : 16),
@@ -199,7 +200,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                           decoration: InputDecoration(
                               contentPadding:
                                   EdgeInsets.symmetric(horizontal: 20),
-                              hintText: "htttp://///",
+                              hintText: "htttp://",
                               hintStyle: TextStyle(
                                 color: colorNeutral1,
                               ),
@@ -232,7 +233,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                 height: 15,
               ),
               Text(
-                "Or use email address",
+                "invite_team_text3".tr(),
                 style: TextStyle(
                     color: colorNeutral3,
                     fontSize: size.height < 569 ? 14 : 16),
@@ -403,7 +404,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                           }
                         },
                         child: Text(
-                          "+ Add Team",
+                          "invite_team_text4".tr(),
                           style: TextStyle(
                               color: colorPrimary,
                               fontWeight: FontWeight.bold,
@@ -417,7 +418,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
               ),
               LongButton(
                 size: size,
-                title: "Send invitation",
+                title: "invite_team_text5".tr(),
                 bgColor: colorPrimary,
                 textColor: colorBackground,
                 onClick: () {
@@ -435,7 +436,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
                 onClick: () {
                   goTo();
                 },
-                title: "Skip for Now",
+                title: "invite_team_text6".tr(),
               )
             ],
           ),
@@ -453,7 +454,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "No",
+              "no_text".tr(),
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
@@ -461,7 +462,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
             }),
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "yes_text".tr(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {

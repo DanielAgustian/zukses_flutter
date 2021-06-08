@@ -4,6 +4,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/screen/punch-system/camera-clock-in.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CameraInstruction extends StatefulWidget {
   CameraInstruction({Key key, this.title}) : super(key: key);
@@ -48,7 +49,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                         height: 20,
                       ),
                       Container(
-                        child: Text("Good Lighting",
+                        child: Text("instruction_text1".tr(),
                             style: TextStyle(
                                 color: colorPrimary50,
                                 fontSize: size.height <= 569 ? 14 : 16)),
@@ -57,15 +58,14 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                         height: size.height <= 569 ? 5 : 10,
                       ),
                       Container(
-                        child: Text(
-                            "Make sure you take a photo with good lighting,",
+                        child: Text("instruction_text2".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontSize: size.height <= 569 ? 14 : 16)),
                       ),
                       SizedBox(height: size.height <= 569 ? 10 : 15),
                       Container(
-                        child: Text("Ready in Your Seat",
+                        child: Text("instruction_text3".tr(),
                             style: TextStyle(
                                 color: colorPrimary50,
                                 fontSize: size.height <= 569 ? 14 : 16)),
@@ -74,15 +74,14 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                         height: size.height <= 569 ? 5 : 10,
                       ),
                       Container(
-                        child: Text(
-                            "Let's touch up and go to bath for the admin to prepare for the day! Slick man and beautiful girl, let's go!",
+                        child: Text("instruction_text4".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontSize: size.height <= 569 ? 14 : 16)),
                       ),
                       SizedBox(height: size.height <= 569 ? 10 : 15),
                       Container(
-                        child: Text("Take a Your Photo",
+                        child: Text("instruction_text5".tr(),
                             style: TextStyle(
                                 color: colorPrimary50,
                                 fontSize: size.height <= 569 ? 14 : 16)),
@@ -91,8 +90,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                         height: size.height <= 569 ? 5 : 10,
                       ),
                       Container(
-                        child: Text(
-                            "Let's take a picture and give your best smile for the admin! Begin our work in this beautiful day!",
+                        child: Text("instruction_text6".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontSize: size.height <= 569 ? 14 : 16)),
@@ -108,7 +106,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                               value: dontShowAgain,
                               onChanged: _onDontShowAgainChanged,
                               controlAffinity: ListTileControlAffinity.leading,
-                              title: Text("Dont Show Again",
+                              title: Text("instruction_text7".tr(),
                                   style: TextStyle(
                                       fontSize: size.height <= 569 ? 12 : 14,
                                       color: colorPrimary,
@@ -123,7 +121,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                         size: size,
                         bgColor: colorPrimary,
                         textColor: colorBackground,
-                        title: "Continue",
+                        title: "continue_text".tr(),
                         onClick: continueButton,
                       )
                     ],

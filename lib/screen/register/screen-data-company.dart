@@ -14,6 +14,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/business-scope-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DataCompany extends StatefulWidget {
   DataCompany({Key key, this.title, this.token, this.paketID})
@@ -40,20 +41,17 @@ class _DataCompanyScreen extends State<DataCompany> {
   bool _scopeValidator = false;
   String textItem = "";
   String idScope = "";
-  
+
   bool isLoading = true;
   List<String> bussinessScope = [];
   List<BussinessScopeModel> scopeData = [];
   @override
   void initState() {
-    
     super.initState();
     BlocProvider.of<BussinessScopeBloc>(context)
         .add(LoadAllBussinessScopeEvent());
     print("Token = " + widget.token);
   }
-
-  
 
   void _gotoAccepted() {
     if (textEmail.text != "") {
@@ -160,12 +158,11 @@ class _DataCompanyScreen extends State<DataCompany> {
                 Text("Scope: " + textItem),
               ],
             )));
-    if (result!=null) {
-      if(result){
+    if (result != null) {
+      if (result) {
         BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
-          companyModel: model, token: widget.token, scope: idScope));
+            companyModel: model, token: widget.token, scope: idScope));
       }
-      
     }
   }
 
@@ -235,9 +232,8 @@ class _DataCompanyScreen extends State<DataCompany> {
                       children: [
                         TitleFormat(
                           size: size,
-                          title: "Company Data",
-                          detail:
-                              "Please fill in your company data to help us setting your account",
+                          title: "company_text1".tr(),
+                          detail: "company_text2".tr(),
                         ),
                         Container(
                           width: size.width,
@@ -256,13 +252,13 @@ class _DataCompanyScreen extends State<DataCompany> {
                             decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
-                                labelText: "Legal Name (Required)",
+                                labelText: "company_text3".tr() + "(Required)",
                                 labelStyle: TextStyle(
                                   color: _nameValidator
                                       ? colorError
                                       : colorNeutral2,
                                 ),
-                                hintText: "Legal Name",
+                                hintText: "company_text3".tr(),
                                 hintStyle: TextStyle(
                                   color: colorNeutral2,
                                 ),
@@ -291,13 +287,13 @@ class _DataCompanyScreen extends State<DataCompany> {
                             decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
-                                labelText: "Company Phone (Required)",
+                                labelText: "company_text4".tr() + "(Required)",
                                 labelStyle: TextStyle(
                                   color: _phoneValidator
                                       ? colorError
                                       : colorNeutral2,
                                 ),
-                                hintText: "Company phone",
+                                hintText: "company_text4".tr(),
                                 hintStyle: TextStyle(
                                   color: colorNeutral2,
                                 ),
@@ -326,13 +322,13 @@ class _DataCompanyScreen extends State<DataCompany> {
                             decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
-                                labelText: "Company Email (Required)",
+                                labelText: "company_text5".tr() + "(Required)",
                                 labelStyle: TextStyle(
                                   color: _emailValidator
                                       ? colorError
                                       : colorNeutral2,
                                 ),
-                                hintText: "Company email",
+                                hintText: "company_text5".tr(),
                                 hintStyle: TextStyle(
                                   color: colorNeutral2,
                                 ),
@@ -359,7 +355,7 @@ class _DataCompanyScreen extends State<DataCompany> {
                             onChanged: (val) {},
                             controller: textWebsite,
                             decoration: InputDecoration(
-                                labelText: "Company Website(Required)",
+                                labelText: "company_text6".tr() + "(Required)",
                                 labelStyle: TextStyle(
                                   color: _websiteValidator
                                       ? colorError
@@ -367,7 +363,7 @@ class _DataCompanyScreen extends State<DataCompany> {
                                 ),
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
-                                hintText: "Company website",
+                                hintText: "company_text6".tr(),
                                 hintStyle: TextStyle(
                                   color: colorNeutral2,
                                 ),
@@ -394,7 +390,7 @@ class _DataCompanyScreen extends State<DataCompany> {
                             onChanged: (val) {},
                             controller: textAddress,
                             decoration: InputDecoration(
-                                labelText: "Company Address (Required)",
+                                labelText: "company_text7".tr() + "(Required)",
                                 labelStyle: TextStyle(
                                   color: _addressValidator
                                       ? colorError
@@ -402,7 +398,7 @@ class _DataCompanyScreen extends State<DataCompany> {
                                 ),
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
-                                hintText: "Company address",
+                                hintText: "company_text7".tr(),
                                 hintStyle: TextStyle(
                                   color: colorNeutral2,
                                 ),
@@ -428,7 +424,7 @@ class _DataCompanyScreen extends State<DataCompany> {
                                       labelStyle: TextStyle(fontSize: 12),
                                       errorStyle: TextStyle(
                                           color: colorError, fontSize: 16.0),
-                                      hintText: 'Your Bussiness Scope',
+                                      hintText: 'company_text8'.tr(),
                                       border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(5.0))),
@@ -479,11 +475,10 @@ class _DataCompanyScreen extends State<DataCompany> {
   Widget _buildCupertino({BuildContext context, Widget wData}) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Are you sure to register your company with this data?",
+        "company_text9".tr(),
       ),
       content: wData,
       actions: <Widget>[
-        
         CupertinoDialogAction(
             child: Text(
               "No",

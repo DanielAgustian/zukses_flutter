@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -16,7 +16,6 @@ import 'package:zukses_app_1/main.dart';
 import 'package:zukses_app_1/model/register-model.dart';
 import 'package:zukses_app_1/screen/register/screen-data-company.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class RegisApproved extends StatefulWidget {
@@ -72,7 +71,7 @@ class _RegisApprovedScreen extends State<RegisApproved> {
                     height: size.height < 569 ? 15 : 25,
                   ),
                   Text(
-                    "Registration Success",
+                    "regis_success_text1".tr(),
                     style: TextStyle(
                         color: colorGoogle,
                         fontSize: size.height < 569 ? 18 : 20,
@@ -82,7 +81,7 @@ class _RegisApprovedScreen extends State<RegisApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "You have successfully created account!",
+                    "regis_success_text2".tr(),
                     style: TextStyle(
                       color: colorGoogle,
                       fontSize: size.height < 569 ? 12 : 14,
@@ -95,7 +94,7 @@ class _RegisApprovedScreen extends State<RegisApproved> {
                     padding: const EdgeInsets.all(15.0),
                     child: LongButton(
                       size: size,
-                      title: "Start Exploring",
+                      title: "exploring_text".tr(),
                       bgColor: colorPrimary,
                       textColor: colorBackground,
                       onClick: () {
@@ -144,8 +143,8 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
         .getInitialMessage()
         .then((RemoteMessage message) {
       if (message != null) {
-        print("MESSAGE ========================");
-        print(message.data);
+        // print("MESSAGE ========================");
+        // print(message.data);
         notificationChecker(message);
       }
     });
@@ -155,7 +154,6 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null) {
-        print("MASUK ==========================================++>");
         // print(notification.body);
         flutterLocalNotificationsPlugin.initialize(
           initSetttings,
@@ -194,7 +192,6 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
         (Route<dynamic> route) => false,
       );
     }
-    
   }
 
   @override
@@ -272,7 +269,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "Your request has been sent to PT. ${widget.company}. You will be notify by email when admin already accept your request and redirected to the dashboard.",
+                    "setup_account_text8".tr(args: ["PT" + widget.company]),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorGoogle,
@@ -345,7 +342,7 @@ class _PaymentApprovedScreen extends State<PaymentApproved> {
                     height: size.height < 569 ? 15 : 25,
                   ),
                   Text(
-                    "Payment Complete",
+                    "payment_text15".tr(),
                     style: TextStyle(
                         color: colorGoogle,
                         fontSize: size.height < 569 ? 18 : 20,
@@ -355,7 +352,7 @@ class _PaymentApprovedScreen extends State<PaymentApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "Thank you, your payment has been successful. A confirmation email and receipt has been sent to yourcompany@gmail.com.",
+                    "payment_text17",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorGoogle,
@@ -369,7 +366,7 @@ class _PaymentApprovedScreen extends State<PaymentApproved> {
                     padding: const EdgeInsets.all(15.0),
                     child: LongButton(
                       size: size,
-                      title: "Continue to Company Data",
+                      title: "payment_text16".tr(),
                       bgColor: colorPrimary,
                       textColor: colorBackground,
                       onClick: () {
