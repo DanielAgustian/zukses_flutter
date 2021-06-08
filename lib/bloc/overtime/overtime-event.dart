@@ -9,10 +9,11 @@ abstract class OvertimeEvent extends Equatable {
 }
 
 class AddOvertimeEvent extends OvertimeEvent {
- 
-  final int attendanceId;
+  final DateTime date;
+  final String startTime, endTime;
   final String reason, project;
-  AddOvertimeEvent({this.attendanceId, this.reason, this.project});
+  AddOvertimeEvent(
+      {this.startTime, this.endTime, this.date, this.reason, this.project});
   List<Object> get props => [OvertimeModel];
 }
 

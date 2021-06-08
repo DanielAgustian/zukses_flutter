@@ -77,8 +77,9 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     if (widget.permission == "leaves") {
       BlocProvider.of<LeaveTypeBloc>(context).add(LoadAllLeaveTypeEvent());
     } else if (widget.permission == "overtime") {
-      BlocProvider.of<AttendanceBloc>(context)
-          .add(LoadUserAttendanceEvent(date: DateTime.now()));
+      /*BlocProvider.of<AttendanceBloc>(context)
+          .add(LoadUserAttendanceEvent(date: DateTime.now()));*/
+      /*BlocProvider.of<>(context)*/
     } else {
       Util().showToast(
           txtColor: colorError,
@@ -446,7 +447,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   },
                   child: Container(),
                 ),
-                BlocListener<AttendanceBloc, AttendanceState>(
+                /*BlocListener<AttendanceBloc, AttendanceState>(
                   listener: (context, state) {
                     if (state is AttendanceStateSuccessLoad) {
                       dateDisplayList.clear();
@@ -471,7 +472,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     } else {}
                   },
                   child: Container(),
-                ),
+                ),*/
                 /*isLoading2
                     ? AddScheduleRow2(
                         fontSize: size.height <= 569 ? 14 : 16,
@@ -486,7 +487,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           });
                         })
                     : CircularProgressIndicator(),*/
-                isLoading2
+                /*isLoading2
                     ? AddScheduleRowOvertimeDate(
                         fontSize: size.height <= 569 ? 14 : 16,
                         title: "date_text".tr(),
@@ -509,7 +510,37 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             : durationOvertime,
                         fontSize: size.height <= 569 ? 14 : 16,
                       )
-                    : CircularProgressIndicator(),
+                    : CircularProgressIndicator(),*/
+                InkWell(
+                  onTap: () {
+                    _selectDate(context, 0);
+                  },
+                  child: AddScheduleRow(
+                    title: "date_text".tr(),
+                    textItem: "${formater.format(startDate)}",
+                    fontSize: size.height <= 600 ? 14 : 16,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    pickTime(context, 0);
+                  },
+                  child: AddScheduleRow(
+                    title: "team_member_text1".tr(),
+                    textItem: Util().changeTimeToString(startTime),
+                    fontSize: size.height <= 600 ? 14 : 16,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    pickTime(context, 1);
+                  },
+                  child: AddScheduleRow(
+                    title: "team_member_text2".tr(),
+                    textItem: Util().changeTimeToString(endTime),
+                    fontSize: size.height <= 600 ? 14 : 16,
+                  ),
+                ),
                 AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
                     title: "apply_overtime_text3".tr(),
@@ -620,7 +651,9 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
 
   _createOvertime() async {
     BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-        attendanceId: int.parse(user.id),
+        date: startDate,
+        startTime: Util().changeTimeToString(startTime) + "",
+        endTime: Util().changeTimeToString(endTime) + "",
         project: project,
         reason: textReason.text));
   }

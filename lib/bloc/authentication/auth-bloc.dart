@@ -39,6 +39,7 @@ class AuthenticationBloc
       if (res is AuthModel && res != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setInt("in-company", res.user.companyAcceptance);
+        prefs.setString("company_id", res.user.companyID);
         yield AuthStateSuccessLoad(res);
       } else {
         yield AuthStateFailLoad();
@@ -83,8 +84,9 @@ class AuthenticationBloc
         if (res is AuthModel && res != null) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setInt("in-company", res.user.companyAcceptance);
+          prefs.setString("company_id", res.user.companyID);
           yield AuthStateSuccessLoad(res);
-          ;
+          
         } else {
           yield AuthStateFailLoad();
         }
@@ -114,6 +116,7 @@ class AuthenticationBloc
     if (res is AuthModel && res != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt("in-company", res.user.companyAcceptance);
+      prefs.setString("company_id", res.user.companyID);
       yield AuthStateSuccessLoad(res);
     } else {
       yield AuthStateFailLoad();
@@ -128,6 +131,7 @@ class AuthenticationBloc
     if (res is AuthModel && res != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt("in-company", res.user.companyAcceptance);
+      prefs.setString("company_id", res.user.companyID);
       yield AuthStateSuccessLoad(res);
     } else {
       yield AuthStateFailLoad();
@@ -143,6 +147,7 @@ class AuthenticationBloc
     if (res is AuthModel && res != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt("in-company", res.user.companyAcceptance);
+      prefs.setString("company_id", res.user.companyID);
       yield AuthStateSuccessTeamLoad(res);
     } else {
       print("AuthStateFailLoad");

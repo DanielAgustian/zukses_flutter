@@ -65,6 +65,7 @@ import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 import 'package:zukses_app_1/screen/punch-system/camera-non-instruction.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
 import 'package:zukses_app_1/screen/profile/user-profile.dart';
+import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -132,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   DateTime backbuttonpressedTime;
 
   String tokenFCM = "";
-
+  String companyID = "";
   int companyAcceptance = 0;
 
   void checkStatusClock(String where) async {
@@ -285,7 +286,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       companyAcceptance = prefs.getInt("in-company");
+      companyID = prefs.getString("company_id");
     });
+    if (companyID != "" && companyAcceptance == 0) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => WaitRegisApproved()),
+          (route) => false);
+    }
   }
 
   Future<bool> onWillPop() async {
@@ -310,11 +318,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      /*floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _controller.forward();
+          showDialog(
+              context: context,
+              builder: (context) => _buildPopupOvertime(context, size: size));
         },
-      ),*/
+      ),
       backgroundColor: colorBackground,
       body: WillPopScope(
         onWillPop: onWillPop,
@@ -1684,8 +1694,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     setState(() {
                       dialogText = "Clock Out";
                     });
+
                     BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-                        attendanceId: attendanceID,
+                        date: DateTime.now(),
+                        startTime: "18:00:00",
+                        endTime: timeOvertime,
                         project: textProjectOvertime.text,
                         reason: textReasonOvertime.text));
 

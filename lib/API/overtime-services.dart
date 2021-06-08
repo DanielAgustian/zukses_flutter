@@ -8,9 +8,11 @@ class OvertimeServiceHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
 
-  Future<int> postOvertime(int attendanceId, String project, reason) async {
+  Future<int> postOvertime(String date, String startTime, String endTime,
+      String project, reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+    String myID = prefs.getString("myID");
     final response = await http.post(
       Uri.https(baseURI, '/api/overtime'),
       headers: <String, String>{
@@ -19,12 +21,14 @@ class OvertimeServiceHTTP {
         'Authorization': 'Bearer $token'
       },
       body: jsonEncode(<String, String>{
-        'attendanceId': attendanceId.toString(),
+        'date': date,
+        'startTime': startTime,
+        'endTime': endTime,
         'project': project,
-        'reason': reason
+        'reason': reason,
+        'user_id': myID
       }),
     );
-
     print("post overtime ${response.statusCode}");
 
     if (response.statusCode >= 200 && response.statusCode < 300) {

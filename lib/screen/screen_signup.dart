@@ -498,7 +498,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       SizedBox(
                         height: 15,
                       ),
-                      Center(
+                      /*Center(
                         child: Text(
                           "register_text2".tr(),
                           style:
@@ -536,7 +536,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                           BlocProvider.of<RegisterBloc>(context)
                               .add(AddRegisterFacebook(tokenFCM: tokenFCM));
                         },
-                      ),
+                      ),*/
                       SizedBox(
                         height: 0.02 * size.height,
                       ),

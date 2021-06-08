@@ -269,7 +269,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "setup_account_text8".tr(args: ["PT" + widget.company]),
+                    "setup_account_text8".tr(args: ["aforemonetioned company"]),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorGoogle,
