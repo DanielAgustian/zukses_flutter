@@ -12,11 +12,13 @@ import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/main.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class UserSettings extends StatefulWidget {
-  UserSettings({Key key, this.title}) : super(key: key);
+  UserSettings({Key key, this.title, this.user}) : super(key: key);
   final String title;
+  final UserModel user;
   @override
   _UserSettingsScreen createState() => _UserSettingsScreen();
 }
@@ -32,6 +34,7 @@ class _UserSettingsScreen extends State<UserSettings> {
   @override
   void initState() {
     super.initState();
+    switchValue = widget.user.notif == 1 ? true : false;
   }
 
   @override
@@ -72,6 +75,8 @@ class _UserSettingsScreen extends State<UserSettings> {
                       msg: "Something wrong",
                       color: colorError,
                       txtColor: colorBackground);
+                } else if (state is UserStateSuccessChangeNotif) {
+                  widget.user.notif = switchValue ? 1 : 0;
                 }
               },
               child: ListView(

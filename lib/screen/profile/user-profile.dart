@@ -28,7 +28,7 @@ class _UserProfileScreen extends State<UserProfile> {
   void initState() {
     super.initState();
     _getProfile();
-    print("Id Company " + widget.company.id);
+    // print("Id Company " + widget.company.id);
   }
 
   _getProfile() {
@@ -79,8 +79,10 @@ class _UserProfileScreen extends State<UserProfile> {
                   color: colorPrimary,
                 ),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserSettings()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserSettings(user: user)));
                 })
           ],
         ),

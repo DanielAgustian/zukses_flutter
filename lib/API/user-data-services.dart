@@ -18,7 +18,8 @@ class UserDataServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print("UserProfile " + res.statusCode.toString());
+    print("User Profile " + res.statusCode.toString());
+    print(res.body);
     if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -117,6 +118,7 @@ class UserDataServiceHTTP {
         body: jsonEncode(<String, dynamic>{"notif": status}));
 
     print("change notification status " + res.statusCode.toString());
+    print(res.body);
     String msg = "";
 
     if (res.statusCode >= 200 && res.statusCode < 300) {

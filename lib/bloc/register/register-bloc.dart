@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -57,8 +58,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       var googleData = await _authenticationService.googleSignIn();
 
       // Integrate to api backend
-      var res = await _authenticationService.googleLoginToAPI(googleData.name,
-          googleData.email, googleData.image, googleData.token);
+      var res = await _authenticationService.googleLoginToAPI(
+          googleData.name, googleData.email, googleData.image, googleData.token,
+          tokenFCM: event.tokenFCM);
       if (res != null && res is AuthModel) {
         yield RegisterStateSuccess(res);
       } else {
@@ -90,19 +92,18 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             fbAuthData.email, fbAuthData.picture.url, tokenFacebook,
             tokenFCM: event.tokenFCM);
         FBModelSender fms = FBModelSender(
-          email: fbAuthData.email,
-          name: fbAuthData.name,
-          url: fbAuthData.picture.url,
-          id: fbAuthData.id
-        );
+            email: fbAuthData.email,
+            name: fbAuthData.name,
+            url: fbAuthData.picture.url,
+            id: fbAuthData.id);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt("facebook", 1);
         await prefs.setString("facebook_token", tokenFacebook);
         await prefs.setString("facebook_data", jsonEncode(fms));
         if (res is AuthModel && res != null) {
           yield RegisterStateSuccess(res);
-          print("AuthStateSuccess FAcebook");
-          print(state);
+          // print("AuthStateSuccess FAcebook");
+          // print(state);
         } else {
           yield RegisterStateFailLoad();
         }
