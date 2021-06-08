@@ -130,8 +130,8 @@ class AuthServiceHTTP {
       String name, String email, String link_image, String token,
       {String tokenFCM, @required String provider}) async {
     try {
-      print(email);
-      print("Image Link in GoogleLoginToAPI: " + link_image);
+      // print("NAON ${tokenFCM}");
+      // print("Image Link in GoogleLoginToAPI: " + link_image);
       final response = await http.post(
         Uri.https(baseURI, '/api/google-sign-in'),
         headers: <String, String>{
@@ -147,8 +147,9 @@ class AuthServiceHTTP {
           'fcmToken': tokenFCM
         }),
       );
+
       print("google login ${response.statusCode}");
-      print(response.body);
+      // print(response.body);
       final user = AuthModel.fromJson(jsonDecode(response.body));
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);

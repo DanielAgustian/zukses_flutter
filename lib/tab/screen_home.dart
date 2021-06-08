@@ -137,7 +137,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int companyAcceptance = 0;
 
   void checkStatusClock(String where) async {
-    print("CheckStatusClock Jalan");
     if (where == "initState") {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var googleSign = prefs.getInt('google');
@@ -178,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void getAuthData() async {
-    await _getTokenFCM();
+    // await _getTokenFCM();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("userLogin");
@@ -254,14 +253,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         .add(LoadHighPriorityEvent("high"));
   }
 
-  Future<void> _getTokenFCM() async {
-    tokenFCM = await util.getTokenFCM();
+  void _getTokenFCM() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      tokenFCM = prefs.getString('fcmToken');
+    });
   }
 
   @override
   void initState() {
     super.initState();
-
+    _getTokenFCM();
     getMember();
     checkStatusClock("initState");
     getCompanyProfile();
@@ -378,14 +380,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         });
 
                         //Choose Enum Tap based on DB data.
+                        // if (_authModel.attendance == "false") {
+                        //   // if they arent clock in yet
+                        //   setState(() {
+                        //     stringTap = enumTap[0];
+                        //     if (_authModel.maxClockIn == "true") {
+                        //       stringTap = enumTap[2];
+                        //     }
+                        //   });
+                        // } else if (_authModel.attendance == "true") {
+                        //   // if they already clock in.
+                        //   setState(() {
+                        //     stringTap = enumTap[1];
+                        //   });
+                        // }
 
                         if (_authModel.maxClockIn == "false") {
                           //if they arent clockout today
                           if (_authModel.attendance == "false") {
                             // if they arent clock in yet
-                            setState(() {
-                              //stringTap = enumTap[0];
-                            });
+                            // setState(() {
+                            //   stringTap = enumTap[0];
+                            // });
                           } else if (_authModel.attendance == "true") {
                             // if they already clock in.
                             setState(() {

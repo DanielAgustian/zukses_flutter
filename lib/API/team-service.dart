@@ -13,7 +13,7 @@ class TeamServiceHTTP {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    print("Token = " + token);
+    // print("Token = " + token);
     try {
       //Query to API
       var res = await http
