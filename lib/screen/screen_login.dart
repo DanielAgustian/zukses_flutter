@@ -359,7 +359,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               SizedBox(
                                 height: 25,
                               ),
-                               /*Center(
+                              /*Center(
                                 child: Text(
                                   "login_text3".tr(),
                                   style: TextStyle(
@@ -580,9 +580,10 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                       onClick: loginScroll,
                       size: size,
                     ),
-                    SizedBox(
+                    /*SizedBox(
                       height: 25,
                     ),
+                    
                     Center(
                       child: Text(
                         "login_text3".tr(),
@@ -614,7 +615,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                         fit: BoxFit.contain,
                       ),
                       onClick: () {},
-                    ),
+                    ),*/
                     SizedBox(
                       height: 0.02 * size.height,
                     ),
