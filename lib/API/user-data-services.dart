@@ -19,7 +19,7 @@ class UserDataServiceHTTP {
       'Authorization': 'Bearer $token'
     });
     print("User Profile " + res.statusCode.toString());
-    // print(res.body);
+    print(res.body);
     if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/API/register-services.dart';
@@ -60,7 +58,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       // Integrate to api backend
       var res = await _authenticationService.googleLoginToAPI(
           googleData.name, googleData.email, googleData.image, googleData.token,
-          tokenFCM: event.tokenFCM);
+          tokenFCM: event.tokenFCM, provider: 'google');
       if (res != null && res is AuthModel) {
         yield RegisterStateSuccess(res);
       } else {
@@ -79,7 +77,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     final result = await facebookLogin.logIn(['email']);
 
     String tokenFacebook = "";
-    print(result.status);
+    // print(result.status);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         tokenFacebook = result.accessToken.token;
@@ -90,7 +88,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         fbAuthData = FBAuthModel.fromJson(profile);
         var res = await _authenticationService.googleLoginToAPI(fbAuthData.name,
             fbAuthData.email, fbAuthData.picture.url, tokenFacebook,
-            tokenFCM: event.tokenFCM);
+            tokenFCM: event.tokenFCM, provider: 'facebook');
         FBModelSender fms = FBModelSender(
             email: fbAuthData.email,
             name: fbAuthData.name,

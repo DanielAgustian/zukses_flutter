@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
@@ -127,8 +128,9 @@ class AuthServiceHTTP {
 
   Future<AuthModel> googleLoginToAPI(
       String name, String email, String link_image, String token,
-      {String tokenFCM}) async {
+      {String tokenFCM, @required String provider}) async {
     try {
+      print(email);
       print("Image Link in GoogleLoginToAPI: " + link_image);
       final response = await http.post(
         Uri.https(baseURI, '/api/google-sign-in'),
@@ -141,11 +143,12 @@ class AuthServiceHTTP {
           'name': name,
           'link_image': link_image,
           'token': token,
+          'provider': provider,
           'fcmToken': tokenFCM
         }),
       );
       print("google login ${response.statusCode}");
-      //print(response.body);
+      print(response.body);
       final user = AuthModel.fromJson(jsonDecode(response.body));
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);
