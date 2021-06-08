@@ -11,7 +11,7 @@ import 'package:zukses_app_1/tab/screen_attendance.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../main.dart';
 
 class ScreenTab extends StatefulWidget {
@@ -70,8 +70,8 @@ class _ScreenTab extends State<ScreenTab> {
         .getInitialMessage()
         .then((RemoteMessage message) {
       if (message != null) {
-        print("MESSAGE ========================");
-        print(message.data);
+        // print("MESSAGE ========================");
+        // print(message.data);
         notificationChecker(message);
       }
     });
@@ -81,7 +81,7 @@ class _ScreenTab extends State<ScreenTab> {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null) {
-        print("MASUK ==========================================++>");
+        // print("MASUK ==========================================++>");
         // print(notification.body);
         flutterLocalNotificationsPlugin.initialize(
           initSetttings,
@@ -129,8 +129,8 @@ class _ScreenTab extends State<ScreenTab> {
     else if (message.notification.title
         .toLowerCase()
         .contains("task assignment")) {
-      print("Masuk task assignment");
-      print(message.data["projectId"]);
+      // print("Masuk task assignment");
+      // print(message.data["projectId"]);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -141,7 +141,7 @@ class _ScreenTab extends State<ScreenTab> {
     } else if (message.notification.title
         .toLowerCase()
         .contains("meeting response")) {
-      print(message.data);
+      // print(message.data);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -167,19 +167,21 @@ class _ScreenTab extends State<ScreenTab> {
               'assets/images/home-icon.svg',
               color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
             ),
-            label: 'Home',
+            label: 'tab_text1'.tr(),
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/images/attendance-icon.svg',
               color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
             ),
-            label: 'Attendance',
+            label: 'tab_text2'.tr(),
           ),
           BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.clipboardList), label: 'Task'),
+              icon: FaIcon(FontAwesomeIcons.clipboardList),
+              label: 'tab_text3'.tr()),
           BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.solidCalendar), label: 'Schedule'),
+              icon: FaIcon(FontAwesomeIcons.solidCalendar),
+              label: 'tab_text4'.tr()),
         ],
         unselectedFontSize: 12,
         selectedFontSize: 12,

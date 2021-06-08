@@ -13,7 +13,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class PreviewCamera extends StatefulWidget {
@@ -143,7 +143,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   SizedBox(
                     height: 30,
                   ),
-                  Text("Are you sure with this picture?",
+                  Text("confirm_clock_in".tr(),
                       style: TextStyle(
                           fontSize: size.height < 600 ? 16 : 18,
                           color: colorPrimary,
@@ -157,7 +157,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                     children: [
                       SmallButton(
                         size: 120,
-                        title: "Continue",
+                        title: "continue_text".tr(),
                         bgColor: colorPrimary,
                         textColor: colorBackground,
                         onClick: () {
@@ -222,7 +222,7 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   Widget _buildPopupDialog(BuildContext context) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Clock In Success!",
+        "Clock In " + "success_text".tr() + " !",
       ),
       content: new Text("Clock In Time: " + Util().hourFormat(DateTime.now())),
       actions: <Widget>[

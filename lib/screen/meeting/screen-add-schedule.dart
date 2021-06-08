@@ -20,6 +20,7 @@ import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   @override
@@ -52,13 +53,13 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
 
   // Dropdown menu
   List<String> items = [
-    "Never",
-    "Everyday",
-    "Weekly",
+    "apply_leaves_text9".tr(),
+    "apply_leaves_text10".tr(),
+    "apply_leaves_text11".tr(),
     "Every Two Weeks",
     "Every Year"
   ];
-  String repeat = "Never";
+  String repeat = "apply_leaves_text9".tr();
 
   // Dragable scroll controller
   AnimationController _controller;
@@ -89,7 +90,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                     children: [
                       Container(
                         child: Text(
-                          "Are you sure you want to discard your changes ?",
+                          "schedule_text8".tr(),
                           style: TextStyle(color: colorPrimary, fontSize: 14),
                           textAlign: TextAlign.center,
                         ),
@@ -101,7 +102,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         size: size,
                         bgColor: colorPrimary,
                         textColor: colorBackground,
-                        title: "Keep Editing",
+                        title: "schedule_text9".tr(),
                         onClick: () {
                           Navigator.of(context, rootNavigator: true).pop();
                         },
@@ -114,7 +115,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         size: size,
                         bgColor: colorBackground,
                         textColor: colorError,
-                        title: "Discard Changes",
+                        title: "schedule_text10".tr(),
                         onClick: () {
                           Navigator.pop(context, true);
                           Navigator.pushReplacement(
@@ -304,7 +305,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           ),
           centerTitle: true,
           title: Text(
-            "Add Schedule",
+            "schedule_text2".tr(),
             style: TextStyle(
                 color: colorPrimary,
                 fontWeight: FontWeight.bold,
@@ -317,7 +318,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
-                    "Done",
+                    "done_text".tr(),
                     style: TextStyle(
                         fontSize: size.height <= 569 ? 15 : 18,
                         color: colorPrimary,
@@ -412,7 +413,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                             decoration: InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 5),
-                                hintText: "Description",
+                                hintText: "task_text20".tr(),
                                 hintStyle: TextStyle(
                                   color: _descriptionValidator
                                       ? colorError
@@ -443,7 +444,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                               },
                               child: AddScheduleRow(
                                 fontSize: size.height <= 569 ? 14 : 16,
-                                title: "Date",
+                                title: "date_text".tr(),
                                 textItem: "${formater.format(date)}",
                               ),
                             ),
@@ -467,7 +468,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                             : colorBackground)),
                                 child: AddScheduleRow(
                                   fontSize: size.height <= 569 ? 14 : 16,
-                                  title: "Time",
+                                  title: "time_text".tr(),
                                   textItem: "$h1.$m1 - $h2.$m2",
                                 ),
                               ),
@@ -475,7 +476,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
 
                             AddScheduleRow2(
                               fontSize: size.height <= 569 ? 14 : 16,
-                              title: "Repeat",
+                              title: "schedule_text4".tr(),
                               textItem: repeat,
                               items: items,
                               onSelectedItem: (val) {
@@ -490,7 +491,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                             Container(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Invite",
+                                "schedule_text5".tr(),
                                 style: TextStyle(
                                     fontSize: size.height <= 569 ? 14 : 16,
                                     color: colorPrimary),
@@ -508,7 +509,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                             EdgeInsets.symmetric(horizontal: paddingHorizontal),
                         child: LongButtonIconShadow(
                           size: size,
-                          title: "Add Invitation",
+                          title: "schedule_text6".tr(),
                           bgColor: colorBackground,
                           textColor: colorPrimary,
                           iconWidget: FaIcon(
@@ -613,7 +614,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           _controller.reverse();
                         },
                         child: Text(
-                          "Cancel",
+                          "cancel_text".tr(),
                           style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height < 600
                                   ? 14
@@ -622,7 +623,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         ),
                       ),
                       Text(
-                        "Add Invitation",
+                        "schedule_text6".tr(),
                         style: TextStyle(
                             fontSize: MediaQuery.of(context).size.height < 600
                                 ? 18
@@ -635,7 +636,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           _controller.reverse();
                         },
                         child: Text(
-                          "Done",
+                          "done_text".tr(),
                           style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height < 600
                                   ? 14

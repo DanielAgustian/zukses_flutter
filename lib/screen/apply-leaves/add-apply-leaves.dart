@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,12 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   LeaveTypeModel result = LeaveTypeModel();
   List<LeaveTypeModel> dataLeaveType = [];
 
-  List<String> items = ["Single Day", "Multiple Day", "Half Day"];
-  String repeat = "Single Day";
+  List<String> items = [
+    "apply_leaves_text4".tr(),
+    "apply_leaves_text5".tr(),
+    "apply_leaves_text6".tr()
+  ];
+  String repeat = "apply_leaves_text4".tr();
   String leaveType = "";
   bool isLoading = false;
   String project = "Agerabot";
@@ -111,7 +116,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         },
                         child: Center(
                           child: Text(
-                            "Cancel",
+                            "cancel_text".tr(),
                             style: TextStyle(
                                 fontSize: size.height <= 600 ? 14 : 16,
                                 color: colorPrimary,
@@ -120,7 +125,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         )),
                   ),
                   title: Text(
-                    "Apply Leaves",
+                    "apply_leaves_text1".tr(),
                     style: TextStyle(
                         color: colorPrimary,
                         fontWeight: FontWeight.bold,
@@ -143,7 +148,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           },
                           child: Container(
                             child: Text(
-                              "Done",
+                              "done_text".tr(),
                               style: TextStyle(
                                   fontSize: size.height <= 600 ? 14 : 16,
                                   color: colorPrimary,
@@ -167,7 +172,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         children: [
                           BlocListener<LeaveBloc, LeaveState>(
                               listener: (context, state) {
-                                
                                 if (state is LeaveStateSuccess) {
                                   _gotoLeavesList();
                                 } else if (state is LeaveStateFail) {
@@ -197,8 +201,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             },
                             child: AddScheduleRow(
                               title: repeat == "Multiple Day"
-                                  ? "Start Date"
-                                  : "Date",
+                                  ? "apply_leaves_text7".tr()
+                                  : "date_text".tr(),
                               textItem: "${formater.format(startDate)}",
                               fontSize: size.height <= 600 ? 14 : 16,
                             ),
@@ -209,7 +213,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                     _selectDate(context, 1);
                                   },
                                   child: AddScheduleRow(
-                                    title: "End Date",
+                                    title: "apply_leaves_text8".tr(),
                                     textItem: "${formater.format(endDate)}",
                                     fontSize: size.height <= 600 ? 14 : 16,
                                   ),
@@ -221,7 +225,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                     pickTime(context, 0);
                                   },
                                   child: AddScheduleRow(
-                                    title: "Start Time",
+                                    title: "team_member_text1".tr(),
                                     textItem:
                                         Util().changeTimeToString(startTime),
                                     fontSize: size.height <= 600 ? 14 : 16,
@@ -234,7 +238,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                     pickTime(context, 1);
                                   },
                                   child: AddScheduleRow(
-                                    title: "End Time",
+                                    title: "team_member_text2".tr(),
                                     textItem:
                                         Util().changeTimeToString(endTime),
                                     fontSize: size.height <= 600 ? 14 : 16,
@@ -264,7 +268,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                                     //_changeLeave();
                                   },
                                   items: dataLeaveType,
-                                  title: "Leave Type",
+                                  title: "apply_leaves_text3".tr(),
                                   textItem: result,
                                   fontSize: size.height <= 600 ? 14 : 16,
                                 )
@@ -291,7 +295,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                               controller: textReason,
                               decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(20),
-                                  hintText: "Description",
+                                  hintText: "task_text20".tr(),
                                   hintStyle: TextStyle(
                                     color: _reasonValidator
                                         ? colorError
@@ -324,7 +328,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     children: [
                       Container(
                         child: Text(
-                          "Are you sure you want to discard your changes ?",
+                          "schedule_text8".tr(),
                           style: TextStyle(color: colorPrimary, fontSize: 14),
                           textAlign: TextAlign.center,
                         ),
@@ -336,7 +340,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         size: size,
                         bgColor: colorPrimary,
                         textColor: colorBackground,
-                        title: "Keep Editing",
+                        title: "schedule_text9".tr(),
                         onClick: () {
                           Navigator.of(context, rootNavigator: true).pop();
                         },
@@ -349,7 +353,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         size: size,
                         bgColor: colorBackground,
                         textColor: colorError,
-                        title: "Discard Changes",
+                        title: "schedule_text10".tr(),
                         onClick: () {
                           Navigator.of(context, rootNavigator: true).pop();
                           Navigator.of(context).pop();
@@ -385,7 +389,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               },
               child: Center(
                 child: Text(
-                  "Cancel",
+                  "cancel_text".tr(),
                   style: TextStyle(
                       fontSize: size.height <= 600 ? 15 : 18,
                       color: colorPrimary,
@@ -394,7 +398,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
               )),
         ),
         title: Text(
-          "Apply Overtime",
+          "apply_overtime_text1".tr(),
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
@@ -412,7 +416,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 },
                 child: Container(
                   child: Text(
-                    "Done",
+                    "done_text".tr(),
                     style: TextStyle(
                         fontSize: size.height <= 600 ? 15 : 18,
                         color: colorPrimary,
@@ -485,7 +489,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 isLoading2
                     ? AddScheduleRowOvertimeDate(
                         fontSize: size.height <= 569 ? 14 : 16,
-                        title: "Date",
+                        title: "date_text".tr(),
                         attendance: user,
                         attendanceList: userModel,
                         onSelectedItem: (val) {
@@ -499,7 +503,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     ? AddScheduleRow(
                         lowerOpacity: true,
                         arrowRight: "false",
-                        title: "Duration",
+                        title: "apply_overtime_text2".tr(),
                         textItem: durationOvertime == ""
                             ? "00:00:00"
                             : durationOvertime,
@@ -508,7 +512,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     : CircularProgressIndicator(),
                 AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
-                    title: "Project",
+                    title: "apply_overtime_text3".tr(),
                     textItem: project,
                     items: projectList,
                     onSelectedItem: (val) {
@@ -518,7 +522,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     }),
                 AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
-                    title: "Task",
+                    title: "apply_overtime_text4".tr(),
                     textItem: task,
                     items: taskList,
                     onSelectedItem: (val) {
@@ -542,7 +546,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     controller: textReason,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(20),
-                        hintText: "Description",
+                        hintText: "task_text20".tr(),
                         hintStyle: TextStyle(
                           color: _reasonValidator ? colorError : colorNeutral1,
                         ),
@@ -659,7 +663,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   Widget _buildCupertino({BuildContext context, String title}) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Application Submitted!",
+        "apply_leaves_text16".tr() + " !",
         style: TextStyle(
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
       ),
@@ -669,7 +673,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "See List",
+              "see_list_text".tr(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {

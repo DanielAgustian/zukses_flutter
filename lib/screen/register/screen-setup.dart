@@ -17,6 +17,7 @@ import 'package:zukses_app_1/screen/register/screen-pricing.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/register/screen-setup-team.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SetupRegister extends StatefulWidget {
   SetupRegister({Key key, this.title, this.token}) : super(key: key);
@@ -202,7 +203,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                             color: colorError,
                             msg: "Register Failed");
                       } else if (state is RegisterStateCompanySuccess) {
-                        
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
@@ -230,15 +230,15 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     alignment: Alignment.topLeft,
                     child: TitleFormat(
                       size: size,
-                      title: "Set Up Account",
+                      title: "invite_team_text1".tr(),
                       detail: "",
                     ),
                   ),
                   QuestionFormat(
                     size: size,
-                    question: "How do you want to use Zukses?",
-                    answer1: "As An Individual",
-                    answer2: "As An Organization",
+                    question: "setup_account_text2setup_account_text2".tr(),
+                    answer1: "setup_account_text3".tr(),
+                    answer2: "setup_account_text4".tr(),
                     bool1: boolOrganization[0],
                     bool2: boolOrganization[1],
                     click1: (val) {
@@ -273,9 +273,9 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                   boolOrganization[0]
                       ? QuestionFormat(
                           size: size,
-                          question: "Do you have team?",
-                          answer1: "Yes",
-                          answer2: "No",
+                          question: "setup_account_text9".tr(),
+                          answer1: "yes_text".tr(),
+                          answer2: "no_text".tr(),
                           bool1: boolTeam[0],
                           bool2: boolTeam[1],
                           click1: (val) {
@@ -304,8 +304,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                   boolOrganization[1]
                       ? QuestionFormat(
                           size: size,
-                          question:
-                              "Has your organization registered in Zukses?",
+                          question: "setup_account_text5".tr(),
                           answer1: "Yes",
                           answer2: "No",
                           bool1: boolOrganizationExist[0],
@@ -360,7 +359,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                     },
                     bgColor: clickable ? colorPrimary : colorPrimary30,
                     textColor: colorBackground,
-                    title: "Set up and continue",
+                    title: "setup_account_text10".tr(),
                   )
                 ],
               ),
@@ -379,8 +378,8 @@ class _SetupRegisterScreen extends State<SetupRegister> {
         TextBoxSetup(
           textBox: textTeamName,
           size: size,
-          question: "What's your team called? (min. 3 character)",
-          hint: "Team Name",
+          question: "setup_account_text11".tr(),
+          hint: "setup_account_text12".tr(),
           onChanged: (val) {
             if (val.length > 3) {
               setState(() {
@@ -425,7 +424,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
           height: size.height < 569 ? 10 : 15,
         ),
         Text(
-          "Input your company code",
+          "setup_account_text6".tr(),
           style: TextStyle(
               color: colorNeutral3, fontSize: size.height < 569 ? 14 : 16),
         ),
@@ -458,7 +457,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                 controller: textCompanyCode,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                    hintText: "Company Code",
+                    hintText: "setup_account_text13".tr(),
                     hintStyle: TextStyle(
                       color: colorNeutral2,
                     ),
@@ -568,9 +567,9 @@ class _SetupRegisterScreen extends State<SetupRegister> {
         ),
         QuestionFormat2(
           size: size,
-          question: "Do you want to register your company?",
-          answer1: "Yes, show me the pricing scheme",
-          answer2: "No, I want to register as free individual",
+          question: "company_text9".tr(),
+          answer1: "setup_account_text14".tr(),
+          answer2: "setup_account_text15".tr(),
           bool1: boolNewCompany[0],
           bool2: boolNewCompany[1],
           click1: (val) {
@@ -603,13 +602,13 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   Widget _buildCupertino({BuildContext context, Widget wData}) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Are you sure to register with this data?",
+        "company_text9".tr(),
       ),
       content: wData,
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "No",
+              "no_text".tr(),
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
@@ -617,7 +616,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             }),
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "yes_text".tr(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {

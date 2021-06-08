@@ -4,6 +4,7 @@ import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenInBetween extends StatefulWidget {
   ScreenInBetween({
@@ -103,7 +104,7 @@ class _ScreenInBetweenState extends State<ScreenInBetween> {
                               height: 80, width: 68),
                         ),
                         Text(
-                          "Overtime",
+                          "overtime_text".tr(),
                           style: TextStyle(
                               fontSize: size.height < 569 ? 14 : 16,
                               color: colorPrimary,

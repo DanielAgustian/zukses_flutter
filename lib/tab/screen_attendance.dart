@@ -19,6 +19,7 @@ import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
 
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AttendanceScreen extends StatefulWidget {
   AttendanceScreen({Key key, this.title}) : super(key: key);
@@ -469,7 +470,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                             SizedBox(height: 15),
                             Container(
                                 child: Text(
-                              "Overtime : 0 hrs",
+                              "overtime_text".tr() +
+                                  " : 0 " +
+                                  "hrs_text".tr().toLowerCase(),
                               style: TextStyle(
                                   color: colorPrimary,
                                   fontSize:

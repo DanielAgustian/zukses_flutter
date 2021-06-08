@@ -11,6 +11,7 @@ import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-tab-leaves.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenListLeaves extends StatefulWidget {
   ScreenListLeaves({Key key, this.title, this.permission, this.animate})
@@ -189,7 +190,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                               child: Stack(
                                 children: [
                                   Center(
-                                    child: Text("Accepted"),
+                                    child: Text("accepted_text").tr(),
                                   ),
                                   positionedDot(
                                       context, size, permissionTotal[0])
@@ -202,7 +203,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                               child: Stack(
                                 children: [
                                   Center(
-                                    child: Text("Waiting"),
+                                    child: Text("waiting_text").tr(),
                                   ),
                                   positionedDot(
                                       context, size, permissionTotal[1])
@@ -215,7 +216,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                               child: Stack(
                                 children: [
                                   Center(
-                                    child: Text("Rejected"),
+                                    child: Text("rejected_text").tr(),
                                   ),
                                   positionedDot(
                                       context, size, permissionTotal[2])
