@@ -272,7 +272,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "Your request has been sent to PT. ${widget.company}. You will be notify by email when admin already accept your request and redirected to the dashboard.",
+                    "Your request has been sent to the aforementioned company. You will be notified by email when admin already accept your request and redirected to the dashboard.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorGoogle,

@@ -361,7 +361,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               SizedBox(
                                 height: 25,
                               ),
-                              Center(
+                               /*Center(
                                 child: Text(
                                   "OR",
                                   style: TextStyle(
@@ -369,7 +369,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                 ),
                               ),
                               SizedBox(height: 25),
-                              
+                             
                               LongButtonIcon(
                                 size: size,
                                 title: "Sign In with Google",
@@ -400,7 +400,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               ),
                               SizedBox(
                                 height: 0.02 * size.height,
-                              ),
+                              ),*/
                               Center(
                                 child: RichText(
                                   text: TextSpan(

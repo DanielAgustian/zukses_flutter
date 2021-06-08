@@ -167,7 +167,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         children: [
                           BlocListener<LeaveBloc, LeaveState>(
                               listener: (context, state) {
-                                
                                 if (state is LeaveStateSuccess) {
                                   _gotoLeavesList();
                                 } else if (state is LeaveStateFail) {
@@ -482,7 +481,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                           });
                         })
                     : CircularProgressIndicator(),*/
-                isLoading2
+                /*isLoading2
                     ? AddScheduleRowOvertimeDate(
                         fontSize: size.height <= 569 ? 14 : 16,
                         title: "Date",
@@ -505,7 +504,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                             : durationOvertime,
                         fontSize: size.height <= 569 ? 14 : 16,
                       )
-                    : CircularProgressIndicator(),
+                    : CircularProgressIndicator(),*/
                 AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
                     title: "Project",

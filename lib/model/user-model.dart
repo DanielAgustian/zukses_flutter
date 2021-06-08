@@ -29,7 +29,8 @@ class UserModel {
     this.email = map["email"];
     this.name = map["name"];
     this.imgUrl = map["image"] == null ? "" : map["image"];
-    this.companyID = map["company_id"].toString();
+    this.companyID =
+        map["company_id"] == null ? "" : map["company_id"].toString();
     this.accepted = map["accepted"] == null ? 100 : map["accepted"];
     this.phone = map["mobile"] == null ? null : map["mobile"];
     this.companyAcceptance =
