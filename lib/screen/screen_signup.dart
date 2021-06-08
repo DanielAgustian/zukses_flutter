@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-event.dart';
@@ -255,9 +255,8 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       ),
                       TitleFormat(
                         size: size,
-                        title: "Welcome!",
-                        detail:
-                            "Please Fill In This Form to Create Your Account",
+                        title: "welcome_text".tr() + "!",
+                        detail: "register_text1".tr(),
                       ),
                       Form(
                         child: Column(
@@ -490,7 +489,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       ),
                       SizedBox(height: 20),
                       LongButton(
-                        title: "Sign Up",
+                        title: "button_sign_up".tr(),
                         bgColor: colorPrimary,
                         textColor: colorBackground,
                         onClick: register,
@@ -501,7 +500,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       ),
                       /*Center(
                         child: Text(
-                          "OR",
+                          "register_text2".tr(),
                           style:
                               TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
                         ),
@@ -509,7 +508,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       SizedBox(height: 15),
                       LongButtonIcon(
                         size: size,
-                        title: "Sign In with Google",
+                        title: "button_sign_up_google".tr(),
                         bgColor: colorGoogle,
                         textColor: colorBackground,
                         iconWidget: Image.asset(
@@ -526,7 +525,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       ),
                       LongButtonIcon(
                         size: size,
-                        title: "Sign In with Facebook",
+                        title: "button_sign_up_fb".tr(),
                         bgColor: colorFacebook,
                         textColor: colorBackground,
                         iconWidget: Image.asset(
@@ -548,9 +547,9 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                                 fontSize: size.height < 569 ? 12 : 14,
                                 color: Colors.black),
                             children: <TextSpan>[
-                              new TextSpan(text: "Already have an account? "),
+                              new TextSpan(text: "register_text3".tr()),
                               TextSpan(
-                                  text: 'Log In',
+                                  text: ' ' + 'button_sign_in'.tr(),
                                   style: new TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: colorPrimary),
@@ -580,13 +579,13 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   Widget _buildCupertino({BuildContext context, Widget wData}) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Are you sure to register with this data?",
+        "register_text4".tr(),
       ),
       content: wData,
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "No",
+              "no_text".tr(),
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
@@ -594,7 +593,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
             }),
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "yes_text".tr(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {

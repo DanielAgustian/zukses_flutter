@@ -4,6 +4,7 @@ import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/pricing-model.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EnterPayment extends StatefulWidget {
   EnterPayment({Key key, this.title, this.token, this.paketID, this.pricing})
@@ -50,8 +51,6 @@ class _EnterPaymentScreen extends State<EnterPayment> {
     super.initState();
     country = countries[0];
   }
-
-  
 
   _testingData() {
     if (textCardNumber.text != "" && textCardNumber.text.length > 14) {
@@ -174,9 +173,8 @@ class _EnterPaymentScreen extends State<EnterPayment> {
               children: [
                 TitleFormatCenter(
                   size: size,
-                  title: "Enter Payment",
-                  detail:
-                      "Company account registered after your monthly plan starts.",
+                  title: "payment_text1".tr(),
+                  detail: "payment_text2".tr(),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -204,9 +202,9 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                                         fontSize: size.height < 569 ? 10 : 12,
                                         color: colorNeutral3),
                                     children: [
-                                  TextSpan(text: "Plan ahead? "),
+                                  TextSpan(text: "payment_text3".tr() + " "),
                                   TextSpan(
-                                      text: "Contact Us!",
+                                      text: "contact_us_text".tr(),
                                       style: TextStyle(
                                           color: colorPrimary,
                                           fontWeight: FontWeight.bold),
@@ -233,7 +231,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                               height: size.height < 569 ? 3 : 5,
                             ),
                             Text(
-                              "billed monthly",
+                              "payment_text4".tr(),
                               style: TextStyle(
                                   color: colorNeutral3,
                                   fontSize: size.height < 569 ? 10 : 12),
@@ -250,7 +248,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Subscription",
+                        Text("payment_text5".tr(),
                             style: TextStyle(
                                 fontSize: size.height < 569 ? 14 : 16)),
                         Text(
@@ -265,7 +263,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    "+ sales tax",
+                    "payment_text6".tr(),
                     style: TextStyle(
                         color: colorNeutral3,
                         fontSize: size.height < 569 ? 10 : 12),
@@ -276,7 +274,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Credit Card or Debit Card",
+                  child: Text("payment_text7".tr(),
                       style: TextStyle(fontSize: size.height < 569 ? 14 : 16)),
                 ),
                 SizedBox(
@@ -301,7 +299,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         decoration: InputDecoration(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            hintText: "Card Number",
+                            hintText: "payment_text8".tr(),
                             hintStyle: TextStyle(
                               color: _cardNumberValidator
                                   ? colorError
@@ -396,7 +394,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         decoration: InputDecoration(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            hintText: "Cardholder's name",
+                            hintText: "payment_text9".tr(),
                             hintStyle: TextStyle(
                               color: _cardNameValidator
                                   ? colorError
@@ -426,7 +424,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         decoration: InputDecoration(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            hintText: "Street Adress",
+                            hintText: "payment_text10".tr(),
                             hintStyle: TextStyle(
                               color:
                                   _streetValidator ? colorError : colorNeutral2,
@@ -451,7 +449,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                               labelStyle: TextStyle(fontSize: 12),
                               errorStyle:
                                   TextStyle(color: colorError, fontSize: 16.0),
-                              hintText: 'Your Bussiness Scope',
+                              hintText: 'payment_text18'.tr(),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5.0))),
                           isEmpty: country == '',
@@ -495,7 +493,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         decoration: InputDecoration(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            hintText: "City",
+                            hintText: "payment_text11".tr(),
                             hintStyle: TextStyle(
                               color:
                                   _cityValidator ? colorError : colorNeutral2,
@@ -525,7 +523,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         decoration: InputDecoration(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            hintText: "Province",
+                            hintText: "payment_text12".tr(),
                             hintStyle: TextStyle(
                               color: _provinceValidator
                                   ? colorError
@@ -556,7 +554,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         decoration: InputDecoration(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            hintText: "Zip Code",
+                            hintText: "payment_text13".tr(),
                             hintStyle: TextStyle(
                               color: _zipCodeValidator
                                   ? colorError
@@ -586,7 +584,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         width: 0.26 * size.width,
                         child: Center(
                           child: Text(
-                            "Back",
+                            "back_text".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontSize: size.height < 569 ? 12 : 14,
@@ -613,7 +611,7 @@ class _EnterPaymentScreen extends State<EnterPayment> {
                         width: 0.43 * size.width,
                         child: Center(
                           child: Text(
-                            "Confirm",
+                            "confirm_text".tr(),
                             style: TextStyle(
                                 color: colorBackground,
                                 fontSize: size.height < 569 ? 12 : 14,

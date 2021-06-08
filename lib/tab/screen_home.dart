@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
@@ -93,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String statusLate = "";
   String statusOvertime = "";
   String key = "clock in";
-  String stringTap = "tap to clock in";
+  String stringTap = "home_text1".tr();
   String teamId = "";
   AuthModel _authModel = AuthModel();
   CompanyModel _company = CompanyModel();
@@ -116,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   var taskDetail = ["Task 1", "task 2"];
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
-  var enumTap = ["tap to clock in", "tap to clock out", "Good Work !"];
+  var enumTap = ["home_text1".tr(), "home_text3".tr(), "home_text2".tr()];
   //bool emptyMeeting = false;
   //bool emptyTask = false;
   // FOR SKELETON -------------------------------------------------------------------------
@@ -141,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var googleSign = prefs.getInt('google');
       var facebookSign = prefs.getInt('facebook');
-      print("Allow Google Sign " + googleSign.toString());
+      // print("Allow Google Sign " + googleSign.toString());
       if (googleSign != null) {
         getAuthGoogle();
       } else if (facebookSign != null) {
@@ -182,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("userLogin");
     String password = prefs.getString("passLogin");
-    print("username " + username);
+    // print("username " + username);
     BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
         email: username, password: password, tokenFCM: tokenFCM));
   }
@@ -191,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.getString('google_data');
     GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
-    print("Email from Google = " + model.email);
+    // print("Email from Google = " + model.email);
     BlocProvider.of<AuthenticationBloc>(context).add(
         AuthEventDetectGoogleSignIn(
             email: model.email,
@@ -208,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     String tokenFacebook = prefs.getString('facebook_token');
     FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
 
-    print("Email from facebook = " + model.email);
+    // print("Email from facebook = " + model.email);
     BlocProvider.of<AuthenticationBloc>(context).add(
         AuthEventDetectGoogleSignIn(
             email: model.email,
@@ -481,10 +482,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           InkWell(
                             onTap: () {
                               if (companyAcceptance == 1) {
-                                print(
-                                    "maximum clock in ${_authModel.maxClockIn}");
-                                print(
-                                    "maximum clock in ${_authModel.attendance}");
                                 if (stringTap != enumTap[2]) {
                                   if (_authModel.maxClockIn != null &&
                                       _authModel.attendance != null) {
@@ -731,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    "WELCOME BACK! ",
+                                                    "home_text4".tr() + " !",
                                                     style: TextStyle(
                                                       color: Colors.grey,
                                                       letterSpacing: 0,
@@ -912,7 +909,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                "WELCOME BACK! ",
+                                                "home_text4".tr() + " !",
                                                 style: TextStyle(
                                                   color: Colors.grey,
                                                   letterSpacing: 0,
@@ -977,7 +974,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Team Member",
+                                            "home_text5".tr(),
                                             style: TextStyle(
                                                 color: colorPrimary,
                                                 letterSpacing: 0,
@@ -1021,7 +1018,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Task List",
+                                "home_text6".tr(),
                                 style: TextStyle(
                                     color: colorPrimary,
                                     letterSpacing: 0,
@@ -1042,14 +1039,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 children: [
                                   BoxHome(
                                     loading: isLoading,
-                                    title: "High Priority Task",
+                                    title: "home_text7".tr(),
                                     total: lengthHighPriority,
                                     numberColor: colorSecondaryRed,
                                     fontSize: size.width <= 600 ? 34 : 36,
                                   ),
                                   BoxHome(
                                       loading: isLoading,
-                                      title: "Low Priority Task",
+                                      title: "home_text8".tr(),
                                       total: lengthLowPriority,
                                       numberColor: colorClear,
                                       fontSize: size.width <= 600 ? 34 : 36),
@@ -1120,7 +1117,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("Show All Task Schedule",
+                                              Text(
+                                                  "home_text7"
+                                                      .tr(args: ["Task"]),
                                                   style: TextStyle(
                                                       color: colorPrimary,
                                                       fontWeight:
@@ -1138,7 +1137,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Meeting List",
+                                "home_text10".tr(),
                                 style: TextStyle(
                                     color: colorPrimary,
                                     letterSpacing: 0,
@@ -1158,13 +1157,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 children: [
                                   BoxHome(
                                       loading: isLoading,
-                                      title: "Meeting Schedule",
+                                      title: "home_text11".tr(),
                                       total: _scheduleAccepted.length,
                                       numberColor: colorSecondaryRed,
                                       fontSize: size.width <= 600 ? 34 : 36),
                                   BoxHome(
                                       loading: isLoading,
-                                      title: "Meeting Request",
+                                      title: "meeting request".tr(),
                                       total: scheduleReqLength,
                                       numberColor: colorSecondaryYellow,
                                       fontSize: size.width <= 600 ? 34 : 36),
@@ -1321,7 +1320,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Task List",
+              "home_text6".tr(),
               style: TextStyle(
                   color: colorPrimary,
                   letterSpacing: 0,
@@ -1389,7 +1388,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Meeting List",
+                "home_text10".tr(),
                 style: TextStyle(
                     color: colorPrimary,
                     letterSpacing: 0,
@@ -1441,7 +1440,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Show All Task Schedule",
+                            Text("home_text9".tr(args: ["Task"]),
                                 style: TextStyle(color: colorPrimary)),
                             Icon(
                               Icons.arrow_forward_ios,
@@ -1462,7 +1461,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildPopupDialog(BuildContext context, String where) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Clock Out Success! ",
+        "Clock Out " + "success_text".tr() + " !",
       ),
       content: new Text("Clock Out in" + getSystemTime()),
       actions: <Widget>[
@@ -1496,7 +1495,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Are you work overtime?",
+            "Ahome_text13".tr(),
             style: TextStyle(
                 color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
           ),
@@ -1507,7 +1506,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               size: size,
               bgColor: colorPrimary,
               textColor: colorBackground,
-              title: "Yes, I need Overtime Pay",
+              title: "home_text14".tr(),
               onClick: () {
                 //timeCalculation(1);
                 Navigator.pop(context);
@@ -1566,7 +1565,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Overtime Paid Form",
+                "home_text15".tr(),
                 style: TextStyle(
                     color: colorPrimary,
                     fontWeight: FontWeight.bold,
@@ -1616,7 +1615,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           setState(() => timeOvertime =
                               DateFormat("HH:mm:ss").format(date));
 
-                          print("TIme Overtime:" + timeOvertime);
+                          print("Time Overtime:" + timeOvertime);
                         });
                       }
                       setState(() {
@@ -1656,7 +1655,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                      hintText: 'Project',
+                      hintText: 'home_text16'.tr(),
                       hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
                 ),
               ),
@@ -1676,7 +1675,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       contentPadding: EdgeInsets.all(5),
-                      hintText: 'Reason for Overtime',
+                      hintText: 'home_text17'.tr(),
                       hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
                 ),
               ),
@@ -1685,7 +1684,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 size: size,
                 bgColor: colorPrimary,
                 textColor: colorBackground,
-                title: "Yes, I need Overtime Pay",
+                title: "home_text14".tr(),
                 onClick: () {
                   if (textProjectOvertime.text != "" &&
                       textReasonOvertime.text != "") {
@@ -1738,18 +1737,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildClockOutNotFinished(BuildContext context, Size size) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Your work hour isn't finished yet",
+        "home_text18".tr(),
       ),
-      content: new Text("Are you sure you want to clock out?"),
+      content: new Text("home_text19").tr(),
       actions: <Widget>[
         CupertinoDialogAction(
-            child: Text("No", style: TextStyle(color: colorError)),
+            child: Text("no_text".tr(), style: TextStyle(color: colorError)),
             onPressed: () {
               Navigator.pop(context);
             }),
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "yes_text".tr(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {
@@ -1825,7 +1824,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Show All Meeting Schedule",
+                        Text("home_text9".tr(args: ["Meeting"]),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontWeight: FontWeight.bold)),
@@ -1921,16 +1920,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   TitleFormat(
                     size: size,
-                    title: "Team Invitation",
-                    detail:
-                        "You are invited to ${model.teamName} team. Please confirm to join the team.",
+                    title: "invite_confirm_text1".tr(),
+                    detail: "invite_confirm_text2".tr(args: [model.teamName]),
                   ),
                   SizedBox(
                     height: size.height < 569 ? 10 : 15,
                   ),
                   LongButton(
                     size: size,
-                    title: "Confirm",
+                    title: "confirm_text".tr(),
                     bgColor: colorPrimary,
                     textColor: colorBackground,
                     onClick: () {

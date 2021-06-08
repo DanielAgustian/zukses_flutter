@@ -21,6 +21,7 @@ import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenTabRequest extends StatefulWidget {
   const ScreenTabRequest({Key key, this.screen, this.loading = true})
@@ -316,7 +317,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
         children: <Widget>[
           Center(
             child: Text(
-              "Why are you rejecting the meeting?",
+              "schedule_text11".tr(),
               style: TextStyle(
                   color: colorPrimary,
                   fontWeight: FontWeight.bold,
@@ -345,7 +346,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.all(5),
-                  hintText: 'Reason..',
+                  hintText: 'schedule_text14'.tr(),
                   hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
             ),
           ),
@@ -358,7 +359,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                 SmallButton(
                   bgColor: colorPrimary,
                   textColor: colorBackground,
-                  title: "Cancel",
+                  title: "cancel_text".tr(),
                   onClick: () {
                     Navigator.pop(context);
                     loadBeginningData();
@@ -371,7 +372,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   bgColor: colorBackground,
                   textColor: colorPrimary,
                   borderColor: colorPrimary,
-                  title: "Confirm",
+                  title: "confirm_text".tr(),
                   onClick: () {
                     BlocProvider.of<MeetingBloc>(context).add(
                         PostAcceptanceMeetingEvent(

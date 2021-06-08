@@ -13,6 +13,7 @@ import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-details.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenTabLeaves extends StatefulWidget {
   const ScreenTabLeaves({

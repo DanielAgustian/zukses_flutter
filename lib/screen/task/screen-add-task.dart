@@ -13,13 +13,12 @@ import 'package:zukses_app_1/bloc/task/task-bloc.dart';
 import 'package:zukses_app_1/bloc/task/task-event.dart';
 import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
-
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/model/label-task-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
@@ -40,7 +39,12 @@ class _AddTaskScreen extends State<AddTaskScreen>
   DateTime selectedDate = DateTime.now();
   String textItem = "", textItemSearch, textLabel = "";
   List<String> labelList = [];
-  var priorityList = ["Priority", "High", "Medium", "Low"];
+  var priorityList = [
+    "task_text22".tr(),
+    "priority_text1".tr(),
+    "priority_text2".tr(),
+    "priority_text3".tr()
+  ];
   String searchQuery = "";
   //var nameList = ["Daniel Agustian", "Rusak", "DAdada", "Tada"];
   List<String> hasilMultiple = [];
@@ -87,7 +91,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
     setState(() {
       myID = prefs.getString("myID");
     });
-    print("This is my Id" + myID);
+    // print("This is my Id" + myID);
   }
 
   _addNewTask() {
@@ -256,7 +260,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            "Add Task",
+            "task_text19".tr(),
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: size.height < 570 ? 18 : 22,
@@ -270,7 +274,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
               child: Container(
                 padding: EdgeInsets.fromLTRB(0, 17, 10, 0),
                 child: Text(
-                  "Done",
+                  "done_text".tr(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: size.height < 570 ? 14 : 16,
@@ -371,7 +375,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                             decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
-                                hintText: "Title",
+                                hintText: "title_text".tr(),
                                 hintStyle: TextStyle(
                                     color: _titleValidator
                                         ? colorError
@@ -402,7 +406,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                           decoration: new InputDecoration(
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 5),
-                              hintText: 'Description Task',
+                              hintText: 'task_text20'.tr(),
                               hintStyle: TextStyle(
                                   color: _descValidation
                                       ? colorError
@@ -418,7 +422,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                           ? Container()
                           : LongButtonOutline(
                               size: size,
-                              title: "Assigned To",
+                              title: "task_text21".tr(),
                               onClick: () {
                                 FocusScopeNode currentFocus =
                                     FocusScope.of(context);
@@ -562,7 +566,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                           _selectDate(context);
                                         },
                                       ),
-                                      hintText: "Set Due Date",
+                                      hintText: "task_text23".tr(),
                                       hintStyle: TextStyle(),
                                       enabledBorder: InputBorder.none,
                                       focusedBorder: InputBorder.none),
@@ -616,7 +620,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                       ),
                                       contentPadding:
                                           EdgeInsets.fromLTRB(20, 15, 20, 0),
-                                      hintText: "Time",
+                                      hintText: "task_text24".tr(),
                                       hintStyle: TextStyle(),
                                       enabledBorder: InputBorder.none,
                                       focusedBorder: InputBorder.none),
@@ -672,7 +676,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                             decoration: new InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 17, vertical: 5),
-                                hintText: 'Notes',
+                                hintText: 'task_text25'.tr(),
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none),
                           )),
@@ -715,7 +719,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
       },
     );
     if (newTime != null) {
-      print("MASUK TIME");
+      // print("MASUK TIME");
       setState(() {
         _time = newTime;
         String data = _time.format(context);

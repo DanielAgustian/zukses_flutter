@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,7 +83,7 @@ class _EditProfileScreen extends State<EditProfile> {
         ),
         centerTitle: true,
         title: Text(
-          "Edit Profile",
+          "profile_text9".tr(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: size.height < 570 ? 18 : 22,
@@ -94,7 +95,7 @@ class _EditProfileScreen extends State<EditProfile> {
                 child: Center(
                   child: Padding(
                     padding: EdgeInsets.only(right: 10),
-                    child: Text("Done",
+                    child: Text("done_text".tr(),
                         style: TextStyle(
                             fontSize: size.height <= 569 ? 15 : 18,
                             color: colorPrimary,
@@ -238,7 +239,7 @@ class _EditProfileScreen extends State<EditProfile> {
                         SizedBox(
                           height: 5,
                         ),
-                        Text("Personal",
+                        Text("profile_text2".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontSize: size.height < 569 ? 14 : 16))
@@ -256,7 +257,7 @@ class _EditProfileScreen extends State<EditProfile> {
                             bottom: BorderSide(
                                 width: 3, color: Color(0xFFF4F4F4)))),
                     child: Text(
-                      "Personal Information",
+                      "profile_text3".tr(),
                       style: TextStyle(
                           color: colorPrimary,
                           fontSize: size.height < 569 ? 14 : 16,
@@ -266,31 +267,31 @@ class _EditProfileScreen extends State<EditProfile> {
                   TextFormatEdit(
                     textEdit: textEditName,
                     size: size,
-                    title: "Name",
+                    title: "profile_text4".tr(),
                     onChanged: (val) {},
                   ),
                   TextFormat1(
                       txtColor: colorPrimary70,
                       size: size,
-                      title: "Username",
+                      title: "profile_text5".tr(),
                       data: widget.user.email //"Harus Diisi ",
                       ),
                   TextFormat1(
                     txtColor: colorPrimary70,
                     size: size,
-                    title: "Zukses ID",
+                    title: "profile_text6".tr(),
                     data: widget.user.userID,
                   ),
                   TextFormatEdit(
                     size: size,
-                    title: "Phone Number",
+                    title: "profile_text7".tr(),
                     textEdit: textEditPhone,
                     onChanged: (val) {},
                   ),
                   TextFormat1(
                     txtColor: colorPrimary70,
                     size: size,
-                    title: "Personal Email",
+                    title: "profile_text8".tr(),
                     data: widget.user.email,
                   ),
                 ],
@@ -377,7 +378,7 @@ class _EditProfileScreen extends State<EditProfile> {
                       }),
                   new ListTile(
                     leading: new Icon(Icons.cancel),
-                    title: new Text('Cancel'),
+                    title: new Text('cancel_text').tr(),
                     onTap: () {
                       Navigator.of(context).pop();
                     },

@@ -6,7 +6,7 @@ import 'package:zukses_app_1/bloc/pricing/pricing-state.dart';
 import 'package:zukses_app_1/component/register/pricing-card.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/screen/register/screen-enter-payment.dart';
 
 class Pricing extends StatefulWidget {
@@ -19,10 +19,8 @@ class Pricing extends StatefulWidget {
 
 /// This is the stateless widget that the main application instantiates.
 class _PricingScreen extends State<Pricing> {
-
   @override
   void initState() {
-   
     super.initState();
     BlocProvider.of<PricingBloc>(context).add(GetPricingEvent());
   }
@@ -42,8 +40,8 @@ class _PricingScreen extends State<Pricing> {
                 SizedBox(width: size.width),
                 TitleFormatCenter(
                   size: size,
-                  title: "Option Plan",
-                  detail: "Choose plan that suits your bussiness better",
+                  title: "pricing_text1".tr(),
+                  detail: "pricing_text2".tr(),
                 ),
                 BlocBuilder<PricingBloc, PricingState>(
                     builder: (context, state) {
@@ -97,7 +95,7 @@ class _PricingScreen extends State<Pricing> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "For more information or inquiries,",
+                          "pricing_text11".tr(),
                           style: TextStyle(
                               color: colorGoogle,
                               fontSize: size.height < 569 ? 12 : 14),
@@ -105,7 +103,7 @@ class _PricingScreen extends State<Pricing> {
                         InkWell(
                           onTap: () {},
                           child: Text(
-                            "Contact Us!",
+                            "contact_us_text".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontSize: size.height < 569 ? 14 : 18),

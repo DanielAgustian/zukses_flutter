@@ -33,15 +33,14 @@ dependencies:
   crypto:
   recase:
   flutter_svg:
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0 
+  flutter_launcher_icons:
   path:
   toast:
   searchable_dropdown:
   shared_preferences:
   flutter_typeahead:
-  #device_preview: ^0.6.2-beta
+  easy_localization:
   timer_builder:
   skeleton_text:
   flutter_slidable:
@@ -58,6 +57,8 @@ dependencies:
   google_sign_in:
   flutter_facebook_login:
   flutter_local_notifications:
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,7 +81,7 @@ flutter:
     - assets/images/
     - icon/google_icon.png
     - icon/facebook_icon.png
-    - assets/json/
+    - assets/lang/
   
   
   # An image asset can refer to one or more resolution-specific "variants", see

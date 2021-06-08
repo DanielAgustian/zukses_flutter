@@ -13,6 +13,7 @@ import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenTabRequest2 extends StatefulWidget {
   const ScreenTabRequest2({Key key, this.screen, this.loading = true})
@@ -206,7 +207,7 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                   SizedBox(
                     height: 20,
                   ),
-                  Text("Assigned To",
+                  Text("schedule_text1".tr(),
                       style: TextStyle(
                           fontSize: 16,
                           color: colorPrimary,
