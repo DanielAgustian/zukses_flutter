@@ -16,8 +16,10 @@ class LabelTaskServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print(res.body);
-    if (res.statusCode == 200) {
+
+    print("fetch task label ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var responseJson = jsonDecode(res.body);
       return (responseJson['Data'] as List)
           .map((p) => LabelTaskModel.fromJson(p))
@@ -37,7 +39,7 @@ class LabelTaskServiceHTTP {
           'Authorization': 'Bearer $token'
         },
         body: jsonEncode(<String, String>{'name': name}));
-    print(res.body);
+    // print(res.body);
     print(res.statusCode);
     return res.statusCode;
   }

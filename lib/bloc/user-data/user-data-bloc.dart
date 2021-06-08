@@ -43,6 +43,21 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
     yield UserDataStateSuccessLoad(event.user);
   }
 
+  // BLOC for handle notification changer
+  Stream<UserDataState> mapNotificationChanger(
+      UserChangeNotificationStatus event) async* {
+    yield UserDataStateLoading();
+    // return string message
+    var res =
+        await _userDataService.changeNotificationStatus(event.status ? 1 : 0);
+
+    if (res != null || res != "") {
+      yield (UserStateSuccessChangeNotif(msg: res));
+    } else {
+      yield UserDataStateUpdateFail();
+    }
+  }
+
   @override
   Stream<UserDataState> mapEventToState(UserDataEvent event) async* {
     if (event is UserDataGettingEvent) {
@@ -51,6 +66,8 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
       yield* mapUpdatingUserDataState(event);
     } else if (event is UserDataUpdateProfileEvent) {
       yield* mapUpdateProfile(event);
+    } else if (event is UserChangeNotificationStatus) {
+      yield* mapNotificationChanger(event);
     }
   }
 

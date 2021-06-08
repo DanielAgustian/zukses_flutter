@@ -23,6 +23,7 @@ class UserDataStateSuccessLoad extends UserDataState {
     return 'Data : { Authentication List: $userModel }';
   }
 }
+
 class UserDataStateUpdateFail extends UserDataState {}
 
 class UserDataStateUpdateSuccess extends UserDataState {
@@ -30,12 +31,18 @@ class UserDataStateUpdateSuccess extends UserDataState {
 
   UserDataStateUpdateSuccess(this.kode);
 
- 
-
   List<Object> get props => [kode];
 
   @override
   String toString() {
     return 'Data : { Authentication List: $kode }';
   }
+}
+
+class UserStateSuccessChangeNotif extends UserDataState {
+  final String msg;
+
+  UserStateSuccessChangeNotif({this.msg});
+
+  List<Object> get props => [msg];
 }

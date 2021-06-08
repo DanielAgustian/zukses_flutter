@@ -80,7 +80,8 @@ class _ScreenTab extends State<ScreenTab> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
-      if (notification != null && android != null) {
+      AppleNotification ios = message.notification?.apple;
+      if (notification != null && (android != null || ios != null)) {
         // print("MASUK ==========================================++>");
         // print(notification.body);
         flutterLocalNotificationsPlugin.initialize(

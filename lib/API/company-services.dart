@@ -18,17 +18,18 @@ class CompanyServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    //print(res.statusCode.toString());
+
+    print("Fetch company profile " + res.statusCode.toString());
     //print(res.body);
-    if (res.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      // If the server did return a 201 CREATED res,
       // then parse the JSON.
-      //print("response.body:" + response.body);
-      var responseJson = jsonDecode(res.body);
-      CompanyModel company = CompanyModel.fromJson(responseJson["company"]);
+      //print("res.body:" + res.body);
+      var resJson = jsonDecode(res.body);
+      CompanyModel company = CompanyModel.fromJson(resJson["company"]);
       return company;
     } else {
-      // If the server did not return a 201 CREATED response,
+      // If the server did not return a 201 CREATED res,
       // then throw an exception.
       // throw Exception('Failed to login');
       return null;
@@ -41,20 +42,20 @@ class CompanyServiceHTTP {
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
         });
-    //print(res.statusCode.toString());
+
+    print("fetch company code " + res.statusCode.toString());
     //print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
-      // If the server did return a 200 OK response,
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      // If the server did return a 200 OK res,
       // then parse the JSON.
 
-      var responseJson = jsonDecode(res.body);
+      var resJson = jsonDecode(res.body);
 
-      final company = CompanyModel.fromJson(responseJson['company']);
+      final company = CompanyModel.fromJson(resJson['company']);
 
       return company;
     } else {
-      // If the server did not return a 201 CREATED response,
+      // If the server did not return a 201 CREATED res,
       // then throw an exception.
       // throw Exception('Failed to login');
       return null;
@@ -80,7 +81,7 @@ class CompanyServiceHTTP {
             'business_scope': scope,
             'package_id': company.packageId
           }));
-      print(res.body);
+      // print(res.body);
       print(res.statusCode);
       return res.statusCode;
     } catch (e) {

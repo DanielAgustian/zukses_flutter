@@ -8,6 +8,7 @@ import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
 import 'package:zukses_app_1/bloc/register/register-bloc.dart';
 import 'package:zukses_app_1/bloc/register/register-event.dart';
 import 'package:zukses_app_1/bloc/register/register-state.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/register/question-format.dart';
 import 'package:zukses_app_1/component/register/text-box-setup.dart';
@@ -174,194 +175,199 @@ class _SetupRegisterScreen extends State<SetupRegister> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: appBarOutside,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-          child: Center(
-            child: Container(
-              color: colorBackground,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  BlocListener<RegisterBloc, RegisterState>(
-                    listener: (context, state) {
-                      if (state is RegisterStateSuccess) {
-                        if (state.authUser.where == "individu") {
-                          Navigator.push(
+    return BlocProvider<UserDataBloc>(
+      create: (context) => UserDataBloc(),
+      child: Scaffold(
+        appBar: appBarOutside,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+            child: Center(
+              child: Container(
+                color: colorBackground,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    BlocListener<RegisterBloc, RegisterState>(
+                      listener: (context, state) {
+                        if (state is RegisterStateSuccess) {
+                          if (state.authUser.where == "individu") {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisApproved()));
+                          }
+                        } else if (state is RegisterStateFailed) {
+                          Util().showToast(
+                              context: context,
+                              duration: 3,
+                              txtColor: colorBackground,
+                              color: colorError,
+                              msg: "Register Failed");
+                        } else if (state is RegisterStateCompanySuccess) {
+                          Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => RegisApproved()));
+                                  builder: (context) => WaitRegisApproved(
+                                        company: textCompanyCode.text,
+                                      )),
+                              (route) => false);
+                        } else if (state is RegisterStateCompanyFailed) {
+                          Util().showToast(
+                              context: context,
+                              duration: 3,
+                              txtColor: colorBackground,
+                              color: colorError,
+                              msg: "Register Company Failed");
+                        } else if (state is RegisterStateTeamSuccess) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SetupTeam()));
                         }
-                      } else if (state is RegisterStateFailed) {
-                        Util().showToast(
-                            context: context,
-                            duration: 3,
-                            txtColor: colorBackground,
-                            color: colorError,
-                            msg: "Register Failed");
-                      } else if (state is RegisterStateCompanySuccess) {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WaitRegisApproved(
-                                      company: textCompanyCode.text,
-                                    )),
-                            (route) => false);
-                      } else if (state is RegisterStateCompanyFailed) {
-                        Util().showToast(
-                            context: context,
-                            duration: 3,
-                            txtColor: colorBackground,
-                            color: colorError,
-                            msg: "Register Company Failed");
-                      } else if (state is RegisterStateTeamSuccess) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SetupTeam()));
-                      }
-                    },
-                    child: Container(),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: TitleFormat(
-                      size: size,
-                      title: "invite_team_text1".tr(),
-                      detail: "",
+                      },
+                      child: Container(),
                     ),
-                  ),
-                  QuestionFormat(
-                    size: size,
-                    question: "setup_account_text2setup_account_text2".tr(),
-                    answer1: "setup_account_text3".tr(),
-                    answer2: "setup_account_text4".tr(),
-                    bool1: boolOrganization[0],
-                    bool2: boolOrganization[1],
-                    click1: (val) {
-                      setState(() {
-                        readOnly = false;
-                        boolTeam = [false, false];
-                        boolOrganization[0] = val;
-                        if (boolOrganization[0] == true &&
-                            boolOrganization[1] == true) {
-                          boolOrganization[1] = false;
-                        }
-                      });
-                      _clickableFalse();
-                    },
-                    click2: (val) {
-                      setState(() {
-                        readOnly = false;
-                        boolOrganizationExist = [false, false];
-                        boolNewCompany = [false, false];
-                        boolOrganization[1] = val;
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: TitleFormat(
+                        size: size,
+                        title: "invite_team_text1".tr(),
+                        detail: "",
+                      ),
+                    ),
+                    QuestionFormat(
+                      size: size,
+                      question: "setup_account_text2".tr(),
+                      answer1: "setup_account_text3".tr(),
+                      answer2: "setup_account_text4".tr(),
+                      bool1: boolOrganization[0],
+                      bool2: boolOrganization[1],
+                      click1: (val) {
+                        setState(() {
+                          readOnly = false;
+                          boolTeam = [false, false];
+                          boolOrganization[0] = val;
+                          if (boolOrganization[0] == true &&
+                              boolOrganization[1] == true) {
+                            boolOrganization[1] = false;
+                          }
+                        });
+                        _clickableFalse();
+                      },
+                      click2: (val) {
+                        setState(() {
+                          readOnly = false;
+                          boolOrganizationExist = [false, false];
+                          boolNewCompany = [false, false];
+                          boolOrganization[1] = val;
 
-                        if (boolOrganization[0] == true &&
-                            boolOrganization[1] == true) {
-                          boolOrganization[0] = false;
+                          if (boolOrganization[0] == true &&
+                              boolOrganization[1] == true) {
+                            boolOrganization[0] = false;
+                          }
+                          textTeamName.text = "";
+                        });
+                        _clickableFalse();
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    boolOrganization[0]
+                        ? QuestionFormat(
+                            size: size,
+                            question: "setup_account_text9".tr(),
+                            answer1: "yes_text".tr(),
+                            answer2: "no_text".tr(),
+                            bool1: boolTeam[0],
+                            bool2: boolTeam[1],
+                            click1: (val) {
+                              setState(() {
+                                boolTeam[0] = val;
+                                if (boolTeam[0] == true &&
+                                    boolTeam[1] == true) {
+                                  boolTeam[1] = false;
+                                }
+                              });
+                              _clickableFalse();
+                            },
+                            click2: (val) {
+                              setState(() {
+                                boolTeam[1] = val;
+                                if (boolTeam[0] == true &&
+                                    boolTeam[1] == true) {
+                                  boolTeam[0] = false;
+                                }
+                                setState(() {
+                                  _clickableTrue();
+                                  textTeamName.text = "";
+                                });
+                              });
+                            },
+                          )
+                        : Container(),
+                    boolOrganization[1]
+                        ? QuestionFormat(
+                            size: size,
+                            question: "setup_account_text5".tr(),
+                            answer1: "Yes",
+                            answer2: "No",
+                            bool1: boolOrganizationExist[0],
+                            bool2: boolOrganizationExist[1],
+                            click1: (val) {
+                              setState(() {
+                                boolNewCompany = [false, false];
+                                boolOrganizationExist[0] = val;
+                                if (boolOrganizationExist[0] == true &&
+                                    boolOrganizationExist[1] == true) {
+                                  boolOrganizationExist[1] = false;
+                                }
+                                textTeamName.text = "";
+                              });
+                              _clickableFalse();
+                            },
+                            click2: (val) {
+                              setState(() {
+                                boolOrganizationExist[1] = val;
+                                if (boolOrganizationExist[0] == true &&
+                                    boolOrganizationExist[1] == true) {
+                                  boolOrganizationExist[0] = false;
+                                }
+                                setState(() {
+                                  _clickableFalse();
+                                  textTeamName.text = "";
+                                });
+                              });
+                            },
+                          )
+                        : Container(),
+                    boolOrganization[0] && boolTeam[0]
+                        ? teamData(context, size)
+                        : Container(),
+                    boolOrganization[1] && boolOrganizationExist[0]
+                        ? organizationExist(context, size)
+                        : Container(),
+                    boolOrganization[1] && boolOrganizationExist[1]
+                        ? organizationNotExist(context, size)
+                        : Container(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    LongButtonSize(
+                      clickable: clickable,
+                      size: size,
+                      width: 0.9 * size.width,
+                      onClick: () {
+                        if (clickable) {
+                          goTo();
                         }
-                        textTeamName.text = "";
-                      });
-                      _clickableFalse();
-                    },
-                  ),
-                  SizedBox(height: 15),
-                  boolOrganization[0]
-                      ? QuestionFormat(
-                          size: size,
-                          question: "setup_account_text9".tr(),
-                          answer1: "yes_text".tr(),
-                          answer2: "no_text".tr(),
-                          bool1: boolTeam[0],
-                          bool2: boolTeam[1],
-                          click1: (val) {
-                            setState(() {
-                              boolTeam[0] = val;
-                              if (boolTeam[0] == true && boolTeam[1] == true) {
-                                boolTeam[1] = false;
-                              }
-                            });
-                            _clickableFalse();
-                          },
-                          click2: (val) {
-                            setState(() {
-                              boolTeam[1] = val;
-                              if (boolTeam[0] == true && boolTeam[1] == true) {
-                                boolTeam[0] = false;
-                              }
-                              setState(() {
-                                _clickableTrue();
-                                textTeamName.text = "";
-                              });
-                            });
-                          },
-                        )
-                      : Container(),
-                  boolOrganization[1]
-                      ? QuestionFormat(
-                          size: size,
-                          question: "setup_account_text5".tr(),
-                          answer1: "Yes",
-                          answer2: "No",
-                          bool1: boolOrganizationExist[0],
-                          bool2: boolOrganizationExist[1],
-                          click1: (val) {
-                            setState(() {
-                              boolNewCompany = [false, false];
-                              boolOrganizationExist[0] = val;
-                              if (boolOrganizationExist[0] == true &&
-                                  boolOrganizationExist[1] == true) {
-                                boolOrganizationExist[1] = false;
-                              }
-                              textTeamName.text = "";
-                            });
-                            _clickableFalse();
-                          },
-                          click2: (val) {
-                            setState(() {
-                              boolOrganizationExist[1] = val;
-                              if (boolOrganizationExist[0] == true &&
-                                  boolOrganizationExist[1] == true) {
-                                boolOrganizationExist[0] = false;
-                              }
-                              setState(() {
-                                _clickableFalse();
-                                textTeamName.text = "";
-                              });
-                            });
-                          },
-                        )
-                      : Container(),
-                  boolOrganization[0] && boolTeam[0]
-                      ? teamData(context, size)
-                      : Container(),
-                  boolOrganization[1] && boolOrganizationExist[0]
-                      ? organizationExist(context, size)
-                      : Container(),
-                  boolOrganization[1] && boolOrganizationExist[1]
-                      ? organizationNotExist(context, size)
-                      : Container(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  LongButtonSize(
-                    clickable: clickable,
-                    size: size,
-                    width: 0.9 * size.width,
-                    onClick: () {
-                      if (clickable) {
-                        goTo();
-                      }
-                    },
-                    bgColor: clickable ? colorPrimary : colorPrimary30,
-                    textColor: colorBackground,
-                    title: "setup_account_text10".tr(),
-                  )
-                ],
+                      },
+                      bgColor: clickable ? colorPrimary : colorPrimary30,
+                      textColor: colorBackground,
+                      title: "setup_account_text10".tr(),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

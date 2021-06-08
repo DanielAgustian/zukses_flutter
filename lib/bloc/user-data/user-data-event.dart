@@ -14,11 +14,20 @@ class UserDataGettingEvent extends UserDataEvent {
   List<Object> get props => [];
 }
 
+class UserChangeNotificationStatus extends UserDataEvent {
+  final bool status;
+
+  UserChangeNotificationStatus({this.status});
+
+  @override
+  List<Object> get props => [status];
+}
+
 class UserDataUpdateProfileEvent extends UserDataEvent {
   final File image;
   final String name, phone, link;
 
-  UserDataUpdateProfileEvent( this.name, this.phone, {this.link, this.image});
+  UserDataUpdateProfileEvent(this.name, this.phone, {this.link, this.image});
   @override
   List<Object> get props => [];
 }

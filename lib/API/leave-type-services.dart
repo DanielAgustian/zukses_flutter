@@ -20,7 +20,9 @@ class LeaveTypeServiceHTTP {
       'Authorization': 'Bearer $token'
     });
 
-    if (res.statusCode == 200) {
+    print("Fetch leave type ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       var responseJson = jsonDecode(res.body);

@@ -21,7 +21,9 @@ class ProjectServicesHTTP {
       'Authorization': 'Bearer $token'
     });
 
-    if (res.statusCode == 200) {
+    print("Fetch project ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //print(res.body);
@@ -47,7 +49,7 @@ class ProjectServicesHTTP {
     String base64Image;
     var jsonData;
 
-    print(image.path);
+    // print(image.path);
     if (image.path.length > 0) {
       base64Image = base64Encode(image.readAsBytesSync());
       jsonData = jsonEncode(<String, dynamic>{
@@ -70,9 +72,11 @@ class ProjectServicesHTTP {
           'Authorization': 'Bearer $token'
         },
         body: jsonData);
-    print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+    // print(res.body);
+
+    print("Add project ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
@@ -99,9 +103,10 @@ class ProjectServicesHTTP {
           'Authorization': 'Bearer $token'
         },
         body: jsonData);
-    print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+    // print(res.body);
+    print("bookmark project ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       return res.statusCode;

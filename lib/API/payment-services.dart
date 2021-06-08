@@ -21,7 +21,10 @@ class PaymentServicesHTTP {
           'province': payment.province,
           'zipCode': payment.zipCode
         });
-    if (res.statusCode == 200) {
+
+    print("send payment data ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var jsonData = jsonDecode(res.body);
       return jsonData['statusBayar'];
     } else {

@@ -29,9 +29,9 @@ class OvertimeServiceHTTP {
         'user_id': myID
       }),
     );
-    print(response.statusCode.toString());
-    print(response.body);
-    if (response.statusCode == 200) {
+    print("post overtime ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
@@ -55,9 +55,10 @@ class OvertimeServiceHTTP {
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print(response.statusCode.toString());
 
-    if (response.statusCode == 200) {
+    print("Fetch overtime " + response.statusCode.toString());
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 

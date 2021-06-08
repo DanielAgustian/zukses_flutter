@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
@@ -15,7 +16,7 @@ class AuthServiceHTTP {
   final facebookLogin = FacebookLogin();
 
   Future<AuthModel> createLogin(String email, password, String tokenFCM) async {
-    print("tokenFCM" + tokenFCM);
+    // print("tokenFCM" + tokenFCM);
     final response = await http.post(
       Uri.https(baseURI, '/api/login'),
       headers: <String, String>{
@@ -28,10 +29,10 @@ class AuthServiceHTTP {
         'fcmToken': tokenFCM
       }),
     );
-    print("email: " + email);
-    print("Auth Code: " + response.statusCode.toString());
+    // print("email: " + email);
+    print("Create login : " + response.statusCode.toString());
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       //print("response.body:" + response.body);
@@ -65,10 +66,10 @@ class AuthServiceHTTP {
         'invitationLink': link
       }),
     );
-    print("email: " + email);
-    print("Auth Team Code: " + response.statusCode.toString());
-    print(response.body);
-    if (response.statusCode == 200) {
+    // print("email: " + email);
+    print("Login team : " + response.statusCode.toString());
+    // print(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       //print("response.body:" + response.body);
@@ -100,7 +101,7 @@ class AuthServiceHTTP {
   Future<GoogleSignInModel> googleSignIn() async {
     try {
       GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-      print("LOGIN GOOGLE ==============+> ON GOING . . .");
+      // print("LOGIN GOOGLE ==============+> ON GOING . . .");
       String name, token, email, image;
       await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleSignInAuthentication =
@@ -111,13 +112,13 @@ class AuthServiceHTTP {
       email = _googleSignIn.currentUser.email;
       image = _googleSignIn.currentUser.photoUrl;
 
-      print("GOOGLE LOGIN ==================+>");
+      // print("GOOGLE LOGIN ==================+>");
       GoogleSignInModel model = GoogleSignInModel(
           name: name, token: token, email: email, image: image);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setInt("google", 1);
       await prefs.setString("google_data", jsonEncode(model));
-      print("Image Link in GoogleSIgnIN" + image);
+      // print("Image Link in GoogleSIgnIN" + image);
       return model;
     } on Exception catch (e) {
       print("googleSignInFailed" + e.toString());
@@ -127,8 +128,9 @@ class AuthServiceHTTP {
 
   Future<AuthModel> googleLoginToAPI(
       String name, String email, String link_image, String token,
-      {String tokenFCM}) async {
+      {String tokenFCM, @required String provider}) async {
     try {
+      print(email);
       print("Image Link in GoogleLoginToAPI: " + link_image);
       final response = await http.post(
         Uri.https(baseURI, '/api/google-sign-in'),
@@ -141,11 +143,12 @@ class AuthServiceHTTP {
           'name': name,
           'link_image': link_image,
           'token': token,
+          'provider': provider,
           'fcmToken': tokenFCM
         }),
       );
-      print(response.statusCode);
-      //print(response.body);
+      print("google login ${response.statusCode}");
+      print(response.body);
       final user = AuthModel.fromJson(jsonDecode(response.body));
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", user.token);

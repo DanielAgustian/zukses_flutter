@@ -158,7 +158,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
     Util util = Util();
     util.initDynamicLinks(context);
     _controller = AnimationController(vsync: this, duration: _duration);
-    print("WidgetLink" + widget.link.toString());
+    // print("WidgetLink" + widget.link.toString());
     if (widget.link != null) {
       _controller.forward();
     }

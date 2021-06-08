@@ -25,9 +25,9 @@ class CommentServicesHTTP {
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    print(res.statusCode);
-    print(res.body);
-    if (res.statusCode == 200) {
+    print("fetch comment ${res.statusCode}");
+    // print(res.body);
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
 
@@ -63,9 +63,9 @@ class CommentServicesHTTP {
           //'userId': comment.user.userID,
         }));
 
-    print(res.statusCode);
-    print(res.body);
-    if (res.statusCode == 200) {
+    print("add comment ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
@@ -93,7 +93,9 @@ class CommentServicesHTTP {
           //'userId': comment.user.userID,
         }));
 
-    if (res.statusCode == 200) {
+    print("delete comment ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
@@ -121,7 +123,9 @@ class CommentServicesHTTP {
           //'userId': comment.user.userID,
         }));
 
-    if (res.statusCode == 200) {
+    print("update comment ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);

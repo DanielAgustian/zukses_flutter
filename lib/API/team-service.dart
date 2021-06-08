@@ -23,8 +23,9 @@ class TeamServiceHTTP {
         'Authorization': 'Bearer $token'
       });
 
-      print("FetchTeamMember" + res.statusCode.toString());
-      if (res.statusCode == 200) {
+      print("Fetch team member" + res.statusCode.toString());
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
         // If the server did return a 200 OK response,
         // then parse the JSON.
         var responseJson = jsonDecode(res.body);
@@ -33,14 +34,14 @@ class TeamServiceHTTP {
             .toList();
       } else {
         // IF the server return everything except 200, it will gte exception.
-        print("Failed TO Load Alubm");
+        // print("Failed TO Load Alubm");
         return null;
         //throw Exception('Failed to load album');
       }
     } catch (excpetion) {
       return null;
     }
-}
+  }
 
   Future<TeamDetailModel> fetchDetailTeam(String id) async {
     var res = await http
@@ -48,8 +49,8 @@ class TeamServiceHTTP {
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
     });
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+    print("Fetch detail team ${res.statusCode}");
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       final data = jsonDecode(res.body);
       final auth = TeamDetailModel.fromJson(data["team"]);
       return auth;

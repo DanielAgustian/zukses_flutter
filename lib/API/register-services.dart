@@ -10,11 +10,12 @@ class RegisterServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
   final fullBaseURI = "https://api-zukses.yokesen.com";
 
-  Future<AuthModel> createRegisterIndividual(RegisterModel regis, {String tokenFCM}) async {
-    print("email " + regis.email);
-    print("name " + regis.username);
-    print("password " + regis.password);
-    print("confirmPassowrd " + regis.confirmPassword);
+  Future<AuthModel> createRegisterIndividual(RegisterModel regis,
+      {String tokenFCM}) async {
+    // print("email " + regis.email);
+    // print("name " + regis.username);
+    // print("password " + regis.password);
+    // print("confirmPassowrd " + regis.confirmPassword);
     final response = await http.post(
       Uri.https(baseURI, '/api/register'),
       headers: <String, String>{
@@ -26,12 +27,12 @@ class RegisterServicesHTTP {
         'name': regis.username,
         'password': regis.password,
         'password_confirmation': regis.confirmPassword,
-        'fcmToken':tokenFCM
+        'fcmToken': tokenFCM
       }),
     );
-    print("RegisterIndividu:" + response.statusCode.toString());
-    print(response.body);
-    if (response.statusCode == 201) {
+    print("Register Individu:" + response.statusCode.toString());
+    // print(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       final user = AuthModel.fromJson(jsonDecode(response.body));
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,10 +47,10 @@ class RegisterServicesHTTP {
 
   Future<AuthModel> createRegisterTeamMember(
       RegisterModel regis, String link) async {
-    print("email " + regis.email);
-    print("name " + regis.username);
-    print("password " + regis.password);
-    print("confirmPassowrd " + regis.confirmPassword);
+    // print("email " + regis.email);
+    // print("name " + regis.username);
+    // print("password " + regis.password);
+    // print("confirmPassowrd " + regis.confirmPassword);
     final response = await http.post(
       Uri.https(baseURI, '/api/register'),
       headers: <String, String>{
@@ -64,9 +65,9 @@ class RegisterServicesHTTP {
         'invitationLink': link
       }),
     );
-    print("RegisterIndividu:" + response.statusCode.toString());
-    print(response.body);
-    if (response.statusCode == 201) {
+    print("Register team member:" + response.statusCode.toString());
+    // print(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       final user = AuthModel.fromJson(jsonDecode(response.body));
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -92,7 +93,7 @@ class RegisterServicesHTTP {
     for (int i = 0; i < email.length; i++) {
       map['email${i + 1}'] = email[i];
     }
-    print(map);
+    // print(map);
     final response = await http.post(
       Uri.https(baseURI, '/api/team'),
       headers: <String, String>{
@@ -102,9 +103,9 @@ class RegisterServicesHTTP {
       },
       body: jsonEncode(map),
     );
-    print(response.body);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
+    // print(response.body);
+    print("Register team ${response.statusCode}");
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return response.statusCode;
     } else {
       return null;
@@ -123,7 +124,7 @@ class RegisterServicesHTTP {
       },
       body: jsonEncode(<String, dynamic>{'companyCode': kode}),
     );
-    print(response.body);
+    // print(response.body);
     print("Register Company: " + response.statusCode.toString());
     return response.statusCode;
   }
@@ -141,7 +142,7 @@ class RegisterServicesHTTP {
       },
       body: jsonEncode(<String, dynamic>{'userId': myID}),
     );
-    print(response.body);
+    // print(response.body);
     print(response.statusCode);
     return response.statusCode;
   }

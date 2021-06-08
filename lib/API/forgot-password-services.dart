@@ -6,8 +6,8 @@ class ForgotPasswordServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
 
   Future<int> sentLinkToEmail(String email, String dynamicLink) async {
-    print("Email" + email);
-    print("link" + dynamicLink);
+    // print("Email" + email);
+    // print("link" + dynamicLink);
     var res = await http.post(Uri.https(baseURI, "/api/submit/forgot-email"),
         headers: <String, String>{
           'Content-Type': 'application/json',
@@ -15,9 +15,10 @@ class ForgotPasswordServicesHTTP {
         },
         body:
             jsonEncode(<String, dynamic>{'email': email, 'link': dynamicLink}));
-    print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+    // print(res.body);
+    print("send link to email ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       return res.statusCode;
     } else {
       return null;
@@ -35,8 +36,9 @@ class ForgotPasswordServicesHTTP {
           'password_confirmation': password,
           'token': token
         }));
-    print(res.body);
-    if (res.statusCode == 200) {
+    // print(res.body);
+    print("set new password ${res.statusCode}");
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       return res.statusCode;
     } else {
       return null;

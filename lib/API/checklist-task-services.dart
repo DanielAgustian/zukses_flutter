@@ -20,9 +20,10 @@ class CheckListTaskService {
         },
         body: jsonEncode(
             <String, dynamic>{'taskId': taskId, 'checklist': checkListName}));
-    print(res.statusCode);
-    print(res.body);
-    if (res.statusCode == 200) {
+
+    print("add checklist ${res.statusCode}");
+    // print(res.body);
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var responseJson = jsonDecode(res.body);
       CheckListModel model = CheckListModel.fromJson(responseJson['Data']);
       return model;
@@ -42,9 +43,10 @@ class CheckListTaskService {
         },
         body: jsonEncode(<String, dynamic>{'checklistId': idCheckList}));
 
-    print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+    // print(res.body);
+    print("put checklist ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var responseJson = jsonDecode(res.body);
       CheckListModel model = CheckListModel.fromJson(responseJson['Data']);
       return model;
@@ -68,7 +70,9 @@ class CheckListTaskService {
       },
     );
 
-    if (res.statusCode == 200) {
+    print("get checklist ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var responseJson = jsonDecode(res.body);
       if (responseJson['Data'].toString() == "[]") {
         List<CheckListModel> model = [];
@@ -92,8 +96,8 @@ class CheckListTaskService {
           'Authorization': 'Bearer $token'
         },
         body: jsonEncode(<String, dynamic>{'checklistId': checkListId}));
-    print(res.statusCode);
-    print(res.body);
+    print("delete checklist ${res.statusCode}");
+    // print(res.body);
     return res.statusCode;
   }
 
@@ -112,8 +116,8 @@ class CheckListTaskService {
           'checklistId': checkListId,
           'checklist': checkListName
         }));
-    print(res.body);
-    print(res.statusCode);
+    // print(res.body);
+    print("edit checklist ${res.statusCode}");
     return res.statusCode;
   }
 }

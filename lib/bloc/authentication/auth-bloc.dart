@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart'; 
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
@@ -35,7 +35,7 @@ class AuthenticationBloc
       // Integrate to api backend
       var res = await _authenticationService.googleLoginToAPI(
           googleData.name, googleData.email, googleData.image, googleData.token,
-          tokenFCM: event.tokenFCM);
+          tokenFCM: event.tokenFCM, provider: 'google');
       if (res is AuthModel && res != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setInt("in-company", res.user.companyAcceptance);
@@ -71,7 +71,7 @@ class AuthenticationBloc
 
         var res = await _authenticationService.googleLoginToAPI(fbAuthData.name,
             fbAuthData.email, fbAuthData.picture.url, tokenFacebook,
-            tokenFCM: event.tokenFCM);
+            tokenFCM: event.tokenFCM, provider: 'facebook');
         FBModelSender fms = FBModelSender(
             email: fbAuthData.email,
             name: fbAuthData.name,
@@ -127,7 +127,7 @@ class AuthenticationBloc
       AuthEventDetectGoogleSignIn event) async* {
     var res = await _authenticationService.googleLoginToAPI(
         event.name, event.email, event.image, event.tokenGoogle,
-        tokenFCM: event.tokenFCM);
+        tokenFCM: event.tokenFCM, provider: 'google');
     if (res is AuthModel && res != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt("in-company", res.user.companyAcceptance);
