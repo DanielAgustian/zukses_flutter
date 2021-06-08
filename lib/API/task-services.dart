@@ -17,17 +17,17 @@ class TaskServicesHTTP {
     var queryParameters = {
       'projectId': projectId.toString(),
     };
+
     var res = await http.get(Uri.https(baseURI, 'api/task', queryParameters),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    Uri uri = Uri.https(baseURI, 'api/task?projectId=$projectId');
-    print(uri.toString());
-    //print(res.statusCode);
-    //print(res.body);
-    if (res.statusCode == 200) {
+
+    print("Fetch task ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       var responseJson = jsonDecode(res.body);
@@ -41,7 +41,7 @@ class TaskServicesHTTP {
       }
     } else {
       // IF the server return everything except 200, it will gte exception.
-      print("Failed TO Load Alubm");
+      // print("Failed TO Load Alubm");
       return null;
     }
   }
@@ -50,8 +50,9 @@ class TaskServicesHTTP {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+
     //Query to API
-    print("Task Assginee" + task.assignee.toString());
+    // print("Task Assginee" + task.assignee.toString());
     var res = await http.post(Uri.https(baseURI, '/api/task'),
         headers: <String, String>{
           'Content-Type': 'application/json',
@@ -69,8 +70,10 @@ class TaskServicesHTTP {
           'notes': task.notes
         }));
     //print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+
+    print("Add task ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
@@ -102,9 +105,9 @@ class TaskServicesHTTP {
           'notes': task.notes
         }));
     //print(res.body);
-    //print(res.statusCode);
+    print("Add task free ${res.statusCode}");
 
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
@@ -132,7 +135,7 @@ class TaskServicesHTTP {
         });
     //print(res.statusCode);
     //print(res.body);
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       var responseJson = jsonDecode(res.body);
@@ -170,7 +173,7 @@ class TaskServicesHTTP {
         }));
     print(res.statusCode);
 
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
 
       return res.statusCode;
@@ -196,7 +199,7 @@ class TaskServicesHTTP {
             <String, dynamic>{'taskId': taskId, 'progress': progress}));
     print(res.body);
     print(res.statusCode);
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //var responseJson = jsonDecode(res.body);
@@ -223,7 +226,7 @@ class TaskServicesHTTP {
         body: jsonEncode(
             <String, dynamic>{'taskId': taskId, 'image': base64Image}));
 
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
 
@@ -253,7 +256,7 @@ class TaskServicesHTTP {
           'Authorization': 'Bearer $token'
         });
 
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       var responseJson = jsonDecode(res.body);

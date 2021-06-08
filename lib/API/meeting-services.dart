@@ -13,18 +13,20 @@ class MeetingServicesHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
 
-    var res = await http
+    var response = await http
         .get(Uri.https(baseURI, 'api/all-user'), headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+
+    print("Fetch user data ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
 
-      var responseJson = jsonDecode(res.body);
+      var responseJson = jsonDecode(response.body);
       return (responseJson['user'] as List)
           .map((p) => UserModel.fromJson(p))
           .toList();
@@ -59,9 +61,9 @@ class MeetingServicesHTTP {
       },
       body: jsonEncode(data),
     );
-    print(response.statusCode.toString());
-    print(response.body);
-    if (response.statusCode == 200) {
+    // print(response.body);
+    print("create schedule ${response.statusCode}");
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
@@ -79,19 +81,21 @@ class MeetingServicesHTTP {
   Future<List<ScheduleModel>> fetchScheduleData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var res = await http
+    var response = await http
         .get(Uri.https(baseURI, 'api/schedule/all/'), headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
       'Authorization': 'Bearer $token'
     });
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+
+    print("Fetch schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       //print(res.body);
       //print(token);
-      var responseJson = jsonDecode(res.body);
+      var responseJson = jsonDecode(response.body);
 
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
@@ -120,7 +124,9 @@ class MeetingServicesHTTP {
       }),
     );
 
-    if (response.statusCode == 200) {
+    print("Delete schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
@@ -151,9 +157,10 @@ class MeetingServicesHTTP {
         'rejectedReason': reason
       }),
     );
-    print(response.statusCode.toString());
-    print(response.body);
-    if (response.statusCode == 200) {
+
+    print("accept meeting " + response.statusCode.toString());
+    // print(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
@@ -171,7 +178,7 @@ class MeetingServicesHTTP {
   Future<ScheduleModel> fetchScheduleDetail(String meetingID) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var res = await http.get(
+    var response = await http.get(
         Uri.https(baseURI, 'api/schedule/detail/$meetingID'),
         headers: <String, String>{
           'Content-Type': 'application/json',
@@ -179,11 +186,13 @@ class MeetingServicesHTTP {
           'Authorization': 'Bearer $token'
         });
 
-    if (res.statusCode == 200) {
+    print("Detail schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
 
-      var responseJson = jsonDecode(res.body);
+      var responseJson = jsonDecode(response.body);
       return ScheduleModel.fromJson(responseJson['data']);
       //return AllUserModel.fromJson(jsonDecode(res.body)["user"]);
     } else {
@@ -197,17 +206,19 @@ class MeetingServicesHTTP {
   Future<List<ScheduleModel>> fetchUnresponseScheduleData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var res = await http.get(Uri.https(baseURI, 'api/schedule/unresponse'),
+    var response = await http.get(Uri.https(baseURI, 'api/schedule/unresponse'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+
+    print("Unresponse schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      var responseJson = jsonDecode(res.body);
+      var responseJson = jsonDecode(response.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
           .toList();
@@ -222,17 +233,19 @@ class MeetingServicesHTTP {
   Future<List<ScheduleModel>> fetchRejectedScheduleData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var res = await http.get(Uri.https(baseURI, 'api/schedule/rejected'),
+    var response = await http.get(Uri.https(baseURI, 'api/schedule/rejected'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+
+    print("fetch rejected schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      var responseJson = jsonDecode(res.body);
+      var responseJson = jsonDecode(response.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
           .toList();
@@ -246,17 +259,19 @@ class MeetingServicesHTTP {
   Future<List<ScheduleModel>> fetchAcceptedScheduleData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var res = await http.get(Uri.https(baseURI, 'api/schedule/accepted'),
+    var response = await http.get(Uri.https(baseURI, 'api/schedule/accepted'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
-    print(res.statusCode);
-    if (res.statusCode == 200) {
+
+    print("fetch accepted schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      var responseJson = jsonDecode(res.body);
+      var responseJson = jsonDecode(response.body);
       return (responseJson['data'] as List)
           .map((p) => ScheduleModel.fromJson(p))
           .toList();
@@ -277,6 +292,7 @@ class MeetingServicesHTTP {
       DateTime endTime) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+
     final response = await http.post(
       Uri.https(baseURI, '/api/schedule/update'),
       headers: <String, String>{
@@ -294,10 +310,10 @@ class MeetingServicesHTTP {
         'meetingId': meetingId
       }),
     );
-    print(response.statusCode.toString());
-    print(response.body);
-    print(userID.toString());
-    if (response.statusCode == 200) {
+    print("update schedule " + response.statusCode.toString());
+    // print(response.body);
+    // print(userID.toString());
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 

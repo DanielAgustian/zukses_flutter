@@ -19,7 +19,7 @@ class UserDataServiceHTTP {
       'Authorization': 'Bearer $token'
     });
     print("UserProfile " + res.statusCode.toString());
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       return UserModel.fromJson(jsonDecode(res.body)["user"]);
@@ -38,10 +38,10 @@ class UserDataServiceHTTP {
     var res = await http.get(Uri.https(baseURI, 'api/all-user'),
         headers: <String, String>{'Authorization': 'Bearer $token'});
     print(res.statusCode);
-    if (res.statusCode == 200) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print("data user ${res.body}");
+      // print("data user ${res.body}");
       var responseJson = jsonDecode(res.body);
       if (responseJson['user'] == null) {
         return null;
@@ -65,7 +65,7 @@ class UserDataServiceHTTP {
     if (image != null) {
       //Sent Image
       String base64Image = base64Encode(image.readAsBytesSync());
-      print(base64Image);
+      // print(base64Image);
       jsonData = jsonEncode(<String, dynamic>{
         'image': base64Image,
         'name': name,
@@ -76,16 +76,15 @@ class UserDataServiceHTTP {
         //Sent Empty Image or Delete Pic
         jsonData = jsonEncode(<String, dynamic>{'name': name, 'phone': phone});
       } else {
-        
         //The Image on Database will stay
         jsonData = jsonEncode(
             <String, dynamic>{'image': link, 'name': name, 'phone': phone});
       }
     }
 
-    print("Update Name: " + name);
-    print("Update Phone: " + phone.toString());
-    print(token);
+    // print("Update Name: " + name);
+    // print("Update Phone: " + phone.toString());
+    // print(token);
 
     var res = await http.post(Uri.https(baseURI, 'api/edit-profile'),
         body: jsonData,
@@ -95,11 +94,42 @@ class UserDataServiceHTTP {
           'Authorization': 'Bearer $token'
         });
     print(res.statusCode);
-    print(res.body);
-    if (res.statusCode == 200) {
+    // print(res.body);
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       return res.statusCode;
     } else {
       return null;
+    }
+  }
+
+  // Change user notification
+  Future<String> changeNotificationStatus(int status) async {
+    //final response = await http.get(Uri.https(baseURI, 'api/user'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    var res = await http.post(Uri.https(baseURI, 'api/notif'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{"notif": status}));
+
+    print("change notification status " + res.statusCode.toString());
+    String msg = "";
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var jsonResult = jsonDecode(res.body);
+
+      msg = jsonResult["Message"];
+      return msg;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return msg;
     }
   }
 }

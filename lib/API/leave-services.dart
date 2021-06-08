@@ -32,10 +32,11 @@ class LeaveServiceHTTP {
       },
       body: jsonEncode(data),
     );
-    print(response.statusCode.toString());
+
+    print("create leave" + response.statusCode.toString());
     //print(response.body);
-    print(response.body);
-    if (response.statusCode == 200) {
+    // print(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       //print("response.body:" + response.body);
       return response.statusCode;
     } else {
@@ -53,7 +54,9 @@ class LeaveServiceHTTP {
       'Authorization': 'Bearer $token'
     });
 
-    if (res.statusCode == 200) {
+    print("Fetch leaves ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
 

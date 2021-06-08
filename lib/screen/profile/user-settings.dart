@@ -1,13 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/API/auth-service.dart'; 
+import 'package:zukses_app_1/API/auth-service.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/main.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class UserSettings extends StatefulWidget {
   UserSettings({Key key, this.title}) : super(key: key);
@@ -58,134 +63,151 @@ class _UserSettingsScreen extends State<UserSettings> {
               ),
               centerTitle: true,
             ),
-            body: ListView(
-              padding: const EdgeInsets.all(8),
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(width: 1, color: colorNeutral2)),
-                        color: colorBackground),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "setting_text3".tr(),
-                          style: TextStyle(
-                              color: colorPrimary,
-                              fontSize: size.height < 570 ? 14 : 16),
-                        ),
-                        Switch(
-                          value: switchValue,
-                          onChanged: (value) {
-                            setState(() {
-                              switchValue = value;
-                            });
-                          },
-                          activeTrackColor: Colors.lightGreenAccent,
-                          activeColor: Colors.green,
-                        ),
-                      ],
+            body: BlocListener<UserDataBloc, UserDataState>(
+              listener: (context, state) {
+                if (state is UserDataStateUpdateFail) {
+                  Util().showToast(
+                      duration: 3,
+                      context: context,
+                      msg: "Something wrong",
+                      color: colorError,
+                      txtColor: colorBackground);
+                }
+              },
+              child: ListView(
+                padding: const EdgeInsets.all(8),
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(width: 1, color: colorNeutral2)),
+                          color: colorBackground),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "setting_text3".tr(),
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontSize: size.height < 570 ? 14 : 16),
+                          ),
+                          Switch(
+                            value: switchValue,
+                            onChanged: (value) {
+                              setState(() {
+                                switchValue = value;
+                              });
+                              BlocProvider.of<UserDataBloc>(context).add(
+                                  UserChangeNotificationStatus(
+                                      status: switchValue));
+                            },
+                            activeTrackColor: Colors.lightGreenAccent,
+                            activeColor: Colors.green,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10, right: 10),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                        color: colorBackground,
-                        border: Border(
-                            bottom:
-                                BorderSide(width: 1, color: colorNeutral2))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "setting_text2".tr(),
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  fontSize: size.height < 570 ? 14 : 16),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              "$choosedLang",
-                              style: TextStyle(
-                                  color: colorNeutral3,
-                                  fontSize: size.height < 570 ? 12 : 14),
-                            )
-                          ],
-                        ),
-                        DropdownButton(
-                          underline: Container(),
-                          onChanged: (value) {
-                            EasyLocalization.of(context).setLocale(
-                                value == "Indonesia"
-                                    ? Locale("id")
-                                    : Locale("en"));
-                            setState(() {
-                              choosedLang = value;
-                            });
-                          },
-                          icon: FaIcon(
-                            FontAwesomeIcons.chevronRight,
-                            color: colorPrimary,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10, right: 10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                          color: colorBackground,
+                          border: Border(
+                              bottom:
+                                  BorderSide(width: 1, color: colorNeutral2))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "setting_text2".tr(),
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height < 570 ? 14 : 16),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                "$choosedLang",
+                                style: TextStyle(
+                                    color: colorNeutral3,
+                                    fontSize: size.height < 570 ? 12 : 14),
+                              )
+                            ],
                           ),
-                          elevation: 16,
-                          items: langs
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: SizedBox(
-                                width: 100,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Text(
-                                      value,
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: colorPrimary,
-                                          fontWeight: FontWeight.w700),
+                          DropdownButton(
+                            underline: Container(),
+                            onChanged: (value) {
+                              EasyLocalization.of(context).setLocale(
+                                  value == "Indonesia"
+                                      ? Locale("id")
+                                      : Locale("en"));
+                              setState(() {
+                                choosedLang = value;
+                              });
+                            },
+                            icon: FaIcon(
+                              FontAwesomeIcons.chevronRight,
+                              color: colorPrimary,
+                            ),
+                            elevation: 16,
+                            items: langs
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: SizedBox(
+                                  width: 100,
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Text(
+                                        value,
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: colorPrimary,
+                                            fontWeight: FontWeight.w700),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        )
-                      ],
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                TextFormatSettings2(
-                    size: size,
-                    title: "setting_text4".tr(),
-                    detail: "setting_text5".tr()),
-                InkWell(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            _buildPopupDialog(context));
-                  },
-                  child: TextFormatSettings2(
-                      //onClick: toLogOut(),
+                  TextFormatSettings2(
                       size: size,
-                      title: "setting_text6".tr(),
-                      detail: "setting_text7".tr()),
-                ),
-              ],
+                      title: "setting_text4".tr(),
+                      detail: "setting_text5".tr()),
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPopupDialog(context));
+                    },
+                    child: TextFormatSettings2(
+                        //onClick: toLogOut(),
+                        size: size,
+                        title: "setting_text6".tr(),
+                        detail: "setting_text7".tr()),
+                  ),
+                ],
+              ),
             )),
         isLoading
             ? Container(

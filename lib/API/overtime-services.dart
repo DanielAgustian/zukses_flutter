@@ -18,14 +18,18 @@ class OvertimeServiceHTTP {
         'Charset': 'utf-8',
         'Authorization': 'Bearer $token'
       },
-      body: jsonEncode(<String, String>{'attendanceId': attendanceId.toString(), 'project': project, 'reason':reason}),
+      body: jsonEncode(<String, String>{
+        'attendanceId': attendanceId.toString(),
+        'project': project,
+        'reason': reason
+      }),
     );
-    print(response.statusCode.toString());
 
-    if (response.statusCode == 200) {
+    print("post overtime ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
- 
 
       // Save token
 
@@ -37,27 +41,26 @@ class OvertimeServiceHTTP {
       return null;
     }
   }
+
   Future<List<OvertimeModel>> fetchOvertime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    final response = await http.get(
-      Uri.https(baseURI, '/api/overtime'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Charset': 'utf-8',
-        'Authorization': 'Bearer $token'
-      }
-    );
-    print(response.statusCode.toString());
+    final response = await http
+        .get(Uri.https(baseURI, '/api/overtime'), headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Charset': 'utf-8',
+      'Authorization': 'Bearer $token'
+    });
 
-    if (response.statusCode == 200) {
+    print("Fetch overtime " + response.statusCode.toString());
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      
 
       // Save token
       var responseJson = jsonDecode(response.body);
-      
+
       return (responseJson['data'] as List)
           .map((p) => OvertimeModel.fromJson(p))
           .toList();

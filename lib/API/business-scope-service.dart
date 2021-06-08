@@ -8,13 +8,15 @@ class BusinessScopeServiceHTTP {
   final fullBaseURI = "https://api-zukses.yokesen.com";
 
   Future<List<BussinessScopeModel>> fetchBusinessScope() async {
-    var res =
-        await http.get(Uri.https(baseURI, 'api/businessScope'), headers: <String, String>{
+    var res = await http
+        .get(Uri.https(baseURI, 'api/businessScope'), headers: <String, String>{
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
-      
     });
-    if (res.statusCode == 200) {
+
+    print("Fetch business scopre ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var responseJson = jsonDecode(res.body);
       return (responseJson['businessScope'] as List)
           .map((p) => BussinessScopeModel.fromJson(p))

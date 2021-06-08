@@ -13,7 +13,10 @@ class PricingServicesHTTP {
       'Content-Type': 'application/json',
       'Charset': 'utf-8',
     });
-    if (res.statusCode == 200) {
+
+    print("Fetch pricing ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       var responseJson = jsonDecode(res.body);

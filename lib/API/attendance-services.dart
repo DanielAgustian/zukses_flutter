@@ -12,16 +12,16 @@ class AttendanceService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     String base64Image = base64Encode(image.readAsBytesSync());
-   
-    print(token);
+
+    // print(token);
     int code = 0;
     await http.post(Uri.https(baseURI, "/api/clock-in"), body: {
       'image': base64Image,
     }, headers: <String, String>{
       'Authorization': 'Bearer $token'
     }).then((res) {
-      print(res.body);
-      print(res.statusCode);
+      // print(res.body);
+      print("crete clock in ${res.statusCode}");
       code = res.statusCode;
       return code;
     }).catchError((err) {
@@ -40,11 +40,11 @@ class AttendanceService {
       headers: <String, String>{'Authorization': 'Bearer $token'},
       body: jsonEncode(<String, dynamic>{}),
     );
-    print("ClockOut " + response.statusCode.toString());
-    print(response.body);
+    print("Create clock out  " + response.statusCode.toString());
+    // print(response.body);
 
     // if success pas the attendance id
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       var res = jsonDecode(response.body);
       prefs.setInt("attendanceId", res["id"]);
       return res["id"];
@@ -59,16 +59,19 @@ class AttendanceService {
 
     var month = date.month;
     var year = date.year;
-    
+
     // get data
-    var res = await http.get(Uri.https(baseURI, "/api/user-attendance/$month/$year"),
+    var res = await http.get(
+        Uri.https(baseURI, "/api/user-attendance/$month/$year"),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         });
 
-    if (res.statusCode == 200) {
+    print("Get user attendances ${res.statusCode}");
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       var jsonResult = jsonDecode(res.body);
       print(res.body);
       List<AttendanceModel> results = [];
@@ -81,7 +84,7 @@ class AttendanceService {
       results = (jsonResult['attendance'] as List)
           .map((p) => AttendanceModel.fromJson(p))
           .toList();
-      
+
       return results;
     } else {
       return null;
