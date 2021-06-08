@@ -13,6 +13,7 @@ import 'package:zukses_app_1/screen/meeting/screen-tab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/meeting/screen-tab2.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RequestInbox extends StatefulWidget {
   final bool animate;
@@ -94,8 +95,9 @@ class _RequestInboxState extends State<RequestInbox>
                 setState(() {
                   requestSchedule[1] = state.meetings.length;
                 });
-              }else if (state is MeetingStateSuccess){
-                BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
+              } else if (state is MeetingStateSuccess) {
+                BlocProvider.of<MeetingBloc>(context)
+                    .add(GetRejectedMeetingEvent());
               }
             },
             child: Container(),
@@ -127,7 +129,7 @@ class _RequestInboxState extends State<RequestInbox>
                           child: Stack(
                             children: [
                               Center(
-                                child: Text("Waiting"),
+                                child: Text("waiting_text").tr(),
                               ),
                               positionedDot(context, size, requestSchedule[0])
                             ],
@@ -139,7 +141,7 @@ class _RequestInboxState extends State<RequestInbox>
                           child: Stack(
                             children: [
                               Center(
-                                child: Text("Rejected"),
+                                child: Text("rejected_text").tr(),
                               ),
                               positionedDot(context, size, requestSchedule[1])
                             ],

@@ -22,6 +22,7 @@ import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:recase/recase.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditScheduleScreen extends StatefulWidget {
   final ScheduleModel model;
@@ -58,13 +59,13 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   String myId = "";
   // Dropdown menu
   List<String> items = [
-    "Never",
-    "Everyday",
-    "Weekly",
+    "apply_leaves_text9".tr(),
+    "apply_leaves_text10".tr(),
+    "apply_leaves_text11".tr(),
     "Every Two Weeks",
     "Every Year"
   ];
-  String repeat = "Never";
+  String repeat = "apply_leaves_text9".tr();
 
   // Dragable scroll controller
   AnimationController _controller;
@@ -95,7 +96,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                     children: [
                       Container(
                         child: Text(
-                          "Are you sure you want to discard your changes ?",
+                          "schedule_text8".tr(),
                           style: TextStyle(color: colorPrimary, fontSize: 14),
                           textAlign: TextAlign.center,
                         ),
@@ -107,7 +108,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                         size: size,
                         bgColor: colorPrimary,
                         textColor: colorBackground,
-                        title: "Keep Editing",
+                        title: "schedule_text9".tr(),
                         onClick: () {
                           Navigator.of(context, rootNavigator: true).pop();
                         },
@@ -120,7 +121,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                         size: size,
                         bgColor: colorBackground,
                         textColor: colorError,
-                        title: "Discard Changes",
+                        title: "schedule_text10".tr(),
                         onClick: () {
                           Navigator.pop(context, true);
                           Navigator.pushReplacement(
@@ -344,7 +345,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
-                    "Done",
+                    "done_text".tr(),
                     style: TextStyle(
                         fontSize: size.height <= 569 ? 15 : 18,
                         color: colorPrimary,
@@ -419,7 +420,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 10),
-                                hintText: "Title",
+                                hintText: "title_text".tr(),
                                 hintStyle: TextStyle(
                                   color: _titleValidator
                                       ? colorError
@@ -453,7 +454,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             decoration: InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 5),
-                                hintText: "Description",
+                                hintText: "task_text20".tr(),
                                 hintStyle: TextStyle(
                                   color: _descriptionValidator
                                       ? colorError
@@ -478,7 +479,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                               },
                               child: AddScheduleRow(
                                 fontSize: size.height <= 569 ? 14 : 16,
-                                title: "Date",
+                                title: "date_text".tr(),
                                 textItem: "${formater.format(date)}",
                               ),
                             ),
@@ -490,13 +491,13 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                               },
                               child: AddScheduleRow(
                                 fontSize: size.height <= 569 ? 14 : 16,
-                                title: "Time",
+                                title: "time_text".tr(),
                                 textItem: "$h1.$m1 - $h2.$m2",
                               ),
                             ),
                             AddScheduleRow2(
                               fontSize: size.height <= 569 ? 14 : 16,
-                              title: "Repeat",
+                              title: "schedule_text4".tr(),
                               textItem: repeat,
                               items: items,
                               onSelectedItem: (val) {
@@ -511,7 +512,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             Container(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Invite",
+                                "schedule_text5".tr(),
                                 style: TextStyle(
                                     fontSize: size.height <= 569 ? 14 : 16,
                                     color: colorPrimary),
@@ -529,7 +530,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             EdgeInsets.symmetric(horizontal: paddingHorizontal),
                         child: LongButtonIconShadow(
                           size: size,
-                          title: "Add Invitation",
+                          title: "schedule_text6".tr(),
                           bgColor: colorBackground,
                           textColor: colorPrimary,
                           iconWidget: FaIcon(
@@ -552,7 +553,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                             EdgeInsets.symmetric(horizontal: paddingHorizontal),
                         child: LongButtonOutline(
                             size: size,
-                            title: "Delete Meeting",
+                            title: "schedule_text7".tr(),
                             bgColor: colorBackground,
                             textColor: colorError,
                             outlineColor: colorError,
@@ -654,7 +655,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                           _controller.reverse();
                         },
                         child: Text(
-                          "Cancel",
+                          "cancel_text".tr(),
                           style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height < 600
                                   ? 14
@@ -663,7 +664,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                         ),
                       ),
                       Text(
-                        "Add Invitation",
+                        "schedule_text6".tr(),
                         style: TextStyle(
                             fontSize: MediaQuery.of(context).size.height < 600
                                 ? 18
@@ -676,7 +677,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                           _controller.reverse();
                         },
                         child: Text(
-                          "Done",
+                          "done_text".tr(),
                           style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height < 600
                                   ? 14
@@ -827,7 +828,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Are you sure to delete this schedule ?",
+            "schedule_text11".tr(),
             style: TextStyle(
                 color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
             textAlign: TextAlign.center,
@@ -837,7 +838,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
             size: size,
             bgColor: colorPrimary,
             textColor: colorBackground,
-            title: "Yes ",
+            title: "yes_text".tr(),
             onClick: () {
               //LOGIC
               BlocProvider.of<MeetingBloc>(context)
@@ -853,7 +854,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
             bgColor: colorBackground,
             textColor: colorPrimary,
             outlineColor: colorPrimary,
-            title: "No",
+            title: "no_text".tr(),
             onClick: () {
               Navigator.pop(context);
             },

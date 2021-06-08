@@ -1,4 +1,6 @@
 { 
+    import 'package:easy_localization/easy_localization.dart';
+    
     "button_sign_in": "Masuk",
     "button_sign_up": "Daftar",
     "button_sign_in_google": "Masuk dengan Google",
