@@ -481,7 +481,7 @@ class _DataCompanyScreen extends State<DataCompany> {
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "No",
+              "no_text".tr(),
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
@@ -489,7 +489,7 @@ class _DataCompanyScreen extends State<DataCompany> {
             }),
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "yes_text".tr(),
             ),
             onPressed: () {
               Navigator.pop(context, true);

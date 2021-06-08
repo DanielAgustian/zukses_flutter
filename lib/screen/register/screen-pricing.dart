@@ -95,7 +95,7 @@ class _PricingScreen extends State<Pricing> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "For more information or inquiries,",
+                          "pricing_text11".tr(),
                           style: TextStyle(
                               color: colorGoogle,
                               fontSize: size.height < 569 ? 12 : 14),

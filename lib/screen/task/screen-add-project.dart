@@ -10,6 +10,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:recase/recase.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddProject extends StatefulWidget {
   AddProject({Key key, this.title}) : super(key: key);
@@ -43,7 +44,7 @@ class _AddProjectScreen extends State<AddProject> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          "Add Project",
+          "task_text2".tr(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: size.height < 570 ? 18 : 22,
@@ -57,7 +58,7 @@ class _AddProjectScreen extends State<AddProject> {
             child: Container(
               padding: EdgeInsets.fromLTRB(0, 17, 10, 0),
               child: Text(
-                "Done",
+                "done_text".tr(),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: size.height < 570 ? 14 : 16,
@@ -116,7 +117,7 @@ class _AddProjectScreen extends State<AddProject> {
                       _showPicker(context);
                     },
                     child: Text(
-                      "Change Icon",
+                      "task_text3".tr(),
                       style: TextStyle(
                           fontSize: size.height < 570 ? 14 : 16,
                           color: colorPrimary),
@@ -151,7 +152,7 @@ class _AddProjectScreen extends State<AddProject> {
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                            labelText: 'Title',
+                            labelText: "Title",
                             labelStyle:
                                 TextStyle(fontSize: 14, color: colorNeutral2)),
                       ),
@@ -180,7 +181,7 @@ class _AddProjectScreen extends State<AddProject> {
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                            labelText: 'Short Description',
+                            labelText: "Short Description",
                             labelStyle:
                                 TextStyle(fontSize: 14, color: colorNeutral2)),
                       ),
@@ -309,7 +310,7 @@ class _AddProjectScreen extends State<AddProject> {
                   ),
                   new ListTile(
                     leading: new Icon(Icons.cancel),
-                    title: new Text('Cancel'),
+                    title: new Text('cancel_text'.tr()),
                     onTap: () {
                       Navigator.of(context).pop();
                     },

@@ -54,13 +54,14 @@
     "on_board_desc3": "Leave all the long-winded method, clock in and clock out is all you need to do to record your attendance.", 
 
     "login_text1": "Sign in to your account",
-    "login_text2": "Forgot password?",
+    "login_text2": "Forgot password ?",
     "login_text3": "OR",
     "login_text4": "Doesn’t have an account?",  
 
     "register_text1": "Please fill in this form to create an account",
     "register_text2": "OR", 
-    "register_text3": "Already have an account?", 
+    "register_text3": "Already have an account ?", 
+    "register_text4": "Are you sure to register with this data ?",
 
     "setup_account_text1": "Set up account",
     "setup_account_text2": "How do you want to use Zukses?",
@@ -274,6 +275,7 @@
     "task_text23": "Set Due Date", 
     "task_text24": "Set Time",  
     "task_text25": "Notes", 
+    "task_text26": "Activity Log - History", 
 
     "priority_text1": "High", 
     "priority_text2": "Medium", 

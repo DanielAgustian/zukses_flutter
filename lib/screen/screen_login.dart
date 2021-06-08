@@ -2,20 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
 import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/screen/forgot-password/forgot-password.dart';
 import 'package:zukses_app_1/screen/screen_signup.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/util/util.dart';
@@ -179,8 +177,8 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
           //Success Login
 
           if (state is AuthStateSuccessLoad) {
-            print(state.authUser.user.email);
-            print(state.authUser.token);
+            // print(state.authUser.user.email);
+            // print(state.authUser.token);
             _loginSharedPref();
 
             Navigator.pushAndRemoveUntil(
@@ -190,7 +188,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
             );
             //Failed Login
           } else if (state is AuthStateFailLoad) {
-            print("NANnananananan");
+            // print("NANnananananan");
             setState(() {
               errorLogin = true;
               loading = false;
@@ -204,7 +202,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                 txtColor: colorBackground);
           } else if (state is AuthStateSuccessTeamLoad) {
             _loginTeamSharedPref();
-            print(state);
+            // print(state);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),
@@ -235,8 +233,8 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                             children: [
                               TitleFormat(
                                 size: size,
-                                title: "Welcome!",
-                                detail: "Sign in to Your Account",
+                                title: "welcome_text".tr() + "!",
+                                detail: "login_text1".tr(),
                               ),
                               Container(
                                   height: 50,
@@ -340,7 +338,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                     },
                                     child: Container(
                                       child: Text(
-                                        "Forgot Password?",
+                                        "login_text2".tr(),
                                         style: TextStyle(
                                           fontSize: size.height < 569 ? 10 : 11,
                                           color: colorPrimary70,
@@ -352,7 +350,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               ),
                               SizedBox(height: size.height < 569 ? 5 : 10),
                               LongButton(
-                                title: "Log In",
+                                title: "button_sign_in".tr(),
                                 bgColor: colorPrimary,
                                 textColor: colorBackground,
                                 onClick: login,
@@ -363,16 +361,15 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               ),
                               Center(
                                 child: Text(
-                                  "OR",
+                                  "login_text3".tr(),
                                   style: TextStyle(
                                       fontSize: 16, color: colorPrimary70),
                                 ),
                               ),
                               SizedBox(height: 25),
-                              
                               LongButtonIcon(
                                 size: size,
-                                title: "Sign In with Google",
+                                title: "button_sign_in_google".tr(),
                                 bgColor: colorGoogle,
                                 textColor: colorBackground,
                                 iconWidget: Image.asset(
@@ -386,7 +383,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               ),
                               LongButtonIcon(
                                 size: size,
-                                title: "Sign In with Facebook",
+                                title: "button_sign_in_fb".tr(),
                                 bgColor: colorFacebook,
                                 textColor: colorBackground,
                                 iconWidget: Image.asset(
@@ -408,10 +405,9 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                         fontSize: size.height < 569 ? 12 : 14,
                                         color: Colors.black),
                                     children: <TextSpan>[
-                                      new TextSpan(
-                                          text: "Doesn't have an account? "),
+                                      new TextSpan(text: "login_text4".tr()),
                                       TextSpan(
-                                          text: 'Sign Up',
+                                          text: 'button_sign_up'.tr(),
                                           style: new TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: colorPrimary),
@@ -453,8 +449,8 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                       children: [
                         TitleFormat(
                           size: size,
-                          title: "Welcome!",
-                          detail: "Sign in to Your Account",
+                          title: "welcome_text".tr() + "!",
+                          detail: "login_text1".tr(),
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 40),
@@ -566,7 +562,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                           },
                           child: Container(
                               child: Text(
-                            "Forgot Password?",
+                            "login_text2".tr(),
                             style: TextStyle(
                               fontSize: size.height < 569 ? 10 : 11,
                               color: colorPrimary70,
@@ -589,14 +585,14 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                     ),
                     Center(
                       child: Text(
-                        "OR",
+                        "login_text3".tr(),
                         style: TextStyle(fontSize: 16, color: colorPrimary70),
                       ),
                     ),
                     SizedBox(height: 25),
                     LongButtonIcon(
                       size: size,
-                      title: "Sign In with Google",
+                      title: "button_sign_in_google".tr(),
                       bgColor: colorGoogle,
                       textColor: colorBackground,
                       iconWidget: Image.asset(
@@ -610,7 +606,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                     ),
                     LongButtonIcon(
                       size: size,
-                      title: "Sign In with Facebook",
+                      title: "button_sign_in_fb".tr(),
                       bgColor: colorFacebook,
                       textColor: colorBackground,
                       iconWidget: Image.asset(
@@ -629,9 +625,9 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               fontSize: size.height < 569 ? 12 : 14,
                               color: Colors.black),
                           children: <TextSpan>[
-                            new TextSpan(text: "Doesn't have an account? "),
+                            new TextSpan(text: "login_text4 ".tr()),
                             TextSpan(
-                                text: 'Sign Up',
+                                text: ' ' + 'button_sign_up'.tr(),
                                 style: new TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: colorPrimary),

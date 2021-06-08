@@ -1,6 +1,5 @@
-{ 
+{  
     // import 'package:easy_localization/easy_localization.dart';
-
     "button_sign_in": "Masuk",
     "button_sign_up": "Daftar",
     "button_sign_in_google": "Masuk dengan Google",
@@ -56,13 +55,14 @@
     "on_board_desc3": "Tinggalkan semua metode bertele-tele, clock-in dan clock-out adalah semua yang perlu kamu lakukan untuk mencatat kehadiranmu.", 
 
     "login_text1": "Masuk dengan akunmu",
-    "login_text2": "Lupa password?",
+    "login_text2": "Lupa password ?",
     "login_text3": "ATAU",
     "login_text4": "Belum punya akun?",  
 
     "register_text1": "Silakan isi formulir ini untuk membuat akun",
     "register_text2": "ATAU", 
-    "register_text3": "Sudah punya akun?", 
+    "register_text3": "Sudah punya akun ?",
+    "register_text4": "Apakah anda yakin data yang dimasukan sudah benar ?", 
 
     "setup_account_text1": "Siapkan akun",
     "setup_account_text2": "Sebagai apa kamu ingin menggunakan Zukses?",
@@ -276,6 +276,7 @@
     "task_text23": "Tetapkan Tanggal", 
     "task_text24": "Atur Waktu",  
     "task_text25": "Catatan", 
+    "task_text26": "Log Aktivitas - Riwayat", 
 
     "priority_text1": "Tinggi", 
     "priority_text2": "Menengah", 

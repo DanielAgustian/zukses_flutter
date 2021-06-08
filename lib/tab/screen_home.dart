@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var googleSign = prefs.getInt('google');
       var facebookSign = prefs.getInt('facebook');
-      print("Allow Google Sign " + googleSign.toString());
+      // print("Allow Google Sign " + googleSign.toString());
       if (googleSign != null) {
         getAuthGoogle();
       } else if (facebookSign != null) {
@@ -182,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("userLogin");
     String password = prefs.getString("passLogin");
-    print("username " + username);
+    // print("username " + username);
     BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
         email: username, password: password, tokenFCM: tokenFCM));
   }
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.getString('google_data');
     GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
-    print("Email from Google = " + model.email);
+    // print("Email from Google = " + model.email);
     BlocProvider.of<AuthenticationBloc>(context).add(
         AuthEventDetectGoogleSignIn(
             email: model.email,
@@ -208,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     String tokenFacebook = prefs.getString('facebook_token');
     FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
 
-    print("Email from facebook = " + model.email);
+    // print("Email from facebook = " + model.email);
     BlocProvider.of<AuthenticationBloc>(context).add(
         AuthEventDetectGoogleSignIn(
             email: model.email,

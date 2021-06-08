@@ -38,8 +38,8 @@ import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
-
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /*class InnerList {
   final String name;
@@ -70,10 +70,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   String moveTo = "";
   String historyMoveTo = "";
   String changeMoveTo = "";
-  var moveToList = ["To Do", "In Progress", "Done"];
+  var moveToList = ["task_text5".tr(), "task_text6".tr(), "task_text7".tr()];
   var dbEnum = ["to-do", "in-progress", "done"];
 
-  var priorityList = ["High", "Medium", "Low"];
+  var priorityList = [
+    "priority_text1".tr(),
+    "priority_text2".tr(),
+    "priority_text3".tr()
+  ];
   String priority = "";
 
   List<LabelTaskModel> label = [];
@@ -224,13 +228,11 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   color: colorPrimary, borderRadius: BorderRadius.circular(5)),
               tabs: [
                 Tab(
-                  text: "ToDo",
+                  text: "task_text5".tr(),
                 ),
+                Tab(text: "task_text6".tr()),
                 Tab(
-                  text: "In Progress",
-                ),
-                Tab(
-                  text: "Done",
+                  text: "task_text7".tr(),
                 ),
               ])),
     );
@@ -266,7 +268,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       labelList.clear();
                       //labelList.add("Click Here for Label");
                       //labelList.add("+ New Label");
-                      print("Data Error");
+                      // print("Data Error");
                     } else if (state is LabelTaskAddStateSuccessLoad) {
                       BlocProvider.of<LabelTaskBloc>(context)
                           .add(LoadAllLabelTaskEvent());
@@ -444,15 +446,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   void dataIndex(int outerIndex) {
     if (outerIndex == 0) {
       setState(() {
-        name = "To Do";
+        name = "task_text5".tr();
       });
     } else if (outerIndex == 1) {
       setState(() {
-        name = "In Progress";
+        name = "task_text6".tr();
       });
     } else {
       setState(() {
-        name = "Done";
+        name = "task_text7".tr();
       });
     }
   }
@@ -655,7 +657,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                         onTap: () {
                           _animationController.reverse();
                         },
-                        child: Text("Cancel",
+                        child: Text("cancel_text".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontWeight: FontWeight.bold)),
@@ -664,7 +666,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                         onTap: () {
                           _clickDoneScroller(clickTask);
                         },
-                        child: Text("Done",
+                        child: Text("done_text".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
                                 fontWeight: FontWeight.bold)),
@@ -718,7 +720,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Reporter",
+                                "task_text8".tr(),
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: colorPrimary,
@@ -781,7 +783,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Assignee",
+                                      "task_text9".tr(),
                                       style: TextStyle(
                                           fontSize: 14,
                                           color: colorPrimary,
@@ -885,7 +887,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   dateDB, TimeOfDay.fromDateTime(dateDB));
                             },
                             child: RowTaskUndroppable(
-                              title: "End Time",
+                              title: "team_member_text2".tr(),
                               textItem: date != null
                                   ? util.dateNumbertoCalendar(date) +
                                       " at " +
@@ -904,7 +906,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ),
                           TaskRow(
                               fontSize: size.height <= 569 ? 12 : 14,
-                              title: "Move To",
+                              title: "task_text11".tr(),
                               textItem: moveTo,
                               items: moveToList,
                               onSelectedItem: (val) {
@@ -919,7 +921,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ? Container()
                               : TaskRow(
                                   fontSize: size.height <= 569 ? 12 : 14,
-                                  title: "label",
+                                  title: "label_text".tr(),
                                   textItem: chooseLabel,
                                   items: labelList,
                                   onSelectedItem: (val) {
@@ -934,7 +936,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                 ),
                           TaskRow2(
                             items: priorityList,
-                            title: "Priority",
+                            title: "task_text12".tr(),
                             textItem: priority,
                             fontSize: size.height <= 600 ? 12 : 14,
                             onSelectedItem: (val) {
@@ -958,7 +960,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ),
                               SizedBox(width: 10),
                               Text(
-                                "Attachment",
+                                "task_text13".tr(),
                                 style: TextStyle(
                                     color: colorPrimary, fontSize: 16),
                               ),
@@ -1254,8 +1256,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   SizedBox(width: 10),
                                   Text(
                                     historyClick
-                                        ? "Activity Log - Comment"
-                                        : "Activity Log - History",
+                                        ? "task_text15".tr()
+                                        : "task_text26".tr(),
                                     style: TextStyle(
                                         color: colorPrimary, fontSize: 16),
                                   ),
@@ -1322,7 +1324,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         padding:
                                             const EdgeInsets.only(bottom: 10),
                                         child: Text(
-                                          "No Comment Yet.",
+                                          "No comment yet.",
                                           style: TextStyle(
                                               color: colorPrimary,
                                               fontWeight: FontWeight.bold),
@@ -1402,7 +1404,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         decoration: InputDecoration(
             isDense: true,
             contentPadding: EdgeInsets.only(top: 15, left: 10),
-            hintText: "Add new list...",
+            hintText: "task_text17".tr(),
             hintStyle: TextStyle(
               color: colorNeutral1,
             ),
@@ -1454,7 +1456,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   ),
                   new ListTile(
                     leading: new Icon(Icons.cancel),
-                    title: new Text('Cancel'),
+                    title: new Text('cancel_text').tr(),
                     onTap: () {
                       Navigator.of(context).pop();
                     },
@@ -1502,9 +1504,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   //TO make alertdialog for picture preview
   Widget _buildCupertino({BuildContext context, String link}) {
     return new CupertinoAlertDialog(
-      title: new Text(
-        "Attachment Picture",
-      ),
+      title: new Text("task_text13".tr()),
       content: Image.network("https://api-zukses.yokesen.com/${link}"),
       actions: <Widget>[
         CupertinoDialogAction(
@@ -1604,7 +1604,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
       ),
       actions: <Widget>[
         CupertinoDialogAction(
-            child: Text("Cancel",
+            child: Text("cancel_text".tr(),
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: colorError)),
             onPressed: () {
