@@ -143,11 +143,14 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                   SizedBox(
                     height: 30,
                   ),
-                  Text("confirm_clock_in".tr(),
-                      style: TextStyle(
-                          fontSize: size.height < 600 ? 16 : 18,
-                          color: colorPrimary,
-                          fontWeight: FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text("confirm_clock_in".tr(),
+                        style: TextStyle(
+                            fontSize: size.height < 600 ? 16 : 18,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.bold)),
+                  ),
                   SizedBox(
                     height: 10,
                   ),
@@ -184,9 +187,9 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 2),
                               child: Text(
-                                "Retake",
+                                "retake_text".tr(),
                                 style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: colorPrimary,
                                     fontWeight: FontWeight.w700),
                               ),
