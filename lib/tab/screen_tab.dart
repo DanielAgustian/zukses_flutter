@@ -1,6 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
+import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
 import 'package:zukses_app_1/tab/screen_task.dart';
@@ -35,6 +40,7 @@ class ScreenTab extends StatefulWidget {
 class _ScreenTab extends State<ScreenTab> {
   List<Widget> screenList = [];
   int _currentScreenIndex;
+  UserModel user;
 
   @override
   void initState() {
@@ -46,7 +52,7 @@ class _ScreenTab extends State<ScreenTab> {
     }
 
     screenList.add(HomeScreen());
-    screenList.add(AttendanceScreen());
+
     if (widget.projectId != null) {
       screenList.add(TaskScreen(
         projectId: widget.projectId,
@@ -116,9 +122,13 @@ class _ScreenTab extends State<ScreenTab> {
     });
   }
 
+  void getUserProfile() async {
+    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
+  }
+
   void notificationChecker(RemoteMessage message) {
-    print(message.notification.title);
-    print(message.data);
+    // print(message.notification.title);
+    // print(message.data);
     //push to request inbox schedule if it is a meeting invitation
     if (message.notification.title
         .toLowerCase()
@@ -154,43 +164,57 @@ class _ScreenTab extends State<ScreenTab> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: colorBackground,
-      body: screenList[_currentScreenIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: onTabTapped,
-        currentIndex:
-            _currentScreenIndex, // this will be set when a new tab is tapped
-        items: [
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/images/home-icon.svg',
-              color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+    return BlocListener<UserDataBloc, UserDataState>(
+      listener: (context, state) {
+        if (state is UserDataStateSuccessLoad) {
+          setState(() {
+            user = state.userModel;
+          });
+          if (user != null) {
+            if (user.companyID != null) screenList.add(AttendanceScreen());
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: colorBackground,
+        body: screenList[_currentScreenIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          onTap: onTabTapped,
+          currentIndex:
+              _currentScreenIndex, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/home-icon.svg',
+                color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+              ),
+              label: 'tab_text1'.tr(),
             ),
-            label: 'tab_text1'.tr(),
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/images/attendance-icon.svg',
-              color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/attendance-icon.svg',
+                color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+              ),
+              label: 'tab_text2'.tr(),
             ),
-            label: 'tab_text2'.tr(),
-          ),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.clipboardList),
-              label: 'tab_text3'.tr()),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.solidCalendar),
-              label: 'tab_text4'.tr()),
-        ],
-        unselectedFontSize: 12,
-        selectedFontSize: 12,
-        showUnselectedLabels: true,
-        selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
-        unselectedItemColor: colorPrimary70,
-        selectedIconTheme: IconThemeData(color: colorPrimary),
-        unselectedIconTheme: IconThemeData(color: colorPrimary70),
+            if (user != null)
+              if (user.companyID != null)
+                BottomNavigationBarItem(
+                    icon: FaIcon(FontAwesomeIcons.clipboardList),
+                    label: 'tab_text3'.tr()),
+            BottomNavigationBarItem(
+                icon: FaIcon(FontAwesomeIcons.solidCalendar),
+                label: 'tab_text4'.tr()),
+          ],
+          unselectedFontSize: 12,
+          selectedFontSize: 12,
+          showUnselectedLabels: true,
+          selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
+          unselectedItemColor: colorPrimary70,
+          selectedIconTheme: IconThemeData(color: colorPrimary),
+          unselectedIconTheme: IconThemeData(color: colorPrimary70),
+        ),
       ),
     );
   }
