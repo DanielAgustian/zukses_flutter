@@ -1294,52 +1294,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             height: 10,
                           ),
                           historyClick
-                              ? BlocBuilder<CommentBloc, CommentState>(
-                                  builder: (context, state) {
-                                    if (state is CommentStateGetSuccessLoad) {
-                                      return ListView.builder(
-                                          padding: EdgeInsets.all(0),
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          itemCount: state.comment.length,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) {
-                                            return CommentBox(
-                                                size: size,
-                                                comment: state
-                                                    .comment[index].content,
-                                                user: state
-                                                    .comment[index].nameUser,
-                                                date: util.dateNumbertoCalendar(
-                                                        state.comment[index]
-                                                            .date) +
-                                                    " at " +
-                                                    util.hourFormat(state
-                                                        .comment[index].date));
-                                          });
-                                    } else if (state
-                                        is CommentStateGetFailLoad) {
-                                      return Center(
-                                          child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: Text(
-                                          "No comment yet.",
-                                          style: TextStyle(
-                                              color: colorPrimary,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ));
-                                    } else if (state
-                                        is CommentStateAddSuccessLoad) {
-                                      BlocProvider.of<CommentBloc>(context).add(
-                                          LoadAllCommentEvent(
-                                              clickTask.idTask.toString()));
-                                      return CircularProgressIndicator();
-                                    }
-                                    return Container();
-                                  },
-                                )
+                              ? buildCommentSection(size, clickTask)
                               : ListView.builder(
                                   padding: EdgeInsets.all(0),
                                   physics: NeverScrollableScrollPhysics(),
@@ -1385,6 +1340,47 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
           },
         ),
       ),
+    );
+  }
+
+  Widget buildCommentSection(Size size, TaskModel clickTask) {
+    List<CommentModel> comments;
+
+    return BlocBuilder<CommentBloc, CommentState>(
+      builder: (context, state) {
+        if (state is CommentStateGetSuccessLoad) {
+          comments = state.comment;
+        } else if (state is CommentStateAddSuccessLoad) {
+          BlocProvider.of<CommentBloc>(context)
+              .add(LoadAllCommentEvent(clickTask.idTask.toString()));
+        } else if (state is CommentStateLoading) {
+          return CircularProgressIndicator();
+        }
+        return comments == null || comments.length == 0
+            ? Center(
+                child: Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Text(
+                  "No comment yet.",
+                  style: TextStyle(
+                      color: colorPrimary, fontWeight: FontWeight.bold),
+                ),
+              ))
+            : ListView.builder(
+                padding: EdgeInsets.all(0),
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: comments.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return CommentBox(
+                      size: size,
+                      comment: comments[index].content,
+                      user: comments[index].nameUser,
+                      date: util.dateNumbertoCalendar(comments[index].date) +
+                          " at " +
+                          util.hourFormat(comments[index].date));
+                });
+      },
     );
   }
 
