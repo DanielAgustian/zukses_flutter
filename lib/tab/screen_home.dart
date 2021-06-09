@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     checkStatusClock("initState");
     getCompanyProfile();
     sharedPrefInstruction();
-    getUserProfile();
+    // getUserProfile();
     _getTaskLowPriority();
     _getTaskHighPriority();
 
@@ -320,295 +320,280 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) => _buildPopupOvertime(context, size: size));
-        },
-      ),*/
-      backgroundColor: colorBackground,
-      body: WillPopScope(
-        onWillPop: onWillPop,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                BlocListener<MeetingReqBloc, MeetingReqState>(
-                  listener: (context, state) async {
-                    if (state is MeetingReqStateSuccessLoad) {
-                      setState(() {
-                        scheduleReqLength = state.schedule.length;
-                      });
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<MeetingBloc, MeetingState>(
+    return BlocProvider<UserDataBloc>(
+      create: (context) => UserDataBloc()..add(UserDataGettingEvent()),
+      child: Scaffold(
+        /*floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) => _buildPopupOvertime(context, size: size));
+          },
+        ),*/
+        backgroundColor: colorBackground,
+        body: WillPopScope(
+          onWillPop: onWillPop,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  BlocListener<MeetingReqBloc, MeetingReqState>(
                     listener: (context, state) async {
-                      if (state is MeetingStateSuccessLoad) {
+                      if (state is MeetingReqStateSuccessLoad) {
                         setState(() {
-                          _scheduleAccepted.clear();
-                          state.meetings.forEach((element) {
-                            if (util.yearFormat(now) ==
-                                util.yearFormat(element.date)) {
-                              _scheduleAccepted.add(element);
+                          scheduleReqLength = state.schedule.length;
+                        });
+                      }
+                    },
+                    child: Container(),
+                  ),
+                  BlocListener<MeetingBloc, MeetingState>(
+                      listener: (context, state) async {
+                        if (state is MeetingStateSuccessLoad) {
+                          setState(() {
+                            _scheduleAccepted.clear();
+                            state.meetings.forEach((element) {
+                              if (util.yearFormat(now) ==
+                                  util.yearFormat(element.date)) {
+                                _scheduleAccepted.add(element);
+                              }
+                            });
+                            if (_scheduleAccepted.length < 1) {
+                              print("No Data");
                             }
                           });
-                          if (_scheduleAccepted.length < 1) {
-                            print("No Data");
+                        }
+                      },
+                      child: Container()),
+                  BlocListener<AuthenticationBloc, AuthenticationState>(
+                      listener: (context, state) async {
+                        if (state is AuthStateFailLoad) {
+                          Util().showToast(
+                              context: context,
+                              msg: "Something Wrong!",
+                              duration: 3,
+                              color: colorError,
+                              txtColor: colorBackground);
+                        } else if (state is AuthStateSuccessLoad) {
+                          setState(() {
+                            _authModel = state.authUser;
+                            isLoadingAuth = true;
+                          });
+
+                          if (_authModel.maxClockIn == "false") {
+                            //if they arent clockout today
+                            if (_authModel.attendance == "false") {
+                              // if they arent clock in yet
+                              // setState(() {
+                              //   stringTap = enumTap[0];
+                              // });
+                            } else if (_authModel.attendance == "true") {
+                              // if they already clock in.
+                              setState(() {
+                                stringTap = enumTap[1];
+                              });
+                            }
+                          } else if (_authModel.maxClockIn == "true") {
+                            //If they already clock out for today
+                            setState(() {
+                              stringTap = enumTap[2];
+                            });
+                          } else {
+                            print("Get Auth Data Error");
                           }
-                        });
-                      }
-                    },
-                    child: Container()),
-                BlocListener<AuthenticationBloc, AuthenticationState>(
+                          checkStatusClock("Get Auth Data");
+                        } else if (state is AuthStateSuccessTeamLoad) {
+                          _controller.reverse();
+                        }
+                      },
+                      child: Container()),
+                  BlocListener<AttendanceBloc, AttendanceState>(
                     listener: (context, state) async {
-                      if (state is AuthStateFailLoad) {
+                      if (state is AttendanceStateFailed) {
                         Util().showToast(
-                            context: context,
-                            msg: "Something Wrong!",
-                            duration: 3,
+                            context: this.context,
+                            msg: "Something Wrong !",
                             color: colorError,
                             txtColor: colorBackground);
-                      } else if (state is AuthStateSuccessLoad) {
+                      } else if (state is AttendanceStateSuccessClockIn) {
+                        //if they already clock in
                         setState(() {
-                          _authModel = state.authUser;
-                          isLoadingAuth = true;
+                          stringTap = enumTap[1];
                         });
-
-                        if (_authModel.maxClockIn == "false") {
-                          //if they arent clockout today
-                          if (_authModel.attendance == "false") {
-                            // if they arent clock in yet
-                            // setState(() {
-                            //   stringTap = enumTap[0];
-                            // });
-                          } else if (_authModel.attendance == "true") {
-                            // if they already clock in.
-                            setState(() {
-                              stringTap = enumTap[1];
-                            });
-                          }
-                        } else if (_authModel.maxClockIn == "true") {
-                          //If they already clock out for today
-                          setState(() {
-                            stringTap = enumTap[2];
-                          });
-                        } else {
-                          print("Get Auth Data Error");
+                      } else if (state is AttendanceStateSuccessClockOut) {
+                        print("clock out");
+                        //if they already clock out
+                        setState(() {
+                          isClockIn = 2;
+                          attendanceID = state.attendanceID;
+                          stringTap = enumTap[2];
+                        });
+                        // show confirm dialog success clock out
+                        if (totalClockOut < 1) {
+                          showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      _buildPopupDialog(
+                                          context, "_BlocListener"))
+                              .then((value) => stringTap = enumTap[2]);
                         }
-                        checkStatusClock("Get Auth Data");
-                      } else if (state is AuthStateSuccessTeamLoad) {
-                        _controller.reverse();
+                        totalClockOut = totalClockOut + 1;
                       }
                     },
-                    child: Container()),
-                BlocListener<AttendanceBloc, AttendanceState>(
-                  listener: (context, state) async {
-                    if (state is AttendanceStateFailed) {
-                      Util().showToast(
-                          context: this.context,
-                          msg: "Something Wrong !",
-                          color: colorError,
-                          txtColor: colorBackground);
-                    } else if (state is AttendanceStateSuccessClockIn) {
-                      //if they already clock in
-                      setState(() {
-                        stringTap = enumTap[1];
-                      });
-                    } else if (state is AttendanceStateSuccessClockOut) {
-                      print("clock out");
-                      //if they already clock out
-                      setState(() {
-                        isClockIn = 2;
-                        attendanceID = state.attendanceID;
-                        stringTap = enumTap[2];
-                      });
-                      // show confirm dialog success clock out
-                      if (totalClockOut < 1) {
-                        showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    _buildPopupDialog(context, "_BlocListener"))
-                            .then((value) => stringTap = enumTap[2]);
-                      }
-                      totalClockOut = totalClockOut + 1;
-                    }
-                  },
-                  child: Container(),
+                    child: Container(),
 
-                  ///
-                ),
-                BlocListener<CompanyBloc, CompanyState>(
-                  listener: (context, state) async {
-                    if (state is CompanyStateSuccessLoad) {
-                      _company = state.company;
-                      print("Company Model: " + _company.name);
-                    } else if (state is CompanyStateLoading) {
-                    } else {}
-                  },
-                  child: Container(),
-                ),
-                BlocListener<TaskBloc, TaskState>(
-                  listener: (context, state) {
-                    if (state is TaskStateLowPrioritySuccessLoad) {
-                      setState(() {
-                        lengthLowPriority = state.task.length;
-                      });
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<TaskPriorityBloc, TaskPriorityState>(
-                  listener: (context, state) {
-                    if (state is TaskPriorityStateSuccessLoad) {
-                      setState(() {
-                        lengthHighPriority = state.task.length;
-                      });
-                      for (int i = 0; i < state.task.length; i++) {
-                        _taskHighPriority.add(state.task[i]);
+                    ///
+                  ),
+                  BlocListener<CompanyBloc, CompanyState>(
+                    listener: (context, state) async {
+                      if (state is CompanyStateSuccessLoad) {
+                        _company = state.company;
+                        print("Company Model: " + _company.name);
+                      } else if (state is CompanyStateLoading) {
+                      } else {}
+                    },
+                    child: Container(),
+                  ),
+                  BlocListener<TaskBloc, TaskState>(
+                    listener: (context, state) {
+                      if (state is TaskStateLowPrioritySuccessLoad) {
+                        setState(() {
+                          lengthLowPriority = state.task.length;
+                        });
                       }
-                    }
-                  },
-                  child: Container(),
-                ),
-                isLoading
-                    // FOR SKELETON LOADING
-                    ? skeletonSection(size)
-                    // LIMIT FOR THE REAL COMPONENT
-                    : Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              if (companyAcceptance == 1) {
-                                if (stringTap != enumTap[2]) {
-                                  if (_authModel.maxClockIn != null &&
-                                      _authModel.attendance != null) {
-                                    if (_authModel.maxClockIn == "false") {
-                                      if (_authModel.attendance == "false") {
-                                        if (instruction == true) {
-                                          pushToCamera();
-                                          print("Push To Camera");
+                    },
+                    child: Container(),
+                  ),
+                  BlocListener<TaskPriorityBloc, TaskPriorityState>(
+                    listener: (context, state) {
+                      if (state is TaskPriorityStateSuccessLoad) {
+                        setState(() {
+                          lengthHighPriority = state.task.length;
+                        });
+                        for (int i = 0; i < state.task.length; i++) {
+                          _taskHighPriority.add(state.task[i]);
+                        }
+                      }
+                    },
+                    child: Container(),
+                  ),
+                  isLoading
+                      // FOR SKELETON LOADING
+                      ? skeletonSection(size)
+                      // LIMIT FOR THE REAL COMPONENT
+                      : Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                if (companyAcceptance == 1) {
+                                  if (stringTap != enumTap[2]) {
+                                    if (_authModel.maxClockIn != null &&
+                                        _authModel.attendance != null) {
+                                      if (_authModel.maxClockIn == "false") {
+                                        if (_authModel.attendance == "false") {
+                                          if (instruction == true) {
+                                            pushToCamera();
+                                            print("Push To Camera");
+                                          } else {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CameraInstruction()),
+                                            );
+                                          }
+                                          checkStatusClock("initState");
+                                        } else if (_authModel.attendance ==
+                                            "true") {
+                                          //Clock Out
+                                          int diff = timeCalculation(
+                                              _company.endOfficeTime);
+                                          //if employee clock out before office closing time
+                                          if (diff < 0) {
+                                            showDialog(
+                                                context: context,
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    _buildClockOutNotFinished(
+                                                        context, size));
+                                          } else {
+                                            confirmClockOut(size: size);
+                                          }
                                         } else {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CameraInstruction()),
-                                          );
-                                        }
-                                        checkStatusClock("initState");
-                                      } else if (_authModel.attendance ==
-                                          "true") {
-                                        //Clock Out
-                                        int diff = timeCalculation(
-                                            _company.endOfficeTime);
-                                        //if employee clock out before office closing time
-                                        if (diff < 0) {
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  _buildClockOutNotFinished(
-                                                      context, size));
-                                        } else {
-                                          confirmClockOut(size: size);
+                                          print(_authModel.attendance);
+                                          print("Error Data");
                                         }
                                       } else {
-                                        print(_authModel.attendance);
-                                        print("Error Data");
+                                        //Have A Good Day!
+                                        setState(() {
+                                          stringTap = enumTap[2];
+                                        });
                                       }
-                                    } else {
-                                      //Have A Good Day!
-                                      setState(() {
-                                        stringTap = enumTap[2];
-                                      });
                                     }
                                   }
                                 }
-                              }
-                            },
-                            child: Container(
-                                width: double.infinity,
-                                height: size.height * 0.40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(40),
-                                      bottomLeft: Radius.circular(40)),
-                                  color: colorPrimary,
-                                ),
-                                child: Center(
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                      TimerBuilder.periodic(
-                                          Duration(seconds: 1),
-                                          builder: (context) {
-                                        return Text(
-                                          getSystemTime(),
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              letterSpacing: 1.5,
-                                              fontSize:
-                                                  size.height < 600 ? 56 : 72,
-                                              fontWeight: FontWeight.w500),
-                                        );
-                                      }),
-                                      Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 8),
-                                          decoration: BoxDecoration(
-                                            color: colorBackground,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: companyAcceptance == 1
-                                              ? Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                        "assets/images/tap-clock-in.svg",
-                                                        width: size.height < 569
-                                                            ? 20
-                                                            : 25,
-                                                        height:
-                                                            size.height < 569
-                                                                ? 20
-                                                                : 25),
-                                                    // SizedBox(width: 10),
-                                                    Text(
-                                                      stringTap,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: colorPrimary,
-                                                          fontSize:
-                                                              size.height < 600
-                                                                  ? 14
-                                                                  : 16),
-                                                    ),
-                                                  ],
-                                                )
-                                              : Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Center(
-                                                      child: Text(
-                                                        "Welcome to Zukses!",
+                              },
+                              child: Container(
+                                  width: double.infinity,
+                                  height: size.height * 0.40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        bottomRight: Radius.circular(40),
+                                        bottomLeft: Radius.circular(40)),
+                                    color: colorPrimary,
+                                  ),
+                                  child: Center(
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                        TimerBuilder.periodic(
+                                            Duration(seconds: 1),
+                                            builder: (context) {
+                                          return Text(
+                                            getSystemTime(),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                letterSpacing: 1.5,
+                                                fontSize:
+                                                    size.height < 600 ? 56 : 72,
+                                                fontWeight: FontWeight.w500),
+                                          );
+                                        }),
+                                        Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: colorBackground,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: companyAcceptance == 1
+                                                ? Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      SvgPicture.asset(
+                                                          "assets/images/tap-clock-in.svg",
+                                                          width:
+                                                              size.height < 569
+                                                                  ? 20
+                                                                  : 25,
+                                                          height:
+                                                              size.height < 569
+                                                                  ? 20
+                                                                  : 25),
+                                                      // SizedBox(width: 10),
+                                                      Text(
+                                                        stringTap,
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -619,196 +604,226 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                                     ? 14
                                                                     : 16),
                                                       ),
-                                                    )
-                                                  ],
-                                                ))
-                                    ]))),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          //======================BlocBuilder Profile User===========================
-                          buildHeaderProfile(size),
+                                                    ],
+                                                  )
+                                                : Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Center(
+                                                        child: Text(
+                                                          "Welcome to Zukses!",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize:
+                                                                  size.height <
+                                                                          600
+                                                                      ? 14
+                                                                      : 16),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ))
+                                      ]))),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            //======================BlocBuilder Profile User===========================
+                            buildHeaderProfile(size),
 
-                          //====================BlocBuilder Team =================================
-                          SizedBox(height: 20),
-                          buildTeamWidget(context, size),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "home_text6".tr(),
-                                style: TextStyle(
-                                    color: colorPrimary,
-                                    letterSpacing: 0,
-                                    fontSize: size.width <= 600 ? 20 : 22,
-                                    fontWeight: FontWeight.bold),
+                            //====================BlocBuilder Team =================================
+                            SizedBox(height: 20),
+                            buildTeamWidget(context, size),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "home_text6".tr(),
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      letterSpacing: 0,
+                                      fontSize: size.width <= 600 ? 20 : 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-
-                          Container(
-                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  BoxHome(
-                                    loading: isLoading,
-                                    title: "home_text7".tr(),
-                                    total: lengthHighPriority,
-                                    numberColor: colorSecondaryRed,
-                                    fontSize: size.width <= 600 ? 34 : 36,
-                                  ),
-                                  BoxHome(
-                                      loading: isLoading,
-                                      title: "home_text8".tr(),
-                                      total: lengthLowPriority,
-                                      numberColor: colorClear,
-                                      fontSize: size.width <= 600 ? 34 : 36),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              decoration: BoxDecoration(
-                                  color: colorBackground,
-                                  boxShadow: [boxShadowStandard]),
-                              child: Column(
-                                children: [
-                                  _taskHighPriority.length < 1
-                                      ? Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 5),
-                                            child: Text(
-                                              "No High Priority Task",
-                                              style: TextStyle(
-                                                  color: colorPrimary,
-                                                  fontSize: size.height < 569
-                                                      ? 12
-                                                      : 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        )
-                                      : ListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          padding: EdgeInsets.all(1.0),
-                                          itemCount:
-                                              _taskHighPriority.length > 2
-                                                  ? 2
-                                                  : _taskHighPriority.length,
-                                          scrollDirection: Axis.vertical,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) {
-                                            return ListViewBox(
-                                              title: _taskHighPriority[index]
-                                                  .taskName,
-                                              detail: _taskHighPriority[index]
-                                                  .details,
-                                              viewType: "task",
-                                            );
-                                          },
-                                        ),
-                                  Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      child: TextButton(
-                                          style: TextButton.styleFrom(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 0, 10, 0),
-                                              primary: colorBackground),
-                                          onPressed: () {
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ScreenTab(index: 2)));
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                  "home_text7"
-                                                      .tr(args: ["Task"]),
-                                                  style: TextStyle(
-                                                      color: colorPrimary,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: colorPrimary,
-                                              )
-                                            ],
-                                          )))
-                                ],
-                              )),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "home_text10".tr(),
-                                style: TextStyle(
-                                    color: colorPrimary,
-                                    letterSpacing: 0,
-                                    fontSize: size.width <= 600 ? 20 : 22,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            SizedBox(
+                              height: 20,
                             ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  BoxHome(
+
+                            Container(
+                                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    BoxHome(
                                       loading: isLoading,
-                                      title: "home_text11".tr(),
-                                      total: _scheduleAccepted.length,
+                                      title: "home_text7".tr(),
+                                      total: lengthHighPriority,
                                       numberColor: colorSecondaryRed,
-                                      fontSize: size.width <= 600 ? 34 : 36),
-                                  BoxHome(
-                                      loading: isLoading,
-                                      title: "meeting request".tr(),
-                                      total: scheduleReqLength,
-                                      numberColor: colorSecondaryYellow,
-                                      fontSize: size.width <= 600 ? 34 : 36),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 15,
-                          ),
+                                      fontSize: size.width <= 600 ? 34 : 36,
+                                    ),
+                                    BoxHome(
+                                        loading: isLoading,
+                                        title: "home_text8".tr(),
+                                        total: lengthLowPriority,
+                                        numberColor: colorClear,
+                                        fontSize: size.width <= 600 ? 34 : 36),
+                                  ],
+                                )),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                                margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                decoration: BoxDecoration(
+                                    color: colorBackground,
+                                    boxShadow: [boxShadowStandard]),
+                                child: Column(
+                                  children: [
+                                    _taskHighPriority.length < 1
+                                        ? Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 5),
+                                              child: Text(
+                                                "No High Priority Task",
+                                                style: TextStyle(
+                                                    color: colorPrimary,
+                                                    fontSize: size.height < 569
+                                                        ? 12
+                                                        : 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            padding: EdgeInsets.all(1.0),
+                                            itemCount:
+                                                _taskHighPriority.length > 2
+                                                    ? 2
+                                                    : _taskHighPriority.length,
+                                            scrollDirection: Axis.vertical,
+                                            shrinkWrap: true,
+                                            itemBuilder: (context, index) {
+                                              return ListViewBox(
+                                                title: _taskHighPriority[index]
+                                                    .taskName,
+                                                detail: _taskHighPriority[index]
+                                                    .details,
+                                                viewType: "task",
+                                              );
+                                            },
+                                          ),
+                                    Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: TextButton(
+                                            style: TextButton.styleFrom(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    10, 0, 10, 0),
+                                                primary: colorBackground),
+                                            onPressed: () {
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ScreenTab(index: 2)));
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                    "home_text7"
+                                                        .tr(args: ["Task"]),
+                                                    style: TextStyle(
+                                                        color: colorPrimary,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color: colorPrimary,
+                                                )
+                                              ],
+                                            )))
+                                  ],
+                                )),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "home_text10".tr(),
+                                  style: TextStyle(
+                                      color: colorPrimary,
+                                      letterSpacing: 0,
+                                      fontSize: size.width <= 600 ? 20 : 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    BoxHome(
+                                        loading: isLoading,
+                                        title: "home_text11".tr(),
+                                        total: _scheduleAccepted.length,
+                                        numberColor: colorSecondaryRed,
+                                        fontSize: size.width <= 600 ? 34 : 36),
+                                    BoxHome(
+                                        loading: isLoading,
+                                        title: "meeting request".tr(),
+                                        total: scheduleReqLength,
+                                        numberColor: colorSecondaryYellow,
+                                        fontSize: size.width <= 600 ? 34 : 36),
+                                  ],
+                                )),
+                            SizedBox(
+                              height: 15,
+                            ),
 
-                          _listViewMeeting(_scheduleAccepted, size),
-                          SizedBox(
-                            height: 20,
-                          )
-                        ],
-                      )
-              ],
-            )),
-            BlocBuilder<TeamDetailBloc, TeamDetailState>(
-                builder: (context, state) {
-              if (state is TeamDetailStateSuccess) {
-                return scrollInvitation(context, size, state.team);
-              }
-              return Container();
-            })
-          ],
+                            _listViewMeeting(_scheduleAccepted, size),
+                            SizedBox(
+                              height: 20,
+                            )
+                          ],
+                        )
+                ],
+              )),
+              BlocBuilder<TeamDetailBloc, TeamDetailState>(
+                  builder: (context, state) {
+                if (state is TeamDetailStateSuccess) {
+                  return scrollInvitation(context, size, state.team);
+                }
+                return Container();
+              })
+            ],
+          ),
         ),
       ),
     );
