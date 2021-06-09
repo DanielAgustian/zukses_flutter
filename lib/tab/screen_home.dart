@@ -50,7 +50,7 @@ import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
-import 'package:zukses_app_1/model/company-model.dart'; 
+import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/model/fb_model_sender.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -1439,7 +1439,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Ahome_text13".tr(),
+            "home_text13".tr(),
             style: TextStyle(
                 color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
           ),
