@@ -170,8 +170,9 @@ class _ScreenTab extends State<ScreenTab> {
           setState(() {
             user = state.userModel;
           });
-          if (user != null) {
-            if (user.companyID != null) screenList.add(AttendanceScreen());
+          if (state.userModel != null) {
+            if (user.companyID != null)
+              screenList.insert(1, AttendanceScreen());
           }
         }
       },
