@@ -25,7 +25,7 @@ import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/screen/meeting/screen-add-schedule.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less3r-avatar.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class MeetingScreen extends StatefulWidget {
@@ -39,7 +39,7 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen>
     with TickerProviderStateMixin {
   DateTime _selectedDate;
-  ScheduleModel scheduleClick = ScheduleModel();
+  // ScheduleModel scheduleClick = ScheduleModel();
   final textSearch = TextEditingController();
 
   int week;
@@ -48,22 +48,17 @@ class _MeetingScreenState extends State<MeetingScreen>
   bool removeBackgroundDialog = false;
   bool isVisible = true;
 
-  // Draggable scroll controller
-  AnimationController _controller;
-  Duration _duration = Duration(milliseconds: 800);
-  Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
-
   //STRING FOR GLOBAL VARIABLE
   String meetingID;
   int waitingRequest = 0;
   List<String> date1 = [], date2 = [];
+
   void selectDate(DateTime date) {
     setState(() {
       _selectedDate = date;
       // selected = absence;
       // kata = "$_currentDate";
     });
-    print(_selectedDate);
   }
 
   Util util;
@@ -93,7 +88,6 @@ class _MeetingScreenState extends State<MeetingScreen>
     _selectedDate = _currentDate;
 
     util = Util();
-    _controller = AnimationController(vsync: this, duration: _duration);
     timer();
   }
 
@@ -251,33 +245,7 @@ class _MeetingScreenState extends State<MeetingScreen>
         ),
         body: WillPopScope(
           onWillPop: onWillPop,
-          child: searching
-              ? searchingData(context, size)
-              : Stack(
-                  children: [
-                    BlocListener<MeetingBloc, MeetingState>(
-                      listener: (context, state) {
-                        if (state is MeetingStateSuccessLoad) {
-                          if (widget.meetingId != null) {
-                            state.meetings.forEach((element) {
-                              if (widget.meetingId == element.meetingID) {
-                                setState(() {
-                                  scheduleClick = element;
-                                });
-                                _controller.forward();
-                              }
-                            });
-                          }
-                        }
-                      },
-                      child: Container(),
-                    ),
-                    buildMainBody(size),
-                    scheduleClick != null
-                        ? showDraggableSheet(size, scheduleClick)
-                        : Container(),
-                  ],
-                ),
+          child: searching ? searchingData(context, size) : buildMainBody(size),
         ));
   }
 
@@ -295,376 +263,330 @@ class _MeetingScreenState extends State<MeetingScreen>
       } else if (state is MeetingStateLoading) {
         return Center(child: CircularProgressIndicator());
       }
-      return meetings == null || meetings.length == 0
-          ? Container()
-          : Stack(
-              children: [
-                grid
-                    ? Container(
-                        margin: EdgeInsets.all(10),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                child: CalendarWidget(
-                                  fontSize:
-                                      size.height <= 600 ? textSizeSmall16 : 16,
-                                  onSelectDate: (date, absence) {
-                                    selectDate(date);
-                                  },
-                                  data: meetings,
-                                  size: size,
-                                ),
-                              ),
-                              SizedBox(height: 30),
-                              TitleDayFormatted(
-                                currentDate: _selectedDate,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Container(
-                                width: size.width,
-                                child: isLoading
-                                    ? ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: meetings.length,
-                                        itemBuilder: (context, index) =>
-                                            SkeletonLess3WithAvatar(
-                                                size: size, row: 2))
-                                    : ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: meetings.length,
-                                        itemBuilder: (context, index) => util
-                                                    .yearFormat(
-                                                        _selectedDate) ==
-                                                util.yearFormat(
-                                                    meetings[index].date)
-                                            ? ScheduleItem(
-                                                status: meetings[index].members,
-                                                count: meetings[index]
-                                                    .members
-                                                    .length,
-                                                size: size,
-                                                title: meetings[index].title,
-                                                time1: util.hourFormat(
-                                                    meetings[index].date),
-                                                time2: util.hourFormat(
-                                                    meetings[index]
-                                                        .meetingEndTime),
-                                                meetingId:
-                                                    meetings[index].meetingID,
-                                                onClick: () {
-                                                  if (_controller.isDismissed) {
-                                                    setState(() {
-                                                      meetingID =
-                                                          meetings[index]
-                                                              .meetingID;
-                                                      scheduleClick =
-                                                          meetings[index];
-                                                      isVisible = false;
-                                                    });
-
-                                                    _controller.forward();
-                                                  } else if (_controller
-                                                      .isCompleted)
-                                                    _controller.reverse();
-                                                },
-                                              )
-                                            : Container()),
-                              )
-                            ],
+      return Stack(
+        children: [
+          grid
+              ? Container(
+                  margin: EdgeInsets.all(10),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          child: CalendarWidget(
+                            fontSize: size.height <= 600 ? textSizeSmall16 : 16,
+                            onSelectDate: (date, absence) {
+                              selectDate(date);
+                            },
+                            data: meetings,
+                            size: size,
                           ),
-                        ))
-                    : Container(
-                        child: SingleChildScrollView(
+                        ),
+                        SizedBox(height: 30),
+                        TitleDayFormatted(
+                          currentDate: _selectedDate,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          width: size.width,
+                          child: isLoading
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: 2,
+                                  itemBuilder: (context, index) =>
+                                      SkeletonLess3WithAvatar(
+                                          size: size, row: 2))
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: meetings.length,
+                                  itemBuilder: (context, index) => util
+                                              .yearFormat(_selectedDate) ==
+                                          util.yearFormat(meetings[index].date)
+                                      ? ScheduleItem(
+                                          status: meetings[index].members,
+                                          count: meetings[index].members.length,
+                                          size: size,
+                                          title: meetings[index].title,
+                                          time1: util
+                                              .hourFormat(meetings[index].date),
+                                          time2: util.hourFormat(
+                                              meetings[index].meetingEndTime),
+                                          meetingId: meetings[index].meetingID,
+                                          onClick: () {
+                                            showModalResult(
+                                                size, meetings[index]);
+                                          },
+                                        )
+                                      : Container()),
+                        )
+                      ],
+                    ),
+                  ))
+              : Container(
+                  child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: size.width,
+                        height: size.height <= 569
+                            ? size.height * 0.21
+                            : size.height * 0.17,
+                        child: CalendarListWidget(
+                          fontSize: size.height <= 569 ? textSizeSmall14 : 16,
+                          onSelectDate: (date) {
+                            selectDate(date);
+                          },
+                          data: meetings,
+                        ),
+                      ),
+                      SizedBox(height: 30),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        width: size.width,
+                        height: size.height,
                         child: Column(
                           children: [
-                            Container(
-                              width: size.width,
-                              height: size.height <= 569
-                                  ? size.height * 0.21
-                                  : size.height * 0.17,
-                              child: CalendarListWidget(
-                                fontSize:
-                                    size.height <= 569 ? textSizeSmall14 : 16,
-                                onSelectDate: (date) {
-                                  selectDate(date);
-                                },
-                                data: meetings,
-                              ),
+                            TitleDayFormatted(
+                              currentDate: _selectedDate,
                             ),
-                            SizedBox(height: 30),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              width: size.width,
-                              height: size.height,
-                              child: Column(
-                                children: [
-                                  TitleDayFormatted(
-                                    currentDate: _selectedDate,
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Expanded(
-                                      child: Container(
-                                    width: size.width,
-                                    child: isLoading
-                                        ? ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: meetings.length,
-                                            itemBuilder: (context, index) =>
-                                                SkeletonLess3WithAvatar(
-                                                    size: size, row: 2))
-                                        : ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: meetings.length,
-                                            itemBuilder: (context, index) =>
-                                                util.yearFormat(
-                                                            _selectedDate) ==
-                                                        util.yearFormat(
-                                                            meetings[index]
-                                                                .date)
-                                                    ? ScheduleItem(
-                                                        status: meetings[index]
-                                                            .members,
-                                                        count: meetings[index]
-                                                            .members
-                                                            .length,
-                                                        size: size,
-                                                        title: meetings[index]
-                                                            .title,
-                                                        time1: util.hourFormat(
-                                                            meetings[index]
-                                                                .date),
-                                                        time2: util.hourFormat(
-                                                            meetings[index]
-                                                                .meetingEndTime),
-                                                        onClick: () {
-                                                          if (_controller
-                                                              .isDismissed) {
-                                                            setState(() {
-                                                              meetingID =
-                                                                  meetings[
-                                                                          index]
-                                                                      .meetingID;
-                                                              scheduleClick =
-                                                                  meetings[
-                                                                      index];
-                                                            });
-
-                                                            _controller
-                                                                .forward();
-                                                          } else if (_controller
-                                                              .isCompleted)
-                                                            _controller
-                                                                .reverse();
-                                                        },
-                                                      )
-                                                    : Container()),
-                                  ))
-                                ],
-                              ),
+                            SizedBox(
+                              height: 5,
                             ),
+                            Expanded(
+                                child: Container(
+                              width: size.width,
+                              child: isLoading
+                                  ? ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: 2,
+                                      itemBuilder: (context, index) =>
+                                          SkeletonLess3WithAvatar(
+                                              size: size, row: 2))
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: meetings.length,
+                                      itemBuilder: (context, index) => util
+                                                  .yearFormat(_selectedDate) ==
+                                              util.yearFormat(
+                                                  meetings[index].date)
+                                          ? ScheduleItem(
+                                              status: meetings[index].members,
+                                              count: meetings[index]
+                                                  .members
+                                                  .length,
+                                              size: size,
+                                              title: meetings[index].title,
+                                              time1: util.hourFormat(
+                                                  meetings[index].date),
+                                              time2: util.hourFormat(
+                                                  meetings[index]
+                                                      .meetingEndTime),
+                                              onClick: () {
+                                                showModalResult(
+                                                    size, meetings[index]);
+                                              },
+                                            )
+                                          : Container()),
+                            ))
                           ],
                         ),
-                      )),
-              ],
-            );
+                      ),
+                    ],
+                  ),
+                )),
+        ],
+      );
     });
   }
 
-  // Dragabble Scroll sheet
-  Widget showDraggableSheet(Size size, ScheduleModel scheduleModel,
+  // Show modal detail
+  Future<void> showModalResult(Size size, ScheduleModel scheduleModel,
       {bool editable = true}) {
     String time1 = util.hourFormat(scheduleModel.date);
     String time2 = util.hourFormat(scheduleModel.meetingEndTime != null
         ? scheduleModel.meetingEndTime
         : scheduleModel.date);
 
-    return scheduleModel == null
-        ? Container()
-        : SizedBox.expand(
-            child: SlideTransition(
-              position: _tween.animate(_controller),
-              child: Container(
-                child: DraggableScrollableSheet(
-                  maxChildSize: 0.8,
-                  initialChildSize: 0.8,
-                  minChildSize: 0.6,
-                  builder: (BuildContext context,
-                      ScrollController scrollController) {
-                    return Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                      decoration: BoxDecoration(
-                          boxShadow: [BoxShadow(blurRadius: 15)],
-                          color: colorBackground,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20))),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+    return showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.white.withOpacity(0.1),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState2) {
+            return DraggableScrollableSheet(
+              maxChildSize: 0.8,
+              initialChildSize: 0.8,
+              minChildSize: 0.6,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      boxShadow: [BoxShadow(blurRadius: 15)],
+                      color: colorBackground,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  _controller.reverse();
-                                  setState(() {
-                                    removeBackgroundDialog =
-                                        !removeBackgroundDialog;
-                                    isVisible = true;
-                                  });
-                                },
-                                child: Text("Close",
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                removeBackgroundDialog =
+                                    !removeBackgroundDialog;
+                                isVisible = true;
+                              });
+                            },
+                            child: Text("close_text".tr(),
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          editable
+                              ? InkWell(
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditScheduleScreen(
+                                                    model: scheduleModel)));
+                                    setState(() {
+                                      isVisible = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    "edit_text".tr(),
                                     style: TextStyle(
                                         color: colorPrimary,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              editable
-                                  ? InkWell(
-                                      onTap: () {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditScheduleScreen(
-                                                        model: scheduleModel)));
-                                        setState(() {
-                                          isVisible = true;
-                                        });
-                                      },
-                                      child: Text(
-                                        "Edit",
-                                        style: TextStyle(
-                                            color: colorPrimary,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.height < 569 ? 3 : 5,
-                          ),
-                          Text(
-                            scheduleModel.title == null
-                                ? "Schedule Not Get"
-                                : scheduleModel.title,
-                            style: TextStyle(
-                                fontSize: size.height <= 570 ? 18 : 20,
-                                color: colorPrimary,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          SizedBox(
-                            height: size.height < 569 ? 2 : 5,
-                          ),
-                          Text(
-                            "$time1 - $time2",
-                            style: TextStyle(
-                              fontSize: size.height <= 570 ? 12 : 14,
-                              color: colorPrimary50,
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height <= 570 ? 6 : 10,
-                          ),
-                          Container(
-                            width: size.width,
-                            child: Text(
-                              scheduleModel.description,
-                              style: TextStyle(
-                                fontSize: size.height <= 570 ? 12 : 14,
-                                color: colorPrimary,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height <= 570 ? 10 : 15,
-                          ),
-                          Text(
-                            "Assigned to",
-                            style: TextStyle(
-                                fontSize: size.height <= 570 ? 12 : 14,
-                                color: colorPrimary,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          scheduleModel.members == null
-                              ? Text("Data Null")
-                              : Container(
-                                  height: 0.3 * size.height,
-                                  child: ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: scheduleModel.members.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                UserAvatarSchedule(
-                                                  status: util.acceptancePrint(
-                                                      scheduleModel
-                                                          .members[index]
-                                                          .accepted),
-                                                  avatarRadius:
-                                                      size.height <= 570
-                                                          ? 15
-                                                          : 20,
-                                                  dotSize: size.height <= 570
-                                                      ? 8
-                                                      : 10,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  "User " +
-                                                      scheduleModel
-                                                          .members[index].name +
-                                                      " (" +
-                                                      util.acceptancePrint(
-                                                          scheduleModel
-                                                              .members[index]
-                                                              .accepted) +
-                                                      ") ",
-                                                  style: TextStyle(
-                                                    fontSize: size.height <= 570
-                                                        ? 14
-                                                        : 16,
-                                                    color: colorPrimary,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: size.height < 569 ? 2 : 5,
-                                            )
-                                          ],
-                                        );
-                                      }),
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 )
+                              : Container(),
                         ],
                       ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
+                      SizedBox(
+                        height: size.height < 569 ? 3 : 5,
+                      ),
+                      Text(
+                        scheduleModel.title == null
+                            ? "Schedule Not Get"
+                            : scheduleModel.title,
+                        style: TextStyle(
+                            fontSize: size.height <= 570 ? 18 : 20,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: size.height < 569 ? 2 : 5,
+                      ),
+                      Text(
+                        "$time1 - $time2",
+                        style: TextStyle(
+                          fontSize: size.height <= 570 ? 12 : 14,
+                          color: colorPrimary50,
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height <= 570 ? 6 : 10,
+                      ),
+                      Container(
+                        width: size.width,
+                        child: Text(
+                          scheduleModel.description,
+                          style: TextStyle(
+                            fontSize: size.height <= 570 ? 12 : 14,
+                            color: colorPrimary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height <= 570 ? 10 : 15,
+                      ),
+                      Text(
+                        "schedule_text1".tr(),
+                        style: TextStyle(
+                            fontSize: size.height <= 570 ? 12 : 14,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      scheduleModel.members == null
+                          ? Text("Data Null")
+                          : Container(
+                              height: 0.3 * size.height,
+                              child: ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: scheduleModel.members.length,
+                                  itemBuilder: (context, index) {
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            UserAvatarSchedule(
+                                              status: util.acceptancePrint(
+                                                  scheduleModel
+                                                      .members[index].accepted),
+                                              avatarRadius:
+                                                  size.height <= 570 ? 15 : 20,
+                                              dotSize:
+                                                  size.height <= 570 ? 8 : 10,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "User " +
+                                                  scheduleModel
+                                                      .members[index].name +
+                                                  " (" +
+                                                  util.acceptancePrint(
+                                                      scheduleModel
+                                                          .members[index]
+                                                          .accepted) +
+                                                  ") ",
+                                              style: TextStyle(
+                                                fontSize: size.height <= 570
+                                                    ? 14
+                                                    : 16,
+                                                color: colorPrimary,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: size.height < 569 ? 2 : 5,
+                                        )
+                                      ],
+                                    );
+                                  }),
+                            )
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget searchingData(BuildContext context, Size size) {
@@ -682,9 +604,6 @@ class _MeetingScreenState extends State<MeetingScreen>
             }),
           ],
         ),
-        scheduleClick.meetingID != null
-            ? showDraggableSheet(size, scheduleClick, editable: false)
-            : Container()
       ],
     );
   }
@@ -703,21 +622,11 @@ class _MeetingScreenState extends State<MeetingScreen>
                   count: state.meeting[index].members.length,
                   date: util.yearFormat(state.meeting[index].date),
                   onClick: () {
-                    print("Clicked Here");
                     FocusScopeNode currentFocus = FocusScope.of(context);
                     if (!currentFocus.hasPrimaryFocus) {
                       currentFocus.unfocus();
                     }
-
-                    if (_controller.isDismissed) {
-                      _controller.forward();
-
-                      setState(() {
-                        scheduleClick = state.meeting[index];
-                      });
-                    } else if (_controller.isCompleted) {
-                      _controller.reverse();
-                    }
+                    showModalResult(size, state.meeting[index]);
                   },
                   time1: util.hourFormat(state.meeting[index].date),
                   time2: util.hourFormat(state.meeting[index].meetingEndTime),
@@ -735,15 +644,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                       if (!currentFocus.hasPrimaryFocus) {
                         currentFocus.unfocus();
                       }
-                      if (_controller.isDismissed) {
-                        _controller.forward();
-                        setState(() {
-                          scheduleClick = state.meeting[index];
-                          print(scheduleClick.meetingID);
-                        });
-                      } else if (_controller.isCompleted) {
-                        _controller.reverse();
-                      }
+                      showModalResult(size, state.meeting[index]);
                     },
                     time1: util.hourFormat(state.meeting[index].date),
                     time2: util.hourFormat(state.meeting[index].meetingEndTime),
