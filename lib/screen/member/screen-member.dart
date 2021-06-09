@@ -9,6 +9,7 @@ import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/component/text-seq-vertical.dart';
 import 'package:zukses_app_1/constant/constant.dart';
+import 'package:zukses_app_1/model/team-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class MemberScreen extends StatefulWidget {
@@ -56,82 +57,87 @@ class _MemberScreenState extends State<MemberScreen> {
             ),
           ]),
       backgroundColor: colorBackground,
-      body: BlocBuilder<TeamBloc, TeamState>(
-        builder: (context, state) {
-          if (state is TeamStateSuccessLoad) {
-            return Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(15),
-                    child: Text(
-                      "${formater.format(date)}",
-                      style: TextStyle(
-                          color: colorPrimary,
-                          fontSize: size.height <= 600 ? 16 : 18),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: state.team.length,
-                      itemBuilder: (context, index) => Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorNeutral1.withOpacity(1),
-                                blurRadius: 15,
-                              )
-                            ]),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            UserAvatar(
-                              avatarRadius: 20,
-                              dotSize: 10,
-                              status: state.team[index].late,
-                            ),
-                            Text(
-                              state.team[index].name,
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  fontSize: size.height <= 600 ? 14 : 16),
-                            ),
-                            TextSequentialVertical(
-                                size: size,
-                                text1: "Start Time",
-                                text2: state.team[index].clockIn == null
-                                    ? "-"
-                                    : util
-                                        .hourFormat(state.team[index].clockIn),
-                                textcolor: colorPrimary70),
-                            TextSequentialVertical(
-                                size: size,
-                                text1: "End Time",
-                                text2: state.team[index].clockOut == null
-                                    ? "-"
-                                    : util
-                                        .hourFormat(state.team[index].clockOut),
-                                textcolor: colorPrimary),
-                          ],
-                        ),
+      body: buildMainBody(size),
+    );
+  }
+
+  Widget buildMainBody(Size size) {
+    List<TeamModel> teams;
+
+    return BlocBuilder<TeamBloc, TeamState>(
+      builder: (context, state) {
+        if (state is TeamStateSuccessLoad) {
+          teams = state.team;
+        }
+        return teams == null || teams.length == 0
+            ? Container()
+            : Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      child: Text(
+                        "${formater.format(date)}",
+                        style: TextStyle(
+                            color: colorPrimary,
+                            fontSize: size.height <= 600 ? 16 : 18),
                       ),
                     ),
-                  )
-                ],
-              ),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+                    Expanded(
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: teams.length,
+                        itemBuilder: (context, index) => Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: colorBackground,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorNeutral1.withOpacity(1),
+                                  blurRadius: 15,
+                                )
+                              ]),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              UserAvatar(
+                                avatarRadius: 20,
+                                dotSize: 10,
+                                status: teams[index].late,
+                              ),
+                              Text(
+                                teams[index].name,
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height <= 600 ? 14 : 16),
+                              ),
+                              TextSequentialVertical(
+                                  size: size,
+                                  text1: "Start Time",
+                                  text2: teams[index].clockIn == null
+                                      ? "-"
+                                      : util.hourFormat(teams[index].clockIn),
+                                  textcolor: colorPrimary70),
+                              TextSequentialVertical(
+                                  size: size,
+                                  text1: "End Time",
+                                  text2: teams[index].clockOut == null
+                                      ? "-"
+                                      : util.hourFormat(teams[index].clockOut),
+                                  textcolor: colorPrimary),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+      },
     );
   }
 }
