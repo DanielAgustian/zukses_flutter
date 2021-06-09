@@ -379,6 +379,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           isLoadingAuth = true;
                         });
 
+                        // print("------------------>" + _authModel.maxClockIn);
+
                         //Choose Enum Tap based on DB data.
                         // if (_authModel.attendance == "false") {
                         //   // if they arent clock in yet
