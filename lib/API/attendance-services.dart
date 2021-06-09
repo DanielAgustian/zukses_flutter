@@ -73,7 +73,6 @@ class AttendanceService {
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       var jsonResult = jsonDecode(res.body);
-      print(res.body);
       List<AttendanceModel> results = [];
       /*
       if (jsonResult["attendance"] != null) {

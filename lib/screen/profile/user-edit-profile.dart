@@ -32,7 +32,7 @@ class _EditProfileScreen extends State<EditProfile> {
   UserModel userModel = UserModel();
   bool allowDelete = false;
 
-  _editData() {
+  void editData() {
     if (data != null && data != "") {
       //Edit Profile with Profile Pic Changes
       BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
@@ -104,9 +104,8 @@ class _EditProfileScreen extends State<EditProfile> {
                 ),
               ),
               onTap: () {
-                _editData();
-                /*Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UserSettings()));*/
+                // _editData();
+                editData();
               })
         ],
       ),
@@ -123,6 +122,8 @@ class _EditProfileScreen extends State<EditProfile> {
                   BlocListener<UserDataBloc, UserDataState>(
                     listener: (context, state) {
                       if (state is UserDataStateUpdateSuccess) {
+                        BlocProvider.of<UserDataBloc>(context)
+                            .add(UserDataGettingEvent());
                         setState(() {
                           uploading = false;
                         });

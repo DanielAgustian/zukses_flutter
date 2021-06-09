@@ -5,9 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-event.dart';
 import 'package:zukses_app_1/bloc/leave-type/leave-type-state.dart';
@@ -100,219 +97,212 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           return Future.value(true);
         },
         child: widget.permission == "leaves"
-            ? Scaffold(
-                appBar: AppBar(
-                  elevation: 0,
-                  centerTitle: true,
-                  backgroundColor: colorBackground,
-                  leadingWidth: 70,
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {
-                          if (textReason.text != "")
-                            _onWillPop(size: size);
-                          else
-                            Navigator.pop(context);
-                        },
-                        child: Center(
-                          child: Text(
-                            "cancel_text".tr(),
-                            style: TextStyle(
-                                fontSize: size.height <= 600 ? 14 : 16,
-                                color: colorPrimary,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        )),
-                  ),
-                  title: Text(
-                    "apply_leaves_text1".tr(),
-                    style: TextStyle(
-                        color: colorPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: size.height <= 600 ? 20 : 22),
-                  ),
-                  actions: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: InkWell(
-                          onTap: () {
-                            _createLeaves();
-                            //Navigator.of(context).pop();
-                            /*Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        (ScreenListLeaves(
-                                            permission: "leaves"))));*/
-                          },
-                          child: Container(
-                            child: Text(
-                              "done_text".tr(),
-                              style: TextStyle(
-                                  fontSize: size.height <= 600 ? 14 : 16,
-                                  color: colorPrimary,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                backgroundColor: colorBackground,
-                body: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: paddingHorizontal, vertical: paddingVertical),
-                  //color: colorSecondaryYellow70,
-                  child: SingleChildScrollView(
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          BlocListener<LeaveBloc, LeaveState>(
-                              listener: (context, state) {
-                                if (state is LeaveStateSuccess) {
-                                  _gotoLeavesList();
-                                } else if (state is LeaveStateFail) {
-                                  Util().showToast(
-                                      context: this.context,
-                                      msg: "Something Wrong !",
-                                      color: colorError,
-                                      txtColor: colorBackground);
-                                }
-                              },
-                              child: Container()),
-                          //SizedBox(height: 20),
-                          AddScheduleRow2(
-                            fontSize: size.height <= 600 ? 14 : 16,
-                            title: items[0],
-                            textItem: repeat,
-                            items: items,
-                            onSelectedItem: (val) {
-                              setState(() {
-                                repeat = val;
-                              });
-                            },
-                          ),
-                          InkWell(
-                            onTap: () {
-                              _selectDate(context, 0);
-                            },
-                            child: AddScheduleRow(
-                              title: repeat == "Multiple Day"
-                                  ? "apply_leaves_text7".tr()
-                                  : "date_text".tr(),
-                              textItem: "${formater.format(startDate)}",
-                              fontSize: size.height <= 600 ? 14 : 16,
-                            ),
-                          ),
-                          repeat == "Multiple Day"
-                              ? InkWell(
-                                  onTap: () {
-                                    _selectDate(context, 1);
-                                  },
-                                  child: AddScheduleRow(
-                                    title: "apply_leaves_text8".tr(),
-                                    textItem: "${formater.format(endDate)}",
-                                    fontSize: size.height <= 600 ? 14 : 16,
-                                  ),
-                                )
-                              : Container(),
-                          repeat == "Half Day"
-                              ? InkWell(
-                                  onTap: () {
-                                    pickTime(context, 0);
-                                  },
-                                  child: AddScheduleRow(
-                                    title: "team_member_text1".tr(),
-                                    textItem:
-                                        Util().changeTimeToString(startTime),
-                                    fontSize: size.height <= 600 ? 14 : 16,
-                                  ),
-                                )
-                              : Container(),
-                          repeat == "Half Day"
-                              ? InkWell(
-                                  onTap: () {
-                                    pickTime(context, 1);
-                                  },
-                                  child: AddScheduleRow(
-                                    title: "team_member_text2".tr(),
-                                    textItem:
-                                        Util().changeTimeToString(endTime),
-                                    fontSize: size.height <= 600 ? 14 : 16,
-                                  ),
-                                )
-                              : Container(),
-                          BlocListener<LeaveTypeBloc, LeaveTypeState>(
-                            listener: (context, state) {
-                              if (state is LeaveTypeStateSuccessLoad) {
-                                dataLeaveType.clear();
-
-                                setState(() {
-                                  dataLeaveType.addAll(state.leaveType);
-                                  result = dataLeaveType[0];
-                                  isLoading = true;
-                                });
-                              }
-                            },
-                            child: Container(),
-                          ),
-                          isLoading
-                              ? AddScheduleLeaveType(
-                                  onSelectedItem: (val) {
-                                    setState(() {
-                                      result = val;
-                                    });
-                                    //_changeLeave();
-                                  },
-                                  items: dataLeaveType,
-                                  title: "apply_leaves_text3".tr(),
-                                  textItem: result,
-                                  fontSize: size.height <= 600 ? 14 : 16,
-                                )
-                              : Container(),
-
-                          Container(
-                            decoration: BoxDecoration(
-                                border: _reasonValidator
-                                    ? Border.all(color: colorError)
-                                    : Border.all(color: Colors.transparent),
-                                color: colorBackground,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: colorNeutral1.withOpacity(1),
-                                    blurRadius: 15,
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(5)),
-                            child: TextFormField(
-                              maxLines: 8,
-                              textInputAction: TextInputAction.done,
-                              keyboardType: TextInputType.text,
-                              onChanged: (val) {},
-                              controller: textReason,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(20),
-                                  hintText: "task_text20".tr(),
-                                  hintStyle: TextStyle(
-                                    color: _reasonValidator
-                                        ? colorError
-                                        : colorNeutral1,
-                                  ),
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              )
+            ? addApplyLeaves(size, context)
             : addOvertime(context));
+  }
+
+  Widget addApplyLeaves(Size size, BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: colorBackground,
+        leadingWidth: 70,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: InkWell(
+              onTap: () {
+                if (textReason.text != "")
+                  _onWillPop(size: size);
+                else
+                  Navigator.pop(context);
+              },
+              child: Center(
+                child: Text(
+                  "cancel_text".tr(),
+                  style: TextStyle(
+                      fontSize: size.height <= 600 ? 14 : 16,
+                      color: colorPrimary,
+                      fontWeight: FontWeight.w500),
+                ),
+              )),
+        ),
+        title: Text(
+          "apply_leaves_text1".tr(),
+          style: TextStyle(
+              color: colorPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: size.height <= 600 ? 20 : 22),
+        ),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: InkWell(
+                onTap: () {
+                  _createLeaves();
+                },
+                child: Container(
+                  child: Text(
+                    "done_text".tr(),
+                    style: TextStyle(
+                        fontSize: size.height <= 600 ? 14 : 16,
+                        color: colorPrimary,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: colorBackground,
+      body: Container(
+        padding: EdgeInsets.symmetric(
+            horizontal: paddingHorizontal, vertical: paddingVertical),
+        //color: colorSecondaryYellow70,
+        child: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                BlocListener<LeaveBloc, LeaveState>(
+                    listener: (context, state) {
+                      if (state is LeaveStateSuccess) {
+                        _gotoLeavesList();
+                      } else if (state is LeaveStateFail) {
+                        Util().showToast(
+                            context: this.context,
+                            msg: "Something Wrong !",
+                            color: colorError,
+                            txtColor: colorBackground);
+                      }
+                    },
+                    child: Container()),
+                //SizedBox(height: 20),
+                AddScheduleRow2(
+                  fontSize: size.height <= 600 ? 14 : 16,
+                  title: items[0],
+                  textItem: repeat,
+                  items: items,
+                  onSelectedItem: (val) {
+                    setState(() {
+                      repeat = val;
+                    });
+                  },
+                ),
+                InkWell(
+                  onTap: () {
+                    _selectDate(context, 0);
+                  },
+                  child: AddScheduleRow(
+                    title: repeat == "Multiple Day"
+                        ? "apply_leaves_text7".tr()
+                        : "date_text".tr(),
+                    textItem: "${formater.format(startDate)}",
+                    fontSize: size.height <= 600 ? 14 : 16,
+                  ),
+                ),
+                repeat == "Multiple Day"
+                    ? InkWell(
+                        onTap: () {
+                          _selectDate(context, 1);
+                        },
+                        child: AddScheduleRow(
+                          title: "apply_leaves_text8".tr(),
+                          textItem: "${formater.format(endDate)}",
+                          fontSize: size.height <= 600 ? 14 : 16,
+                        ),
+                      )
+                    : Container(),
+                repeat == "Half Day"
+                    ? InkWell(
+                        onTap: () {
+                          pickTime(context, 0);
+                        },
+                        child: AddScheduleRow(
+                          title: "team_member_text1".tr(),
+                          textItem: Util().changeTimeToString(startTime),
+                          fontSize: size.height <= 600 ? 14 : 16,
+                        ),
+                      )
+                    : Container(),
+                repeat == "Half Day"
+                    ? InkWell(
+                        onTap: () {
+                          pickTime(context, 1);
+                        },
+                        child: AddScheduleRow(
+                          title: "team_member_text2".tr(),
+                          textItem: Util().changeTimeToString(endTime),
+                          fontSize: size.height <= 600 ? 14 : 16,
+                        ),
+                      )
+                    : Container(),
+                BlocListener<LeaveTypeBloc, LeaveTypeState>(
+                  listener: (context, state) {
+                    if (state is LeaveTypeStateSuccessLoad) {
+                      dataLeaveType.clear();
+
+                      setState(() {
+                        dataLeaveType.addAll(state.leaveType);
+                        result = dataLeaveType[0];
+                        isLoading = true;
+                      });
+                    }
+                  },
+                  child: Container(),
+                ),
+                isLoading
+                    ? AddScheduleLeaveType(
+                        onSelectedItem: (val) {
+                          setState(() {
+                            result = val;
+                          });
+                          //_changeLeave();
+                        },
+                        items: dataLeaveType,
+                        title: "apply_leaves_text3".tr(),
+                        textItem: result,
+                        fontSize: size.height <= 600 ? 14 : 16,
+                      )
+                    : Container(),
+
+                Container(
+                  decoration: BoxDecoration(
+                      border: _reasonValidator
+                          ? Border.all(color: colorError)
+                          : Border.all(color: Colors.transparent),
+                      color: colorBackground,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorNeutral1.withOpacity(1),
+                          blurRadius: 15,
+                        )
+                      ],
+                      borderRadius: BorderRadius.circular(5)),
+                  child: TextFormField(
+                    maxLines: 8,
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.text,
+                    onChanged: (val) {},
+                    controller: textReason,
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(20),
+                        hintText: "task_text20".tr(),
+                        hintStyle: TextStyle(
+                          color: _reasonValidator ? colorError : colorNeutral1,
+                        ),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   // Handle if user click back using button in device not in app (usually for android)
@@ -372,9 +362,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   Widget addOvertime(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      /*floatingActionButton: FloatingActionButton(onPressed: () {
-          temp();
-        }),*/
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: colorBackground,

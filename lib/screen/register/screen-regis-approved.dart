@@ -150,10 +150,24 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
     });
 
     // handle click notif from foreground
+    // Handle Click Notif from BackGround
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
+      if (message != null) {
+        // print("MESSAGE ========================");
+        // print(message.data);
+        notificationChecker(message);
+      }
+    });
+
+    // handle click notif from foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
-      if (notification != null && android != null) {
+      AppleNotification ios = message.notification?.apple;
+      if (notification != null && (android != null || ios != null)) {
+        // print("MASUK ==========================================++>");
         // print(notification.body);
         flutterLocalNotificationsPlugin.initialize(
           initSetttings,

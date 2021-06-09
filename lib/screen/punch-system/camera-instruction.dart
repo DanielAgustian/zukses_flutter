@@ -171,7 +171,6 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
         imageQuality: imageQualityCamera,
         maxHeight: maxHeight,
         maxWidth: maxWidth);
-
     if (pickedFile != null) {
       setState(() {
         String data = pickedFile.path;

@@ -51,7 +51,7 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
     var res =
         await _userDataService.changeNotificationStatus(event.status ? 1 : 0);
 
-    if (res != null || res != "") {
+    if (res != null && res != "") {
       yield (UserStateSuccessChangeNotif(msg: res));
     } else {
       yield UserDataStateUpdateFail();

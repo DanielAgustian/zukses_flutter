@@ -39,225 +39,231 @@ class _UserProfileScreen extends State<UserProfile> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          child: Center(
-            child: FaIcon(FontAwesomeIcons.pencilAlt,
-                color: colorBackground, size: size.height < 569 ? 18 : 22),
+      floatingActionButton: FloatingActionButton(
+        child: Center(
+          child: FaIcon(FontAwesomeIcons.pencilAlt,
+              color: colorBackground, size: size.height < 569 ? 18 : 22),
+        ),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditProfile(
+                        user: user,
+                      )));
+        },
+      ),
+      appBar: AppBar(
+        backgroundColor: colorBackground,
+        leading: IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.chevronLeft,
+            color: colorPrimary,
           ),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => EditProfile(
-                          user: user,
-                        )));
+            Navigator.pop(context);
           },
         ),
-        appBar: AppBar(
-          backgroundColor: colorBackground,
-          leading: IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.chevronLeft,
-              color: colorPrimary,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          centerTitle: true,
-          title: Text(
-            "profile_text1".tr(),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 18 : 22,
-                color: colorPrimary),
-          ),
-          actions: [
-            IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.cog,
-                  color: colorPrimary,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => UserSettings(user: user)));
-                })
-          ],
+        centerTitle: true,
+        title: Text(
+          "profile_text1".tr(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: size.height < 570 ? 18 : 22,
+              color: colorPrimary),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  paddingHorizontal, 0, paddingHorizontal, 20),
-              child: Stack(
-                children: [
-                  BlocListener<UserDataBloc, UserDataState>(
-                    listener: (context, state) {
-                      if (state is UserDataStateSuccessLoad) {
-                        setState(() {
-                          user = state.userModel;
-                        });
-                        print(user.imgUrl);
-                      }
-                    },
-                    child: Container(),
+        actions: [
+          IconButton(
+              icon: FaIcon(
+                FontAwesomeIcons.cog,
+                color: colorPrimary,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UserSettings(user: user)));
+              })
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(
+                paddingHorizontal, 0, paddingHorizontal, 20),
+            child: Stack(
+              children: [
+                BlocListener<UserDataBloc, UserDataState>(
+                  listener: (context, state) {
+                    if (state is UserDataStateSuccessLoad) {
+                      setState(() {
+                        user = state.userModel;
+                      });
+                      print(user.imgUrl);
+                    }
+                  },
+                  child: Container(),
+                ),
+                buildMainBody(size),
+              ],
+            )),
+      ),
+    );
+  }
+
+  Widget buildMainBody(Size size) {
+    UserModel user;
+    return BlocListener<UserDataBloc, UserDataState>(
+      listener: (context, state) {
+        if (state is UserDataStateSuccessLoad) {
+          user = state.userModel;
+        } else if (state is UserDataStateUpdateSuccess) {
+          _getProfile();
+        }
+      },
+      child: BlocBuilder<UserDataBloc, UserDataState>(
+        builder: (context, state) {
+          if (state is UserDataStateSuccessLoad) {
+            user = state.userModel;
+          } else if (state is UserDataStateLoading) {
+            return Container(
+              width: size.width,
+              height: 0.8 * size.height,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          return user == null
+              ? Container(
+                  width: size.width,
+                  height: 0.8 * size.height,
+                  child: Center(
+                    child: Text(
+                      "Profile data not found. Please try again.",
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  BlocBuilder<UserDataBloc, UserDataState>(
-                    builder: (context, state) {
-                      if (state is UserDataStateSuccessLoad) {
-                        return Column(
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: size.height < 569 ? 5 : 10),
+                    Row(
+                      children: [
+                        Stack(
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                child: user.imgUrl == "" || user.imgUrl == null
+                                    ? Container(
+                                        width: size.height < 569 ? 68 : 72,
+                                        height: size.height < 569 ? 68 : 72,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                            child: FaIcon(
+                                          FontAwesomeIcons.camera,
+                                          color: colorNeutral3,
+                                        )))
+                                    : Container(
+                                        width: size.height < 569 ? 68 : 72,
+                                        height: size.height < 569 ? 68 : 72,
+                                        decoration: BoxDecoration(
+                                            color: colorNeutral2,
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                  "https://api-zukses.yokesen.com/${user.imgUrl}",
+                                                ),
+                                                fit: BoxFit.fitWidth)),
+                                      )),
+                          ],
+                        ),
+                        SizedBox(
+                          width: size.height < 569 ? 10 : 15,
+                        ),
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: size.height < 569 ? 5 : 10),
-                            Row(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 5, 5, 5),
-                                        child: state.userModel.imgUrl == "" ||
-                                                state.userModel.imgUrl == null
-                                            ? Container(
-                                                width:
-                                                    size.height < 569 ? 68 : 72,
-                                                height:
-                                                    size.height < 569 ? 68 : 72,
-                                                decoration: BoxDecoration(
-                                                  color: colorNeutral2,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Center(
-                                                    child: FaIcon(
-                                                  FontAwesomeIcons.camera,
-                                                  color: colorNeutral3,
-                                                )))
-                                            : Container(
-                                                width:
-                                                    size.height < 569 ? 68 : 72,
-                                                height:
-                                                    size.height < 569 ? 68 : 72,
-                                                decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    shape: BoxShape.circle,
-                                                    image: DecorationImage(
-                                                        image: NetworkImage(
-                                                          "https://api-zukses.yokesen.com/${state.userModel.imgUrl}",
-                                                        ),
-                                                        fit: BoxFit.fitWidth)),
-                                              )),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: size.height < 569 ? 10 : 15,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      state.userModel.name,
-                                      style: TextStyle(
-                                          color: colorPrimary,
-                                          fontSize: size.height < 569 ? 16 : 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text("profile_text2".tr(),
-                                        style: TextStyle(
-                                            color: colorPrimary,
-                                            fontSize:
-                                                size.height < 569 ? 14 : 16))
-                                  ],
-                                )
-                              ],
+                            Text(
+                              user.name,
+                              style: TextStyle(
+                                  color: colorPrimary,
+                                  fontSize: size.height < 569 ? 16 : 18,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            widget.company.id == null || widget.company.id == ""
-                                ? Container()
-                                : SizedBox(
-                                    height: size.height < 569 ? 10 : 15,
-                                  ),
-                            widget.company.id == null || widget.company.id == ""
-                                ? Container()
-                                : _dataCompany(context, size),
                             SizedBox(
-                              height: size.height < 569 ? 10 : 15,
+                              height: 5,
                             ),
-                            Container(
-                              width: size.width,
-                              padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 3, color: Color(0xFFF4F4F4)))),
-                              child: Text(
-                                "profile_text3".tr(),
+                            Text("profile_text2".tr(),
                                 style: TextStyle(
                                     color: colorPrimary,
-                                    fontSize: size.height < 569 ? 14 : 16,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            TextFormat1(
-                              size: size,
-                              title: "profile_text4".tr(),
-                              data: state.userModel.name,
-                            ),
-                            TextFormat1(
-                                size: size,
-                                title: "profile_text5".tr(),
-                                data: state.userModel.email //"Harus Diisi ",
-                                ),
-                            TextFormat1(
-                                size: size,
-                                title: "profile_text6".tr(),
-                                data: state.userModel.userID),
-                            TextFormat1(
-                              size: size,
-                              title: "profile_text7".tr(),
-                              data: state.userModel.phone == null
-                                  ? "profile_text15".tr()
-                                  : state.userModel.phone,
-                            ),
-                            TextFormat1(
-                              size: size,
-                              title: "profile_text8".tr(),
-                              data: state.userModel.email,
-                            ),
+                                    fontSize: size.height < 569 ? 14 : 16))
                           ],
-                        );
-                      } else if (state is UserDataStateLoading) {
-                        return Container(
-                          width: size.width,
-                          height: 0.8 * size.height,
-                          child: Center(
-                            child: CircularProgressIndicator(),
+                        )
+                      ],
+                    ),
+                    widget.company.id == null || widget.company.id == ""
+                        ? Container()
+                        : SizedBox(
+                            height: size.height < 569 ? 10 : 15,
                           ),
-                        );
-                      } else if (state is UserDataStateFailLoad) {
-                        return Container(
-                          width: size.width,
-                          height: 0.8 * size.height,
-                          child: Center(
-                            child: Text(
-                              "Oops Something Wrong. Please try again.",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      } else if (state is UserDataStateUpdateSuccess) {
-                        _getProfile();
-                      }
-                      return Container();
-                    },
-                  ),
-                ],
-              )),
-        ));
+                    widget.company.id == null || widget.company.id == ""
+                        ? Container()
+                        : _dataCompany(context, size),
+                    SizedBox(
+                      height: size.height < 569 ? 10 : 15,
+                    ),
+                    Container(
+                      width: size.width,
+                      padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                  width: 3, color: Color(0xFFF4F4F4)))),
+                      child: Text(
+                        "profile_text3".tr(),
+                        style: TextStyle(
+                            color: colorPrimary,
+                            fontSize: size.height < 569 ? 14 : 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    TextFormat1(
+                      size: size,
+                      title: "profile_text4".tr(),
+                      data: user.name,
+                    ),
+                    TextFormat1(
+                        size: size,
+                        title: "profile_text5".tr(),
+                        data: user.email //"Harus Diisi ",
+                        ),
+                    TextFormat1(
+                        size: size,
+                        title: "profile_text6".tr(),
+                        data: user.userID),
+                    TextFormat1(
+                      size: size,
+                      title: "profile_text7".tr(),
+                      data: user.phone == null
+                          ? "profile_text15".tr()
+                          : user.phone,
+                    ),
+                    TextFormat1(
+                      size: size,
+                      title: "profile_text8".tr(),
+                      data: user.email,
+                    ),
+                  ],
+                );
+        },
+      ),
+    );
   }
 
   Widget _dataCompany(BuildContext context, Size size) {

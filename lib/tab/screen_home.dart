@@ -50,8 +50,7 @@ import 'package:zukses_app_1/component/home/box-home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/component/home/listviewbox.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
-import 'package:zukses_app_1/model/company-model.dart';
-import 'package:zukses_app_1/model/facebook_auth-model.dart';
+import 'package:zukses_app_1/model/company-model.dart'; 
 import 'package:zukses_app_1/model/fb_model_sender.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -258,6 +257,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       tokenFCM = prefs.getString('fcmToken');
     });
+    // print("TOKEN FCM =>>>>>>>>>>>>>>>>>>> $tokenFCM");
   }
 
   @override
@@ -320,13 +320,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) => _buildPopupOvertime(context, size: size));
-        },
-      ),*/
       backgroundColor: colorBackground,
       body: WillPopScope(
         onWillPop: onWillPop,
@@ -378,22 +371,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           _authModel = state.authUser;
                           isLoadingAuth = true;
                         });
-
-                        //Choose Enum Tap based on DB data.
-                        // if (_authModel.attendance == "false") {
-                        //   // if they arent clock in yet
-                        //   setState(() {
-                        //     stringTap = enumTap[0];
-                        //     if (_authModel.maxClockIn == "true") {
-                        //       stringTap = enumTap[2];
-                        //     }
-                        //   });
-                        // } else if (_authModel.attendance == "true") {
-                        //   // if they already clock in.
-                        //   setState(() {
-                        //     stringTap = enumTap[1];
-                        //   });
-                        // }
 
                         if (_authModel.maxClockIn == "false") {
                           //if they arent clockout today
@@ -642,395 +619,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           SizedBox(
                             height: 10,
                           ),
-                          //======================BlocBuilder===========================
-                          BlocBuilder<UserDataBloc, UserDataState>(
-                            builder: (context, state) {
-                              if (state is UserDataStateLoading) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SkeletonAnimation(
-                                                shimmerColor: colorNeutral170,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  width: size.width * 0.6,
-                                                  height: 20,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              SkeletonAnimation(
-                                                shimmerColor: colorNeutral170,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  width: size.width * 0.6,
-                                                  height: 10,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SkeletonAvatar()
-                                      ]),
-                                );
-                              } else if (state is UserDataStateSuccessLoad) {
-                                String name = state.userModel.name == null
-                                    ? "Username"
-                                    : state.userModel.name;
-                                if (name.length > 15) {
-                                  var parts = name.split(" ");
-                                  name = parts[0];
-                                }
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                  child: InkWell(
-                                    onTap: () {
-                                      if (_company != null) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => UserProfile(
-                                                  company: _company,
-                                                  user: state.userModel),
-                                            ));
-                                      } else {
-                                        Util().showToast(
-                                            msg: "Company Empty!",
-                                            color: colorError,
-                                            txtColor: colorBackground,
-                                            context: context,
-                                            duration: 3);
-                                      }
-                                    },
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Hi, $name",
-                                                  style: TextStyle(
-                                                      color: colorPrimary,
-                                                      letterSpacing: 0,
-                                                      fontSize:
-                                                          size.width <= 600
-                                                              ? 20
-                                                              : 24,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    "home_text4".tr() + " !",
-                                                    style: TextStyle(
-                                                      color: Colors.grey,
-                                                      letterSpacing: 0,
-                                                      fontSize:
-                                                          size.width <= 600
-                                                              ? 12
-                                                              : 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              FaIcon(
-                                                FontAwesomeIcons.solidBell,
-                                                size:
-                                                    size.height < 569 ? 18 : 25,
-                                                color: colorPrimary,
-                                              ),
-                                              SizedBox(
-                                                width:
-                                                    size.height < 569 ? 10 : 15,
-                                              ),
-                                              Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      0, 0, 10, 0),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Container(
-                                                          height: 45,
-                                                          width: 45,
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  colorPrimary,
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              image: DecorationImage(
-                                                                  fit: BoxFit
-                                                                      .fitWidth,
-                                                                  image: state.userModel.imgUrl ==
-                                                                              null ||
-                                                                          state.userModel.imgUrl ==
-                                                                              ""
-                                                                      ? Image.asset(
-                                                                              "assets/images/ava.png")
-                                                                          .image
-                                                                      : NetworkImage(
-                                                                          "https://api-zukses.yokesen.com/${state.userModel.imgUrl}"))))
-                                                    ],
-                                                  )),
-                                            ],
-                                          )
-                                        ]),
-                                  ),
-                                );
-                              } else if (state is UserDataStateFailLoad) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SkeletonAnimation(
-                                                shimmerColor: colorNeutral170,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  width: size.width * 0.6,
-                                                  height: 20,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              SkeletonAnimation(
-                                                shimmerColor: colorNeutral170,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  width: size.width * 0.6,
-                                                  height: 10,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SkeletonAvatar()
-                                      ]),
-                                );
-                              } else if (state is UserDataStateUpdateSuccess) {
-                                getUserProfile();
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SkeletonAnimation(
-                                                shimmerColor: colorNeutral170,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  width: size.width * 0.6,
-                                                  height: 20,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              SkeletonAnimation(
-                                                shimmerColor: colorNeutral170,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: colorNeutral2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  width: size.width * 0.6,
-                                                  height: 10,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SkeletonAvatar()
-                                      ]),
-                                );
-                              }
+                          //======================BlocBuilder Profile User===========================
+                          buildHeaderProfile(size),
 
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Data Error",
-                                              style: TextStyle(
-                                                color: colorPrimary,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize:
-                                                    size.width <= 600 ? 20 : 24,
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "home_text4".tr() + " !",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  letterSpacing: 0,
-                                                  fontSize: size.width <= 600
-                                                      ? 12
-                                                      : 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Container(
-                                                  height: 45,
-                                                  width: 45,
-                                                  decoration: BoxDecoration(
-                                                      color: colorPrimary,
-                                                      shape: BoxShape.circle,
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: Image.asset(
-                                                                  "assets/images/ava.png")
-                                                              .image)))
-                                            ],
-                                          ))
-                                    ]),
-                              );
-                            },
-                          ),
-
-                          //====================BlocBuilder=================================///
+                          //====================BlocBuilder Team =================================
                           SizedBox(height: 20),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MemberScreen()));
-                            },
-                            child: BlocBuilder<TeamBloc, TeamState>(
-                              builder: (context, state) {
-                                if (state is TeamStateSuccessLoad) {
-                                  return Container(
-                                    width: size.width,
-                                    padding: EdgeInsets.all(10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    decoration: BoxDecoration(
-                                        color: colorBackground,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [boxShadowStandard]),
-                                    child: Center(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "home_text5".tr(),
-                                            style: TextStyle(
-                                                color: colorPrimary,
-                                                letterSpacing: 0,
-                                                fontSize:
-                                                    size.width <= 600 ? 18 : 20,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Container(
-                                            height: 20,
-                                            child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: state.team.length,
-                                              itemBuilder: (context, index) =>
-                                                  index >= 9
-                                                      ? UserAvatar(
-                                                          value: "+" +
-                                                              (state.team.length -
-                                                                      9)
-                                                                  .toString(),
-                                                        )
-                                                      : UserAvatar(
-                                                          dotSize: 7,
-                                                          status: state
-                                                              .team[index]
-                                                              .late),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                          ),
+                          buildTeamWidget(context, size),
                           Padding(
                             padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
                             child: Align(
@@ -1209,6 +803,338 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildTeamWidget(BuildContext context, Size size) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MemberScreen()));
+      },
+      child: BlocBuilder<TeamBloc, TeamState>(
+        builder: (context, state) {
+          if (state is TeamStateSuccessLoad) {
+            return Container(
+              width: size.width,
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                  color: colorBackground,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [boxShadowStandard]),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "home_text5".tr(),
+                      style: TextStyle(
+                          color: colorPrimary,
+                          letterSpacing: 0,
+                          fontSize: size.width <= 600 ? 18 : 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      height: 20,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: state.team.length,
+                        itemBuilder: (context, index) => index >= 9
+                            ? UserAvatar(
+                                value: "+" + (state.team.length - 9).toString(),
+                              )
+                            : UserAvatar(
+                                dotSize: 7, status: state.team[index].late),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
+    );
+  }
+
+  Widget buildHeaderProfile(Size size) {
+    return BlocBuilder<UserDataBloc, UserDataState>(
+      builder: (context, state) {
+        if (state is UserDataStateLoading) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonAnimation(
+                          shimmerColor: colorNeutral170,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: colorNeutral2,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: size.width * 0.6,
+                            height: 20,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        SkeletonAnimation(
+                          shimmerColor: colorNeutral170,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: colorNeutral2,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: size.width * 0.6,
+                            height: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SkeletonAvatar()
+                ]),
+          );
+        } else if (state is UserDataStateSuccessLoad) {
+          String name =
+              state.userModel.name == null ? "Username" : state.userModel.name;
+          if (name.length > 15) {
+            var parts = name.split(" ");
+            name = parts[0];
+          }
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: InkWell(
+              onTap: () {
+                if (_company != null) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserProfile(
+                            company: _company, user: state.userModel),
+                      ));
+                } else {
+                  Util().showToast(
+                      msg: "Company Empty!",
+                      color: colorError,
+                      txtColor: colorBackground,
+                      context: context,
+                      duration: 3);
+                }
+              },
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hi, $name",
+                            style: TextStyle(
+                                color: colorPrimary,
+                                letterSpacing: 0,
+                                fontSize: size.width <= 600 ? 20 : 24,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "home_text4".tr() + " !",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                letterSpacing: 0,
+                                fontSize: size.width <= 600 ? 12 : 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.solidBell,
+                          size: size.height < 569 ? 18 : 25,
+                          color: colorPrimary,
+                        ),
+                        SizedBox(
+                          width: size.height < 569 ? 10 : 15,
+                        ),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                        color: colorPrimary,
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            fit: BoxFit.fitWidth,
+                                            image: state.userModel.imgUrl ==
+                                                        null ||
+                                                    state.userModel.imgUrl == ""
+                                                ? Image.asset(
+                                                        "assets/images/ava.png")
+                                                    .image
+                                                : NetworkImage(
+                                                    "https://api-zukses.yokesen.com/${state.userModel.imgUrl}"))))
+                              ],
+                            )),
+                      ],
+                    )
+                  ]),
+            ),
+          );
+        } else if (state is UserDataStateFailLoad) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonAnimation(
+                          shimmerColor: colorNeutral170,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: colorNeutral2,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: size.width * 0.6,
+                            height: 20,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        SkeletonAnimation(
+                          shimmerColor: colorNeutral170,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: colorNeutral2,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: size.width * 0.6,
+                            height: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SkeletonAvatar()
+                ]),
+          );
+        } else if (state is UserDataStateUpdateSuccess) {
+          getUserProfile();
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonAnimation(
+                          shimmerColor: colorNeutral170,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: colorNeutral2,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: size.width * 0.6,
+                            height: 20,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        SkeletonAnimation(
+                          shimmerColor: colorNeutral170,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: colorNeutral2,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: size.width * 0.6,
+                            height: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SkeletonAvatar()
+                ]),
+          );
+        }
+
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Data Error",
+                    style: TextStyle(
+                      color: colorPrimary,
+                      letterSpacing: 0,
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.width <= 600 ? 20 : 24,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "home_text4".tr() + " !",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        letterSpacing: 0,
+                        fontSize: size.width <= 600 ? 12 : 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                        height: 45,
+                        width: 45,
+                        decoration: BoxDecoration(
+                            color: colorPrimary,
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: Image.asset("assets/images/ava.png")
+                                    .image)))
+                  ],
+                ))
+          ]),
+        );
+      },
     );
   }
 

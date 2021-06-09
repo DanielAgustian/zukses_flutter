@@ -146,75 +146,7 @@ class _TaskScreen extends State<TaskScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  BlocBuilder<ProjectBloc, ProjectState>(
-                      builder: (context, state) {
-                    if (state is ProjectStateSuccessLoad) {
-                      return ListView.builder(
-                        itemCount: state.project.length,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TaskDetailScreen(
-                                            project: state.project[index],
-                                          )),
-                                );
-                              },
-                              child: ListReviseProject(
-                                tag: state.bools[index],
-                                image: state.project[index].imgUrl,
-                                title: state.project[index].name,
-                                detail: state.project[index].details,
-                                jumlahTask: state.project[index].totalTask,
-                                onTapStar: () {
-                                  print("OnTapStar");
-                                  setState(() {
-                                    state.bools[index] = !state.bools[index];
-                                    BlocProvider.of<ProjectBookmarkBloc>(
-                                            context)
-                                        .add(DoProjectBookmarkEvent(state
-                                            .project[index].id
-                                            .toString()));
-                                  });
-                                },
-                              ));
-                        },
-                      );
-                    } else if (state is ProjectStateFailLoad) {
-                      return Container(
-                        width: size.width,
-                        height: size.height * 0.75,
-                        child: Center(
-                            child: RichText(
-                          text: TextSpan(
-                            text: 'No project listed at the moment. Click',
-                            style: TextStyle(color: colorPrimary),
-                            children: <TextSpan>[
-                              TextSpan(
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddProject()));
-                                    },
-                                  text: 'here',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: colorPrimary)),
-                              TextSpan(text: ' to continue'),
-                            ],
-                          ),
-                        )),
-                      );
-                    }
-                    return Container();
-                  }),
+                  buildListProject(size),
                 ],
               )),
               isLoading
@@ -234,6 +166,80 @@ class _TaskScreen extends State<TaskScreen> {
             ],
           ),
         ));
+  }
+
+  Widget buildListProject(Size size) {
+    List<ProjectModel> projects;
+    List<bool> bools;
+    return BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
+      if (state is ProjectStateSuccessLoad) {
+        projects = state.project;
+        bools = state.bools;
+      } else if (state is ProjectStateFailLoad) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          width: size.width,
+          height: size.height * 0.75,
+          child: Center(
+              child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: 'No project listed at the moment. Click',
+              style: TextStyle(color: colorPrimary),
+              children: <TextSpan>[
+                TextSpan(
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddProject()));
+                      },
+                    text: ' here',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: colorPrimary)),
+                TextSpan(text: ' add a new Project'),
+              ],
+            ),
+          )),
+        );
+      }
+      return projects == null || projects.length == 0
+          ? Container()
+          : ListView.builder(
+              itemCount: projects.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TaskDetailScreen(
+                                  project: projects[index],
+                                )),
+                      );
+                    },
+                    child: ListReviseProject(
+                      tag: bools[index],
+                      image: projects[index].imgUrl,
+                      title: projects[index].name,
+                      detail: projects[index].details,
+                      jumlahTask: projects[index].totalTask,
+                      onTapStar: () {
+                        print("OnTapStar");
+                        setState(() {
+                          bools[index] = !bools[index];
+                          BlocProvider.of<ProjectBookmarkBloc>(context).add(
+                              DoProjectBookmarkEvent(
+                                  projects[index].id.toString()));
+                        });
+                      },
+                    ));
+              },
+            );
+    });
   }
 
   void searchTask(String word) {}

@@ -105,264 +105,251 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         builder: (context, state) {
       // BLOC when success load
       if (state is AttendanceStateSuccessLoad) {
-        print("AttendanceList  = " + state.attendanceList.isEmpty.toString());
-        return Scaffold(
-            backgroundColor: colorBackground,
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: colorBackground,
-              automaticallyImplyLeading: false,
-              /*title: Text(
-                "Attendance",
-                style: TextStyle(
-                    color: colorPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.height <= 569 ? 18 : 22),
-              ),*/
-              actions: [
-                IconButton(
-                  splashColor: Colors.transparent,
-                  icon: FaIcon(
-                    monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
-                    color: colorPrimary,
-                    size: size.height <= 600 ? 16 : 20,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      print(state.attendanceList);
-                      monthly = !monthly;
-                      if (state.attendanceList != null &&
-                          state.attendanceList.length > 0 &&
-                          monthly == false) {
-                        absensiList = state.attendanceList.where((data) {
-                          var day = CustomCalendar()
-                              .findFirstDateOfTheWeek(data.clockIn);
-                          var nowWeek = CustomCalendar()
-                              .findFirstDateOfTheWeek(DateTime.now());
-                          return (nowWeek.day == day.day &&
-                              nowWeek.month == day.month &&
-                              nowWeek.year == day.year);
-                        }).toList();
-                      }
-                    });
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    child: Container(
-                      child: SvgPicture.asset(
-                        "assets/images/leave-symbol.svg",
-                        height: size.height <= 569 ? 20 : 25,
-                        width: size.height <= 569 ? 20 : 25,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ScreenListLeaves(permission: "leaves")),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    child: SvgPicture.asset(
-                      "assets/images/overtime-symbol.svg",
-                      height: size.height <= 569 ? 20 : 25,
-                      width: size.height <= 569 ? 20 : 25,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ScreenListLeaves(permission: "overtime")),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            body: WillPopScope(
-              onWillPop: onWillPop,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: companyAcceptance == 1
-                      ? monthly
-                          ? SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  state.attendanceList == null
-                                      ? Center(
-                                          child: CircularProgressIndicator())
-                                      : CalendarWidget(
-                                          fontSize: size.height <= 600
-                                              ? textSizeSmall16
-                                              : 16,
-                                          // When select the date
-                                          onSelectDate: (date, absence) {
-                                            selectDate(date, absence);
-                                          },
-                                          // When change the month
-                                          onClickToggle: (DateTime val) {
-                                            _attendanceBloc.add(
-                                                LoadUserAttendanceEvent(
-                                                    date: val));
-                                          },
-                                          data: state.attendanceList,
-                                          size: size,
-                                        ),
-                                  SizedBox(height: 20),
-                                  TitleDayFormatted(
-                                    currentDate: _currentDate,
-                                  ),
-                                  SizedBox(
-                                    height: size.height <= 569 ? 20 : 25,
-                                  ),
-                                  TimeBox(
-                                    selected: selected,
-                                    fontSize: size.height <= 569
-                                        ? textSizeSmall18
-                                        : 18,
-                                  ),
-                                  SizedBox(height: 15),
-                                  OvertimeText(selected: selected, size: size)
-                                ],
-                              ),
-                            )
-                          // BLOC when failed load
-                          : Column(
-                              children: [
-                                Container(
-                                  width: size.width,
-                                  height: size.height * 0.06,
-                                  child: WeekLyCanlendarWidget(
-                                    fontSize: size.height <= 569
-                                        ? textSizeSmall18
-                                        : 18,
-                                    onChangeWeek: (WeeklyCalendar val) {
-                                      setState(() {
-                                        _selectedWeek = val;
-                                        absensiList =
-                                            state.attendanceList.where((data) {
-                                          var day = CustomCalendar()
-                                              .findFirstDateOfTheWeek(
-                                                  data.clockIn);
-                                          return (_selectedWeek
-                                                      .firstWeekDate.day ==
-                                                  day.day &&
-                                              _selectedWeek
-                                                      .firstWeekDate.month ==
-                                                  day.month &&
-                                              _selectedWeek
-                                                      .firstWeekDate.year ==
-                                                  day.year);
-                                        }).toList();
-                                      });
-                                    },
-                                    data: absensiList,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                absensiList == null
-                                    ? Container()
-                                    : Expanded(
-                                        child: isLoading
-                                            ? ListView.builder(
-                                                itemCount: 5,
-                                                itemBuilder: (context, index) =>
-                                                    SkeletonLess3(
-                                                  size: size,
-                                                  col: 2,
-                                                  row: 2,
-                                                ),
-                                              )
-                                            : ListView.builder(
-                                                itemCount: absensiList.length,
-                                                itemBuilder: (context, index) {
-                                                  return Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 5),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 10,
-                                                            horizontal: 15),
-                                                    decoration: BoxDecoration(
-                                                        color: colorBackground,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        boxShadow: [
-                                                          boxShadowStandard
-                                                        ]),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                                "${getDayName.format(absensiList[index].clockIn)}",
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        colorPrimary,
-                                                                    fontSize: size.width <=
-                                                                            569
-                                                                        ? textSizeSmall16
-                                                                        : 16)),
-                                                            Text(
-                                                                "${getFormatListDate.format(absensiList[index].clockIn)}",
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        colorPrimary,
-                                                                    fontSize: size.width <=
-                                                                            569
-                                                                        ? textSizeSmall14
-                                                                        : 14))
-                                                          ],
-                                                        ),
-                                                        TimeBox(
-                                                          selected: absensiList[
-                                                              index],
-                                                          space:
-                                                              size.width * 0.01,
-                                                          fontSize: size
-                                                                      .width <=
-                                                                  569
-                                                              ? textSizeSmall12
-                                                              : 14,
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                      )
-                              ],
-                            )
-                      : freeVerLayout(context, size)),
-            ));
+        return buildMainBody(size, state, context);
       } else if (state is AttendanceStateFailLoad) {
         print("Failed load");
         return noStateLoadSection(size);
       }
       return noStateLoadSection(size);
     });
+  }
+
+  Widget buildMainBody(
+      Size size, AttendanceStateSuccessLoad state, BuildContext context) {
+    return Scaffold(
+        backgroundColor: colorBackground,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: colorBackground,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              splashColor: Colors.transparent,
+              icon: FaIcon(
+                monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
+                color: colorPrimary,
+                size: size.height <= 600 ? 16 : 20,
+              ),
+              onPressed: () {
+                setState(() {
+                  print(state.attendanceList);
+                  monthly = !monthly;
+                  if (state.attendanceList != null &&
+                      state.attendanceList.length > 0 &&
+                      monthly == false) {
+                    absensiList = state.attendanceList.where((data) {
+                      var day =
+                          CustomCalendar().findFirstDateOfTheWeek(data.clockIn);
+                      var nowWeek = CustomCalendar()
+                          .findFirstDateOfTheWeek(DateTime.now());
+                      return (nowWeek.day == day.day &&
+                          nowWeek.month == day.month &&
+                          nowWeek.year == day.year);
+                    }).toList();
+                  }
+                });
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                child: Container(
+                  child: SvgPicture.asset(
+                    "assets/images/leave-symbol.svg",
+                    height: size.height <= 569 ? 20 : 25,
+                    width: size.height <= 569 ? 20 : 25,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ScreenListLeaves(permission: "leaves")),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                child: SvgPicture.asset(
+                  "assets/images/overtime-symbol.svg",
+                  height: size.height <= 569 ? 20 : 25,
+                  width: size.height <= 569 ? 20 : 25,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ScreenListLeaves(permission: "overtime")),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        body: WillPopScope(
+          onWillPop: onWillPop,
+          child: Container(
+              padding: EdgeInsets.all(10),
+              child: companyAcceptance == 1
+                  ? monthly
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              state.attendanceList == null
+                                  ? Center(child: CircularProgressIndicator())
+                                  : CalendarWidget(
+                                      fontSize: size.height <= 600
+                                          ? textSizeSmall16
+                                          : 16,
+                                      // When select the date
+                                      onSelectDate: (date, absence) {
+                                        selectDate(date, absence);
+                                      },
+                                      // When change the month
+                                      onClickToggle: (DateTime val) {
+                                        _attendanceBloc.add(
+                                            LoadUserAttendanceEvent(date: val));
+                                      },
+                                      data: state.attendanceList,
+                                      size: size,
+                                    ),
+                              SizedBox(height: 20),
+                              TitleDayFormatted(
+                                currentDate: _currentDate,
+                              ),
+                              SizedBox(
+                                height: size.height <= 569 ? 20 : 25,
+                              ),
+                              TimeBox(
+                                selected: selected,
+                                fontSize:
+                                    size.height <= 569 ? textSizeSmall18 : 18,
+                              ),
+                              SizedBox(height: 15),
+                              OvertimeText(selected: selected, size: size)
+                            ],
+                          ),
+                        )
+                      // BLOC when failed load
+                      : Column(
+                          children: [
+                            Container(
+                              width: size.width,
+                              height: size.height * 0.06,
+                              child: WeekLyCanlendarWidget(
+                                fontSize:
+                                    size.height <= 569 ? textSizeSmall18 : 18,
+                                onChangeWeek: (WeeklyCalendar val) {
+                                  setState(() {
+                                    _selectedWeek = val;
+                                    absensiList =
+                                        state.attendanceList.where((data) {
+                                      var day = CustomCalendar()
+                                          .findFirstDateOfTheWeek(data.clockIn);
+                                      return (_selectedWeek.firstWeekDate.day ==
+                                              day.day &&
+                                          _selectedWeek.firstWeekDate.month ==
+                                              day.month &&
+                                          _selectedWeek.firstWeekDate.year ==
+                                              day.year);
+                                    }).toList();
+                                  });
+                                },
+                                data: absensiList,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            absensiList == null
+                                ? Container()
+                                : Expanded(
+                                    child: isLoading
+                                        ? ListView.builder(
+                                            itemCount: 5,
+                                            itemBuilder: (context, index) =>
+                                                SkeletonLess3(
+                                              size: size,
+                                              col: 2,
+                                              row: 2,
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            itemCount: absensiList.length,
+                                            itemBuilder: (context, index) {
+                                              return Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10,
+                                                    horizontal: 15),
+                                                decoration: BoxDecoration(
+                                                    color: colorBackground,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    boxShadow: [
+                                                      boxShadowStandard
+                                                    ]),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                            "${getDayName.format(absensiList[index].clockIn)}",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    colorPrimary,
+                                                                fontSize:
+                                                                    size.width <=
+                                                                            569
+                                                                        ? textSizeSmall16
+                                                                        : 16)),
+                                                        Text(
+                                                            "${getFormatListDate.format(absensiList[index].clockIn)}",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    colorPrimary,
+                                                                fontSize:
+                                                                    size.width <=
+                                                                            569
+                                                                        ? textSizeSmall14
+                                                                        : 14))
+                                                      ],
+                                                    ),
+                                                    TimeBox(
+                                                      selected:
+                                                          absensiList[index],
+                                                      space: size.width * 0.01,
+                                                      fontSize:
+                                                          size.width <= 569
+                                                              ? textSizeSmall12
+                                                              : 14,
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                  )
+                          ],
+                        )
+                  : freeVerLayout(context, size)),
+        ));
   }
 
   // WIDGET when there is no data loaded
