@@ -20,7 +20,7 @@ class AttendanceService {
     }, headers: <String, String>{
       'Authorization': 'Bearer $token'
     }).then((res) {
-      print(res.body);
+      // print(res.body);
       print("crete clock in ${res.statusCode}");
       code = res.statusCode;
       return code;

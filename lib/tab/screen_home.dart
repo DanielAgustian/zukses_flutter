@@ -258,6 +258,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       tokenFCM = prefs.getString('fcmToken');
     });
+    // print("TOKEN FCM =>>>>>>>>>>>>>>>>>>> $tokenFCM");
   }
 
   @override
