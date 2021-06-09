@@ -411,6 +411,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       //if they already clock in
                       setState(() {
                         stringTap = enumTap[1];
+                        dialogText = "Clock In";
                       });
                     } else if (state is AttendanceStateSuccessClockOut) {
                       print("clock out");
@@ -419,6 +420,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         isClockIn = 2;
                         attendanceID = state.attendanceID;
                         stringTap = enumTap[2];
+                        dialogText = "Clock Out";
                       });
                       // show confirm dialog success clock out
                       if (totalClockOut < 1) {
@@ -484,7 +486,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       if (_authModel.attendance == "false") {
                                         if (instruction == true) {
                                           pushToCamera();
-                                          print("Push To Camera");
                                         } else {
                                           Navigator.push(
                                             context,
@@ -507,11 +508,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                   _buildClockOutNotFinished(
                                                       context, size));
                                         } else {
-                                          confirmClockOut(size: size);
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  _buildPopupDialog(context,
+                                                      "_buildPopUpClockOut"));
+                                          // confirmClockOut(size: size);
                                         }
                                       } else {
-                                        print(_authModel.attendance);
-                                        print("Error Data");
+                                        Util().showToast(
+                                            msg:
+                                                "Something wrong when $dialogText !",
+                                            color: colorError,
+                                            txtColor: colorBackground,
+                                            context: context,
+                                            duration: 3);
+                                        // print(_authModel.attendance);
+                                        // print("Error Data");
                                       }
                                     } else {
                                       //Have A Good Day!
@@ -806,6 +819,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // build widget to show team
   Widget buildTeamWidget(BuildContext context, Size size) {
     return InkWell(
       onTap: () {
@@ -861,6 +875,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // Widget to show the profile
   Widget buildHeaderProfile(Size size) {
     return BlocBuilder<UserDataBloc, UserDataState>(
       builder: (context, state) {
@@ -1431,7 +1446,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // Clock Out Step 1========================================
   BuildContext buildContext1, buildContext2;
   Widget _buildPopupClockOut(BuildContext context, {size}) {
-    print("dialog clock out");
+    // print("dialog clock out");
     buildContext1 = context;
     return new AlertDialog(
       content: new Column(
