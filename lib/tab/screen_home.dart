@@ -321,13 +321,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      /*floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) => _buildPopupOvertime(context, size: size));
-          },
-        ),*/
       backgroundColor: colorBackground,
       body: WillPopScope(
         onWillPop: onWillPop,
