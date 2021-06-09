@@ -441,12 +441,8 @@ class _MeetingScreenState extends State<MeetingScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () {
-                              setState(() {
-                                removeBackgroundDialog =
-                                    !removeBackgroundDialog;
-                                isVisible = true;
-                              });
+                            onTap: () { 
+                              Navigator.pop(context);
                             },
                             child: Text("close_text".tr(),
                                 style: TextStyle(
@@ -597,7 +593,7 @@ class _MeetingScreenState extends State<MeetingScreen>
             BlocBuilder<MeetingSearchBloc, MeetingSearchState>(
                 builder: (context, state) {
               if (state is MeetingSearchStateSuccessLoad) {
-                return _filterMethod(state, textSearch.text, size);
+                return _filterMethod(state.meeting, textSearch.text, size);
               } else {
                 return Container();
               }
@@ -608,47 +604,47 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
   }
 
-  Widget _filterMethod(
-      MeetingSearchStateSuccessLoad state, String query, Size size) {
+  Widget _filterMethod(List<ScheduleModel> meetings, String query, Size size) {
     return Expanded(
       child: ListView.builder(
-          itemCount: state.meeting.length,
+          itemCount: meetings.length,
           shrinkWrap: true,
           itemBuilder: (BuildContext context, int index) {
             //return (Text("DADADADADADAD"));
             if (textSearch.text == "" || textSearch.text == null) {
               return ScheduleItemRequest(
                   size: size,
-                  count: state.meeting[index].members.length,
-                  date: util.yearFormat(state.meeting[index].date),
+                  count: meetings[index].members.length,
+                  date: util.yearFormat(meetings[index].date),
                   onClick: () {
                     FocusScopeNode currentFocus = FocusScope.of(context);
                     if (!currentFocus.hasPrimaryFocus) {
                       currentFocus.unfocus();
                     }
-                    showModalResult(size, state.meeting[index]);
+                    showModalResult(size, meetings[index]);
                   },
-                  time1: util.hourFormat(state.meeting[index].date),
-                  time2: util.hourFormat(state.meeting[index].meetingEndTime),
-                  title: state.meeting[index].title);
+                  time1: util.hourFormat(meetings[index].date),
+                  time2: util.hourFormat(meetings[index].meetingEndTime),
+                  title: meetings[index].title);
             } else {
-              if (state.meeting[index].title
+              if (meetings[index]
+                  .title
                   .toLowerCase()
                   .contains(query.toLowerCase())) {
                 return ScheduleItemRequest(
                     size: size,
-                    count: state.meeting[index].members.length,
-                    date: util.yearFormat(state.meeting[index].date),
+                    count: meetings[index].members.length,
+                    date: util.yearFormat(meetings[index].date),
                     onClick: () {
                       FocusScopeNode currentFocus = FocusScope.of(context);
                       if (!currentFocus.hasPrimaryFocus) {
                         currentFocus.unfocus();
                       }
-                      showModalResult(size, state.meeting[index]);
+                      showModalResult(size, meetings[index]);
                     },
-                    time1: util.hourFormat(state.meeting[index].date),
-                    time2: util.hourFormat(state.meeting[index].meetingEndTime),
-                    title: state.meeting[index].title);
+                    time1: util.hourFormat(meetings[index].date),
+                    time2: util.hourFormat(meetings[index].meetingEndTime),
+                    title: meetings[index].title);
               }
               return Container();
             }

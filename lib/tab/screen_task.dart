@@ -177,10 +177,12 @@ class _TaskScreen extends State<TaskScreen> {
         bools = state.bools;
       } else if (state is ProjectStateFailLoad) {
         return Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
           width: size.width,
           height: size.height * 0.75,
           child: Center(
               child: RichText(
+            textAlign: TextAlign.center,
             text: TextSpan(
               text: 'No project listed at the moment. Click',
               style: TextStyle(color: colorPrimary),
@@ -193,10 +195,10 @@ class _TaskScreen extends State<TaskScreen> {
                             MaterialPageRoute(
                                 builder: (context) => AddProject()));
                       },
-                    text: 'here',
+                    text: ' here',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: colorPrimary)),
-                TextSpan(text: ' to continue'),
+                TextSpan(text: ' add a new Project'),
               ],
             ),
           )),
