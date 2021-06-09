@@ -27,7 +27,7 @@ class _UserProfileScreen extends State<UserProfile> {
   @override
   void initState() {
     super.initState();
-    // _getProfile();
+    _getProfile();
     // print("Id Company " + widget.company.id);
   }
 
@@ -38,77 +38,75 @@ class _UserProfileScreen extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocProvider<UserDataBloc>(
-      create: (context) => UserDataBloc()..add(UserDataGettingEvent()),
-      child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-            child: Center(
-              child: FaIcon(FontAwesomeIcons.pencilAlt,
-                  color: colorBackground, size: size.height < 569 ? 18 : 22),
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditProfile(
-                            user: user,
-                          )));
-            },
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Center(
+          child: FaIcon(FontAwesomeIcons.pencilAlt,
+              color: colorBackground, size: size.height < 569 ? 18 : 22),
+        ),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditProfile(
+                        user: user,
+                      )));
+        },
+      ),
+      appBar: AppBar(
+        backgroundColor: colorBackground,
+        leading: IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.chevronLeft,
+            color: colorPrimary,
           ),
-          appBar: AppBar(
-            backgroundColor: colorBackground,
-            leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          "profile_text1".tr(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: size.height < 570 ? 18 : 22,
+              color: colorPrimary),
+        ),
+        actions: [
+          IconButton(
               icon: FaIcon(
-                FontAwesomeIcons.chevronLeft,
+                FontAwesomeIcons.cog,
                 color: colorPrimary,
               ),
               onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            centerTitle: true,
-            title: Text(
-              "profile_text1".tr(),
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: size.height < 570 ? 18 : 22,
-                  color: colorPrimary),
-            ),
-            actions: [
-              IconButton(
-                  icon: FaIcon(
-                    FontAwesomeIcons.cog,
-                    color: colorPrimary,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserSettings(user: user)));
-                  })
-            ],
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    paddingHorizontal, 0, paddingHorizontal, 20),
-                child: Stack(
-                  children: [
-                    BlocListener<UserDataBloc, UserDataState>(
-                      listener: (context, state) {
-                        if (state is UserDataStateSuccessLoad) {
-                          setState(() {
-                            user = state.userModel;
-                          });
-                          print(user.imgUrl);
-                        }
-                      },
-                      child: Container(),
-                    ),
-                    buildMainBody(size),
-                  ],
-                )),
-          )),
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UserSettings(user: user)));
+              })
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(
+                paddingHorizontal, 0, paddingHorizontal, 20),
+            child: Stack(
+              children: [
+                BlocListener<UserDataBloc, UserDataState>(
+                  listener: (context, state) {
+                    if (state is UserDataStateSuccessLoad) {
+                      setState(() {
+                        user = state.userModel;
+                      });
+                      print(user.imgUrl);
+                    }
+                  },
+                  child: Container(),
+                ),
+                buildMainBody(size),
+              ],
+            )),
+      ),
     );
   }
 

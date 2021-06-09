@@ -136,9 +136,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<AttendanceBloc>(
           create: (context) => AttendanceBloc(),
         ),
-        // BlocProvider<UserDataBloc>(
-        //   create: (context) => UserDataBloc(),
-        // ),
+        BlocProvider<UserDataBloc>(
+          create: (context) => UserDataBloc(),
+        ),
         BlocProvider<EmployeeBloc>(
           create: (context) => EmployeeBloc(),
         ),

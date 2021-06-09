@@ -32,7 +32,7 @@ class _EditProfileScreen extends State<EditProfile> {
   UserModel userModel = UserModel();
   bool allowDelete = false;
 
-  _editData() {
+  void editData() {
     if (data != null && data != "") {
       //Edit Profile with Profile Pic Changes
       BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
@@ -69,255 +69,251 @@ class _EditProfileScreen extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocProvider<UserDataBloc>(
-      create: (context) => UserDataBloc(),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: colorBackground,
-          leading: IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.chevronLeft,
-              color: colorPrimary,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: colorBackground,
+        leading: IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.chevronLeft,
+            color: colorPrimary,
           ),
-          centerTitle: true,
-          title: Text(
-            "profile_text9".tr(),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 18 : 22,
-                color: colorPrimary),
-          ),
-          actions: [
-            InkWell(
-                child: Container(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Text("done_text".tr(),
-                          style: TextStyle(
-                              fontSize: size.height <= 569 ? 15 : 18,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.bold)),
-                    ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          "profile_text9".tr(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: size.height < 570 ? 18 : 22,
+              color: colorPrimary),
+        ),
+        actions: [
+          InkWell(
+              child: Container(
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Text("done_text".tr(),
+                        style: TextStyle(
+                            fontSize: size.height <= 569 ? 15 : 18,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.bold)),
                   ),
                 ),
-                onTap: () {
-                  _editData();
-                  /*Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserSettings()));*/
-                })
-          ],
-        ),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                width: size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BlocListener<UserDataBloc, UserDataState>(
-                      listener: (context, state) {
-                        if (state is UserDataStateUpdateSuccess) {
-                          setState(() {
-                            uploading = false;
-                          });
-                          Navigator.pop(context);
-                        } else if (state is UserDataStateUpdateFail) {
-                          setState(() {
-                            uploading = false;
-                          });
-                          Util().showToast(
-                              duration: 3,
-                              context: context,
-                              msg: "Update Data Wrong",
-                              color: colorError,
-                              txtColor: colorBackground);
-                        } else if (state is UserDataStateLoading) {
-                          setState(() {
-                            uploading = true;
-                          });
-                        }
-                      },
-                      child: Container(),
-                    ),
-                    //Layout for Edit Profile here.
-                    Center(
-                      child: Stack(
-                        children: [
-                          allowDelete
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                  child: Container(
-                                      width: size.height < 569 ? 75 : 90,
-                                      height: size.height < 569 ? 75 : 90,
-                                      decoration: BoxDecoration(
-                                        color: colorNeutral2,
-                                        shape: BoxShape.circle,
+              ),
+              onTap: () {
+                // _editData();
+                editData();
+              })
+        ],
+      ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+              width: size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BlocListener<UserDataBloc, UserDataState>(
+                    listener: (context, state) {
+                      if (state is UserDataStateUpdateSuccess) {
+                        BlocProvider.of<UserDataBloc>(context)
+                            .add(UserDataGettingEvent());
+                        setState(() {
+                          uploading = false;
+                        });
+                        Navigator.pop(context);
+                      } else if (state is UserDataStateUpdateFail) {
+                        setState(() {
+                          uploading = false;
+                        });
+                        Util().showToast(
+                            duration: 3,
+                            context: context,
+                            msg: "Update Data Wrong",
+                            color: colorError,
+                            txtColor: colorBackground);
+                      } else if (state is UserDataStateLoading) {
+                        setState(() {
+                          uploading = true;
+                        });
+                      }
+                    },
+                    child: Container(),
+                  ),
+                  //Layout for Edit Profile here.
+                  Center(
+                    child: Stack(
+                      children: [
+                        allowDelete
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                child: Container(
+                                    width: size.height < 569 ? 75 : 90,
+                                    height: size.height < 569 ? 75 : 90,
+                                    decoration: BoxDecoration(
+                                      color: colorNeutral2,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.camera,
+                                        color: colorNeutral3,
                                       ),
-                                      child: Center(
-                                        child: FaIcon(
-                                          FontAwesomeIcons.camera,
-                                          color: colorNeutral3,
+                                    )))
+                            : Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                child: (widget.user.imgUrl == "" ||
+                                            widget.user.imgUrl == null) &&
+                                        (data == null || data == "")
+                                    ? Container(
+                                        width: size.height < 569 ? 75 : 90,
+                                        height: size.height < 569 ? 75 : 90,
+                                        decoration: BoxDecoration(
+                                          color: colorNeutral2,
+                                          shape: BoxShape.circle,
                                         ),
-                                      )))
-                              : Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                  child: (widget.user.imgUrl == "" ||
-                                              widget.user.imgUrl == null) &&
-                                          (data == null || data == "")
-                                      ? Container(
-                                          width: size.height < 569 ? 75 : 90,
-                                          height: size.height < 569 ? 75 : 90,
-                                          decoration: BoxDecoration(
+                                        child: Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.camera,
+                                            color: colorNeutral3,
+                                          ),
+                                        ))
+                                    : Container(
+                                        width: size.height < 569 ? 75 : 90,
+                                        height: size.height < 569 ? 75 : 90,
+                                        decoration: BoxDecoration(
                                             color: colorNeutral2,
                                             shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: FaIcon(
-                                              FontAwesomeIcons.camera,
-                                              color: colorNeutral3,
-                                            ),
-                                          ))
-                                      : Container(
-                                          width: size.height < 569 ? 75 : 90,
-                                          height: size.height < 569 ? 75 : 90,
-                                          decoration: BoxDecoration(
-                                              color: colorNeutral2,
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  fit: BoxFit.fitWidth,
-                                                  image: data != ""
-                                                      ? FileImage(File(data))
-                                                      : NetworkImage(
-                                                          "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
-                                        ),
+                                            image: DecorationImage(
+                                                fit: BoxFit.fitWidth,
+                                                image: data != ""
+                                                    ? FileImage(File(data))
+                                                    : NetworkImage(
+                                                        "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
+                                      ),
+                              ),
+                        Positioned(
+                            right: 0.0,
+                            bottom: 0.0,
+                            child: InkWell(
+                              onTap: () {
+                                _showPicker(context);
+                              },
+                              child: Container(
+                                width: size.height < 569 ? 28 : 32,
+                                height: size.height < 569 ? 28 : 32,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black,
                                 ),
-                          Positioned(
-                              right: 0.0,
-                              bottom: 0.0,
-                              child: InkWell(
-                                onTap: () {
-                                  _showPicker(context);
-                                },
-                                child: Container(
-                                  width: size.height < 569 ? 28 : 32,
-                                  height: size.height < 569 ? 28 : 32,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black,
-                                  ),
-                                  child: Center(
-                                    child: FaIcon(FontAwesomeIcons.image,
-                                        color: colorBackground,
-                                        size: size.height < 569 ? 16 : 18),
-                                  ),
+                                child: Center(
+                                  child: FaIcon(FontAwesomeIcons.image,
+                                      color: colorBackground,
+                                      size: size.height < 569 ? 16 : 18),
                                 ),
-                              ))
-                        ],
-                      ),
+                              ),
+                            ))
+                      ],
                     ),
-                    SizedBox(
-                      width: size.height < 569 ? 10 : 15,
-                    ),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            widget.user.name,
+                  ),
+                  SizedBox(
+                    width: size.height < 569 ? 10 : 15,
+                  ),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.user.name,
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 569 ? 16 : 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text("profile_text2".tr(),
                             style: TextStyle(
                                 color: colorPrimary,
-                                fontSize: size.height < 569 ? 16 : 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text("profile_text2".tr(),
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  fontSize: size.height < 569 ? 14 : 16))
-                        ],
-                      ),
+                                fontSize: size.height < 569 ? 14 : 16))
+                      ],
                     ),
-                    SizedBox(
-                      height: size.height < 569 ? 10 : 15,
+                  ),
+                  SizedBox(
+                    height: size.height < 569 ? 10 : 15,
+                  ),
+                  Container(
+                    width: size.width,
+                    padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 3, color: Color(0xFFF4F4F4)))),
+                    child: Text(
+                      "profile_text3".tr(),
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: size.height < 569 ? 14 : 16,
+                          fontWeight: FontWeight.bold),
                     ),
-                    Container(
-                      width: size.width,
-                      padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(
-                                  width: 3, color: Color(0xFFF4F4F4)))),
-                      child: Text(
-                        "profile_text3".tr(),
-                        style: TextStyle(
-                            color: colorPrimary,
-                            fontSize: size.height < 569 ? 14 : 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TextFormatEdit(
-                      textEdit: textEditName,
-                      size: size,
-                      title: "profile_text4".tr(),
-                      onChanged: (val) {},
-                    ),
-                    TextFormat1(
-                        txtColor: colorPrimary70,
-                        size: size,
-                        title: "profile_text5".tr(),
-                        data: widget.user.email //"Harus Diisi ",
-                        ),
-                    TextFormat1(
+                  ),
+                  TextFormatEdit(
+                    textEdit: textEditName,
+                    size: size,
+                    title: "profile_text4".tr(),
+                    onChanged: (val) {},
+                  ),
+                  TextFormat1(
                       txtColor: colorPrimary70,
                       size: size,
-                      title: "profile_text6".tr(),
-                      data: widget.user.userID,
-                    ),
-                    TextFormatEdit(
-                      size: size,
-                      title: "profile_text7".tr(),
-                      textEdit: textEditPhone,
-                      onChanged: (val) {},
-                    ),
-                    TextFormat1(
-                      txtColor: colorPrimary70,
-                      size: size,
-                      title: "profile_text8".tr(),
-                      data: widget.user.email,
-                    ),
-                  ],
-                ),
+                      title: "profile_text5".tr(),
+                      data: widget.user.email //"Harus Diisi ",
+                      ),
+                  TextFormat1(
+                    txtColor: colorPrimary70,
+                    size: size,
+                    title: "profile_text6".tr(),
+                    data: widget.user.userID,
+                  ),
+                  TextFormatEdit(
+                    size: size,
+                    title: "profile_text7".tr(),
+                    textEdit: textEditPhone,
+                    onChanged: (val) {},
+                  ),
+                  TextFormat1(
+                    txtColor: colorPrimary70,
+                    size: size,
+                    title: "profile_text8".tr(),
+                    data: widget.user.email,
+                  ),
+                ],
               ),
             ),
-            uploading
-                ? Container(
-                    width: size.width,
-                    height: size.height,
-                    color: Colors.black38.withOpacity(0.5),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: colorPrimary70,
-                        // strokeWidth: 0,
-                        valueColor: AlwaysStoppedAnimation(colorBackground),
-                      ),
+          ),
+          uploading
+              ? Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.black38.withOpacity(0.5),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: colorPrimary70,
+                      // strokeWidth: 0,
+                      valueColor: AlwaysStoppedAnimation(colorBackground),
                     ),
-                  )
-                : Container()
-          ],
-        ),
+                  ),
+                )
+              : Container()
+        ],
       ),
     );
   }
