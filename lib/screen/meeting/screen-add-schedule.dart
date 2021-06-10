@@ -201,6 +201,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     // print("dateValidator = " + _dateStartEndValidator.toString());
     if (!_descriptionValidator && !_titleValidator && !_timeValidator) {
       // print(repeat);
+      startMeeting =
+          DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+      endMeeting =
+          DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,

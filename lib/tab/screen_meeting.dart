@@ -56,7 +56,6 @@ class _MeetingScreenState extends State<MeetingScreen>
   void selectDate(DateTime date) {
     setState(() {
       _selectedDate = date;
-      
     });
   }
 
@@ -253,7 +252,7 @@ class _MeetingScreenState extends State<MeetingScreen>
 
     return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
       if (state is MeetingStateSuccessLoad) {
-        meetings = state.meetings;
+        meetings = state.meetings; 
       } else if (state is MeetingStateFailLoad) {
         return Text("Get Data Error");
       } else if (state is MeetingStateSuccess) {
