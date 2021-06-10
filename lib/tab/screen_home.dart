@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TextEditingController textProjectOvertime = new TextEditingController();
 
   final picker = ImagePicker();
-  String statusLate = "";
+  
   String statusOvertime = "";
   String key = "clock in";
   String stringTap = "home_text1".tr();
@@ -100,14 +100,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<ScheduleModel> _scheduleAccepted = [];
   int scheduleReqLength = 0;
   List<TaskModel> _taskHighPriority = [];
-  int lengthLowPriority = 0, lengthHighPriority = 0;
+  int lengthHighPriority = 0;
   //For Disabling Button ============================//
   DateTime now = DateTime.now();
   String dialogText = "Clock In ";
   bool instruction = false;
   int isClockIn;
   int attendanceID;
-  int totalClockOut = 0;
+  
   TimeOfDay _time = TimeOfDay.now();
   Util util = Util();
 
@@ -117,12 +117,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
   var enumTap = ["home_text1".tr(), "home_text3".tr(), "home_text2".tr()];
-  //bool emptyMeeting = false;
-  //bool emptyTask = false;
+  
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
   bool isLoadingAuth = false;
-  bool stopLooping = false;
   bool changeTime = false;
 
   AnimationController _controller;
@@ -420,14 +418,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         dialogText = "Clock Out";
                       });
                       // show confirm dialog success clock out
-                      if (totalClockOut < 1) {
+                      
                         showDialog(
                                 context: context,
                                 builder: (BuildContext context) =>
                                     _buildPopupDialog(context, "_BlocListener"))
                             .then((value) => stringTap = enumTap[2]);
-                      }
-                      totalClockOut = totalClockOut + 1;
+                     
                     }
                   },
                   child: Container(),
@@ -438,16 +435,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   listener: (context, state) async {
                     if (state is CompanyStateSuccessLoad) {
                       _company = state.company;
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<TaskBloc, TaskState>(
-                  listener: (context, state) {
-                    if (state is TaskStateLowPrioritySuccessLoad) {
-                      setState(() {
-                        lengthLowPriority = state.task.length;
-                      });
                     }
                   },
                   child: Container(),
@@ -601,12 +588,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   numberColor: colorSecondaryRed,
                   fontSize: size.width <= 600 ? 34 : 36,
                 ),
-                BoxHome(
-                    loading: isLoading,
-                    title: "home_text8".tr(),
-                    total: lengthLowPriority,
-                    numberColor: colorClear,
-                    fontSize: size.width <= 600 ? 34 : 36),
+                BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+                  if (state is TaskStateLowPrioritySuccessLoad) {
+                    return BoxHome(
+                        loading: isLoading,
+                        title: "home_text8".tr(),
+                        total: state.task.length,
+                        numberColor: colorClear,
+                        fontSize: size.width <= 600 ? 34 : 36);
+                  }
+                  return BoxHome(
+                      loading: isLoading,
+                      title: "home_text8".tr(),
+                      total: 0,
+                      numberColor: colorClear,
+                      fontSize: size.width <= 600 ? 34 : 36);
+                }),
               ],
             )),
         SizedBox(
