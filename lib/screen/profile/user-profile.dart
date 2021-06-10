@@ -156,9 +156,16 @@ class _UserProfileScreen extends State<UserProfile> {
                           children: [
                             Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                child: AvatarBig(
-                                    imgUrl:
-                                        "https://api-zukses.yokesen.com/${user.imgUrl}")),
+                                child: user.imgUrl == ""
+                                    ? CircleAvatar(
+                                        backgroundColor: colorPrimary,
+                                        radius: size.width <= 569 ? 35 : 40,
+                                        child: Image.asset(
+                                            "assets/images/ava.png"),
+                                      )
+                                    : AvatarBig(
+                                        imgUrl:
+                                            "https://api-zukses.yokesen.com/${user.imgUrl}")),
                           ],
                         ),
                         SizedBox(
