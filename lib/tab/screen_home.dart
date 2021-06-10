@@ -275,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _getMeetingToday();
     _getMeetingRequest();
     getCompanyAcceptance();
+
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
 
@@ -388,9 +389,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           setState(() {
                             stringTap = enumTap[2];
                           });
-                        } else {
-                          print("Get Auth Data Error");
-                        }
+                        } else {}
                         checkStatusClock("Get Auth Data");
                       } else if (state is AuthStateSuccessTeamLoad) {
                         _controller.reverse();
@@ -439,9 +438,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   listener: (context, state) async {
                     if (state is CompanyStateSuccessLoad) {
                       _company = state.company;
-                      print("Company Model: " + _company.name);
-                    } else if (state is CompanyStateLoading) {
-                    } else {}
+                    }
                   },
                   child: Container(),
                 ),
@@ -472,335 +469,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     // FOR SKELETON LOADING
                     ? skeletonSection(size)
                     // LIMIT FOR THE REAL COMPONENT
-                    : Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              if (companyAcceptance == 1) {
-                                if (stringTap != enumTap[2]) {
-                                  if (_authModel.maxClockIn != null &&
-                                      _authModel.attendance != null) {
-                                    if (_authModel.maxClockIn == "false") {
-                                      if (_authModel.attendance == "false") {
-                                        if (instruction == true) {
-                                          pushToCamera();
-                                        } else {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CameraInstruction()),
-                                          );
-                                        }
-                                        checkStatusClock("initState");
-                                      } else if (_authModel.attendance ==
-                                          "true") {
-                                        //Clock Out
-                                        int diff = timeCalculation(
-                                            _company.endOfficeTime);
-                                        //if employee clock out before office closing time
-                                        if (diff < 0) {
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  _buildClockOutNotFinished(
-                                                      context, size));
-                                        } else {
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  _buildPopupDialog(context,
-                                                      "_buildPopUpClockOut"));
-                                        }
-                                      } else {
-                                        Util().showToast(
-                                            msg:
-                                                "Something wrong when $dialogText !",
-                                            color: colorError,
-                                            txtColor: colorBackground,
-                                            context: context,
-                                            duration: 3);
-                                        // print(_authModel.attendance);
-                                        // print("Error Data");
-                                      }
-                                    } else {
-                                      //Have A Good Day!
-                                      setState(() {
-                                        stringTap = enumTap[2];
-                                      });
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            child: Container(
-                                width: double.infinity,
-                                height: size.height * 0.40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(40),
-                                      bottomLeft: Radius.circular(40)),
-                                  color: colorPrimary,
-                                ),
-                                child: Center(
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                      TimerBuilder.periodic(
-                                          Duration(seconds: 1),
-                                          builder: (context) {
-                                        return Text(
-                                          getSystemTime(),
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              letterSpacing: 1.5,
-                                              fontSize:
-                                                  size.height < 600 ? 56 : 72,
-                                              fontWeight: FontWeight.w500),
-                                        );
-                                      }),
-                                      Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 8),
-                                          decoration: BoxDecoration(
-                                            color: colorBackground,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: companyAcceptance == 1
-                                              ? Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                        "assets/images/tap-clock-in.svg",
-                                                        width: size.height < 569
-                                                            ? 20
-                                                            : 25,
-                                                        height:
-                                                            size.height < 569
-                                                                ? 20
-                                                                : 25),
-                                                    // SizedBox(width: 10),
-                                                    Text(
-                                                      stringTap,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: colorPrimary,
-                                                          fontSize:
-                                                              size.height < 600
-                                                                  ? 14
-                                                                  : 16),
-                                                    ),
-                                                  ],
-                                                )
-                                              : Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Center(
-                                                      child: Text(
-                                                        "Welcome to Zukses!",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: colorPrimary,
-                                                            fontSize:
-                                                                size.height <
-                                                                        600
-                                                                    ? 14
-                                                                    : 16),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ))
-                                    ]))),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          //======================BlocBuilder Profile User===========================
-                          buildHeaderProfile(size),
-
-                          //====================BlocBuilder Team =================================
-                          SizedBox(height: 20),
-                          buildTeamWidget(context, size),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "home_text6".tr(),
-                                style: TextStyle(
-                                    color: colorPrimary,
-                                    letterSpacing: 0,
-                                    fontSize: size.width <= 600 ? 20 : 22,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-
-                          Container(
-                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  BoxHome(
-                                    loading: isLoading,
-                                    title: "home_text7".tr(),
-                                    total: lengthHighPriority,
-                                    numberColor: colorSecondaryRed,
-                                    fontSize: size.width <= 600 ? 34 : 36,
-                                  ),
-                                  BoxHome(
-                                      loading: isLoading,
-                                      title: "home_text8".tr(),
-                                      total: lengthLowPriority,
-                                      numberColor: colorClear,
-                                      fontSize: size.width <= 600 ? 34 : 36),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              decoration: BoxDecoration(
-                                  color: colorBackground,
-                                  boxShadow: [boxShadowStandard]),
-                              child: Column(
-                                children: [
-                                  _taskHighPriority.length < 1
-                                      ? Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 5),
-                                            child: Text(
-                                              "No High Priority Task",
-                                              style: TextStyle(
-                                                  color: colorPrimary,
-                                                  fontSize: size.height < 569
-                                                      ? 12
-                                                      : 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        )
-                                      : ListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          padding: EdgeInsets.all(1.0),
-                                          itemCount:
-                                              _taskHighPriority.length > 2
-                                                  ? 2
-                                                  : _taskHighPriority.length,
-                                          scrollDirection: Axis.vertical,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) {
-                                            return ListViewBox(
-                                              title: _taskHighPriority[index]
-                                                  .taskName,
-                                              detail: _taskHighPriority[index]
-                                                  .details,
-                                              viewType: "task",
-                                            );
-                                          },
-                                        ),
-                                  Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      child: TextButton(
-                                          style: TextButton.styleFrom(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 0, 10, 0),
-                                              primary: colorBackground),
-                                          onPressed: () {
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ScreenTab(index: 2)));
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                  "home_text7"
-                                                      .tr(args: ["Task"]),
-                                                  style: TextStyle(
-                                                      color: colorPrimary,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: colorPrimary,
-                                              )
-                                            ],
-                                          )))
-                                ],
-                              )),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "home_text10".tr(),
-                                style: TextStyle(
-                                    color: colorPrimary,
-                                    letterSpacing: 0,
-                                    fontSize: size.width <= 600 ? 20 : 22,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  BoxHome(
-                                      loading: isLoading,
-                                      title: "home_text11".tr(),
-                                      total: _scheduleAccepted.length,
-                                      numberColor: colorSecondaryRed,
-                                      fontSize: size.width <= 600 ? 34 : 36),
-                                  BoxHome(
-                                      loading: isLoading,
-                                      title: "meeting request".tr(),
-                                      total: scheduleReqLength,
-                                      numberColor: colorSecondaryYellow,
-                                      fontSize: size.width <= 600 ? 34 : 36),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 15,
-                          ),
-
-                          _listViewMeeting(_scheduleAccepted, size),
-                          SizedBox(
-                            height: 20,
-                          )
-                        ],
-                      )
+                    : realComponent(context, size)
               ],
             )),
             BlocBuilder<TeamDetailBloc, TeamDetailState>(
@@ -813,6 +482,217 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ],
         ),
       ),
+    );
+  }
+
+  Widget realComponent(BuildContext context, Size size) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            onClickWatch(size);
+          },
+          child: Container(
+              width: double.infinity,
+              height: size.height * 0.40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(40),
+                    bottomLeft: Radius.circular(40)),
+                color: colorPrimary,
+              ),
+              child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                    TimerBuilder.periodic(Duration(seconds: 1),
+                        builder: (context) {
+                      return Text(
+                        getSystemTime(),
+                        style: TextStyle(
+                            color: Colors.white,
+                            letterSpacing: 1.5,
+                            fontSize: size.height < 600 ? 56 : 72,
+                            fontWeight: FontWeight.w500),
+                      );
+                    }),
+                    Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: colorBackground,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: companyAcceptance == 1
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                      "assets/images/tap-clock-in.svg",
+                                      width: size.height < 569 ? 20 : 25,
+                                      height: size.height < 569 ? 20 : 25),
+                                  // SizedBox(width: 10),
+                                  Text(
+                                    stringTap,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: colorPrimary,
+                                        fontSize: size.height < 600 ? 14 : 16),
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      "Welcome to Zukses!",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorPrimary,
+                                          fontSize:
+                                              size.height < 600 ? 14 : 16),
+                                    ),
+                                  )
+                                ],
+                              ))
+                  ]))),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        //======================BlocBuilder Profile User===========================
+        buildHeaderProfile(size),
+
+        //====================BlocBuilder Team =================================
+        SizedBox(height: 20),
+        buildTeamWidget(context, size),
+        Padding(
+          padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "home_text6".tr(),
+              style: TextStyle(
+                  color: colorPrimary,
+                  letterSpacing: 0,
+                  fontSize: size.width <= 600 ? 20 : 22,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+
+        Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BoxHome(
+                  loading: isLoading,
+                  title: "home_text7".tr(),
+                  total: lengthHighPriority,
+                  numberColor: colorSecondaryRed,
+                  fontSize: size.width <= 600 ? 34 : 36,
+                ),
+                BoxHome(
+                    loading: isLoading,
+                    title: "home_text8".tr(),
+                    total: lengthLowPriority,
+                    numberColor: colorClear,
+                    fontSize: size.width <= 600 ? 34 : 36),
+              ],
+            )),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            decoration: BoxDecoration(
+                color: colorBackground, boxShadow: [boxShadowStandard]),
+            child: Column(
+              children: [
+                // List Builder for Task List
+                _listViewTask(size, _taskHighPriority),
+
+                Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            primary: colorBackground),
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ScreenTab(index: 2)));
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("home_text7".tr(args: ["Task"]),
+                                style: TextStyle(
+                                    color: colorPrimary,
+                                    fontWeight: FontWeight.bold)),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: colorPrimary,
+                            )
+                          ],
+                        )))
+              ],
+            )),
+        Padding(
+          padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "home_text10".tr(),
+              style: TextStyle(
+                  color: colorPrimary,
+                  letterSpacing: 0,
+                  fontSize: size.width <= 600 ? 20 : 22,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BoxHome(
+                    loading: isLoading,
+                    title: "home_text11".tr(),
+                    total: _scheduleAccepted.length,
+                    numberColor: colorSecondaryRed,
+                    fontSize: size.width <= 600 ? 34 : 36),
+                BoxHome(
+                    loading: isLoading,
+                    title: "meeting request".tr(),
+                    total: scheduleReqLength,
+                    numberColor: colorSecondaryYellow,
+                    fontSize: size.width <= 600 ? 34 : 36),
+              ],
+            )),
+        SizedBox(
+          height: 15,
+        ),
+
+        _listViewMeeting(_scheduleAccepted, size),
+        SizedBox(
+          height: 20,
+        )
+      ],
     );
   }
 
@@ -1797,52 +1677,34 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ));
   }
 
-  String getHourNow() {
-    final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat.Hm();
-    final String formatted = formatter.format(now);
-    return formatted;
-  }
-
-  String getSystemTime() {
-    var now = new DateTime.now();
-
-    return new DateFormat("HH:mm").format(now);
-  }
-
-  void sharedPrefInstruction() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      if (prefs.getBool("instruction") != null) {
-        instruction = prefs.getBool("instruction");
-        print("Instruction Closed");
-      } else {
-        print("Bool faield");
-      }
-    });
-  }
-
-  void pushToCamera() async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CameraNonInstruction()));
-  }
-
-  String formatOfficeTime(String tod) {
-    TimeOfDay timeTemp = Util().stringToTimeOfDay(tod);
-    return Util().changeTimeToString(timeTemp);
-  }
-
-  int timeCalculation(String endOfficeString) {
-    TimeOfDay now = TimeOfDay.now();
-    if (_company.endOfficeTime != null) {
-      TimeOfDay endOfficeTime = Util().stringToTimeOfDay(endOfficeString);
-      int diffHour = ((now.hour * 60) + now.minute) -
-          ((endOfficeTime.hour * 60) + endOfficeTime.minute);
-      return diffHour;
-    } else {
-      print("Error Get Data");
-      return 86400;
-    }
+  Widget _listViewTask(Size size, List<TaskModel> tasks) {
+    return _taskHighPriority.length < 1
+        ? Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: Text(
+                "No High Priority Task",
+                style: TextStyle(
+                    color: colorPrimary,
+                    fontSize: size.height < 569 ? 12 : 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          )
+        : ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.all(1.0),
+            itemCount: tasks.length > 2 ? 2 : tasks.length,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListViewBox(
+                title: tasks[index].taskName,
+                detail: tasks[index].details,
+                viewType: "task",
+              );
+            },
+          );
   }
 
   Widget scrollInvitation(
@@ -1901,5 +1763,106 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }),
       ),
     );
+  }
+
+  //---------------------Function Logic----------------------------//
+  void onClickWatch(Size size) {
+    if (companyAcceptance == 1) {
+      if (stringTap != enumTap[2]) {
+        if (_authModel.maxClockIn != null && _authModel.attendance != null) {
+          if (_authModel.maxClockIn == "false") {
+            if (_authModel.attendance == "false") {
+              if (instruction == true) {
+                pushToCamera();
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraInstruction()),
+                );
+              }
+              checkStatusClock("initState");
+            } else if (_authModel.attendance == "true") {
+              //Clock Out
+              int diff = timeCalculation(_company.endOfficeTime);
+              //if employee clock out before office closing time
+              if (diff < 0) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildClockOutNotFinished(context, size));
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context, "_buildPopUpClockOut"));
+                // confirmClockOut(size: size);
+              }
+            } else {
+              Util().showToast(
+                  msg: "Something wrong when $dialogText !",
+                  color: colorError,
+                  txtColor: colorBackground,
+                  context: context,
+                  duration: 3);
+              // print(_authModel.attendance);
+              // print("Error Data");
+            }
+          } else {
+            //Have A Good Day!
+            setState(() {
+              stringTap = enumTap[2];
+            });
+          }
+        }
+      }
+    }
+  }
+
+  String getHourNow() {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat.Hm();
+    final String formatted = formatter.format(now);
+    return formatted;
+  }
+
+  String getSystemTime() {
+    var now = new DateTime.now();
+
+    return new DateFormat("HH:mm").format(now);
+  }
+
+  void sharedPrefInstruction() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (prefs.getBool("instruction") != null) {
+        instruction = prefs.getBool("instruction");
+        print("Instruction Closed");
+      } else {
+        print("Bool faield");
+      }
+    });
+  }
+
+  void pushToCamera() async {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => CameraNonInstruction()));
+  }
+
+  String formatOfficeTime(String tod) {
+    TimeOfDay timeTemp = Util().stringToTimeOfDay(tod);
+    return Util().changeTimeToString(timeTemp);
+  }
+
+  int timeCalculation(String endOfficeString) {
+    TimeOfDay now = TimeOfDay.now();
+    if (_company.endOfficeTime != null) {
+      TimeOfDay endOfficeTime = Util().stringToTimeOfDay(endOfficeString);
+      int diffHour = ((now.hour * 60) + now.minute) -
+          ((endOfficeTime.hour * 60) + endOfficeTime.minute);
+      return diffHour;
+    } else {
+      print("Error Get Data");
+      return 86400;
+    }
   }
 }

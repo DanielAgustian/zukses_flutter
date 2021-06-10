@@ -243,5 +243,5 @@ class _TaskScreen extends State<TaskScreen> {
     });
   }
 
-  void searchTask(String word) {}
+  
 }

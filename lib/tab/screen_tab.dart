@@ -53,7 +53,6 @@ class _ScreenTab extends State<ScreenTab> {
 
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
-
     if (widget.projectId != null) {
       screenList.add(TaskScreen(
         projectId: widget.projectId,
@@ -71,26 +70,25 @@ class _ScreenTab extends State<ScreenTab> {
 
     Util util = Util();
     util.initDynamicLinks(context);
+    //Firebase Handler
+    firebaseMessagingHandler();
+  }
 
-    // Handle Click Notif from BackGround
+  void firebaseMessagingHandler() {
+    //Handle Click Notif from Background
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage message) {
       if (message != null) {
-        // print("MESSAGE ========================");
-        // print(message.data);
         notificationChecker(message);
       }
     });
-
     // handle click notif from foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
       AppleNotification ios = message.notification?.apple;
       if (notification != null && (android != null || ios != null)) {
-        // print("MASUK ==========================================++>");
-        // print(notification.body);
         flutterLocalNotificationsPlugin.initialize(
           initSetttings,
           onSelectNotification: (payload) {
@@ -140,7 +138,6 @@ class _ScreenTab extends State<ScreenTab> {
     else if (message.notification.title
         .toLowerCase()
         .contains("task assignment")) {
-          
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
