@@ -171,6 +171,7 @@ class _TaskScreen extends State<TaskScreen> {
   Widget buildListProject(Size size) {
     List<ProjectModel> projects;
     List<bool> bools;
+    
     return BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
       if (state is ProjectStateSuccessLoad) {
         projects = state.project;
