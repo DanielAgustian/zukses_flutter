@@ -137,91 +137,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   }
 
 // get calendar function
-  _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: date,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(3500),
-    );
-    if (picked != null && picked != date)
-      setState(() {
-        date = picked;
-      });
-  }
-
-  // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
-  void pickTime(BuildContext context, {int index = 1}) async {
-    showCustomTimePicker(
-        context: context,
-        // It is a must if you provide selectableTimePredicate
-        onFailValidation: (context) => print('Unavailable Selection'),
-        initialTime: index == 1
-            ? TimeOfDay(hour: time1.hour, minute: 0)
-            : TimeOfDay(hour: time2.hour, minute: 0),
-        selectableTimePredicate: (time) => time.minute % 15 == 0).then((time) {
-      if (time != null) {
-        setState(() {
-          if (index == 1)
-            time1 = time;
-          else if (index == 2) time2 = time;
-        });
-      }
-    });
-  }
-
-  void addMeeting() {
-    if (textTitle.text == "") {
-      setState(() {
-        _titleValidator = true;
-      });
-    } else {
-      setState(() {
-        _titleValidator = false;
-      });
-    }
-    if (textDescription.text == "") {
-      setState(() {
-        _descriptionValidator = true;
-      });
-    } else {
-      setState(() {
-        _descriptionValidator = false;
-      });
-    }
-
-    int pembanding =
-        (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
-    if (pembanding < 0) {
-      setState(() {
-        _timeValidator = true;
-      });
-    } else {
-      setState(() {
-        _timeValidator = false;
-      });
-    }
-
-    // print("dateValidator = " + _dateStartEndValidator.toString());
-    if (!_descriptionValidator && !_titleValidator && !_timeValidator) {
-      // print(repeat);
-      startMeeting =
-          DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
-      endMeeting =
-          DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
-      ScheduleModel meeting = ScheduleModel(
-          title: textTitle.text,
-          description: textDescription.text,
-          date: startMeeting,
-          meetingEndTime: endMeeting,
-          repeat: repeat.toLowerCase(),
-          userID: choosedUser);
-
-      // call event to add meeting
-      BlocProvider.of<MeetingBloc>(context)
-          .add(AddMeetingEvent(model: meeting));
-    }
-  }
 
   @override
   void initState() {
@@ -772,5 +687,96 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         },
       ),
     );
+  }
+
+  //-----------------------------Logic-----------------------------/
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(3500),
+    );
+    if (picked != null && picked != date)
+      setState(() {
+        date = picked;
+      });
+  }
+
+  // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
+  void pickTime(BuildContext context, {int index = 1}) async {
+    showCustomTimePicker(
+        context: context,
+        // It is a must if you provide selectableTimePredicate
+        onFailValidation: (context) => print('Unavailable Selection'),
+        initialTime: index == 1
+            ? TimeOfDay(hour: time1.hour, minute: 0)
+            : TimeOfDay(hour: time2.hour, minute: 0),
+        selectableTimePredicate: (time) => time.minute % 15 == 0).then((time) {
+      if (time != null) {
+        if (index == 1)
+          setState(() {
+            time1 = time;
+          });
+        else if (index == 2)
+          setState(() {
+            time2 = time;
+          });
+      }
+    });
+  }
+
+  void addMeeting() {
+    if (textTitle.text == "") {
+      setState(() {
+        _titleValidator = true;
+      });
+    } else {
+      setState(() {
+        _titleValidator = false;
+      });
+    }
+    if (textDescription.text == "") {
+      setState(() {
+        _descriptionValidator = true;
+      });
+    } else {
+      setState(() {
+        _descriptionValidator = false;
+      });
+    }
+
+    int pembanding =
+        (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
+    if (pembanding < 0) {
+      setState(() {
+        _timeValidator = true;
+      });
+    } else {
+      setState(() {
+        _timeValidator = false;
+      });
+    }
+
+    // print("dateValidator = " + _dateStartEndValidator.toString());
+    if (!_descriptionValidator && !_titleValidator && !_timeValidator) {
+      // print(repeat);
+      String temp = repeat.replaceAll(" ", "");
+      startMeeting =
+          DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+      endMeeting =
+          DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+      ScheduleModel meeting = ScheduleModel(
+          title: textTitle.text,
+          description: textDescription.text,
+          date: startMeeting,
+          meetingEndTime: endMeeting,
+          repeat: temp.toLowerCase(),
+          userID: choosedUser);
+
+      // call event to add meeting
+      BlocProvider.of<MeetingBloc>(context)
+          .add(AddMeetingEvent(model: meeting));
+    }
   }
 }

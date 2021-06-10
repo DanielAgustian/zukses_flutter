@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:time_picker_widget/time_picker_widget.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -75,13 +76,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   //INIT Employee BLOC
   EmployeeBloc _employeeBloc;
 
-  // Search Function
-  void searchFunction(String q) {
-    setState(() {
-      searchQuery = q;
-    });
-  }
-
   // Handle if user click back using button in device not in app (usually for android)
   Future<bool> _onWillPop({size}) async {
     return (await showDialog(
@@ -139,100 +133,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         false;
   }
 
-// get calendar function
-  _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: date,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(3500),
-    );
-    if (picked != null && picked != date)
-      setState(() {
-        date = picked;
-      });
-  }
-
-  // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
-  void pickTime(BuildContext context, {int index = 1}) async {
-    TimeOfDay picked = await showTimePicker(
-      context: context,
-      initialTime: time1,
-    );
-    try {
-      if (picked.minute == 60) {
-        picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
-      }
-    } catch (error) {
-      print(error);
-    }
-
-    if (picked != null) {
-      setState(() {
-        if (index == 1) {
-          time1 = picked;
-          print("${time1.hour}.${time1.minute}");
-          //time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
-        } else {
-          time2 = picked;
-        }
-      });
-    }
-  }
-
-  void addMeeting() {
-    startMeeting =
-        DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
-    endMeeting =
-        DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
-    if (textTitle.text == "") {
-      setState(() {
-        _titleValidator = true;
-      });
-    } else {
-      setState(() {
-        _titleValidator = false;
-      });
-    }
-    if (textDescription.text == "") {
-      setState(() {
-        _descriptionValidator = true;
-      });
-    } else {
-      setState(() {
-        _descriptionValidator = false;
-      });
-    }
-    int pembanding =
-        (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
-    if (pembanding < 0) {
-      setState(() {
-        _timeValidator = true;
-      });
-    } else {
-      setState(() {
-        _timeValidator = false;
-      });
-    }
-    if (!_descriptionValidator &&
-        !_titleValidator &&
-        startMeeting != null &&
-        endMeeting != null &&
-        !_timeValidator) {
-      ScheduleModel meeting = ScheduleModel(
-          title: textTitle.text.titleCase,
-          description: textDescription.text,
-          date: startMeeting,
-          meetingEndTime: endMeeting,
-          repeat: repeat.toLowerCase(),
-          userID: choosedUser);
-
-      // call event to add meeting
-      BlocProvider.of<MeetingBloc>(context).add(UpdateMeetingEvent(
-          model: meeting, meetingID: widget.model.meetingID));
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -247,7 +147,17 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
       textTitle.text = widget.model.title;
       textDescription.text = widget.model.description;
       date = widget.model.date;
-      repeat = widget.model.repeat.titleCase;
+      String repeatAPI = widget.model.repeat;
+      if (repeatAPI == "everytwoweeks") {
+        repeat = items[3];
+      } else if (repeatAPI == "everyyear") {
+        repeat = items[4];
+      } else if (repeatAPI == "") {
+        repeat = items[0];
+      } else {
+        repeat = repeatAPI.titleCase;
+      }
+
       time1 = TimeOfDay(
           hour: widget.model.date.hour, minute: widget.model.date.minute);
       time2 = TimeOfDay(
@@ -266,22 +176,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         : time1.hour;
 
     time2 = TimeOfDay(hour: h, minute: m);*/
-  }
-
-  _loadAllAsyncMethod() async {
-    await _getMyID();
-  }
-
-  _getMyID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    myId = prefs.getString("myID");
-    print("myId: " + myId);
-    widget.model.members.forEach((element) {
-      if (element.userIDSchedule != myId) {
-        choosedUser.add(element.userIDSchedule);
-      }
-      print(element.userIDSchedule + ";" + myId);
-    });
   }
 
   @override
@@ -307,8 +201,8 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print("Widget.model.members" +
-                widget.model.members[1].userIDSchedule);
+            print("Repeat : " + repeat);
+            print("Repeat List:" + items.toString());
           },
         ),
         appBar: AppBar(
@@ -486,13 +380,50 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
 
                             InkWell(
                               onTap: () {
-                                pickTime(this.context, index: 2);
-                                pickTime(this.context);
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+                                pickTime(this.context, index: 1);
+                                //pickTime(this.context);
                               },
-                              child: AddScheduleRow(
-                                fontSize: size.height <= 569 ? 14 : 16,
-                                title: "time_text".tr(),
-                                textItem: "$h1.$m1 - $h2.$m2",
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: colorBackground,
+                                    border: Border.all(
+                                        color: _timeValidator
+                                            ? colorError
+                                            : colorBackground)),
+                                child: AddScheduleRow(
+                                  fontSize: size.height <= 569 ? 14 : 16,
+                                  title: "start_time_text".tr(),
+                                  textItem: "$h1.$m1",
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+                                //pickTime(this.context, index: 2);
+                                pickTime(this.context, index: 2);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: colorBackground,
+                                    border: Border.all(
+                                        color: _timeValidator
+                                            ? colorError
+                                            : colorBackground)),
+                                child: AddScheduleRow(
+                                  fontSize: size.height <= 569 ? 14 : 16,
+                                  title: "end_time_text".tr(),
+                                  textItem: "$h2.$m2",
+                                ),
                               ),
                             ),
                             AddScheduleRow2(
@@ -862,5 +793,121 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         ],
       ),
     );
+  }
+  //--------------------------Logic-----------------------------//
+
+  // get calendar function
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(3500),
+    );
+    if (picked != null && picked != date)
+      setState(() {
+        date = picked;
+      });
+  }
+
+  // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
+  void pickTime(BuildContext context, {int index = 1}) async {
+    showCustomTimePicker(
+        context: context,
+        // It is a must if you provide selectableTimePredicate
+        onFailValidation: (context) => print('Unavailable Selection'),
+        initialTime: index == 1
+            ? TimeOfDay(hour: time1.hour, minute: time1.minute)
+            : TimeOfDay(hour: time2.hour, minute: time2.minute),
+        selectableTimePredicate: (time) => time.minute % 15 == 0).then((time) {
+      if (time != null) {
+        if (index == 1)
+          setState(() {
+            time1 = time;
+          });
+        else if (index == 2)
+          setState(() {
+            time2 = time;
+          });
+      }
+    });
+  }
+
+  void addMeeting() {
+    startMeeting =
+        DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+    endMeeting =
+        DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+
+    if (textTitle.text == "") {
+      setState(() {
+        _titleValidator = true;
+      });
+    } else {
+      setState(() {
+        _titleValidator = false;
+      });
+    }
+    if (textDescription.text == "") {
+      setState(() {
+        _descriptionValidator = true;
+      });
+    } else {
+      setState(() {
+        _descriptionValidator = false;
+      });
+    }
+    int pembanding =
+        (time2.hour * 60 + time2.minute) - (time1.hour * 60 + time1.minute);
+    if (pembanding < 0) {
+      setState(() {
+        _timeValidator = true;
+      });
+    } else {
+      setState(() {
+        _timeValidator = false;
+      });
+    }
+    if (!_descriptionValidator &&
+        !_titleValidator &&
+        startMeeting != null &&
+        endMeeting != null &&
+        !_timeValidator) {
+      String temp = repeat.replaceAll(" ", "");
+      ScheduleModel meeting = ScheduleModel(
+          title: textTitle.text.titleCase,
+          description: textDescription.text,
+          date: startMeeting,
+          meetingEndTime: endMeeting,
+          repeat: temp.toLowerCase(),
+          userID: choosedUser);
+
+      // call event to add meeting
+      BlocProvider.of<MeetingBloc>(context).add(UpdateMeetingEvent(
+          model: meeting, meetingID: widget.model.meetingID));
+    }
+  }
+
+  // Search Function
+  void searchFunction(String q) {
+    setState(() {
+      searchQuery = q;
+    });
+  }
+
+  _loadAllAsyncMethod() async {
+    await _getMyID();
+  }
+
+  _getMyID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    myId = prefs.getString("myID");
+    print("myId: " + myId);
+    widget.model.members.forEach((element) {
+      if (element.userIDSchedule != myId) {
+        choosedUser.add(element.userIDSchedule);
+      }
+      print(element.userIDSchedule + ";" + myId);
+    });
   }
 }

@@ -24,10 +24,7 @@ import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart'; 
 import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
 import 'package:zukses_app_1/bloc/task-priority/task-priority-event.dart';
 import 'package:zukses_app_1/bloc/task-priority/task-priority-state.dart';
@@ -92,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TextEditingController textProjectOvertime = new TextEditingController();
 
   final picker = ImagePicker();
-  String statusLate = "";
+
   String statusOvertime = "";
   String key = "clock in";
   String stringTap = "home_text1".tr();
@@ -102,14 +99,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<ScheduleModel> _scheduleAccepted = [];
   int scheduleReqLength = 0;
   List<TaskModel> _taskHighPriority = [];
-  int lengthLowPriority = 0, lengthHighPriority = 0;
+  int lengthHighPriority = 0;
   //For Disabling Button ============================//
   DateTime now = DateTime.now();
   String dialogText = "Clock In ";
   bool instruction = false;
-  int isClockIn;
-  int attendanceID;
-  int totalClockOut = 0;
+
   TimeOfDay _time = TimeOfDay.now();
   Util util = Util();
 
@@ -119,12 +114,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   var meetName = ["Meeting 1", "Meeting 2"];
   var meetTime = ["14:00-15:00", "19:00-20:00"];
   var enumTap = ["home_text1".tr(), "home_text3".tr(), "home_text2".tr()];
-  //bool emptyMeeting = false;
-  //bool emptyTask = false;
+
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
   bool isLoadingAuth = false;
-  bool stopLooping = false;
   bool changeTime = false;
 
   AnimationController _controller;
@@ -136,132 +129,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String tokenFCM = "";
   String companyID = "";
   int companyAcceptance = 0;
-
-  void checkStatusClock(String where) async {
-    if (where == "initState") {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var googleSign = prefs.getInt('google');
-      var facebookSign = prefs.getInt('facebook');
-      // print("Allow Google Sign " + googleSign.toString());
-      if (googleSign != null) {
-        getAuthGoogle();
-      } else if (facebookSign != null) {
-        getAuthFacebook();
-      } else {
-        getAuthData();
-      }
-    }
-    if (isLoadingAuth) {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  void confirmClockOut({Size size}) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            _buildPopupClockOut(context, size: size));
-  }
-
-  void clockOut() async {
-    BlocProvider.of<AttendanceBloc>(context).add(AttendanceClockOut());
-  }
-
-  void getUserProfile() async {
-    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
-  }
-
-  void getMember() async {
-    BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
-  }
-
-  void getAuthData() async {
-    // await _getTokenFCM();
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString("userLogin");
-    String password = prefs.getString("passLogin");
-    // print("username " + username);
-    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
-        email: username, password: password, tokenFCM: tokenFCM));
-  }
-
-  void getAuthGoogle() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String data = prefs.getString('google_data');
-    GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
-    // print("Email from Google = " + model.email);
-    BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthEventDetectGoogleSignIn(
-            email: model.email,
-            name: model.name,
-            image: model.image,
-            tokenGoogle: model.token,
-            tokenFCM: tokenFCM));
-  }
-
-  void getAuthFacebook() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String data = prefs.getString('facebook_data');
-
-    String tokenFacebook = prefs.getString('facebook_token');
-    FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
-
-    // print("Email from facebook = " + model.email);
-    BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthEventDetectGoogleSignIn(
-            email: model.email,
-            name: model.name,
-            image: model.url,
-            tokenGoogle: tokenFacebook,
-            tokenFCM: tokenFCM));
-  }
-
-  void loginTeam() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString("userLogin");
-    String password = prefs.getString("passLogin");
-    String link = await util.createDynamicLink2(
-        short: false, link: widget.link.toString());
-    BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthEventLoginTeam(email: username, password: password, link: link));
-  }
-
-  void getCompanyProfile() async {
-    BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetProfile());
-  }
-
-  void _getMeetingToday() async {
-    BlocProvider.of<MeetingBloc>(context)
-        .add(GetAcceptedMeetingEvent(month: now.year, year: now.year));
-  }
-
-  void _getMeetingRequest() async {
-    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
-  }
-
-  void _getTeamDetail(String id) async {
-    BlocProvider.of<TeamDetailBloc>(context).add(LoadAllTeamDetailEvent("12"));
-  }
-
-  void _getTaskLowPriority() async {
-    BlocProvider.of<TaskBloc>(context).add(LoadLowPriorityTaskEvent("low"));
-  }
-
-  void _getTaskHighPriority() async {
-    BlocProvider.of<TaskPriorityBloc>(context)
-        .add(LoadHighPriorityEvent("high"));
-  }
-
-  void _getTokenFCM() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      tokenFCM = prefs.getString('fcmToken');
-    });
-    // print("TOKEN FCM =>>>>>>>>>>>>>>>>>>> $tokenFCM");
-  }
 
   @override
   void initState() {
@@ -277,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     _getMeetingToday();
     _getMeetingRequest();
-    getCompanyAcceptance();
 
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
@@ -286,20 +152,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       teamId = widget.link.queryParameters['teamId'];
       _controller.forward();
       _getTeamDetail(teamId);
-    }
-  }
-
-  getCompanyAcceptance() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      companyAcceptance = prefs.getInt("in-company");
-      companyID = prefs.getString("company_id");
-    });
-    if (companyID != "" && companyAcceptance == 0) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => WaitRegisApproved()),
-          (route) => false);
     }
   }
 
@@ -377,7 +229,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           isLoadingAuth = true;
                           // handle to get company acceptance after register
                           companyAcceptance = _authModel.user.companyAcceptance;
+                          companyID = _authModel.user.companyID;
                         });
+
+                        //This function is for employee not yet accepted.
+                        pushToWaitRegis();
 
                         if (_authModel.maxClockIn == "false") {
                           //if they arent clockout today
@@ -392,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           setState(() {
                             stringTap = enumTap[2];
                           });
-                        } else {}
+                        }
                         checkStatusClock("Get Auth Data");
                       } else if (state is AuthStateSuccessTeamLoad) {
                         _controller.reverse();
@@ -417,40 +273,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       print("clock out");
                       //if they already clock out
                       setState(() {
-                        isClockIn = 2;
-                        attendanceID = state.attendanceID;
                         stringTap = enumTap[2];
                         dialogText = "Clock Out";
                       });
                       // show confirm dialog success clock out
-                      if (totalClockOut < 1) {
-                        showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    _buildPopupDialog(context, "_BlocListener"))
-                            .then((value) => stringTap = enumTap[2]);
-                      }
-                      totalClockOut = totalClockOut + 1;
+
+                      showDialog(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  _buildPopupDialog(context, "_BlocListener"))
+                          .then((value) => stringTap = enumTap[2]);
                     }
                   },
                   child: Container(),
-
-                  ///
                 ),
                 BlocListener<CompanyBloc, CompanyState>(
                   listener: (context, state) async {
                     if (state is CompanyStateSuccessLoad) {
                       _company = state.company;
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<TaskBloc, TaskState>(
-                  listener: (context, state) {
-                    if (state is TaskStateLowPrioritySuccessLoad) {
-                      setState(() {
-                        lengthLowPriority = state.task.length;
-                      });
                     }
                   },
                   child: Container(),
@@ -604,12 +444,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   numberColor: colorSecondaryRed,
                   fontSize: size.width <= 600 ? 34 : 36,
                 ),
-                BoxHome(
-                    loading: isLoading,
-                    title: "home_text8".tr(),
-                    total: lengthLowPriority,
-                    numberColor: colorClear,
-                    fontSize: size.width <= 600 ? 34 : 36),
+                BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+                  if (state is TaskStateLowPrioritySuccessLoad) {
+                    return BoxHome(
+                        loading: isLoading,
+                        title: "home_text8".tr(),
+                        total: state.task.length,
+                        numberColor: colorClear,
+                        fontSize: size.width <= 600 ? 34 : 36);
+                  }
+                  return BoxHome(
+                      loading: isLoading,
+                      title: "home_text8".tr(),
+                      total: 0,
+                      numberColor: colorClear,
+                      fontSize: size.width <= 600 ? 34 : 36);
+                }),
               ],
             )),
         SizedBox(
@@ -1284,7 +1134,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     ));
   }
 
-//Pop Up Dialog for Clock in and Out Confirmation
+//Widget untuk Popup Dialog.
   Widget _buildPopupDialog(BuildContext context, String where) {
     return new CupertinoAlertDialog(
       title: new Text(
@@ -1296,11 +1146,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: Text("OK"),
             onPressed: () {
               Navigator.pop(context);
-              // if (dialogText == "Clock Out") {
-              //disposeSF();
+
               setState(() {
-                //dialogText = "Clock In";
-                isClockIn = 2;
                 stringTap = enumTap[2];
               });
               String timeClockOut = getSystemTime();
@@ -1311,259 +1158,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // Clock Out Step 1========================================
-  BuildContext buildContext1, buildContext2;
-  Widget _buildPopupClockOut(BuildContext context, {size}) {
-    // print("dialog clock out");
-    buildContext1 = context;
-    return new AlertDialog(
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            "home_text13".tr(),
-            style: TextStyle(
-                color: colorPrimary, fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: LongButton(
-              size: size,
-              bgColor: colorPrimary,
-              textColor: colorBackground,
-              title: "home_text14".tr(),
-              onClick: () {
-                //timeCalculation(1);
-                Navigator.pop(context);
-                clockOut();
-                if (statusOvertime != "No") {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupOvertime(context, size: size));
-                } else {
-                  setState(() {
-                    dialogText = "Clock Out";
-                  });
-
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupDialog(context, "_buildPopUpClockOut"));
-                }
-              },
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: LongButton(
-              size: size,
-              bgColor: colorBackground,
-              textColor: colorPrimary,
-              title: "No, I Clocked  Out On Time",
-              onClick: () {
-                dialogText = "Clock Out";
-                Navigator.pop(context);
-                clockOut();
-              },
-            ),
-          ),
-        ],
-      ),
-      actions: <Widget>[],
-    );
-  }
-
-  //POPUP OVERTIME FORM
-  Widget _buildPopupOvertime(BuildContext context, {size}) {
-    buildContext2 = context;
-    String timeOvertime = getSystemTime();
-    return AlertDialog(
-      content: StatefulBuilder(// You need this, notice the parameters below:
-          builder: (BuildContext context, StateSetter setState) {
-        return SingleChildScrollView(
-          child: new Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "home_text15".tr(),
-                style: TextStyle(
-                    color: colorPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              ),
-              SizedBox(height: 20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: colorPrimary, width: 2)),
-                      child: Text(formatOfficeTime(_company.endOfficeTime),
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: colorPrimary,
-                              letterSpacing: 1))),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: FaIcon(
-                        Icons.arrow_forward,
-                        color: colorPrimary,
-                      )),
-                  InkWell(
-                    onTap: () async {
-                      TimeOfDay newTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        builder: (BuildContext context, Widget child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(context)
-                                .copyWith(alwaysUse24HourFormat: true),
-                            child: child,
-                          );
-                        },
-                      );
-                      if (newTime != null) {
-                        setState(() {
-                          _time = newTime;
-                          String data = _time.format(context);
-                          DateTime date = DateFormat.jm().parse(data);
-                          setState(() => timeOvertime =
-                              DateFormat("HH:mm:ss").format(date));
-
-                          print("Time Overtime:" + timeOvertime);
-                        });
-                      }
-                      setState(() {
-                        changeTime = true;
-                      });
-                    },
-                    child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border:
-                                Border.all(color: colorSecondaryRed, width: 2)),
-                        child: Text(
-                            changeTime
-                                ? formatOfficeTime(timeOvertime)
-                                : timeOvertime,
-                            style: TextStyle(
-                                letterSpacing: 1,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: colorSecondaryRed))),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: colorBackground, boxShadow: [boxShadowStandard]),
-                width: double.infinity,
-                child: TextFormField(
-                  controller: textProjectOvertime,
-                  keyboardType: TextInputType.text,
-                  decoration: new InputDecoration(
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                      hintText: 'home_text16'.tr(),
-                      hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: colorBackground, boxShadow: [boxShadowStandard]),
-                width: double.infinity,
-                child: TextFormField(
-                  controller: textReasonOvertime,
-                  keyboardType: TextInputType.multiline,
-                  minLines: 6,
-                  maxLines: 6,
-                  decoration: new InputDecoration(
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.all(5),
-                      hintText: 'home_text17'.tr(),
-                      hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
-                ),
-              ),
-              SizedBox(height: 10),
-              LongButton(
-                size: size,
-                bgColor: colorPrimary,
-                textColor: colorBackground,
-                title: "home_text14".tr(),
-                onClick: () {
-                  if (textProjectOvertime.text != "" &&
-                      textReasonOvertime.text != "") {
-                    //timeCalculation(1);
-                    setState(() {
-                      dialogText = "Clock Out";
-                    });
-
-                    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
-                        date: DateTime.now(),
-                        startTime: "18:00:00",
-                        endTime: timeOvertime,
-                        project: textProjectOvertime.text,
-                        reason: textReasonOvertime.text));
-
-                    Navigator.pop(context);
-                  } else {
-                    Util().showToast(
-                        context: context,
-                        duration: 3,
-                        msg: "Project and Reason for Overtime can't be empty",
-                        color: colorSecondaryRed);
-                  }
-                },
-              ),
-              BlocListener<OvertimeBloc, OvertimeState>(
-                listener: (context, state) async {
-                  if (state is OvertimeStateSuccess) {
-                    Util().showToast(
-                        context: this.context,
-                        msg: "Overtime Created !",
-                        color: Colors.blueAccent,
-                        txtColor: colorBackground);
-                  } else if (state is OvertimeStateLoading) {
-                  } else {
-                    Util().showToast(
-                        context: this.context,
-                        msg: "Overtime Failed !",
-                        color: colorError,
-                        txtColor: colorBackground);
-                  }
-                },
-                child: Container(),
-              )
-            ],
-          ),
-        );
-      }),
-      actions: <Widget>[],
-    );
-  }
-
+  //Widget untuk clock out sebelum waktunya.
   Widget _buildClockOutNotFinished(BuildContext context, Size size) {
     return new CupertinoAlertDialog(
       title: new Text(
@@ -1597,30 +1192,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Column(
           children: [
             data.length > 0
-                ? data.length > 1
-                    ? ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.all(1.0),
-                        itemCount: taskName.length,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListViewBox(
-                            title: data[index].title,
-                            detail: util.hourFormat(data[index].date) +
-                                " - " +
-                                util.hourFormat(data[index].meetingEndTime),
-                            viewType: "meeting",
-                          );
-                        },
-                      )
-                    : ListViewBox(
-                        title: data[0].title,
-                        detail: util.hourFormat(data[0].date) +
+                ? ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(1.0),
+                    itemCount: taskName.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListViewBox(
+                        title: data[index].title,
+                        detail: util.hourFormat(data[index].date) +
                             " - " +
-                            util.hourFormat(data[0].meetingEndTime),
+                            util.hourFormat(data[index].meetingEndTime),
                         viewType: "meeting",
-                      )
+                      );
+                    },
+                  )
                 : Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Container(
@@ -1756,53 +1343,163 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  //---------------------Get Bloc Function-------------------------------//
+  void checkStatusClock(String where) async {
+    if (where == "initState") {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var googleSign = prefs.getInt('google');
+      var facebookSign = prefs.getInt('facebook');
+      // print("Allow Google Sign " + googleSign.toString());
+      if (googleSign != null) {
+        getAuthGoogle();
+      } else if (facebookSign != null) {
+        getAuthFacebook();
+      } else {
+        getAuthData();
+      }
+    }
+    if (isLoadingAuth) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void clockOut() async {
+    BlocProvider.of<AttendanceBloc>(context).add(AttendanceClockOut());
+  }
+
+  void getUserProfile() async {
+    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
+  }
+
+  void getMember() async {
+    BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
+  }
+
+  void getAuthData() async {
+    // await _getTokenFCM();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString("userLogin");
+    String password = prefs.getString("passLogin");
+    // print("username " + username);
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
+        email: username, password: password, tokenFCM: tokenFCM));
+  }
+
+  void getAuthGoogle() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('google_data');
+    GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
+    // print("Email from Google = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.image,
+            tokenGoogle: model.token,
+            tokenFCM: tokenFCM));
+  }
+
+  void getAuthFacebook() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('facebook_data');
+
+    String tokenFacebook = prefs.getString('facebook_token');
+    FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
+
+    // print("Email from facebook = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.url,
+            tokenGoogle: tokenFacebook,
+            tokenFCM: tokenFCM));
+  }
+
+  void loginTeam() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString("userLogin");
+    String password = prefs.getString("passLogin");
+    String link = await util.createDynamicLink2(
+        short: false, link: widget.link.toString());
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventLoginTeam(email: username, password: password, link: link));
+  }
+
+  void getCompanyProfile() async {
+    BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetProfile());
+  }
+
+  void _getMeetingToday() async {
+    BlocProvider.of<MeetingBloc>(context).add(GetAcceptedMeetingEvent());
+  }
+
+  void _getMeetingRequest() async {
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
+  }
+
+  void _getTeamDetail(String id) async {
+    BlocProvider.of<TeamDetailBloc>(context).add(LoadAllTeamDetailEvent("12"));
+  }
+
+  void _getTaskLowPriority() async {
+    BlocProvider.of<TaskBloc>(context).add(LoadLowPriorityTaskEvent("low"));
+  }
+
+  void _getTaskHighPriority() async {
+    BlocProvider.of<TaskPriorityBloc>(context)
+        .add(LoadHighPriorityEvent("high"));
+  }
+
+  void _getTokenFCM() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      tokenFCM = prefs.getString('fcmToken');
+    });
+  }
+
+  pushToWaitRegis() async {
+    if (companyID != "" && companyAcceptance == 0) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => WaitRegisApproved()),
+          (route) => false);
+    }
+  }
+
   //---------------------Function Logic----------------------------//
   void onClickWatch(Size size) {
     if (companyAcceptance == 1) {
-      if (stringTap != enumTap[2]) {
-        if (_authModel.maxClockIn != null && _authModel.attendance != null) {
-          if (_authModel.maxClockIn == "false") {
-            if (_authModel.attendance == "false") {
-              if (instruction == true) {
-                pushToCamera();
-              } else {
-                Navigator.push(
+      if (_authModel.maxClockIn != null && _authModel.attendance != null) {
+        if (_authModel.maxClockIn == "false") {
+          if (_authModel.attendance == "false") {
+            if (instruction == true) {
+              Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CameraInstruction()),
-                );
-              }
-              checkStatusClock("initState");
-            } else if (_authModel.attendance == "true") {
-              //Clock Out
-              int diff = timeCalculation(_company.endOfficeTime);
-              //if employee clock out before office closing time
-              if (diff < 0) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildClockOutNotFinished(context, size));
-              } else {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupDialog(context, "_buildPopUpClockOut"));
-                // confirmClockOut(size: size);
-              }
+                  MaterialPageRoute(
+                      builder: (context) => CameraNonInstruction()));
             } else {
-              Util().showToast(
-                  msg: "Something wrong when $dialogText !",
-                  color: colorError,
-                  txtColor: colorBackground,
-                  context: context,
-                  duration: 3);
-              // print(_authModel.attendance);
-              // print("Error Data");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CameraInstruction()),
+              );
             }
-          } else {
-            //Have A Good Day!
-            setState(() {
-              stringTap = enumTap[2];
-            });
+            checkStatusClock("initState");
+          } else if (_authModel.attendance == "true") {
+            //Clock Out
+            int diff = timeCalculation(_company.endOfficeTime);
+            //if employee clock out before office closing time
+            if (diff < 0) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      _buildClockOutNotFinished(context, size));
+            } else {
+              clockOut();
+            }
           }
         }
       }
@@ -1818,7 +1515,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   String getSystemTime() {
     var now = new DateTime.now();
-
     return new DateFormat("HH:mm").format(now);
   }
 
@@ -1834,11 +1530,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
-  void pushToCamera() async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CameraNonInstruction()));
-  }
-
   String formatOfficeTime(String tod) {
     TimeOfDay timeTemp = Util().stringToTimeOfDay(tod);
     return Util().changeTimeToString(timeTemp);
@@ -1846,13 +1537,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   int timeCalculation(String endOfficeString) {
     TimeOfDay now = TimeOfDay.now();
-    if (_company.endOfficeTime != null) {
+    if (endOfficeString != null) {
       TimeOfDay endOfficeTime = Util().stringToTimeOfDay(endOfficeString);
       int diffHour = ((now.hour * 60) + now.minute) -
           ((endOfficeTime.hour * 60) + endOfficeTime.minute);
       return diffHour;
     } else {
-      print("Error Get Data");
       return 86400;
     }
   }

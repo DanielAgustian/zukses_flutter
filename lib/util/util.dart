@@ -211,6 +211,8 @@ class Util {
       print(deepLink);
       if (deepLink != null) {
         print("OnLink Data:");
+
+        // Jika dynamic link yang dipakai untuk forgot password
         if (deepLink.path.toLowerCase().contains("/forgotpassword")) {
           String token = deepLink.queryParameters['token'];
           print("Onlink token" + token);
@@ -220,8 +222,11 @@ class Util {
                   builder: (context) => ResetPassword(
                         token: token,
                       )));
-        } else if (deepLink.path.toLowerCase().contains("/registerteam")) {
-          print("register");
+        }
+        // Jika dynamic link yang dipakai untuk forgot password 
+        else if (deepLink.path.toLowerCase().contains("/registerteam")) {
+
+          
           if (deepLink.queryParameters['token'] != null) {
             //if he has account
             String token = deepLink.queryParameters['token'];
