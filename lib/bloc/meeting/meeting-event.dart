@@ -61,10 +61,11 @@ class GetUnresponseMeetingEvent extends MeetingEvent {
 
 class GetAcceptedMeetingEvent extends MeetingEvent {
   final List<ScheduleModel> meeting;
-  GetAcceptedMeetingEvent({this.meeting});
+  final int month, year;
+  GetAcceptedMeetingEvent({this.month, this.year, this.meeting});
 
   @override
-  List<Object> get props => [meeting];
+  List<Object> get props => [meeting, month, year];
 }
 
 class GetRejectedMeetingEvent extends MeetingEvent {

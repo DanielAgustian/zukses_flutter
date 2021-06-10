@@ -137,7 +137,8 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
   Stream<MeetingState> mapLoadAcceptedMeeting(
       GetAcceptedMeetingEvent event) async* {
     yield MeetingStateLoading();
-    var res = await _meetingServicesHTTP.fetchAcceptedScheduleData();
+    var res = await _meetingServicesHTTP.fetchAcceptedScheduleData(
+        month: event.month, year: event.year);
 
     if (res != null) {
       yield MeetingStateSuccessLoad(meetings: res);
@@ -170,6 +171,7 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       yield* mapUpdateMeeting(event);
     }
   }
+
   @override
   Future<void> close() {
     _subscription?.cancel();
