@@ -57,7 +57,7 @@ dependencies:
   google_sign_in:
   flutter_facebook_login:
   flutter_local_notifications:
-
+  time_picker_widget:
 
 dev_dependencies:
   flutter_test:

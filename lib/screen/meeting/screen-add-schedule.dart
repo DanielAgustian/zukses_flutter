@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:time_picker_widget/time_picker_widget.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -149,33 +150,20 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
 
   // pick time function (MUST PICKED. NOT PICKING MAKE IT CANT BE ADDED)
   void pickTime(BuildContext context, {int index = 1}) async {
-    TimeOfDay picked = await showTimePicker(
-      context: context,
-      initialTime: index == 1 ? time1 : time2,
-    );
-    try {
-      if (picked.minute == 60) {
-        picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
+    showCustomTimePicker(
+        context: context,
+        // It is a must if you provide selectableTimePredicate
+        onFailValidation: (context) => print('Unavailable Selection'),
+        initialTime: index == 1
+            ? TimeOfDay(hour: time1.hour, minute: 0)
+            : TimeOfDay(hour: time2.hour, minute: 0),
+        selectableTimePredicate: (time) => time.minute % 15 == 0).then((time) {
+      if (time != null) {
+        if (index == 1)
+          time1 = time;
+        else if (index == 2) time2 = time;
       }
-    } catch (error) {
-      // print(error);
-    }
-
-    if (picked != null) {
-      setState(() {
-        if (index == 1) {
-          time1 = picked;
-          time2 = TimeOfDay(hour: time1.hour, minute: time1.minute + 30);
-        } else {
-          time2 = picked;
-        }
-
-        startMeeting =
-            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
-        endMeeting =
-            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
-      });
-    }
+    });
   }
 
   void addMeeting() {
@@ -209,20 +197,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         _timeValidator = false;
       });
     }
-    if (startMeeting != null && endMeeting != null) {
-      setState(() {
-        _dateStartEndValidator = false;
-      });
-    } else {
-      setState(() {
-        _dateStartEndValidator = true;
-      });
-    }
+
     // print("dateValidator = " + _dateStartEndValidator.toString());
-    if (startMeeting != null) if (!_descriptionValidator &&
-        !_titleValidator &&
-        !_dateStartEndValidator &&
-        !_timeValidator) {
+    if (!_descriptionValidator && !_titleValidator && !_timeValidator) {
       // print(repeat);
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
@@ -455,25 +432,47 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                 if (!currentFocus.hasPrimaryFocus) {
                                   currentFocus.unfocus();
                                 }
-                                pickTime(this.context, index: 2);
-                                pickTime(this.context);
+                                pickTime(this.context, index: 1);
+                                //pickTime(this.context);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
                                     color: colorBackground,
                                     border: Border.all(
-                                        color: _timeValidator ||
-                                                _dateStartEndValidator
+                                        color: _timeValidator
                                             ? colorError
                                             : colorBackground)),
                                 child: AddScheduleRow(
                                   fontSize: size.height <= 569 ? 14 : 16,
-                                  title: "time_text".tr(),
-                                  textItem: "$h1.$m1 - $h2.$m2",
+                                  title: "start_time_text".tr(),
+                                  textItem: "$h1.$m1",
                                 ),
                               ),
                             ),
-
+                            InkWell(
+                              onTap: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+                                //pickTime(this.context, index: 2);
+                                pickTime(this.context, index: 2);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: colorBackground,
+                                    border: Border.all(
+                                        color: _timeValidator
+                                            ? colorError
+                                            : colorBackground)),
+                                child: AddScheduleRow(
+                                  fontSize: size.height <= 569 ? 14 : 16,
+                                  title: "end_time_text".tr(),
+                                  textItem: "$h2.$m2",
+                                ),
+                              ),
+                            ),
                             AddScheduleRow2(
                               fontSize: size.height <= 569 ? 14 : 16,
                               title: "schedule_text4".tr(),
@@ -527,53 +526,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       SizedBox(
                         height: 10,
                       ),
-                      BlocBuilder<EmployeeBloc, EmployeeState>(
-                        builder: (context, state) {
-                          if (state is EmployeeStateSuccessLoad) {
-                            return Container(
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                itemCount: choosedUser.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4,
-                                ),
-                                itemBuilder: (context, index) {
-                                  // If user has been choos attendance
-                                  if (choosedUser.length != 0) {
-                                    for (var i = 0;
-                                        i < state.employees.length;
-                                        i++) {
-                                      if (state.employees[i].userID ==
-                                          choosedUser[index]) {
-                                        return Column(
-                                          children: [
-                                            CircleAvatar(
-                                              backgroundColor:
-                                                  colorSecondaryRed,
-                                              radius:
-                                                  size.height <= 569 ? 20 : 30,
-                                            ),
-                                            Text(
-                                              "${state.employees[i].name}",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: colorPrimary,
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }
-                                    }
-                                  }
-                                  return SizedBox();
-                                },
-                              ),
-                            );
-                          }
-                          return Container();
-                        },
-                      )
+                      // To Print the Result of Choosing Assignee.
+                      showMemberResult(size)
                     ],
                   ),
                 ),
@@ -583,6 +537,51 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget showMemberResult(Size size) {
+    return BlocBuilder<EmployeeBloc, EmployeeState>(
+      builder: (context, state) {
+        if (state is EmployeeStateSuccessLoad) {
+          return Container(
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemCount: choosedUser.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+              ),
+              itemBuilder: (context, index) {
+                // If user has been choos attendance
+                if (choosedUser.length != 0) {
+                  for (var i = 0; i < state.employees.length; i++) {
+                    if (state.employees[i].userID == choosedUser[index]) {
+                      return Column(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: colorSecondaryRed,
+                            radius: size.height <= 569 ? 20 : 30,
+                          ),
+                          Text(
+                            "${state.employees[i].name}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colorPrimary,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  }
+                }
+                return SizedBox();
+              },
+            ),
+          );
+        }
+        return Container();
+      },
     );
   }
 

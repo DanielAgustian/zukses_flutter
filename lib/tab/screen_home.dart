@@ -618,7 +618,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 color: colorBackground, boxShadow: [boxShadowStandard]),
             child: Column(
               children: [
-                _listViewTask(size),
+                // List Builder for Task List
+                _listViewTask(size, _taskHighPriority),
+
                 Padding(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: TextButton(
@@ -1675,7 +1677,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ));
   }
 
-  Widget _listViewTask(Size size) {
+  Widget _listViewTask(Size size, List<TaskModel> tasks) {
     return _taskHighPriority.length < 1
         ? Center(
             child: Padding(
@@ -1692,14 +1694,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         : ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             padding: EdgeInsets.all(1.0),
-            itemCount:
-                _taskHighPriority.length > 2 ? 2 : _taskHighPriority.length,
+            itemCount: tasks.length > 2 ? 2 : tasks.length,
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return ListViewBox(
-                title: _taskHighPriority[index].taskName,
-                detail: _taskHighPriority[index].details,
+                title: tasks[index].taskName,
+                detail: tasks[index].details,
                 viewType: "task",
               );
             },
