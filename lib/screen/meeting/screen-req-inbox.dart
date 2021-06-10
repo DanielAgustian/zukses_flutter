@@ -43,7 +43,7 @@ class _RequestInboxState extends State<RequestInbox>
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
     BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
     tabController = TabController(length: 2, vsync: this);
-    timer();
+    // timer();
     if (widget.animate != null) {
       tabController.animateTo(1);
     }
@@ -52,6 +52,7 @@ class _RequestInboxState extends State<RequestInbox>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool isLoading = false;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorBackground,
@@ -82,9 +83,12 @@ class _RequestInboxState extends State<RequestInbox>
           BlocListener<MeetingReqBloc, MeetingReqState>(
             listener: (context, state) {
               if (state is MeetingReqStateSuccessLoad) {
+                isLoading = false;
                 setState(() {
                   requestSchedule[0] = state.schedule.length;
                 });
+              } else if (state is MeetingReqStateLoading) {
+                isLoading = true;
               }
             },
             child: Container(),
@@ -92,12 +96,18 @@ class _RequestInboxState extends State<RequestInbox>
           BlocListener<MeetingBloc, MeetingState>(
             listener: (context, state) {
               if (state is MeetingStateSuccessLoad) {
+                isLoading = false;
                 setState(() {
                   requestSchedule[1] = state.meetings.length;
                 });
               } else if (state is MeetingStateSuccess) {
+                isLoading = false;
+                BlocProvider.of<MeetingReqBloc>(context)
+                    .add(LoadAllMeetingReqEvent());
                 BlocProvider.of<MeetingBloc>(context)
                     .add(GetRejectedMeetingEvent());
+              } else if (state is MeetingStateSuccess) {
+                isLoading = true;
               }
             },
             child: Container(),

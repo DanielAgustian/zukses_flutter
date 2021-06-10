@@ -46,21 +46,13 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   Util util = Util();
   ScheduleModel model = ScheduleModel();
   bool shade = false;
-  bool isLoading = true;
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
     // _controller = AnimationController(vsync: this, duration: _duration);
-    timer();
+    // timer();
   }
 
   @override
@@ -80,40 +72,44 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   }
 
   Widget buildMainBody(Size size) {
+    bool isLoading = false;
     return BlocBuilder<MeetingReqBloc, MeetingReqState>(
         builder: (context, state) {
       List<ScheduleModel> meetings;
 
       if (state is MeetingReqStateSuccessLoad) {
         meetings = state.schedule;
+        isLoading = false;
       } else if (state is MeetingReqStateFailLoad) {
+        isLoading = false;
         return Center(
           child: Text(
             "No Meeting Request.",
             style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
           ),
         );
+      } else if (state is MeetingReqStateLoading) {
+        isLoading = true;
       }
-      return meetings == null || meetings.length == 0
-          ? Center(
-              child: Text(
-                "No Meeting Request.",
-                style:
-                    TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
-              ),
-            )
-          : Stack(
-              children: [
-                Container(
-                    child: isLoading
-                        ? ListView.builder(
-                            itemCount: 2,
-                            itemBuilder: (context, index) =>
-                                SkeletonLess3WithAvatar(
-                                  size: size,
-                                  row: 2,
-                                ))
-                        : ListView.builder(
+      return isLoading
+          ? ListView.builder(
+              itemCount: 2,
+              itemBuilder: (context, index) => SkeletonLess3WithAvatar(
+                    size: size,
+                    row: 2,
+                  ))
+          : meetings == null || meetings.length == 0
+              ? Center(
+                  child: Text(
+                    "No Meeting Request.",
+                    style: TextStyle(
+                        color: colorPrimary, fontWeight: FontWeight.bold),
+                  ),
+                )
+              : Stack(
+                  children: [
+                    Container(
+                        child: ListView.builder(
                             itemCount: meetings.length,
                             itemBuilder: (context, index) =>
                                 ScheduleItemRequest(
@@ -130,15 +126,15 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                                     time2: util.hourFormat(
                                         meetings[index].meetingEndTime),
                                     title: meetings[index].title))),
-                shade
-                    ? Container(
-                        width: size.width,
-                        height: size.height,
-                        color: Colors.black38.withOpacity(0.5),
-                      )
-                    : Container(),
-              ],
-            );
+                    shade
+                        ? Container(
+                            width: size.width,
+                            height: size.height,
+                            color: Colors.black38.withOpacity(0.5),
+                          )
+                        : Container(),
+                  ],
+                );
     });
   }
 
@@ -289,7 +285,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                           showDialog(
                               context: context,
                               builder: (BuildContext context) =>
-                                  _dialog(context));
+                                  _dialog(context, model: model));
                         },
                       )
                     ],
@@ -303,7 +299,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
     );
   }
 
-  Widget _dialog(BuildContext context) {
+  Widget _dialog(BuildContext context, {ScheduleModel model}) {
     return AlertDialog(
       //title: const Text('Popup example'),
       content: new Column(
@@ -369,6 +365,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                   borderColor: colorPrimary,
                   title: "confirm_text".tr(),
                   onClick: () {
+                    print(model.meetingID);
                     BlocProvider.of<MeetingBloc>(context).add(
                         PostAcceptanceMeetingEvent(
                             meetingId: model.meetingID,

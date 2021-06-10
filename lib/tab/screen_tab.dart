@@ -40,11 +40,11 @@ class ScreenTab extends StatefulWidget {
 class _ScreenTab extends State<ScreenTab> {
   List<Widget> screenList = [];
   int _currentScreenIndex;
-  UserModel user;
 
   @override
   void initState() {
     super.initState();
+    getUserProfile();
     if (widget.index != null) {
       _currentScreenIndex = widget.index;
     } else {
@@ -133,6 +133,7 @@ class _ScreenTab extends State<ScreenTab> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => RequestInbox()));
     }
+
     // push to task screen if create task
     else if (message.notification.title
         .toLowerCase()
@@ -147,6 +148,7 @@ class _ScreenTab extends State<ScreenTab> {
     } else if (message.notification.title
         .toLowerCase()
         .contains("meeting response")) {
+          
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -158,44 +160,60 @@ class _ScreenTab extends State<ScreenTab> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: colorBackground,
-      body: screenList[_currentScreenIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: onTabTapped,
-        currentIndex:
-            _currentScreenIndex, // this will be set when a new tab is tapped
-        items: [
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/images/home-icon.svg',
-              color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
-            ),
-            label: 'tab_text1'.tr(),
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/images/attendance-icon.svg',
-              color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
-            ),
-            label: 'tab_text2'.tr(),
-          ),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.clipboardList),
-              label: 'tab_text3'.tr()),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.solidCalendar),
-              label: 'tab_text4'.tr()),
-        ],
-        unselectedFontSize: 12,
-        selectedFontSize: 12,
-        showUnselectedLabels: true,
-        selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
-        unselectedItemColor: colorPrimary70,
-        selectedIconTheme: IconThemeData(color: colorPrimary),
-        unselectedIconTheme: IconThemeData(color: colorPrimary70),
-      ),
-    );
+    UserModel user;
+    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      if (state is UserDataStateSuccessLoad) {
+        user = state.userModel;
+        if (user != null) {
+          if (user.companyID == null) {
+            screenList.removeWhere((element) => element is AttendanceScreen);
+          }
+        }
+      }
+
+      return Scaffold(
+          backgroundColor: colorBackground,
+          body: screenList[_currentScreenIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            onTap: onTabTapped,
+            currentIndex:
+                _currentScreenIndex, // this will be set when a new tab is tapped
+            items: [
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'assets/images/home-icon.svg',
+                  color:
+                      _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+                ),
+                label: 'tab_text1'.tr(),
+              ),
+              if (user != null)
+                if (user.companyID != null)
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/images/attendance-icon.svg',
+                      color: _currentScreenIndex == 1
+                          ? colorPrimary
+                          : colorPrimary70,
+                    ),
+                    label: 'tab_text2'.tr(),
+                  ),
+              BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.clipboardList),
+                  label: 'tab_text3'.tr()),
+              BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.solidCalendar),
+                  label: 'tab_text4'.tr()),
+            ],
+            unselectedFontSize: 12,
+            selectedFontSize: 12,
+            showUnselectedLabels: true,
+            selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
+            unselectedItemColor: colorPrimary70,
+            selectedIconTheme: IconThemeData(color: colorPrimary),
+            unselectedIconTheme: IconThemeData(color: colorPrimary70),
+          ));
+    });
   }
 }

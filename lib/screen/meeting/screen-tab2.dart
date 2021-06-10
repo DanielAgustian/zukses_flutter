@@ -35,26 +35,21 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   Util util = Util();
   bool shade = false;
-  bool isLoading = true;
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
     _controller = AnimationController(vsync: this, duration: _duration);
-    timer();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    return buildMainBody(size);
+  }
+
+  Widget buildMainBody(Size size) {
     return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
       if (state is MeetingStateSuccessLoad) {
         int panjang = state.meetings.length;
@@ -62,32 +57,22 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
             ? Stack(
                 children: [
                   Container(
-                      child: isLoading
-                          ? ListView.builder(
-                              itemCount: state.meetings.length,
-                              itemBuilder: (context, index) =>
-                                  SkeletonLess3WithAvatar(
-                                    size: size,
-                                    row: 2,
-                                  ))
-                          : ListView.builder(
-                              itemCount: state.meetings.length,
-                              itemBuilder: (context, index) =>
-                                  ScheduleItemRequest(
-                                      count:
-                                          state.meetings[index].members.length,
-                                      size: size,
-                                      onClick: () {
-                                        showModalResult(size,
-                                            model: state.meetings[index]);
-                                      },
-                                      date: util.dateNumbertoCalendar(
-                                          state.meetings[index].date),
-                                      time1: util.hourFormat(
-                                          state.meetings[index].date),
-                                      time2: util.hourFormat(
-                                          state.meetings[index].meetingEndTime),
-                                      title: state.meetings[index].title))),
+                      child: ListView.builder(
+                          itemCount: state.meetings.length,
+                          itemBuilder: (context, index) => ScheduleItemRequest(
+                              count: state.meetings[index].members.length,
+                              size: size,
+                              onClick: () {
+                                showModalResult(size,
+                                    model: state.meetings[index]);
+                              },
+                              date: util.dateNumbertoCalendar(
+                                  state.meetings[index].date),
+                              time1:
+                                  util.hourFormat(state.meetings[index].date),
+                              time2: util.hourFormat(
+                                  state.meetings[index].meetingEndTime),
+                              title: state.meetings[index].title))),
                   shade
                       ? Container(
                           width: size.width,
@@ -107,6 +92,13 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
               );
       } else if (state is MeetingStateSuccess) {
         BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
+      } else if (state is MeetingStateLoading) {
+        return ListView.builder(
+            itemCount: 2,
+            itemBuilder: (context, index) => SkeletonLess3WithAvatar(
+                  size: size,
+                  row: 2,
+                ));
       }
       return Container();
     });
