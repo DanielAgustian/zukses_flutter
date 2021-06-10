@@ -266,8 +266,6 @@ class MeetingServicesHTTP {
       'year': "$year",
     };
 
-    print(queryParameters);
-
     var response = await http.get(
         Uri.https(baseURI, 'api/schedule/accepted', queryParameters),
         headers: <String, String>{
