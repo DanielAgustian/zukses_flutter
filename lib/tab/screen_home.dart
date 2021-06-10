@@ -278,6 +278,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
+
     if (widget.link != null) {
       teamId = widget.link.queryParameters['teamId'];
       _controller.forward();
@@ -371,15 +372,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         setState(() {
                           _authModel = state.authUser;
                           isLoadingAuth = true;
+                          // handle to get company acceptance after register
                           companyAcceptance = _authModel.user.companyAcceptance;
                         });
 
                         if (_authModel.maxClockIn == "false") {
                           //if they arent clockout today
-                          if (_authModel.attendance == "false") {
-                            // if they arent clock in yet
-
-                          } else if (_authModel.attendance == "true") {
+                          if (_authModel.attendance == "true") {
                             // if they already clock in.
                             setState(() {
                               stringTap = enumTap[1];
