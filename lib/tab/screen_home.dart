@@ -372,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           _authModel = state.authUser;
                           isLoadingAuth = true;
                           // handle to get company acceptance after register
-                          companyAcceptance = _authModel.user.accepted;
+                          companyAcceptance = _authModel.user.companyAcceptance;
                         });
 
                         if (_authModel.maxClockIn == "false") {
@@ -510,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               context: context,
                                               builder: (BuildContext context) =>
                                                   _buildPopupDialog(context,
-                                                      "_buildPopUpClockOut")); 
+                                                      "_buildPopUpClockOut"));
                                         }
                                       } else {
                                         Util().showToast(
