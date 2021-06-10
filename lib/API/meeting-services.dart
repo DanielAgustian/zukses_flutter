@@ -256,10 +256,18 @@ class MeetingServicesHTTP {
     }
   }
 
-  Future<List<ScheduleModel>> fetchAcceptedScheduleData() async {
+  Future<List<ScheduleModel>> fetchAcceptedScheduleData(
+      {int month, int year}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    var response = await http.get(Uri.https(baseURI, 'api/schedule/accepted'),
+
+    var queryParameters = {
+      'month': month < 10 ? "0$month" : '$month',
+      'year': "$year",
+    };
+
+    var response = await http.get(
+        Uri.https(baseURI, 'api/schedule/accepted', queryParameters),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
