@@ -52,6 +52,7 @@ class _ScreenTab extends State<ScreenTab> {
     }
 
     screenList.add(HomeScreen());
+    screenList.add(AttendanceScreen());
 
     if (widget.projectId != null) {
       screenList.add(TaskScreen(

@@ -300,29 +300,36 @@ class _MeetingScreenState extends State<MeetingScreen>
                                   itemBuilder: (context, index) =>
                                       SkeletonLess3WithAvatar(
                                           size: size, row: 2))
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: meetings.length,
-                                  itemBuilder: (context, index) => util
-                                              .yearFormat(_selectedDate) ==
-                                          util.yearFormat(meetings[index].date)
-                                      ? ScheduleItem(
-                                          status: meetings[index].members,
-                                          count: meetings[index].members.length,
-                                          size: size,
-                                          title: meetings[index].title,
-                                          time1: util
-                                              .hourFormat(meetings[index].date),
-                                          time2: util.hourFormat(
-                                              meetings[index].meetingEndTime),
-                                          meetingId: meetings[index].meetingID,
-                                          onClick: () {
-                                            showModalResult(
-                                                size, meetings[index]);
-                                          },
-                                        )
-                                      : Container()),
+                              : meetings == null
+                                  ? Container()
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: meetings.length,
+                                      itemBuilder: (context, index) => util
+                                                  .yearFormat(_selectedDate) ==
+                                              util.yearFormat(
+                                                  meetings[index].date)
+                                          ? ScheduleItem(
+                                              status: meetings[index].members,
+                                              count: meetings[index]
+                                                  .members
+                                                  .length,
+                                              size: size,
+                                              title: meetings[index].title,
+                                              time1: util.hourFormat(
+                                                  meetings[index].date),
+                                              time2: util.hourFormat(
+                                                  meetings[index]
+                                                      .meetingEndTime),
+                                              meetingId:
+                                                  meetings[index].meetingID,
+                                              onClick: () {
+                                                showModalResult(
+                                                    size, meetings[index]);
+                                              },
+                                            )
+                                          : Container()),
                         )
                       ],
                     ),
@@ -367,31 +374,35 @@ class _MeetingScreenState extends State<MeetingScreen>
                                       itemBuilder: (context, index) =>
                                           SkeletonLess3WithAvatar(
                                               size: size, row: 2))
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: meetings.length,
-                                      itemBuilder: (context, index) => util
-                                                  .yearFormat(_selectedDate) ==
-                                              util.yearFormat(
-                                                  meetings[index].date)
-                                          ? ScheduleItem(
-                                              status: meetings[index].members,
-                                              count: meetings[index]
-                                                  .members
-                                                  .length,
-                                              size: size,
-                                              title: meetings[index].title,
-                                              time1: util.hourFormat(
-                                                  meetings[index].date),
-                                              time2: util.hourFormat(
-                                                  meetings[index]
-                                                      .meetingEndTime),
-                                              onClick: () {
-                                                showModalResult(
-                                                    size, meetings[index]);
-                                              },
-                                            )
-                                          : Container()),
+                                  : meetings == null
+                                      ? Container()
+                                      : ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: meetings.length,
+                                          itemBuilder: (context, index) => util
+                                                      .yearFormat(
+                                                          _selectedDate) ==
+                                                  util.yearFormat(
+                                                      meetings[index].date)
+                                              ? ScheduleItem(
+                                                  status:
+                                                      meetings[index].members,
+                                                  count: meetings[index]
+                                                      .members
+                                                      .length,
+                                                  size: size,
+                                                  title: meetings[index].title,
+                                                  time1: util.hourFormat(
+                                                      meetings[index].date),
+                                                  time2: util.hourFormat(
+                                                      meetings[index]
+                                                          .meetingEndTime),
+                                                  onClick: () {
+                                                    showModalResult(
+                                                        size, meetings[index]);
+                                                  },
+                                                )
+                                              : Container()),
                             ))
                           ],
                         ),
@@ -441,7 +452,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () { 
+                            onTap: () {
                               Navigator.pop(context);
                             },
                             child: Text("close_text".tr(),
