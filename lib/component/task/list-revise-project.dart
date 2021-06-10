@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -54,35 +55,8 @@ class ListReviseProject extends StatelessWidget {
                         ),
                         onTap: onTapStar),
                     SizedBox(width: 10),
-                    image == null || image == ""
-                        ? Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: colorPrimary,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                Util().getInitials(title),
-                                style: TextStyle(
-                                    color: colorBackground,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ))
-                        : Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage(
-                                    "https://api-zukses.yokesen.com/" + image),
-                              ),
-                            )),
+                    AvatarMedium(
+                        imgUrl: "https://api-zukses.yokesen.com/$image"),
                     SizedBox(width: 10),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,

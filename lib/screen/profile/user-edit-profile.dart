@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/component/avatar/avatar-big.dart';
+import 'package:zukses_app_1/component/avatar/avatar-bigger.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/user-model.dart';
@@ -168,22 +170,10 @@ class _EditProfileScreen extends State<EditProfile> {
                                     )))
                             : Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                child: (widget.user.imgUrl == "" ||
-                                            widget.user.imgUrl == null) &&
-                                        (data == null || data == "")
-                                    ? Container(
-                                        width: size.height < 569 ? 75 : 90,
-                                        height: size.height < 569 ? 75 : 90,
-                                        decoration: BoxDecoration(
-                                          color: colorNeutral2,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
-                                          child: FaIcon(
-                                            FontAwesomeIcons.camera,
-                                            color: colorNeutral3,
-                                          ),
-                                        ))
+                                child: (data == null || data == "")
+                                    ? AvatarBigger(
+                                        imgUrl:
+                                            "https://api-zukses.yokesen.com/${widget.user.imgUrl}")
                                     : Container(
                                         width: size.height < 569 ? 75 : 90,
                                         height: size.height < 569 ? 75 : 90,
@@ -192,12 +182,41 @@ class _EditProfileScreen extends State<EditProfile> {
                                             shape: BoxShape.circle,
                                             image: DecorationImage(
                                                 fit: BoxFit.fitWidth,
-                                                image: data != ""
-                                                    ? FileImage(File(data))
-                                                    : NetworkImage(
-                                                        "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
+                                                image: FileImage(File(data)))),
                                       ),
                               ),
+                        // Padding(
+                        //     padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                        //     child: (widget.user.imgUrl == "" ||
+                        //                 widget.user.imgUrl == null) &&
+                        //             (data == null || data == "")
+                        //         ? Container(
+                        //             width: size.height < 569 ? 75 : 90,
+                        //             height: size.height < 569 ? 75 : 90,
+                        //             decoration: BoxDecoration(
+                        //               color: colorNeutral2,
+                        //               shape: BoxShape.circle,
+                        //             ),
+                        //             child: Center(
+                        //               child: FaIcon(
+                        //                 FontAwesomeIcons.camera,
+                        //                 color: colorNeutral3,
+                        //               ),
+                        //             ))
+                        //         : Container(
+                        //             width: size.height < 569 ? 75 : 90,
+                        //             height: size.height < 569 ? 75 : 90,
+                        //             decoration: BoxDecoration(
+                        //                 color: colorNeutral2,
+                        //                 shape: BoxShape.circle,
+                        //                 image: DecorationImage(
+                        //                     fit: BoxFit.fitWidth,
+                        //                     image: data != ""
+                        //                         ? FileImage(File(data))
+                        //                         : NetworkImage(
+                        //                             "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
+                        //           ),
+                        //   ),
                         Positioned(
                             right: 0.0,
                             bottom: 0.0,

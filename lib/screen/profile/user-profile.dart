@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/component/avatar/avatar-big.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/company-model.dart';
@@ -155,31 +156,9 @@ class _UserProfileScreen extends State<UserProfile> {
                           children: [
                             Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                child: user.imgUrl == "" || user.imgUrl == null
-                                    ? Container(
-                                        width: size.height < 569 ? 68 : 72,
-                                        height: size.height < 569 ? 68 : 72,
-                                        decoration: BoxDecoration(
-                                          color: colorNeutral2,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
-                                            child: FaIcon(
-                                          FontAwesomeIcons.camera,
-                                          color: colorNeutral3,
-                                        )))
-                                    : Container(
-                                        width: size.height < 569 ? 68 : 72,
-                                        height: size.height < 569 ? 68 : 72,
-                                        decoration: BoxDecoration(
-                                            color: colorNeutral2,
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                                image: NetworkImage(
-                                                  "https://api-zukses.yokesen.com/${user.imgUrl}",
-                                                ),
-                                                fit: BoxFit.fitWidth)),
-                                      )),
+                                child: AvatarBig(
+                                    imgUrl:
+                                        "https://api-zukses.yokesen.com/${user.imgUrl}")),
                           ],
                         ),
                         SizedBox(

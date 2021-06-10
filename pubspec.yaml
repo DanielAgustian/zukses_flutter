@@ -48,8 +48,7 @@ dependencies:
   flutter_bloc:
   http_parser:  
   flutter_switch:
-  # cloud_firestore: 
-  # firebase_auth:
+  cached_network_image:
   firebase_messaging:
   firebase_core:
   firebase_dynamic_links: any
