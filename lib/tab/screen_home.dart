@@ -24,7 +24,7 @@ import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
 import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart'; 
+import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
 import 'package:zukses_app_1/bloc/task-priority/task-priority-event.dart';
 import 'package:zukses_app_1/bloc/task-priority/task-priority-state.dart';
@@ -267,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       //if they already clock in
                       setState(() {
                         stringTap = enumTap[1];
-                        dialogText = "Clock In";
+                        dialogText = "Clock Out";
                       });
                     } else if (state is AttendanceStateSuccessClockOut) {
                       print("clock out");
