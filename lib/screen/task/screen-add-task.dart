@@ -295,7 +295,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
                     children: [
                       BlocListener<EmployeeBloc, EmployeeState>(
                         listener: (context, state) {
-                          print(state);
                           if (state is EmployeeStateFailLoad) {
                             setState(() {
                               freeAssignTo = true;
@@ -457,21 +456,22 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                     for (var i = 0; i < allUser.length; i++) {
                                       if (allUser[i].userID ==
                                           hasilMultiple[index]) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(3.0),
-                                          child: Container(
-                                            padding: EdgeInsets.all(3),
-                                            decoration: BoxDecoration(
-                                                color: colorPrimary,
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            child: Center(
-                                              child: Text(
-                                                allUser[i].name,
-                                                style: TextStyle(
-                                                    color: colorBackground,
-                                                    fontSize: 14),
-                                              ),
+                                        return Container(
+                                          height: 5,
+                                          margin: EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 5),
+                                          decoration: BoxDecoration(
+                                              color: colorPrimary,
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          child: Center(
+                                            child: Text(
+                                              allUser[i].name,
+                                              textAlign: TextAlign.justify,
+                                              style: TextStyle(
+                                                  color: colorBackground,
+                                                  fontSize: 14),
                                             ),
                                           ),
                                         );
@@ -487,6 +487,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                             child: Center(
                                               child: Text(
                                                 "Myself",
+                                                textAlign: TextAlign.justify,
                                                 style: TextStyle(
                                                     color: colorBackground,
                                                     fontSize: 14),
@@ -1031,6 +1032,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
         itemBuilder: (BuildContext context, int index) {
           if (textSearch.text == "" || textSearch.text == null) {
             return UserInvitationItem(
+              imgURL: "https://api-zukses.yokesen.com/${allUser[index].imgUrl}",
               val: checklist[index],
               title: allUser[index].name,
               checkboxCallback: (val) {
@@ -1055,6 +1057,8 @@ class _AddTaskScreen extends State<AddTaskScreen>
                 .toLowerCase()
                 .contains(query.toLowerCase())) {
               return UserInvitationItem(
+                imgURL:
+                    "https://api-zukses.yokesen.com/${allUser[index].imgUrl}",
                 val: checklist[index],
                 title: allUser[index].name,
                 checkboxCallback: (val) {
