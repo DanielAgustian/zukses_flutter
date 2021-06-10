@@ -158,7 +158,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         picked = TimeOfDay(hour: picked.hour + 1, minute: 0);
       }
     } catch (error) {
-      print(error);
+      // print(error);
     }
 
     if (picked != null) {
@@ -218,12 +218,12 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         _dateStartEndValidator = true;
       });
     }
-    print("dateValidator = " + _dateStartEndValidator.toString());
+    // print("dateValidator = " + _dateStartEndValidator.toString());
     if (startMeeting != null) if (!_descriptionValidator &&
         !_titleValidator &&
         !_dateStartEndValidator &&
         !_timeValidator) {
-      print(repeat);
+      // print(repeat);
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,

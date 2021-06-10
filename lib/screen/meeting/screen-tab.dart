@@ -122,7 +122,8 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
                                         meetings[index].date),
                                     size: size,
                                     onClick: () {
-                                      showModalResult(size);
+                                      showModalResult(size,
+                                          model: meetings[index]);
                                     },
                                     time1:
                                         util.hourFormat(meetings[index].date),
@@ -146,12 +147,12 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
   }
 
   // Show modal detail
-  Future<void> showModalResult(Size size) {
+  Future<void> showModalResult(Size size, {ScheduleModel model}) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.white.withOpacity(0.1),
+      barrierColor: Colors.black38.withOpacity(0.5),
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState2) {

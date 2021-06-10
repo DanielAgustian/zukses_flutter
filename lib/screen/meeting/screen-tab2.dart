@@ -78,16 +78,8 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                                           state.meetings[index].members.length,
                                       size: size,
                                       onClick: () {
-                                        if (_controller.isDismissed) {
-                                          _controller.forward();
-                                          setState(() {
-                                            model = state.meetings[index];
-                                            shade = true;
-                                          });
-                                        } else if (_controller.isCompleted) {
-                                          _controller.reverse();
-                                          shade = false;
-                                        }
+                                        showModalResult(size,
+                                            model: state.meetings[index]);
                                       },
                                       date: util.dateNumbertoCalendar(
                                           state.meetings[index].date),
@@ -103,12 +95,6 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
                           color: Colors.black38.withOpacity(0.5),
                         )
                       : Container(),
-                  model != null
-                      ? scrollerSheet()
-                      : Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Text("data Error"),
-                        )
                 ],
               )
             : Center(
@@ -126,112 +112,229 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
     });
   }
 
-  Widget scrollerSheet() {
-    Size size = MediaQuery.of(context).size;
-    return SizedBox.expand(
-      child: SlideTransition(
-        position: _tween.animate(_controller),
-        child: DraggableScrollableSheet(
-          maxChildSize: 0.9,
-          initialChildSize: 0.8,
-          minChildSize: 0.8,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  boxShadow: [BoxShadow(blurRadius: 15)],
-                  color: colorBackground,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // Show modal detail
+  Future<void> showModalResult(Size size, {ScheduleModel model}) {
+    return showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black38.withOpacity(0.5),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState2) {
+            return DraggableScrollableSheet(
+              maxChildSize: 0.9,
+              initialChildSize: 0.8,
+              minChildSize: 0.8,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                      boxShadow: [BoxShadow(blurRadius: 15)],
+                      color: colorBackground,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        model.title,
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: colorPrimary,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          child: FaIcon(
-                            FontAwesomeIcons.times,
-                            color: colorPrimary,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            model.title,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.w700),
                           ),
-                          onTap: () {
-                            _controller.reverse();
-                            setState(() {
-                              shade = false;
-                            });
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: InkWell(
+                              child: FaIcon(
+                                FontAwesomeIcons.times,
+                                color: colorPrimary,
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                setState(() {
+                                  shade = false;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(util.dateNumbertoCalendar(model.date),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colorNeutral2,
+                          )),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                          util.hourFormat(model.date) +
+                              " - " +
+                              util.hourFormat(model.meetingEndTime),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colorNeutral2,
+                          )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        model.description,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text("schedule_text1".tr(),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w700)),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(0),
+                          controller: scrollController,
+                          itemCount: model.members.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return UserAssignedItem(
+                                size: size,
+                                name: model.members[index].name,
+                                status: util.acceptancePrint(
+                                    model.members[index].accepted));
                           },
                         ),
-                      )
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(util.dateNumbertoCalendar(model.date),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: colorNeutral2,
-                      )),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                      util.hourFormat(model.date) +
-                          " - " +
-                          util.hourFormat(model.meetingEndTime),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: colorNeutral2,
-                      )),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    model.description,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text("schedule_text1".tr(),
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: colorPrimary,
-                          fontWeight: FontWeight.w700)),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      controller: scrollController,
-                      itemCount: model.members.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return UserAssignedItem(
-                            size: size,
-                            name: model.members[index].name,
-                            status: util.acceptancePrint(
-                                model.members[index].accepted));
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
+
+  // Widget scrollerSheet() {
+  //   Size size = MediaQuery.of(context).size;
+  //   return SizedBox.expand(
+  //     child: SlideTransition(
+  //       position: _tween.animate(_controller),
+  //       child: DraggableScrollableSheet(
+  //         maxChildSize: 0.9,
+  //         initialChildSize: 0.8,
+  //         minChildSize: 0.8,
+  //         builder: (BuildContext context, ScrollController scrollController) {
+  //           return Container(
+  //             padding: EdgeInsets.all(20),
+  //             decoration: BoxDecoration(
+  //                 boxShadow: [BoxShadow(blurRadius: 15)],
+  //                 color: colorBackground,
+  //                 borderRadius: BorderRadius.only(
+  //                     topLeft: Radius.circular(20),
+  //                     topRight: Radius.circular(20))),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.start,
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Text(
+  //                       model.title,
+  //                       style: TextStyle(
+  //                           fontSize: 20,
+  //                           color: colorPrimary,
+  //                           fontWeight: FontWeight.w700),
+  //                     ),
+  //                     Align(
+  //                       alignment: Alignment.centerRight,
+  //                       child: InkWell(
+  //                         child: FaIcon(
+  //                           FontAwesomeIcons.times,
+  //                           color: colorPrimary,
+  //                         ),
+  //                         onTap: () {
+  //                           _controller.reverse();
+  //                           setState(() {
+  //                             shade = false;
+  //                           });
+  //                         },
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //                 SizedBox(
+  //                   height: 5,
+  //                 ),
+  //                 Text(util.dateNumbertoCalendar(model.date),
+  //                     style: TextStyle(
+  //                       fontSize: 16,
+  //                       color: colorNeutral2,
+  //                     )),
+  //                 SizedBox(
+  //                   height: 5,
+  //                 ),
+  //                 Text(
+  //                     util.hourFormat(model.date) +
+  //                         " - " +
+  //                         util.hourFormat(model.meetingEndTime),
+  //                     style: TextStyle(
+  //                       fontSize: 16,
+  //                       color: colorNeutral2,
+  //                     )),
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //                 Text(
+  //                   model.description,
+  //                   style: TextStyle(
+  //                       fontSize: 14,
+  //                       color: colorPrimary,
+  //                       fontWeight: FontWeight.w500),
+  //                 ),
+  //                 SizedBox(
+  //                   height: 20,
+  //                 ),
+  //                 Text("schedule_text1".tr(),
+  //                     style: TextStyle(
+  //                         fontSize: 16,
+  //                         color: colorPrimary,
+  //                         fontWeight: FontWeight.w700)),
+  //                 Expanded(
+  //                   child: ListView.builder(
+  //                     padding: EdgeInsets.all(0),
+  //                     controller: scrollController,
+  //                     itemCount: model.members.length,
+  //                     itemBuilder: (BuildContext context, int index) {
+  //                       return UserAssignedItem(
+  //                           size: size,
+  //                           name: model.members[index].name,
+  //                           status: util.acceptancePrint(
+  //                               model.members[index].accepted));
+  //                     },
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 }

@@ -16,7 +16,6 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     yield EmployeeStateLoading();
     // return list user model
     var res = await _userDataService.fetchEmployeeData();
-    print("AllEmployee" + res.toString());
     // return checkbox handler
     List<bool> bools = [];
     // directly throw into success load or fail load
@@ -47,6 +46,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield* mapUpdatingEmployeeState(event);
     }
   }
+
   @override
   Future<void> close() {
     _subscription?.cancel();
