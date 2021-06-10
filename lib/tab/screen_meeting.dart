@@ -252,7 +252,7 @@ class _MeetingScreenState extends State<MeetingScreen>
 
     return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
       if (state is MeetingStateSuccessLoad) {
-        meetings = state.meetings; 
+        meetings = state.meetings;
       } else if (state is MeetingStateFailLoad) {
         return Text("Get Data Error");
       } else if (state is MeetingStateSuccess) {
@@ -309,7 +309,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                               util.yearFormat(
                                                   meetings[index].date)
                                           ? ScheduleItem(
-                                              status: meetings[index].members,
+                                              members: meetings[index].members,
                                               count: meetings[index]
                                                   .members
                                                   .length,
@@ -383,7 +383,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                                   util.yearFormat(
                                                       meetings[index].date)
                                               ? ScheduleItem(
-                                                  status:
+                                                  members:
                                                       meetings[index].members,
                                                   count: meetings[index]
                                                       .members
@@ -546,6 +546,8 @@ class _MeetingScreenState extends State<MeetingScreen>
                                         Row(
                                           children: [
                                             UserAvatarSchedule(
+                                              imgURL:
+                                                  "https://api-zukses.yokesen.com/${scheduleModel.members[index].imgUrl}",
                                               status: util.acceptancePrint(
                                                   scheduleModel
                                                       .members[index].accepted),

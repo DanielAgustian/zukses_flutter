@@ -23,7 +23,7 @@ class ScheduleItem extends StatelessWidget {
       this.onClick,
       this.meetingId,
       this.count,
-      this.status})
+      this.members})
       : super(key: key);
 
   final Size size;
@@ -31,7 +31,7 @@ class ScheduleItem extends StatelessWidget {
   final String time1, time2;
   final Function onClick;
   final int count;
-  final List<UserModel> status;
+  final List<UserModel> members;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -72,16 +72,21 @@ class ScheduleItem extends StatelessWidget {
                 height: 5,
               ),
               Container(
-                  height: 20,
+                  height: 30,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: count,
                     itemBuilder: (context, index) {
-                      return status == null
-                          ? UserAvatarSchedule()
+                      return members == null
+                          ? UserAvatarSchedule(
+                              imgURL:
+                                  "https://api-zukses.yokesen.com/${members[index].imgUrl}",
+                            )
                           : UserAvatarSchedule(
+                              imgURL:
+                                  "https://api-zukses.yokesen.com/${members[index].imgUrl}",
                               status: Util()
-                                  .acceptancePrint(status[index].accepted),
+                                  .acceptancePrint(members[index].accepted),
                             );
                     },
                   ))

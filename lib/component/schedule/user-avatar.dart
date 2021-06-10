@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/component/avatar/avatar-small.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class UserAvatar extends StatelessWidget {
@@ -77,12 +78,13 @@ class UserAvatarSchedule extends StatelessWidget {
       this.dotSize = 5,
       this.avatarRadius = 10,
       this.value,
-      this.status})
+      this.status,
+      this.imgURL})
       : super(key: key);
 
   final double dotSize, avatarRadius;
   final String value;
-  final String status;
+  final String status, imgURL;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -90,9 +92,8 @@ class UserAvatarSchedule extends StatelessWidget {
       child: value == null
           ? Stack(
               children: [
-                CircleAvatar(
-                  backgroundColor: colorPrimary30,
-                  radius: avatarRadius,
+                AvatarSmaller(
+                  imgUrl: imgURL,
                 ),
                 Positioned(
                   top: 0,
