@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class UserInvitationItem extends StatelessWidget {
@@ -7,10 +8,10 @@ class UserInvitationItem extends StatelessWidget {
     Key key,
     this.title,
     this.checkboxCallback,
-    this.val,
+    this.val, this.imgURL,
   }) : super(key: key);
 
-  final String title;
+  final String title, imgURL;
   final Function checkboxCallback;
   final bool val;
 
@@ -24,9 +25,9 @@ class UserInvitationItem extends StatelessWidget {
           Container(
             child: Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: colorSecondaryRed,
-                  radius: 25,
+                AvatarMedium(
+                  imgUrl:
+                      imgURL
                 ),
                 SizedBox(
                   width: 10,

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:zukses_app_1/bloc/employee/employee-state.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
 import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
+import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -159,9 +161,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             : TimeOfDay(hour: time2.hour, minute: 0),
         selectableTimePredicate: (time) => time.minute % 15 == 0).then((time) {
       if (time != null) {
-        if (index == 1)
-          time1 = time;
-        else if (index == 2) time2 = time;
+        setState(() {
+          if (index == 1)
+            time1 = time;
+          else if (index == 2) time2 = time;
+        });
       }
     });
   }
@@ -562,9 +566,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                     if (state.employees[i].userID == choosedUser[index]) {
                       return Column(
                         children: [
-                          CircleAvatar(
-                            backgroundColor: colorSecondaryRed,
-                            radius: size.height <= 569 ? 20 : 30,
+                          AvatarMedium(
+                            imgUrl:
+                                "https://api-zukses.yokesen.com/${state.employees[i].imgUrl}",
                           ),
                           Text(
                             "${state.employees[i].name}",
@@ -719,6 +723,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             return UserInvitationItem(
               val: state.checklist[index],
               title: state.employees[index].name,
+              imgURL:
+                  "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
               checkboxCallback: (val) {
                 setState(() {
                   state.checklist[index] = !state.checklist[index];
@@ -742,6 +748,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
               return UserInvitationItem(
                 val: state.checklist[index],
                 title: state.employees[index].name,
+                imgURL:
+                    "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
                 checkboxCallback: (val) {
                   setState(() {
                     state.checklist[index] = !state.checklist[index];

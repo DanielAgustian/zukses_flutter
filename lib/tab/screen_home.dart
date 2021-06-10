@@ -43,6 +43,8 @@ import 'package:zukses_app_1/bloc/team/team-state.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
+import 'package:zukses_app_1/component/avatar/avatar-small.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -868,22 +870,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Container(
-                                    height: 45,
-                                    width: 45,
-                                    decoration: BoxDecoration(
-                                        color: colorPrimary,
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            fit: BoxFit.fitWidth,
-                                            image: state.userModel.imgUrl ==
-                                                        null ||
-                                                    state.userModel.imgUrl == ""
-                                                ? Image.asset(
-                                                        "assets/images/ava.png")
-                                                    .image
-                                                : NetworkImage(
-                                                    "https://api-zukses.yokesen.com/${state.userModel.imgUrl}"))))
+                                AvatarMedium(
+                                  imgUrl:
+                                      "https://api-zukses.yokesen.com/${state.userModel.imgUrl}",
+                                ),
                               ],
                             )),
                       ],
