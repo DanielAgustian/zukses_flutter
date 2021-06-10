@@ -56,8 +56,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   void selectDate(DateTime date) {
     setState(() {
       _selectedDate = date;
-      // selected = absence;
-      // kata = "$_currentDate";
+      
     });
   }
 

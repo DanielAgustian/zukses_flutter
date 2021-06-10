@@ -55,16 +55,22 @@ class ListTaskDetail2 extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              title,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: colorPrimary),
+                            Container(
+                              width: 150,
+                              child: Text(
+                                title,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorPrimary),
+                              ),
                             ),
-                            Padding(
+                            Container(
+                              width: 150,
                               padding: EdgeInsets.only(top: 3),
                               child: Text(detail,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontSize: 12, color: colorPrimary50)),
                             ),

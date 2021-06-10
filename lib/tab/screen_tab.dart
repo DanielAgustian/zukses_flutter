@@ -52,7 +52,7 @@ class _ScreenTab extends State<ScreenTab> {
     }
 
     screenList.add(HomeScreen());
-
+    screenList.add(AttendanceScreen());
     if (widget.projectId != null) {
       screenList.add(TaskScreen(
         projectId: widget.projectId,
@@ -70,26 +70,25 @@ class _ScreenTab extends State<ScreenTab> {
 
     Util util = Util();
     util.initDynamicLinks(context);
+    //Firebase Handler
+    firebaseMessagingHandler();
+  }
 
-    // Handle Click Notif from BackGround
+  void firebaseMessagingHandler() {
+    //Handle Click Notif from Background
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage message) {
       if (message != null) {
-        // print("MESSAGE ========================");
-        // print(message.data);
         notificationChecker(message);
       }
     });
-
     // handle click notif from foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
       AppleNotification ios = message.notification?.apple;
       if (notification != null && (android != null || ios != null)) {
-        // print("MASUK ==========================================++>");
-        // print(notification.body);
         flutterLocalNotificationsPlugin.initialize(
           initSetttings,
           onSelectNotification: (payload) {
@@ -127,8 +126,6 @@ class _ScreenTab extends State<ScreenTab> {
   }
 
   void notificationChecker(RemoteMessage message) {
-    // print(message.notification.title);
-    // print(message.data);
     //push to request inbox schedule if it is a meeting invitation
     if (message.notification.title
         .toLowerCase()
@@ -140,8 +137,6 @@ class _ScreenTab extends State<ScreenTab> {
     else if (message.notification.title
         .toLowerCase()
         .contains("task assignment")) {
-      // print("Masuk task assignment");
-      // print(message.data["projectId"]);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -152,7 +147,6 @@ class _ScreenTab extends State<ScreenTab> {
     } else if (message.notification.title
         .toLowerCase()
         .contains("meeting response")) {
-      // print(message.data);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -171,8 +165,8 @@ class _ScreenTab extends State<ScreenTab> {
             user = state.userModel;
           });
           if (state.userModel != null) {
-            if (user.companyID != null)
-              screenList.insert(1, AttendanceScreen());
+            if (user.companyID != null) {}
+            //screenList.insert(1, AttendanceScreen());
           }
         }
       },
@@ -199,11 +193,11 @@ class _ScreenTab extends State<ScreenTab> {
               ),
               label: 'tab_text2'.tr(),
             ),
-            if (user != null)
-              if (user.companyID != null)
-                BottomNavigationBarItem(
-                    icon: FaIcon(FontAwesomeIcons.clipboardList),
-                    label: 'tab_text3'.tr()),
+            /*if (user != null)
+              if (user.companyID != null)*/
+            BottomNavigationBarItem(
+                icon: FaIcon(FontAwesomeIcons.clipboardList),
+                label: 'tab_text3'.tr()),
             BottomNavigationBarItem(
                 icon: FaIcon(FontAwesomeIcons.solidCalendar),
                 label: 'tab_text4'.tr()),
