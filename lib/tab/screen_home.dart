@@ -267,10 +267,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       //if they already clock in
                       setState(() {
                         stringTap = enumTap[1];
-                        dialogText = "Clock Out";
+                        dialogText = "Clock In";
                       });
                     } else if (state is AttendanceStateSuccessClockOut) {
-                      print("clock out");
                       //if they already clock out
                       setState(() {
                         stringTap = enumTap[2];
