@@ -377,12 +377,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                         if (_authModel.maxClockIn == "false") {
                           //if they arent clockout today
-                          if (_authModel.attendance == "false") {
-                            // if they arent clock in yet
-                            // setState(() {
-                            //   stringTap = enumTap[0];
-                            // });
-                          } else if (_authModel.attendance == "true") {
+                          if (_authModel.attendance == "true") {
                             // if they already clock in.
                             setState(() {
                               stringTap = enumTap[1];
@@ -515,8 +510,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               context: context,
                                               builder: (BuildContext context) =>
                                                   _buildPopupDialog(context,
-                                                      "_buildPopUpClockOut"));
-                                          // confirmClockOut(size: size);
+                                                      "_buildPopUpClockOut")); 
                                         }
                                       } else {
                                         Util().showToast(
