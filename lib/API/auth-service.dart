@@ -32,10 +32,10 @@ class AuthServiceHTTP {
     // print("email: " + email);
     print("Create login : " + response.statusCode.toString());
 
+    // print("response.body:" + response.body);
     if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      //print("response.body:" + response.body);
 
       final user = AuthModel.fromJson(jsonDecode(response.body));
 
