@@ -65,13 +65,12 @@ class _AddTaskScreen extends State<AddTaskScreen>
   TextEditingController textTime = new TextEditingController();
   TextEditingController textTitle = new TextEditingController();
   TextEditingController textDescription = new TextEditingController();
-  TextEditingController textAssignedTo = new TextEditingController();
-  TextEditingController textPriority = new TextEditingController();
   TextEditingController textNotes = new TextEditingController();
+
   final textNewLabel = TextEditingController();
   final textSearch = TextEditingController();
   Util util = Util();
-  int count = 4;
+
   bool _titleValidator = false;
   bool _descValidation = false;
   bool _assignToValidator = false;
@@ -250,40 +249,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
 
     return Scaffold(
         backgroundColor: colorBackground,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: colorBackground,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          leading: IconButton(
-            icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            "task_text19".tr(),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size.height < 570 ? 18 : 22,
-                color: colorPrimary),
-          ),
-          actions: [
-            InkWell(
-              onTap: () {
-                _addNewTask();
-              },
-              child: Container(
-                padding: EdgeInsets.fromLTRB(0, 17, 10, 0),
-                child: Text(
-                  "done_text".tr(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: size.height < 570 ? 14 : 16,
-                      color: colorPrimary),
-                ),
-              ),
-            )
-          ],
-        ),
+        appBar: appBar(size, context),
         body: Stack(
           children: [
             SingleChildScrollView(
@@ -468,7 +434,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                           child: Center(
                                             child: Text(
                                               allUser[i].name,
-                                              textAlign: TextAlign.justify,
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: colorBackground,
                                                   fontSize: 14),
@@ -487,7 +453,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                             child: Center(
                                               child: Text(
                                                 "Myself",
-                                                textAlign: TextAlign.justify,
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: colorBackground,
                                                     fontSize: 14),
@@ -732,87 +698,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
   _addNewLabel(String newLabel) async {
     BlocProvider.of<LabelTaskBloc>(context).add(AddLabelTaskEvent(newLabel));
   }
-
-  /*_showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: paddingHorizontal, vertical: paddingVertical),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Create New Label",
-                        style: TextStyle(
-                            color: colorPrimary,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                        decoration: BoxDecoration(
-                            color: colorBackground,
-                            boxShadow: [boxShadowStandard],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Center(
-                          child: TextFormField(
-                            controller: textNewLabel,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            onChanged: (val) {},
-                            decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 10),
-                                hintText: "New Label",
-                                hintStyle: TextStyle(),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SmallButton(
-                              bgColor: colorPrimary,
-                              title: "Add",
-                              textColor: colorBackground,
-                              size: 120,
-                              onClick: () {
-                                _addNewLabel(textNewLabel.text);
-                                Navigator.pop(context);
-                              },
-                            ),
-                            SmallButton(
-                              bgColor: colorError,
-                              title: "Cancel",
-                              textColor: colorBackground,
-                              size: 120,
-                              onClick: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  )),
-            ),
-          );
-        });
-  }*/
 
   buildPopUpNewLabel(context) {
     return AlertDialog(
@@ -1082,6 +967,43 @@ class _AddTaskScreen extends State<AddTaskScreen>
           return Container();
         },
       ),
+    );
+  }
+
+  Widget appBar(Size size, BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: colorBackground,
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      leading: IconButton(
+        icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: Text(
+        "task_text19".tr(),
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: size.height < 570 ? 18 : 22,
+            color: colorPrimary),
+      ),
+      actions: [
+        InkWell(
+          onTap: () {
+            _addNewTask();
+          },
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 17, 10, 0),
+            child: Text(
+              "done_text".tr(),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.height < 570 ? 14 : 16,
+                  color: colorPrimary),
+            ),
+          ),
+        )
+      ],
     );
   }
 }

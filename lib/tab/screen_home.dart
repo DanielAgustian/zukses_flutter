@@ -249,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             stringTap = enumTap[2];
                           });
                         }
-                        checkStatusClock("Get Auth Data");
+                        doneLoading();
                       } else if (state is AuthStateSuccessTeamLoad) {
                         _controller.reverse();
                       }
@@ -489,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("home_text7".tr(args: ["Task"]),
+                            Text("home_text9".tr(args: ["Task"]),
                                 style: TextStyle(
                                     color: colorPrimary,
                                     fontWeight: FontWeight.bold)),
@@ -531,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     fontSize: size.width <= 600 ? 34 : 36),
                 BoxHome(
                     loading: isLoading,
-                    title: "meeting request".tr(),
+                    title: "home_text12".tr(),
                     total: scheduleReqLength,
                     numberColor: colorSecondaryYellow,
                     fontSize: size.width <= 600 ? 34 : 36),
@@ -1219,7 +1219,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Text("No Meeting Today.",
+                            child: Text("home_text20".tr(args: ["Meeting"]),
                                 style: TextStyle(
                                     color: colorPrimary,
                                     fontSize: size.height < 569 ? 12 : 14,
@@ -1257,18 +1257,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _listViewTask(Size size, List<TaskModel> tasks) {
     return _taskHighPriority.length < 1
-        ? Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              child: Text(
-                "No High Priority Task",
-                style: TextStyle(
-                    color: colorPrimary,
-                    fontSize: size.height < 569 ? 12 : 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          )
+        ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(width: 1, color: colorBorder))),
+                height: 40,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Text("home_text20".tr(args: ["Task"]),
+                        style: TextStyle(
+                            color: colorPrimary,
+                            fontSize: size.height < 569 ? 12 : 14,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                )))
         : ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             padding: EdgeInsets.all(1.0),
@@ -1358,6 +1363,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         getAuthData();
       }
     }
+  }
+
+  void doneLoading() {
     if (isLoadingAuth) {
       setState(() {
         isLoading = false;

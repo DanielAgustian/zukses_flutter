@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 
 class AvatarBig extends StatelessWidget {
@@ -22,14 +23,18 @@ class AvatarBig extends StatelessWidget {
               backgroundImage: imageProvider,
             ),
         placeholder: (context, url) => CircleAvatar(
-              backgroundColor: colorPrimary,
+              backgroundColor: colorNeutral150,
               radius: size.width <= 569 ? 35 : 40,
-              child: Image.asset("assets/images/ava.png"),
+              child: SvgPicture.asset(
+                "assets/images/photo-placeholder.svg",
+                height: 23,
+                width: 21,
+              ),
             ),
         errorWidget: (context, url, error) => CircleAvatar(
-              backgroundColor: colorPrimary,
-              radius: size.width <= 569 ? 35 : 40,
-              child: Image.asset("assets/images/ava.png"),
-            ));
+            backgroundColor: colorNeutral150,
+            radius: size.width <= 569 ? 35 : 40,
+            child: SvgPicture.asset("assets/images/photo-placeholder.svg",
+                height: 23, width: 21)));
   }
 }
