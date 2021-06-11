@@ -121,11 +121,12 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                         title: "schedule_text10".tr(),
                         onClick: () {
                           Navigator.pop(context, true);
-                          Navigator.pushReplacement(
+                          Navigator.pop(context, true);
+                          /*Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      (ScreenTab(index: 3))));
+                                      (ScreenTab(index: 3))));*/
                         },
                       )
                     ],
@@ -196,11 +197,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
               if (textDescription.text != "" || textTitle.text != "")
                 _onWillPop(size: size);
               else
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            (ScreenTab(index: 3))));
+                Navigator.pop(context);
             },
           ),
           centerTitle: true,
