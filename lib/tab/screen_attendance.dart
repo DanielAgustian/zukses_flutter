@@ -108,6 +108,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                 attendanceList: attendanceList, loading: isLoading));
   }
 
+  // THE MAIN BODY
   Widget buildMainBody(Size size, BuildContext context,
       {List<AttendanceModel> attendanceList, bool loading}) {
     return Scaffold(
@@ -220,7 +221,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         Expanded(
           child: loading
               ? ListView.builder(
-                  itemCount: 5,
+                  itemCount: 1,
                   itemBuilder: (context, index) => SkeletonLess3(
                     size: size,
                     col: 2,
@@ -410,7 +411,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     );
   }
 
-  // ====================================== FUNCTION ======================================
+  // --------------------------Logic-----------------------------//
 
   // check company of the user
   getCompanyAcceptance() async {

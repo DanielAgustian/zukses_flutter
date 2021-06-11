@@ -53,129 +53,6 @@ class _DataCompanyScreen extends State<DataCompany> {
     print("Token = " + widget.token);
   }
 
-  void _gotoAccepted() {
-    if (textEmail.text != "") {
-      Pattern pattern =
-          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-      RegExp regex = new RegExp(pattern);
-      if (regex.hasMatch(textEmail.text)) {
-        setState(() {
-          _emailValidator = false;
-        });
-      } else {
-        setState(() {
-          _emailValidator = true;
-        });
-      }
-    } else {
-      setState(() {
-        _emailValidator = true;
-      });
-    }
-    if (textAddress.text != "") {
-      setState(() {
-        _addressValidator = false;
-      });
-    } else {
-      setState(() {
-        _addressValidator = true;
-      });
-    }
-    if (textName.text != "") {
-      setState(() {
-        _nameValidator = false;
-      });
-    } else {
-      setState(() {
-        _nameValidator = true;
-      });
-    }
-    if (textPhone.text != "") {
-      setState(() {
-        _phoneValidator = false;
-      });
-    } else {
-      setState(() {
-        _phoneValidator = true;
-      });
-    }
-    if (textItem != "" && textItem != null) {
-      setState(() {
-        _scopeValidator = false;
-      });
-    } else {
-      setState(() {
-        _scopeValidator = true;
-      });
-    }
-    if (textWebsite.text != "") {
-      setState(() {
-        _websiteValidator = false;
-      });
-    } else {
-      setState(() {
-        _websiteValidator = true;
-      });
-    }
-    /*if (textWebsite.text != "") {
-      _errorFalse();
-    } else {
-      _errorTrue();
-    }*/
-    if (!_addressValidator &&
-        !_emailValidator &&
-        !_nameValidator &&
-        !_phoneValidator &&
-        !_scopeValidator &&
-        !_websiteValidator) {
-      _searchIDScope(textItem);
-      CompanyModel model = CompanyModel(
-          name: textName.text,
-          phone: textPhone.text,
-          email: textEmail.text,
-          website: textWebsite.text,
-          address: textAddress.text,
-          packageId: widget.paketID);
-      print("Data is Completed");
-      _registerNewCompany(model);
-    }
-  }
-
-  _registerNewCompany(CompanyModel model) async {
-    var result = await showDialog(
-        context: context,
-        builder: (BuildContext context) => _buildCupertino(
-            context: context,
-            wData: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Email: " + model.email),
-                Text("Name: " + model.name),
-                Text("Phone: " + model.phone),
-                Text("Website:" + model.website),
-                Text("Address:" + model.address),
-                Text("Scope: " + textItem),
-              ],
-            )));
-    if (result != null) {
-      if (result) {
-        BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
-            companyModel: model, token: widget.token, scope: idScope));
-      }
-    }
-  }
-
-  _searchIDScope(String textItem) {
-    scopeData.forEach((element) {
-      if (textItem == element.name) {
-        setState(() {
-          idScope = element.id.toString();
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -496,5 +373,130 @@ class _DataCompanyScreen extends State<DataCompany> {
             }),
       ],
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  void _gotoAccepted() {
+    if (textEmail.text != "") {
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+      if (regex.hasMatch(textEmail.text)) {
+        setState(() {
+          _emailValidator = false;
+        });
+      } else {
+        setState(() {
+          _emailValidator = true;
+        });
+      }
+    } else {
+      setState(() {
+        _emailValidator = true;
+      });
+    }
+    if (textAddress.text != "") {
+      setState(() {
+        _addressValidator = false;
+      });
+    } else {
+      setState(() {
+        _addressValidator = true;
+      });
+    }
+    if (textName.text != "") {
+      setState(() {
+        _nameValidator = false;
+      });
+    } else {
+      setState(() {
+        _nameValidator = true;
+      });
+    }
+    if (textPhone.text != "") {
+      setState(() {
+        _phoneValidator = false;
+      });
+    } else {
+      setState(() {
+        _phoneValidator = true;
+      });
+    }
+    if (textItem != "" && textItem != null) {
+      setState(() {
+        _scopeValidator = false;
+      });
+    } else {
+      setState(() {
+        _scopeValidator = true;
+      });
+    }
+    if (textWebsite.text != "") {
+      setState(() {
+        _websiteValidator = false;
+      });
+    } else {
+      setState(() {
+        _websiteValidator = true;
+      });
+    }
+    /*if (textWebsite.text != "") {
+      _errorFalse();
+    } else {
+      _errorTrue();
+    }*/
+    if (!_addressValidator &&
+        !_emailValidator &&
+        !_nameValidator &&
+        !_phoneValidator &&
+        !_scopeValidator &&
+        !_websiteValidator) {
+      _searchIDScope(textItem);
+      CompanyModel model = CompanyModel(
+          name: textName.text,
+          phone: textPhone.text,
+          email: textEmail.text,
+          website: textWebsite.text,
+          address: textAddress.text,
+          packageId: widget.paketID);
+      print("Data is Completed");
+      _registerNewCompany(model);
+    }
+  }
+
+  _registerNewCompany(CompanyModel model) async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email: " + model.email),
+                Text("Name: " + model.name),
+                Text("Phone: " + model.phone),
+                Text("Website:" + model.website),
+                Text("Address:" + model.address),
+                Text("Scope: " + textItem),
+              ],
+            )));
+    if (result != null) {
+      if (result) {
+        BlocProvider.of<CompanyBloc>(context).add(AddCompanyEvent(
+            companyModel: model, token: widget.token, scope: idScope));
+      }
+    }
+  }
+
+  _searchIDScope(String textItem) {
+    scopeData.forEach((element) {
+      if (textItem == element.name) {
+        setState(() {
+          idScope = element.id.toString();
+        });
+      }
+    });
   }
 }

@@ -52,110 +52,6 @@ class _EnterPaymentScreen extends State<EnterPayment> {
     country = countries[0];
   }
 
-  _testingData() {
-    if (textCardNumber.text != "" && textCardNumber.text.length > 14) {
-      setState(() {
-        _cardNumberValidator = false;
-      });
-    } else {
-      setState(() {
-        _cardNumberValidator = true;
-      });
-    }
-    if (textMMYY.text != "") {
-      setState(() {
-        _mmyyValidator = false;
-      });
-    } else {
-      setState(() {
-        _mmyyValidator = true;
-      });
-    }
-    if (textCVC.text != "") {
-      setState(() {
-        _cvcValidator = false;
-      });
-    } else {
-      setState(() {
-        _cvcValidator = true;
-      });
-    }
-    if (textCardName.text != "") {
-      setState(() {
-        _cardNameValidator = false;
-      });
-    } else {
-      setState(() {
-        _cardNameValidator = true;
-      });
-    }
-    if (textStreetAddress.text != "") {
-      setState(() {
-        _streetValidator = false;
-      });
-    } else {
-      setState(() {
-        _streetValidator = true;
-      });
-    }
-    if (textCity.text != "") {
-      setState(() {
-        _cityValidator = false;
-      });
-    } else {
-      setState(() {
-        _cityValidator = true;
-      });
-    }
-    if (textProvince.text != "") {
-      setState(() {
-        _provinceValidator = false;
-      });
-    } else {
-      setState(() {
-        _provinceValidator = true;
-      });
-    }
-    if (textZipCode.text != "") {
-      setState(() {
-        _zipCodeValidator = false;
-      });
-    } else {
-      setState(() {
-        _zipCodeValidator = true;
-      });
-    }
-
-    if (country != countries[0]) {
-      setState(() {
-        _countryValidator = false;
-      });
-    } else {
-      setState(() {
-        _countryValidator = true;
-      });
-    }
-    if (!_cardNumberValidator &&
-        !_mmyyValidator &&
-        !_cvcValidator &&
-        !_cardNameValidator &&
-        !_streetValidator &&
-        !_countryValidator &&
-        !_cityValidator &&
-        !_provinceValidator &&
-        !_zipCodeValidator) {
-      _goto();
-    }
-  }
-
-  _goto() {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                PaymentApproved(token: widget.token, paketID: widget.paketID)));
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -628,5 +524,111 @@ class _EnterPaymentScreen extends State<EnterPayment> {
         ),
       ),
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  _testingData() {
+    if (textCardNumber.text != "" && textCardNumber.text.length > 14) {
+      setState(() {
+        _cardNumberValidator = false;
+      });
+    } else {
+      setState(() {
+        _cardNumberValidator = true;
+      });
+    }
+    if (textMMYY.text != "") {
+      setState(() {
+        _mmyyValidator = false;
+      });
+    } else {
+      setState(() {
+        _mmyyValidator = true;
+      });
+    }
+    if (textCVC.text != "") {
+      setState(() {
+        _cvcValidator = false;
+      });
+    } else {
+      setState(() {
+        _cvcValidator = true;
+      });
+    }
+    if (textCardName.text != "") {
+      setState(() {
+        _cardNameValidator = false;
+      });
+    } else {
+      setState(() {
+        _cardNameValidator = true;
+      });
+    }
+    if (textStreetAddress.text != "") {
+      setState(() {
+        _streetValidator = false;
+      });
+    } else {
+      setState(() {
+        _streetValidator = true;
+      });
+    }
+    if (textCity.text != "") {
+      setState(() {
+        _cityValidator = false;
+      });
+    } else {
+      setState(() {
+        _cityValidator = true;
+      });
+    }
+    if (textProvince.text != "") {
+      setState(() {
+        _provinceValidator = false;
+      });
+    } else {
+      setState(() {
+        _provinceValidator = true;
+      });
+    }
+    if (textZipCode.text != "") {
+      setState(() {
+        _zipCodeValidator = false;
+      });
+    } else {
+      setState(() {
+        _zipCodeValidator = true;
+      });
+    }
+
+    if (country != countries[0]) {
+      setState(() {
+        _countryValidator = false;
+      });
+    } else {
+      setState(() {
+        _countryValidator = true;
+      });
+    }
+    if (!_cardNumberValidator &&
+        !_mmyyValidator &&
+        !_cvcValidator &&
+        !_cardNameValidator &&
+        !_streetValidator &&
+        !_countryValidator &&
+        !_cityValidator &&
+        !_provinceValidator &&
+        !_zipCodeValidator) {
+      _goto();
+    }
+  }
+
+  _goto() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                PaymentApproved(token: widget.token, paketID: widget.paketID)));
   }
 }

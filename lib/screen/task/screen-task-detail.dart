@@ -111,6 +111,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   int lengthTask = 0;
   var projectTask = [1, 5, 2, 0];
   TabController tabController;
+  String name = "";
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 
@@ -129,38 +130,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     _getLabel();
     BlocProvider.of<TaskBloc>(context)
         .add(GetAllTaskEvent(projectId: widget.project.id));
-  }
-
-  _getLabel() {
-    BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
-  }
-
-  _postComment(CommentModel comment) {
-    setState(() {
-      textEditingController.text = "";
-    });
-    BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
-  }
-
-  _searchEnum(String moving, String idtask) {
-    for (int i = 0; i < moveToList.length; i++) {
-      if (moving == moveToList[i]) {
-        print(moving + " - " + moveToList[i]);
-        if (dbEnum[i] != historyMoveTo) {
-          _changeProgressbyDropdown(dbEnum[i], idtask);
-        }
-      }
-    }
-  }
-
-  _changeProgressbyDropdown(String progress, String idTask) {
-    BlocProvider.of<ChangeTaskBloc>(context)
-        .add(ChangeTaskUpdateByDropdownEvent(idTask, progress));
-  }
-
-  _changeProgress(String progress, String idTask) {
-    BlocProvider.of<ChangeTaskBloc>(context)
-        .add(ChangeTaskUpdateEvent(idTask, progress));
   }
 
   @override
@@ -442,23 +411,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         ));
   }
 
-  String name = "";
-  void dataIndex(int outerIndex) {
-    if (outerIndex == 0) {
-      setState(() {
-        name = "task_text5".tr();
-      });
-    } else if (outerIndex == 1) {
-      setState(() {
-        name = "task_text6".tr();
-      });
-    } else {
-      setState(() {
-        name = "task_text7".tr();
-      });
-    }
-  }
-
   _buildList(int outerIndex) {
     var innerList = dataTask[outerIndex];
     dataIndex(outerIndex);
@@ -535,98 +487,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         },
       ),
     );
-  }
-
-  _onItemReorder(
-      int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    setState(() {
-      var movedItem = dataTask[oldListIndex].removeAt(oldItemIndex);
-
-      dataTask[newListIndex].insert(newItemIndex, movedItem);
-
-      _changeProgress(dbEnum[newListIndex], movedItem.idTask.toString());
-    });
-  }
-
-  _onListReorder(int oldListIndex, int newListIndex) {
-    setState(() {
-      var movedList = dataTask.removeAt(oldListIndex);
-      dataTask.insert(newListIndex, movedList);
-    });
-  }
-
-  _scrollListener() {
-    if (_controller.offset >= _controller.position.maxScrollExtent - 320 &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        tabController.animateTo((2));
-      });
-    } else if (_controller.offset >=
-            (_controller.position.maxScrollExtent / 2 - 165) &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        tabController.animateTo((1));
-      });
-    } else if (_controller.offset <= _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        tabController.animateTo((0));
-      });
-    }
-  }
-
-  void _getTabIndex() {
-    activeIndex = tabController.index;
-    print(activeIndex);
-  }
-
-  _onTapIndex(int index) {
-    if (index == 0) {
-      _controller.animateTo(_controller.position.minScrollExtent,
-          curve: Curves.linear, duration: Duration(milliseconds: 500));
-    } else if (index == 1) {
-      _controller.animateTo(_controller.position.maxScrollExtent / 2 - 165,
-          curve: Curves.linear, duration: Duration(milliseconds: 500));
-    } else {
-      _controller.animateTo(_controller.position.maxScrollExtent - 320,
-          curve: Curves.linear, duration: Duration(milliseconds: 500));
-    }
-  }
-
-  _onClickItem(TaskModel task) {
-    if (_animationController.isDismissed) {
-      _animationController.forward();
-    } else if (_animationController.isCompleted) {
-      _animationController.reverse();
-    }
-  }
-
-  void _onCheckBoxClick(bool newValue) => setState(() {
-        checkBoxClick = newValue;
-      });
-
-  _clickDoneScroller(TaskModel clickTask) {
-    _searchEnum(moveTo, clickTask.idTask.toString());
-
-    int idLabel;
-    label.forEach((element) {
-      if (element.name == chooseLabel) {
-        setState(() {
-          idLabel = element.id;
-        });
-      }
-    });
-    if (priority != clickTask.priority ||
-        idLabel != clickTask.idLabel ||
-        date != DateTime.parse(clickTask.date)) {
-      TaskModel taskUpdate = TaskModel(
-          idTask: clickTask.idTask,
-          priority: priority,
-          date: date.toString(),
-          idLabel: idLabel);
-      BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(taskUpdate));
-    }
-    _animationController.reverse();
   }
 
   Widget scrollerSheet(TaskModel clickTask) {
@@ -1427,76 +1287,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     );
   }
 
-  _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _imagePicker();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _imagePickerCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  new ListTile(
-                    leading: new Icon(Icons.cancel),
-                    title: new Text('cancel_text').tr(),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  _imagePicker() async {
-    //ImagePicker for gallery
-
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        data = pickedFile.path;
-        print(data);
-        _uploadAttachment(File(data));
-      });
-    } else {}
-  }
-
-  _imagePickerCamera() async {
-    //ImagePicker for Camera
-    final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
-
-    if (pickedFile != null) {
-      setState(() {
-        data = pickedFile.path;
-        print(data);
-        _uploadAttachment(File(data));
-      });
-    }
-  }
-
-  _uploadAttachment(File image) {
-    BlocProvider.of<UploadAttachBloc>(context)
-        .add(UploadAttachNewEvent(clickTask.idTask.toString(), image));
-  }
-
   //TO make alertdialog for picture preview
   Widget _buildCupertino({BuildContext context, String link}) {
     return new CupertinoAlertDialog(
@@ -1513,25 +1303,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
             }),
       ],
     );
-  }
-
-  //Widget to pick dateTime in ScrollerSheet
-  dateUpdatePicker(DateTime initDate, TimeOfDay initTime) async {
-    final DateTime datePicked = await showDatePicker(
-        context: context,
-        initialDate: initDate,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100));
-    if (datePicked != null) {
-      final TimeOfDay timePicked =
-          await showTimePicker(context: context, initialTime: initTime);
-      if (timePicked != null) {
-        setState(() {
-          date = DateTime(datePicked.year, datePicked.month, datePicked.day,
-              timePicked.hour, timePicked.minute);
-        });
-      }
-    }
   }
 
   //Widget for PopUp BUtton in CheckList Task
@@ -1621,5 +1392,234 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
             }),
       ],
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+  _getLabel() {
+    BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
+  }
+
+  _postComment(CommentModel comment) {
+    setState(() {
+      textEditingController.text = "";
+    });
+    BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
+  }
+
+  _searchEnum(String moving, String idtask) {
+    for (int i = 0; i < moveToList.length; i++) {
+      if (moving == moveToList[i]) {
+        print(moving + " - " + moveToList[i]);
+        if (dbEnum[i] != historyMoveTo) {
+          _changeProgressbyDropdown(dbEnum[i], idtask);
+        }
+      }
+    }
+  }
+
+  _changeProgressbyDropdown(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateByDropdownEvent(idTask, progress));
+  }
+
+  _changeProgress(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateEvent(idTask, progress));
+  }
+
+  void dataIndex(int outerIndex) {
+    if (outerIndex == 0) {
+      setState(() {
+        name = "task_text5".tr();
+      });
+    } else if (outerIndex == 1) {
+      setState(() {
+        name = "task_text6".tr();
+      });
+    } else {
+      setState(() {
+        name = "task_text7".tr();
+      });
+    }
+  }
+
+  _onItemReorder(
+      int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+    setState(() {
+      var movedItem = dataTask[oldListIndex].removeAt(oldItemIndex);
+
+      dataTask[newListIndex].insert(newItemIndex, movedItem);
+
+      _changeProgress(dbEnum[newListIndex], movedItem.idTask.toString());
+    });
+  }
+
+  _onListReorder(int oldListIndex, int newListIndex) {
+    setState(() {
+      var movedList = dataTask.removeAt(oldListIndex);
+      dataTask.insert(newListIndex, movedList);
+    });
+  }
+
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent - 320 &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        tabController.animateTo((2));
+      });
+    } else if (_controller.offset >=
+            (_controller.position.maxScrollExtent / 2 - 165) &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        tabController.animateTo((1));
+      });
+    } else if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        tabController.animateTo((0));
+      });
+    }
+  }
+
+  void _getTabIndex() {
+    activeIndex = tabController.index;
+    print(activeIndex);
+  }
+
+  _onTapIndex(int index) {
+    if (index == 0) {
+      _controller.animateTo(_controller.position.minScrollExtent,
+          curve: Curves.linear, duration: Duration(milliseconds: 500));
+    } else if (index == 1) {
+      _controller.animateTo(_controller.position.maxScrollExtent / 2 - 165,
+          curve: Curves.linear, duration: Duration(milliseconds: 500));
+    } else {
+      _controller.animateTo(_controller.position.maxScrollExtent - 320,
+          curve: Curves.linear, duration: Duration(milliseconds: 500));
+    }
+  }
+
+  _onClickItem(TaskModel task) {
+    if (_animationController.isDismissed) {
+      _animationController.forward();
+    } else if (_animationController.isCompleted) {
+      _animationController.reverse();
+    }
+  }
+
+  void _onCheckBoxClick(bool newValue) => setState(() {
+        checkBoxClick = newValue;
+      });
+
+  _clickDoneScroller(TaskModel clickTask) {
+    _searchEnum(moveTo, clickTask.idTask.toString());
+
+    int idLabel;
+    label.forEach((element) {
+      if (element.name == chooseLabel) {
+        setState(() {
+          idLabel = element.id;
+        });
+      }
+    });
+    if (priority != clickTask.priority ||
+        idLabel != clickTask.idLabel ||
+        date != DateTime.parse(clickTask.date)) {
+      TaskModel taskUpdate = TaskModel(
+          idTask: clickTask.idTask,
+          priority: priority,
+          date: date.toString(),
+          idLabel: idLabel);
+      BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(taskUpdate));
+    }
+    _animationController.reverse();
+  }
+
+  _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imagePicker();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imagePickerCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.cancel),
+                    title: new Text('cancel_text').tr(),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  //ImagePicker for gallery
+  _imagePicker() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    } else {}
+  }
+
+  _imagePickerCamera() async {
+    //ImagePicker for Camera
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    }
+  }
+
+  _uploadAttachment(File image) {
+    BlocProvider.of<UploadAttachBloc>(context)
+        .add(UploadAttachNewEvent(clickTask.idTask.toString(), image));
+  }
+
+  //Widget to pick dateTime in ScrollerSheet
+  dateUpdatePicker(DateTime initDate, TimeOfDay initTime) async {
+    final DateTime datePicked = await showDatePicker(
+        context: context,
+        initialDate: initDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100));
+    if (datePicked != null) {
+      final TimeOfDay timePicked =
+          await showTimePicker(context: context, initialTime: initTime);
+      if (timePicked != null) {
+        setState(() {
+          date = DateTime(datePicked.year, datePicked.month, datePicked.day,
+              timePicked.hour, timePicked.minute);
+        });
+      }
+    }
   }
 }

@@ -76,63 +76,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   //INIT Employee BLOC
   EmployeeBloc _employeeBloc;
 
-  // Handle if user click back using button in device not in app (usually for android)
-  Future<bool> _onWillPop({size}) async {
-    return (await showDialog(
-            context: context,
-            barrierColor: Colors.white.withOpacity(0.5),
-            builder: (BuildContext context) {
-              return BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: AlertDialog(
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        child: Text(
-                          "schedule_text8".tr(),
-                          style: TextStyle(color: colorPrimary, fontSize: 14),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      LongButton(
-                        size: size,
-                        bgColor: colorPrimary,
-                        textColor: colorBackground,
-                        title: "schedule_text9".tr(),
-                        onClick: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                        },
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      LongButtonOutline(
-                        outlineColor: colorError,
-                        size: size,
-                        bgColor: colorBackground,
-                        textColor: colorError,
-                        title: "schedule_text10".tr(),
-                        onClick: () {
-                          Navigator.pop(context, true);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      (ScreenTab(index: 3))));
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              );
-            })) ??
-        false;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -795,6 +738,64 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
     );
   }
   //--------------------------Logic-----------------------------//
+// --------------------------Logic-----------------------------//
+
+  // Handle if user click back using button in device not in app (usually for android)
+  Future<bool> _onWillPop({size}) async {
+    return (await showDialog(
+            context: context,
+            barrierColor: Colors.white.withOpacity(0.5),
+            builder: (BuildContext context) {
+              return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        child: Text(
+                          "schedule_text8".tr(),
+                          style: TextStyle(color: colorPrimary, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      LongButton(
+                        size: size,
+                        bgColor: colorPrimary,
+                        textColor: colorBackground,
+                        title: "schedule_text9".tr(),
+                        onClick: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        },
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      LongButtonOutline(
+                        outlineColor: colorError,
+                        size: size,
+                        bgColor: colorBackground,
+                        textColor: colorError,
+                        title: "schedule_text10".tr(),
+                        onClick: () {
+                          Navigator.pop(context, true);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 3))));
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })) ??
+        false;
+  }
 
   // get calendar function
   _selectDate(BuildContext context) async {

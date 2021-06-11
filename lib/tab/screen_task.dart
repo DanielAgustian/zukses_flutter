@@ -233,7 +233,7 @@ class _TaskScreen extends State<TaskScreen> {
     });
   }
 
-  // ====================================== FUNCTION ======================================
+  // --------------------------Logic-----------------------------//
 
   // Function to handle click back on android
   Future<bool> onWillPop() async {

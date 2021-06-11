@@ -125,15 +125,6 @@ class WaitRegisApproved extends StatefulWidget {
 /// This is the stateless widget that the main application instantiates.
 class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
   bool visible = false;
-  void _timer() {
-    Timer(Duration(seconds: 1), () {
-      _sentAcceptance();
-    });
-  }
-
-  _sentAcceptance() {
-    BlocProvider.of<RegisterBloc>(context).add(PostAcceptanceCompanyEvent());
-  }
 
   @override
   void initState() {
@@ -193,6 +184,16 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
             payload: notification.body);
       }
     });
+  }
+
+  void _timer() {
+    Timer(Duration(seconds: 1), () {
+      _sentAcceptance();
+    });
+  }
+
+  _sentAcceptance() {
+    BlocProvider.of<RegisterBloc>(context).add(PostAcceptanceCompanyEvent());
   }
 
   void notificationChecker(RemoteMessage message) {

@@ -84,154 +84,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
   bool getAllUser = false;
 
   String myID = "";
-
-  sharedPrefId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      myID = prefs.getString("myID");
-    });
-    // print("This is my Id" + myID);
-  }
-
-  _addNewTask() {
-    print("Click here");
-    if (textTitle.text != "") {
-      setState(() {
-        _titleValidator = false;
-      });
-    } else {
-      setState(() {
-        _titleValidator = true;
-      });
-    }
-    print("titleValidator = " + _titleValidator.toString());
-    if (textDescription.text != "") {
-      setState(() {
-        _descValidation = false;
-      });
-    } else {
-      setState(() {
-        _descValidation = true;
-      });
-    }
-
-    if (hasilMultiple.length > 0) {
-      setState(() {
-        _assignToValidator = false;
-      });
-    } else {
-      setState(() {
-        _assignToValidator = true;
-      });
-    }
-    if (textItem != priorityList.first) {
-      setState(() {
-        _priorityValidator = false;
-      });
-    } else {
-      setState(() {
-        _priorityValidator = true;
-      });
-    }
-    if (textDueDate.text != "") {
-      setState(() {
-        _dateValidator = false;
-      });
-    } else {
-      setState(() {
-        _dateValidator = true;
-      });
-    }
-    if (textTime.text != "") {
-      setState(() {
-        _timeValidator = false;
-      });
-    } else {
-      setState(() {
-        _timeValidator = true;
-      });
-    }
-
-    if (textLabel != labelList[0] && textLabel != labelList.last) {
-      setState(() {
-        _labelValidator = false;
-      });
-    } else {
-      setState(() {
-        _labelValidator = true;
-      });
-    }
-
-    print("FreeAssignTO" + freeAssignTo.toString());
-    if (freeAssignTo) {
-      if (!_titleValidator &&
-          !_descValidation &&
-          !_dateValidator &&
-          !_timeValidator &&
-          !_priorityValidator) {
-        int idLabel;
-        print("textLabel" + textLabel);
-        for (int i = 0; i < label.length; i++) {
-          if (label[i].name == textLabel) {
-            setState(() {
-              idLabel = label[i].id;
-            });
-
-            print("idLabel" + idLabel.toString());
-          }
-        }
-        DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
-            selectedDate.day, _time.hour, _time.minute);
-        TaskModel task = TaskModel(
-          idProject: widget.projectId,
-          taskName: textTitle.text.titleCase,
-          details: textDescription.text,
-          date: datePush.toString(),
-          priority: textItem,
-          notes: textNotes.text,
-          label: idLabel.toString(),
-        );
-        BlocProvider.of<TaskBloc>(context).add(AddTaskFreeEvent(task));
-      }
-    } else {
-      if (!_titleValidator &&
-          !_descValidation &&
-          !_assignToValidator &&
-          !_dateValidator &&
-          !_timeValidator &&
-          !_labelValidator &&
-          !_priorityValidator) {
-        /*for (int i = 0; i < hasilMultiple.length; i++) {
-          int temp = hasilMultiple[i];
-          if (temp == 0) {
-            idUser.add(int.parse(myID));
-          } else {
-            idUser.add(int.parse(allUser[temp - 1].userID));
-          }
-        }*/
-        int idLabel;
-        for (int i = 0; i < label.length; i++) {
-          if (label[i].name == textLabel) {
-            idLabel = label[i].id;
-            print("IdLabel" + idLabel.toString());
-          }
-        }
-        DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
-            selectedDate.day, _time.hour, _time.minute);
-        TaskModel task = TaskModel(
-          idProject: widget.projectId,
-          taskName: textTitle.text.titleCase,
-          details: textDescription.text,
-          assignee: hasilMultiple,
-          date: datePush.toString(),
-          priority: textItem,
-          notes: textNotes.text,
-          label: idLabel.toString(),
-        );
-        BlocProvider.of<TaskBloc>(context).add(AddTaskEvent(task));
-      }
-    }
-  }
+  TimeOfDay _time = TimeOfDay.now();
 
   @override
   void initState() {
@@ -658,120 +511,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
         ));
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2050));
-    if (picked != null)
-      setState(() {
-        selectedDate = picked;
-        DateFormat formatter = DateFormat('yyyy-MM-dd');
-        String formatted = formatter.format(selectedDate);
-        textDueDate.text = formatted;
-      });
-  }
-
-  TimeOfDay _time = TimeOfDay.now();
-  void _selectTime() async {
-    TimeOfDay newTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (BuildContext context, Widget child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
-        );
-      },
-    );
-    if (newTime != null) {
-      // print("MASUK TIME");
-      setState(() {
-        _time = newTime;
-        String data = _time.format(context);
-        textTime.text = data;
-      });
-    }
-  }
-
-  _addNewLabel(String newLabel) async {
-    BlocProvider.of<LabelTaskBloc>(context).add(AddLabelTaskEvent(newLabel));
-  }
-
-  buildPopUpNewLabel(context) {
-    return AlertDialog(
-      title: Text(
-        "Create New Label",
-        style: TextStyle(
-            color: colorPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: colorNeutral2),
-                  color: colorBackground,
-                  boxShadow: [boxShadowStandard],
-                  borderRadius: BorderRadius.circular(5)),
-              child: Center(
-                child: TextFormField(
-                  controller: textNewLabel,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      hintText: "New Label",
-                      hintStyle: TextStyle(),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SmallButton(
-                  bgColor: colorError,
-                  title: "Cancel",
-                  textColor: colorBackground,
-                  size: 100,
-                  onClick: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SmallButton(
-                  bgColor: colorPrimary,
-                  title: "Add",
-                  textColor: colorBackground,
-                  size: 100,
-                  onClick: () {
-                    _addNewLabel(textNewLabel.text);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  void searchFunction(String q) {
-    setState(() {
-      searchQuery = q;
-    });
-  }
-
+  // Show scroll sheet
   Widget scrollerSheet() {
     return SizedBox.expand(
       child: SlideTransition(
@@ -970,6 +710,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
     );
   }
 
+  // The App bar
   Widget appBar(Size size, BuildContext context) {
     return AppBar(
       elevation: 0,
@@ -1005,5 +746,267 @@ class _AddTaskScreen extends State<AddTaskScreen>
         )
       ],
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  sharedPrefId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      myID = prefs.getString("myID");
+    });
+    // print("This is my Id" + myID);
+  }
+
+  _addNewTask() {
+    print("Click here");
+    if (textTitle.text != "") {
+      setState(() {
+        _titleValidator = false;
+      });
+    } else {
+      setState(() {
+        _titleValidator = true;
+      });
+    }
+    print("titleValidator = " + _titleValidator.toString());
+    if (textDescription.text != "") {
+      setState(() {
+        _descValidation = false;
+      });
+    } else {
+      setState(() {
+        _descValidation = true;
+      });
+    }
+
+    if (hasilMultiple.length > 0) {
+      setState(() {
+        _assignToValidator = false;
+      });
+    } else {
+      setState(() {
+        _assignToValidator = true;
+      });
+    }
+    if (textItem != priorityList.first) {
+      setState(() {
+        _priorityValidator = false;
+      });
+    } else {
+      setState(() {
+        _priorityValidator = true;
+      });
+    }
+    if (textDueDate.text != "") {
+      setState(() {
+        _dateValidator = false;
+      });
+    } else {
+      setState(() {
+        _dateValidator = true;
+      });
+    }
+    if (textTime.text != "") {
+      setState(() {
+        _timeValidator = false;
+      });
+    } else {
+      setState(() {
+        _timeValidator = true;
+      });
+    }
+
+    if (textLabel != labelList[0] && textLabel != labelList.last) {
+      setState(() {
+        _labelValidator = false;
+      });
+    } else {
+      setState(() {
+        _labelValidator = true;
+      });
+    }
+
+    if (freeAssignTo) {
+      if (!_titleValidator &&
+          !_descValidation &&
+          !_dateValidator &&
+          !_timeValidator &&
+          !_priorityValidator) {
+        int idLabel;
+        print("textLabel" + textLabel);
+        for (int i = 0; i < label.length; i++) {
+          if (label[i].name == textLabel) {
+            setState(() {
+              idLabel = label[i].id;
+            });
+
+            print("idLabel" + idLabel.toString());
+          }
+        }
+        DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
+            selectedDate.day, _time.hour, _time.minute);
+        TaskModel task = TaskModel(
+          idProject: widget.projectId,
+          taskName: textTitle.text.titleCase,
+          details: textDescription.text,
+          date: datePush.toString(),
+          priority: textItem,
+          notes: textNotes.text,
+          label: idLabel.toString(),
+        );
+        BlocProvider.of<TaskBloc>(context).add(AddTaskFreeEvent(task));
+      }
+    } else {
+      if (!_titleValidator &&
+          !_descValidation &&
+          !_assignToValidator &&
+          !_dateValidator &&
+          !_timeValidator &&
+          !_labelValidator &&
+          !_priorityValidator) {
+        /*for (int i = 0; i < hasilMultiple.length; i++) {
+          int temp = hasilMultiple[i];
+          if (temp == 0) {
+            idUser.add(int.parse(myID));
+          } else {
+            idUser.add(int.parse(allUser[temp - 1].userID));
+          }
+        }*/
+        int idLabel;
+        for (int i = 0; i < label.length; i++) {
+          if (label[i].name == textLabel) {
+            idLabel = label[i].id;
+            print("IdLabel" + idLabel.toString());
+          }
+        }
+        DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
+            selectedDate.day, _time.hour, _time.minute);
+        TaskModel task = TaskModel(
+          idProject: widget.projectId,
+          taskName: textTitle.text.titleCase,
+          details: textDescription.text,
+          assignee: hasilMultiple,
+          date: datePush.toString(),
+          priority: textItem,
+          notes: textNotes.text,
+          label: idLabel.toString(),
+        );
+        BlocProvider.of<TaskBloc>(context).add(AddTaskEvent(task));
+      }
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2050));
+    if (picked != null)
+      setState(() {
+        selectedDate = picked;
+        DateFormat formatter = DateFormat('yyyy-MM-dd');
+        String formatted = formatter.format(selectedDate);
+        textDueDate.text = formatted;
+      });
+  }
+
+  void _selectTime() async {
+    TimeOfDay newTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child,
+        );
+      },
+    );
+    if (newTime != null) {
+      // print("MASUK TIME");
+      setState(() {
+        _time = newTime;
+        String data = _time.format(context);
+        textTime.text = data;
+      });
+    }
+  }
+
+  _addNewLabel(String newLabel) async {
+    BlocProvider.of<LabelTaskBloc>(context).add(AddLabelTaskEvent(newLabel));
+  }
+
+  buildPopUpNewLabel(context) {
+    return AlertDialog(
+      title: Text(
+        "Create New Label",
+        style: TextStyle(
+            color: colorPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 50,
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+              decoration: BoxDecoration(
+                  border: Border.all(color: colorNeutral2),
+                  color: colorBackground,
+                  boxShadow: [boxShadowStandard],
+                  borderRadius: BorderRadius.circular(5)),
+              child: Center(
+                child: TextFormField(
+                  controller: textNewLabel,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      hintText: "New Label",
+                      hintStyle: TextStyle(),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SmallButton(
+                  bgColor: colorError,
+                  title: "Cancel",
+                  textColor: colorBackground,
+                  size: 100,
+                  onClick: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SmallButton(
+                  bgColor: colorPrimary,
+                  title: "Add",
+                  textColor: colorBackground,
+                  size: 100,
+                  onClick: () {
+                    _addNewLabel(textNewLabel.text);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void searchFunction(String q) {
+    setState(() {
+      searchQuery = q;
+    });
   }
 }

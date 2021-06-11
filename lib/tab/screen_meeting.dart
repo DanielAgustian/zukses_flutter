@@ -347,6 +347,7 @@ class _MeetingScreenState extends State<MeetingScreen>
           : meetings == null
               ? Container()
               : ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: meetings.length,
                   itemBuilder: (context, index) => util
@@ -515,8 +516,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                               width: 10,
                                             ),
                                             Text(
-                                              "User " +
-                                                  scheduleModel
+                                              scheduleModel
                                                       .members[index].name +
                                                   " (" +
                                                   util.acceptancePrint(
@@ -620,7 +620,7 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
   }
 
-  // ====================================== FUNCTION ======================================
+  // --------------------------Logic-----------------------------//
 
   void selectDate(DateTime date) {
     setState(() {

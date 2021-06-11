@@ -44,94 +44,6 @@ class _SetupTeamScreen extends State<SetupTeam> {
     textLink.text = widget.link;
   }
 
-  void getLinkTeam() {
-    textLink.text = data;
-  }
-
-  void goTo() async {
-    List<String> listData = [];
-    var result = await showDialog(
-        context: context,
-        builder: (BuildContext context) => _buildCupertino(
-            context: context,
-            wData: Container(
-              child: Column(
-                children: [
-                  Text("Team Name: " + widget.namaTeam),
-                ],
-              ),
-            )));
-    if (result) {
-      BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-          namaTeam: widget.namaTeam,
-          token: widget.token,
-          link: widget.link,
-          email: listData));
-    }
-  }
-
-  void copyLink() {
-    FlutterClipboard.copy(textLink.text)
-        .then((value) => print("copy:" + textLink.text));
-  }
-
-  void sentInvitation() async {
-    if (textInvEmail.text == "" || textInvEmail.text.length < 1) {
-      setState(() {
-        errorInvEmail = true;
-      });
-    } else {
-      Pattern pattern =
-          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-      RegExp regex = new RegExp(pattern);
-      int temp = 0;
-      while (temp <= jumlahTextEditing) {
-        if (regex.hasMatch(textEmail[temp].text)) {
-          setState(() {
-            errorInvEmail = false;
-          });
-        } else {
-          setState(() {
-            errorInvEmail = true;
-          });
-        }
-        temp++;
-      }
-    }
-
-    // print("Click Invitation");
-    // print("Jumlah Text Editing:" + jumlahTextEditing.toString());
-    // print("TextEmail[0]" + textEmail[0].text);
-    // print(errorInvEmail);
-    setState(() {
-      errorInvEmail = false;
-    });
-
-    if (errorInvEmail == false) {
-      for (int i = 0; i <= jumlahTextEditing; i++) {
-        listEmail.add(textEmail[i].text);
-      }
-      var result = await showDialog(
-          context: context,
-          builder: (BuildContext context) => _buildCupertino(
-              context: context,
-              wData: Container(
-                child: Column(
-                  children: [
-                    Text("Team Name: " + widget.namaTeam),
-                  ],
-                ),
-              )));
-      if (result) {
-        BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-            namaTeam: widget.namaTeam,
-            token: widget.token,
-            link: widget.link,
-            email: listEmail));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -470,5 +382,91 @@ class _SetupTeamScreen extends State<SetupTeam> {
             }),
       ],
     );
+  }
+
+// --------------------------Logic-----------------------------//
+
+  void getLinkTeam() {
+    textLink.text = data;
+  }
+
+  void goTo() async {
+    List<String> listData = [];
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Container(
+              child: Column(
+                children: [
+                  Text("Team Name: " + widget.namaTeam),
+                ],
+              ),
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+          namaTeam: widget.namaTeam,
+          token: widget.token,
+          link: widget.link,
+          email: listData));
+    }
+  }
+
+  void copyLink() {
+    FlutterClipboard.copy(textLink.text)
+        .then((value) => print("copy:" + textLink.text));
+  }
+
+  void sentInvitation() async {
+    if (textInvEmail.text == "" || textInvEmail.text.length < 1) {
+      setState(() {
+        errorInvEmail = true;
+      });
+    } else {
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+      int temp = 0;
+      while (temp <= jumlahTextEditing) {
+        if (regex.hasMatch(textEmail[temp].text)) {
+          setState(() {
+            errorInvEmail = false;
+          });
+        } else {
+          setState(() {
+            errorInvEmail = true;
+          });
+        }
+        temp++;
+      }
+    }
+
+    setState(() {
+      errorInvEmail = false;
+    });
+
+    if (errorInvEmail == false) {
+      for (int i = 0; i <= jumlahTextEditing; i++) {
+        listEmail.add(textEmail[i].text);
+      }
+      var result = await showDialog(
+          context: context,
+          builder: (BuildContext context) => _buildCupertino(
+              context: context,
+              wData: Container(
+                child: Column(
+                  children: [
+                    Text("Team Name: " + widget.namaTeam),
+                  ],
+                ),
+              )));
+      if (result) {
+        BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+            namaTeam: widget.namaTeam,
+            token: widget.token,
+            link: widget.link,
+            email: listEmail));
+      }
+    }
   }
 }
