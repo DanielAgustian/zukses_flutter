@@ -163,38 +163,6 @@ class _EditProfileScreen extends State<EditProfile> {
                                                 image: FileImage(File(data)))),
                                       ),
                               ),
-                        // Padding(
-                        //     padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                        //     child: (widget.user.imgUrl == "" ||
-                        //                 widget.user.imgUrl == null) &&
-                        //             (data == null || data == "")
-                        //         ? Container(
-                        //             width: size.height < 569 ? 75 : 90,
-                        //             height: size.height < 569 ? 75 : 90,
-                        //             decoration: BoxDecoration(
-                        //               color: colorNeutral2,
-                        //               shape: BoxShape.circle,
-                        //             ),
-                        //             child: Center(
-                        //               child: FaIcon(
-                        //                 FontAwesomeIcons.camera,
-                        //                 color: colorNeutral3,
-                        //               ),
-                        //             ))
-                        //         : Container(
-                        //             width: size.height < 569 ? 75 : 90,
-                        //             height: size.height < 569 ? 75 : 90,
-                        //             decoration: BoxDecoration(
-                        //                 color: colorNeutral2,
-                        //                 shape: BoxShape.circle,
-                        //                 image: DecorationImage(
-                        //                     fit: BoxFit.fitWidth,
-                        //                     image: data != ""
-                        //                         ? FileImage(File(data))
-                        //                         : NetworkImage(
-                        //                             "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
-                        //           ),
-                        //   ),
                         Positioned(
                             right: 0.0,
                             bottom: 0.0,

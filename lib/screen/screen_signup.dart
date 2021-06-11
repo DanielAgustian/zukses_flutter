@@ -48,157 +48,6 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
   String failedRegister = "";
   String tokenFCM = "";
 
-  void register() {
-    if (textEmail.text == "") {
-      setState(() {
-        _emailValidator = true;
-      });
-    } else {
-      print(textUsername.text.titleCase);
-      Pattern pattern =
-          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-      RegExp regex = new RegExp(pattern);
-
-      if (textEmail.text == "") {
-        setState(() {
-          empty[0] = true;
-        });
-      } else {
-        if (!regex.hasMatch(textEmail.text)) {
-          setState(() {
-            _emailValidator = true;
-          });
-        } else {
-          setState(() {
-            _emailValidator = false;
-          });
-        }
-      }
-    }
-
-    if (textUsername.text == "") {
-      setState(() {
-        empty[1] = true;
-        _usernameValidator = true;
-      });
-    } else {
-      setState(() {
-        _usernameValidator = false;
-      });
-    }
-    if (textPassword.text == "") {
-      setState(() {
-        empty[2] = true;
-        _passValidator = true;
-      });
-    } else {
-      setState(() {
-        _passValidator = false;
-      });
-    }
-    if (textConfirmPassword.text == "") {
-      setState(() {
-        empty[3] = true;
-        _confirmPassValidator = true;
-      });
-    } else {
-      if (textConfirmPassword.text != textPassword.text) {
-        setState(() {
-          _confirmPassValidator = true;
-
-          _passValidator = true;
-        });
-      } else {
-        setState(() {
-          _confirmPassValidator = false;
-        });
-      }
-    }
-
-    if (widget.link == null) {
-      setState(() {
-        _linkValidator = true;
-      });
-    } else {
-      setState(() {
-        _linkValidator = false;
-      });
-    }
-    if (!_emailValidator &&
-        !_usernameValidator &&
-        !_passValidator &&
-        !_confirmPassValidator) {
-      RegisterModel register = RegisterModel(
-          email: textEmail.text.toLowerCase(),
-          username: textUsername.text.titleCase,
-          password: textPassword.text,
-          confirmPassword: textConfirmPassword.text);
-
-      if (_linkValidator) {
-        registerIndividu(register);
-      } else {
-        registerTeamMember(register);
-      }
-    }
-  }
-
-  registerIndividu(RegisterModel register) async {
-    var result = await showDialog(
-        context: context,
-        builder: (BuildContext context) => _buildCupertino(
-            context: context,
-            wData: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Email : " + textEmail.text.toLowerCase()),
-                Text("Full Name: " + textUsername.text.titleCase),
-              ],
-            )));
-    if (result) {
-      BlocProvider.of<RegisterBloc>(context)
-          .add(AddRegisterIndividuEvent(register, tokenFCM: tokenFCM));
-    }
-  }
-
-  registerTeamMember(RegisterModel register) async {
-    String link = await Util()
-        .createDynamicLink2(short: false, link: widget.link.toString());
-    var result = await showDialog(
-        context: context,
-        builder: (BuildContext context) => _buildCupertino(
-            context: context,
-            wData: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Email : " + textEmail.text),
-                Text("Full Name: " + textUsername.text.titleCase),
-              ],
-            )));
-    if (result) {
-      BlocProvider.of<RegisterBloc>(context)
-          .add(AddRegisterTeamMemberEvent(register, link));
-    }
-  }
-
-  gotoLogin() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScreenLogin()),
-    );
-  }
-
-  _sharedPrefLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("userLogin", textEmail.text);
-    await prefs.setString("passLogin", textPassword.text);
-  }
-
-  _getFCMToken() async {
-    tokenFCM = await Util().getTokenFCM();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -497,45 +346,6 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                       SizedBox(
                         height: 15,
                       ),
-                      /*Center(
-                        child: Text(
-                          "register_text2".tr(),
-                          style:
-                              TextStyle(fontSize: 16, color: Color(0xFF8793B5)),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      LongButtonIcon(
-                        size: size,
-                        title: "button_sign_up_google".tr(),
-                        bgColor: colorGoogle,
-                        textColor: colorBackground,
-                        iconWidget: Image.asset(
-                          'assets/images/google-logo.png',
-                          scale: 0.6,
-                        ),
-                        onClick: () {
-                          BlocProvider.of<RegisterBloc>(context)
-                              .add(AddRegisterGoogle(tokenFCM: tokenFCM));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      LongButtonIcon(
-                        size: size,
-                        title: "button_sign_up_fb".tr(),
-                        bgColor: colorFacebook,
-                        textColor: colorBackground,
-                        iconWidget: Image.asset(
-                          'assets/images/facebook-logo.png',
-                          scale: 0.6,
-                        ),
-                        onClick: () {
-                          BlocProvider.of<RegisterBloc>(context)
-                              .add(AddRegisterFacebook(tokenFCM: tokenFCM));
-                        },
-                      ),*/
                       SizedBox(
                         height: 0.02 * size.height,
                       ),
@@ -600,5 +410,158 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
             }),
       ],
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  void register() {
+    if (textEmail.text == "") {
+      setState(() {
+        _emailValidator = true;
+      });
+    } else {
+      print(textUsername.text.titleCase);
+      Pattern pattern =
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regex = new RegExp(pattern);
+
+      if (textEmail.text == "") {
+        setState(() {
+          empty[0] = true;
+        });
+      } else {
+        if (!regex.hasMatch(textEmail.text)) {
+          setState(() {
+            _emailValidator = true;
+          });
+        } else {
+          setState(() {
+            _emailValidator = false;
+          });
+        }
+      }
+    }
+
+    if (textUsername.text == "") {
+      setState(() {
+        empty[1] = true;
+        _usernameValidator = true;
+      });
+    } else {
+      setState(() {
+        _usernameValidator = false;
+      });
+    }
+    if (textPassword.text == "") {
+      setState(() {
+        empty[2] = true;
+        _passValidator = true;
+      });
+    } else {
+      setState(() {
+        _passValidator = false;
+      });
+    }
+    if (textConfirmPassword.text == "") {
+      setState(() {
+        empty[3] = true;
+        _confirmPassValidator = true;
+      });
+    } else {
+      if (textConfirmPassword.text != textPassword.text) {
+        setState(() {
+          _confirmPassValidator = true;
+
+          _passValidator = true;
+        });
+      } else {
+        setState(() {
+          _confirmPassValidator = false;
+        });
+      }
+    }
+
+    if (widget.link == null) {
+      setState(() {
+        _linkValidator = true;
+      });
+    } else {
+      setState(() {
+        _linkValidator = false;
+      });
+    }
+    if (!_emailValidator &&
+        !_usernameValidator &&
+        !_passValidator &&
+        !_confirmPassValidator) {
+      RegisterModel register = RegisterModel(
+          email: textEmail.text.toLowerCase(),
+          username: textUsername.text.titleCase,
+          password: textPassword.text,
+          confirmPassword: textConfirmPassword.text);
+
+      if (_linkValidator) {
+        registerIndividu(register);
+      } else {
+        registerTeamMember(register);
+      }
+    }
+  }
+
+  registerIndividu(RegisterModel register) async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email : " + textEmail.text.toLowerCase()),
+                Text("Full Name: " + textUsername.text.titleCase),
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterIndividuEvent(register, tokenFCM: tokenFCM));
+    }
+  }
+
+  registerTeamMember(RegisterModel register) async {
+    String link = await Util()
+        .createDynamicLink2(short: false, link: widget.link.toString());
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Email : " + textEmail.text),
+                Text("Full Name: " + textUsername.text.titleCase),
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterTeamMemberEvent(register, link));
+    }
+  }
+
+  gotoLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ScreenLogin()),
+    );
+  }
+
+  _sharedPrefLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userLogin", textEmail.text);
+    await prefs.setString("passLogin", textPassword.text);
+  }
+
+  _getFCMToken() async {
+    tokenFCM = await Util().getTokenFCM();
   }
 }
