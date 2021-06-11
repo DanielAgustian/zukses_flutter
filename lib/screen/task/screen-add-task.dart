@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:time_picker_widget/time_picker_widget.dart';
 import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
 import 'package:zukses_app_1/bloc/employee/employee-event.dart';
 import 'package:zukses_app_1/bloc/employee/employee-state.dart';
@@ -13,6 +16,7 @@ import 'package:zukses_app_1/bloc/task/task-bloc.dart';
 import 'package:zukses_app_1/bloc/task/task-event.dart';
 import 'package:zukses_app_1/bloc/task/task-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -84,7 +88,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
   bool getAllUser = false;
 
   String myID = "";
-  TimeOfDay _time = TimeOfDay.now();
 
   @override
   void initState() {
@@ -96,6 +99,63 @@ class _AddTaskScreen extends State<AddTaskScreen>
     BlocProvider.of<EmployeeBloc>(context).add(LoadAllEmployeeEvent());
   }
 
+  Future<bool> onWillPop(Size size) async {
+    return (await showDialog(
+            context: context,
+            barrierColor: Colors.white.withOpacity(0.5),
+            builder: (BuildContext context) {
+              return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        child: Text(
+                          "schedule_text8".tr(),
+                          style: TextStyle(color: colorPrimary, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      LongButton(
+                        size: size,
+                        bgColor: colorPrimary,
+                        textColor: colorBackground,
+                        title: "schedule_text9".tr(),
+                        onClick: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        },
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      LongButtonOutline(
+                        outlineColor: colorError,
+                        size: size,
+                        bgColor: colorBackground,
+                        textColor: colorError,
+                        title: "schedule_text10".tr(),
+                        onClick: () {
+                          Navigator.pop(context, true);
+                          Navigator.pop(context, true);
+                          /*Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      (ScreenTab(index: 3))));*/
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -103,415 +163,499 @@ class _AddTaskScreen extends State<AddTaskScreen>
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: appBar(size, context),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 10, vertical: paddingVertical),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      BlocListener<EmployeeBloc, EmployeeState>(
-                        listener: (context, state) {
-                          if (state is EmployeeStateFailLoad) {
-                            setState(() {
-                              freeAssignTo = true;
-                            });
-                          }
-                        },
-                        child: Container(),
-                      ),
-                      BlocListener<TaskBloc, TaskState>(
+        body: WillPopScope(
+          onWillPop: () {
+            if (textDueDate.text.length > 0 ||
+                textTitle.text.length > 0 ||
+                textDescription.text.length > 0 ||
+                textNotes.text.length > 0 ||
+                textTime.text.length > 0) {
+              return onWillPop(size);
+            }
+            return Future.value(true);
+          },
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10, vertical: paddingVertical),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        BlocListener<EmployeeBloc, EmployeeState>(
                           listener: (context, state) {
-                            if (state is TaskStateAddSuccessLoad) {
-                              Navigator.pop(context);
-                            } else if (state is TaskStateAddFailLoad) {
-                              util.showToast(
-                                  context: context,
-                                  msg: "Add Task Failed",
-                                  duration: 3,
-                                  color: colorError,
-                                  txtColor: colorBackground);
+                            if (state is EmployeeStateFailLoad) {
+                              setState(() {
+                                freeAssignTo = true;
+                              });
                             }
                           },
-                          child: Container()),
-                      BlocListener<LabelTaskBloc, LabelTaskState>(
-                        listener: (context, state) {
-                          if (state is LabelTaskStateSuccessLoad) {
-                            labelList.clear();
-                            labelList.add("Click Here for Label");
+                          child: Container(),
+                        ),
+                        BlocListener<TaskBloc, TaskState>(
+                            listener: (context, state) {
+                              if (state is TaskStateAddSuccessLoad) {
+                                Navigator.pop(context);
+                              } else if (state is TaskStateAddFailLoad) {
+                                util.showToast(
+                                    context: context,
+                                    msg: "Add Task Failed",
+                                    duration: 3,
+                                    color: colorError,
+                                    txtColor: colorBackground);
+                              }
+                            },
+                            child: Container()),
+                        BlocListener<LabelTaskBloc, LabelTaskState>(
+                          listener: (context, state) {
+                            if (state is LabelTaskStateSuccessLoad) {
+                              labelList.clear();
+                              labelList.add("Click Here for Label");
 
-                            setState(() {
-                              label = state.labelTask;
-                              state.labelTask.forEach((element) {
-                                labelList.add(element.name);
+                              setState(() {
+                                label = state.labelTask;
+                                state.labelTask.forEach((element) {
+                                  labelList.add(element.name);
+                                });
+                                labelList.add("+ New Label");
+                                textLabel = labelList[0];
+                                waitingLabel = false;
                               });
+                            } else if (state is LabelTaskStateFailLoad) {
+                              setState(() {
+                                //freeLabel = true;
+                              });
+                              labelList.clear();
+                              labelList.add("Click Here for Label");
                               labelList.add("+ New Label");
-                              textLabel = labelList[0];
-                              waitingLabel = false;
-                            });
-                          } else if (state is LabelTaskStateFailLoad) {
-                            setState(() {
-                              //freeLabel = true;
-                            });
-                            labelList.clear();
-                            labelList.add("Click Here for Label");
-                            labelList.add("+ New Label");
-                            setState(() {
-                              textLabel = labelList[0];
-                              waitingLabel = false;
-                            });
-                            print("Data Error");
-                          } else if (state is LabelTaskAddStateSuccessLoad) {
-                            BlocProvider.of<LabelTaskBloc>(context)
-                                .add(LoadAllLabelTaskEvent());
-                          }
-                        },
-                        child: Container(),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: _titleValidator
-                                    ? colorError
-                                    : Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [boxShadowStandard],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Center(
+                              setState(() {
+                                textLabel = labelList[0];
+                                waitingLabel = false;
+                              });
+                              print("Data Error");
+                            } else if (state is LabelTaskAddStateSuccessLoad) {
+                              BlocProvider.of<LabelTaskBloc>(context)
+                                  .add(LoadAllLabelTaskEvent());
+                            }
+                          },
+                          child: Container(),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: _titleValidator
+                                      ? colorError
+                                      : Colors.transparent),
+                              color: colorBackground,
+                              boxShadow: [boxShadowStandard],
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Center(
+                            child: TextFormField(
+                              controller: textTitle,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              onChanged: (val) {},
+                              decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 20),
+                                  hintText: "title_text".tr(),
+                                  hintStyle: TextStyle(
+                                      color: _titleValidator
+                                          ? colorError
+                                          : colorNeutral2),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: _descValidation
+                                      ? colorError
+                                      : Colors.transparent),
+                              color: colorBackground,
+                              boxShadow: [boxShadowStandard],
+                              borderRadius: BorderRadius.circular(5)),
                           child: TextFormField(
-                            controller: textTitle,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            onChanged: (val) {},
-                            decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 20),
-                                hintText: "title_text".tr(),
+                            controller: textDescription,
+                            keyboardType: TextInputType.multiline,
+                            minLines: 4,
+                            maxLines: 5,
+                            decoration: new InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 5),
+                                hintText: 'task_text20'.tr(),
                                 hintStyle: TextStyle(
-                                    color: _titleValidator
+                                    color: _descValidation
                                         ? colorError
                                         : colorNeutral2),
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: _descValidation
-                                    ? colorError
-                                    : Colors.transparent),
-                            color: colorBackground,
-                            boxShadow: [boxShadowStandard],
-                            borderRadius: BorderRadius.circular(5)),
-                        child: TextFormField(
-                          controller: textDescription,
-                          keyboardType: TextInputType.multiline,
-                          minLines: 4,
-                          maxLines: 5,
-                          decoration: new InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 5),
-                              hintText: 'task_text20'.tr(),
-                              hintStyle: TextStyle(
-                                  color: _descValidation
-                                      ? colorError
-                                      : colorNeutral2),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      freeAssignTo
-                          ? Container()
-                          : LongButtonOutline(
-                              size: size,
-                              title: "task_text21".tr(),
-                              onClick: () {
-                                FocusScopeNode currentFocus =
-                                    FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
-                                if (_controller.isDismissed) {
-                                  _controller.forward();
-                                } else if (_controller.isCompleted) {
-                                  _controller.reverse();
-                                }
-                              },
-                              bgColor: Colors.white,
-                              outlineColor: colorNeutral2,
-                              textColor: Colors.black,
-                              bold: false,
-                            ),
-                      hasilMultiple.length < 1
-                          ? Container()
-                          : Container(
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                itemCount: hasilMultiple.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  childAspectRatio: 1.9,
-                                  crossAxisCount: 4,
-                                ),
-                                itemBuilder: (context, index) {
-                                  // If user has been choos attendance
-                                  if (hasilMultiple.length != 0) {
-                                    for (var i = 0; i < allUser.length; i++) {
-                                      if (allUser[i].userID ==
-                                          hasilMultiple[index]) {
-                                        return Container(
-                                          height: 5,
-                                          margin: EdgeInsets.only(top: 5),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 5, vertical: 5),
-                                          decoration: BoxDecoration(
-                                              color: colorPrimary,
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                          child: Center(
-                                            child: Text(
-                                              allUser[i].name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: colorBackground,
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        Padding(
-                                          padding: const EdgeInsets.all(3.0),
-                                          child: Container(
-                                            padding: EdgeInsets.all(3),
+                        freeAssignTo
+                            ? Container()
+                            : LongButtonOutline(
+                                size: size,
+                                title: "task_text21".tr(),
+                                onClick: () {
+                                  FocusScopeNode currentFocus =
+                                      FocusScope.of(context);
+                                  if (!currentFocus.hasPrimaryFocus) {
+                                    currentFocus.unfocus();
+                                  }
+                                  if (_controller.isDismissed) {
+                                    _controller.forward();
+                                  } else if (_controller.isCompleted) {
+                                    _controller.reverse();
+                                  }
+                                },
+                                bgColor: Colors.white,
+                                outlineColor: colorNeutral2,
+                                textColor: Colors.black,
+                                bold: false,
+                              ),
+                        hasilMultiple.length < 1
+                            ? Container()
+                            : Container(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: hasilMultiple.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 1.9,
+                                    crossAxisCount: 4,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    // If user has been choos attendance
+                                    if (hasilMultiple.length != 0) {
+                                      for (var i = 0; i < allUser.length; i++) {
+                                        if (allUser[i].userID ==
+                                            hasilMultiple[index]) {
+                                          return Container(
+                                            height: 5,
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 5),
                                             decoration: BoxDecoration(
                                                 color: colorPrimary,
                                                 borderRadius:
                                                     BorderRadius.circular(5)),
                                             child: Center(
                                               child: Text(
-                                                "Myself",
+                                                allUser[i].name,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: colorBackground,
                                                     fontSize: 14),
                                               ),
                                             ),
-                                          ),
-                                        );
+                                          );
+                                        } else {
+                                          Padding(
+                                            padding: const EdgeInsets.all(3.0),
+                                            child: Container(
+                                              padding: EdgeInsets.all(3),
+                                              decoration: BoxDecoration(
+                                                  color: colorPrimary,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              child: Center(
+                                                child: Text(
+                                                  "Myself",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: colorBackground,
+                                                      fontSize: 14),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       }
+                                      // }
                                     }
-                                    // }
-                                  }
-                                  return Container();
+                                    return Container();
+                                  },
+                                ),
+                              ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        RowTaskAddPriority(
+                          list: priorityList,
+                          textItem: textItem,
+                          size: size,
+                          onSelectedItem: (val) {
+                            setState(() {
+                              textItem = val;
+                            });
+                          },
+                        ),
+                        _priorityValidator
+                            ? Text("Please Choose another priority.",
+                                style: TextStyle(
+                                  color: colorError,
+                                  fontSize: 12,
+                                ))
+                            : Container(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+                                _selectDate(context);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
+                                width: size.height < 600
+                                    ? size.width * 0.4
+                                    : size.width * 0.45,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: _dateValidator
+                                            ? colorError
+                                            : Colors.transparent),
+                                    color: colorBackground,
+                                    boxShadow: [boxShadowStandard],
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: IgnorePointer(
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    controller: textDueDate,
+                                    textInputAction: TextInputAction.next,
+                                    keyboardType: TextInputType.text,
+                                    onChanged: (val) {},
+                                    decoration: InputDecoration(
+                                        suffixIcon: IconButton(
+                                          icon: FaIcon(
+                                              FontAwesomeIcons.chevronDown,
+                                              color: colorPrimary),
+                                          onPressed: () {
+                                            _selectDate(context);
+                                          },
+                                        ),
+                                        hintText: "task_text23".tr(),
+                                        hintStyle: TextStyle(),
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+                                _selectTime();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                width: size.width * 0.40,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: _timeValidator
+                                            ? colorError
+                                            : Colors.transparent),
+                                    color: colorBackground,
+                                    boxShadow: [boxShadowStandard],
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: IgnorePointer(
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    controller: textTime,
+                                    textInputAction: TextInputAction.next,
+                                    keyboardType: TextInputType.text,
+                                    onChanged: (val) {},
+                                    decoration: InputDecoration(
+                                        prefixIcon: IconButton(
+                                          icon: FaIcon(FontAwesomeIcons.clock,
+                                              color: colorPrimary),
+                                          onPressed: () {
+                                            FocusScopeNode currentFocus =
+                                                FocusScope.of(context);
+                                            if (!currentFocus.hasPrimaryFocus) {
+                                              currentFocus.unfocus();
+                                            }
+                                            _selectTime();
+                                          },
+                                        ),
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(20, 15, 20, 0),
+                                        hintText: "task_text24".tr(),
+                                        hintStyle: TextStyle(),
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        waitingLabel
+                            ? Container()
+                            : RowTaskDrop(
+                                list: labelList,
+                                textItem: textLabel,
+                                size: size,
+                                onSelectedItem: (val) {
+                                  setState(() {
+                                    textLabel = val;
+                                    if (textLabel == "+ New Label") {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              buildPopUpNewLabel(context));
+                                    }
+                                  });
                                 },
                               ),
-                            ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      RowTaskAddPriority(
-                        list: priorityList,
-                        textItem: textItem,
-                        size: size,
-                        onSelectedItem: (val) {
-                          setState(() {
-                            textItem = val;
-                          });
-                        },
-                      ),
-                      _priorityValidator
-                          ? Text("Please Choose another priority.",
-                              style: TextStyle(
-                                color: colorError,
-                                fontSize: 12,
-                              ))
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              FocusScopeNode currentFocus =
-                                  FocusScope.of(context);
-                              if (!currentFocus.hasPrimaryFocus) {
-                                currentFocus.unfocus();
-                              }
-                              _selectDate(context);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
-                              width: size.height < 600
-                                  ? size.width * 0.4
-                                  : size.width * 0.45,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: _dateValidator
-                                          ? colorError
-                                          : Colors.transparent),
-                                  color: colorBackground,
-                                  boxShadow: [boxShadowStandard],
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: IgnorePointer(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  controller: textDueDate,
-                                  textInputAction: TextInputAction.next,
-                                  keyboardType: TextInputType.text,
-                                  onChanged: (val) {},
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                        icon: FaIcon(
-                                            FontAwesomeIcons.chevronDown,
-                                            color: colorPrimary),
-                                        onPressed: () {
-                                          _selectDate(context);
-                                        },
-                                      ),
-                                      hintText: "task_text23".tr(),
-                                      hintStyle: TextStyle(),
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              FocusScopeNode currentFocus =
-                                  FocusScope.of(context);
-                              if (!currentFocus.hasPrimaryFocus) {
-                                currentFocus.unfocus();
-                              }
-                              _selectTime();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              width: size.width * 0.40,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: _timeValidator
-                                          ? colorError
-                                          : Colors.transparent),
-                                  color: colorBackground,
-                                  boxShadow: [boxShadowStandard],
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: IgnorePointer(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  controller: textTime,
-                                  textInputAction: TextInputAction.next,
-                                  keyboardType: TextInputType.text,
-                                  onChanged: (val) {},
-                                  decoration: InputDecoration(
-                                      prefixIcon: IconButton(
-                                        icon: FaIcon(FontAwesomeIcons.clock,
-                                            color: colorPrimary),
-                                        onPressed: () {
-                                          FocusScopeNode currentFocus =
-                                              FocusScope.of(context);
-                                          if (!currentFocus.hasPrimaryFocus) {
-                                            currentFocus.unfocus();
-                                          }
-                                          _selectTime();
-                                        },
-                                      ),
-                                      contentPadding:
-                                          EdgeInsets.fromLTRB(20, 15, 20, 0),
-                                      hintText: "task_text24".tr(),
-                                      hintStyle: TextStyle(),
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      waitingLabel
-                          ? Container()
-                          : RowTaskDrop(
-                              list: labelList,
-                              textItem: textLabel,
-                              size: size,
-                              onSelectedItem: (val) {
-                                setState(() {
-                                  textLabel = val;
-                                  if (textLabel == "+ New Label") {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            buildPopUpNewLabel(context));
-                                  }
-                                });
-                              },
-                            ),
-                      _labelValidator
-                          ? Text("Please Choose another label.",
-                              style: TextStyle(
-                                color: colorError,
-                                fontSize: 12,
-                              ))
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: colorBackground,
-                              boxShadow: [boxShadowStandard],
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            controller: textNotes,
-                            keyboardType: TextInputType.multiline,
-                            minLines: 3,
-                            maxLines: 3,
-                            decoration: new InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 17, vertical: 5),
-                                hintText: 'task_text25'.tr(),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none),
-                          )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  )),
-            ),
-            scrollerSheet()
-          ],
+                        _labelValidator
+                            ? Text("Please Choose another label.",
+                                style: TextStyle(
+                                  color: colorError,
+                                  fontSize: 12,
+                                ))
+                            : Container(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: colorBackground,
+                                boxShadow: [boxShadowStandard],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              controller: textNotes,
+                              keyboardType: TextInputType.multiline,
+                              minLines: 3,
+                              maxLines: 3,
+                              decoration: new InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 17, vertical: 5),
+                                  hintText: 'task_text25'.tr(),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    )),
+              ),
+              scrollerSheet()
+            ],
+          ),
         ));
   }
 
-  // Show scroll sheet
+  buildPopUpNewLabel(context) {
+    return AlertDialog(
+      title: Text(
+        "Create New Label",
+        style: TextStyle(
+            color: colorPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 50,
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+              decoration: BoxDecoration(
+                  border: Border.all(color: colorNeutral2),
+                  color: colorBackground,
+                  boxShadow: [boxShadowStandard],
+                  borderRadius: BorderRadius.circular(5)),
+              child: Center(
+                child: TextFormField(
+                  controller: textNewLabel,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      hintText: "New Label",
+                      hintStyle: TextStyle(),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SmallButton(
+                  bgColor: colorError,
+                  title: "Cancel",
+                  textColor: colorBackground,
+                  size: 100,
+                  onClick: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SmallButton(
+                  bgColor: colorPrimary,
+                  title: "Add",
+                  textColor: colorBackground,
+                  size: 100,
+                  onClick: () {
+                    _addNewLabel(textNewLabel.text);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void searchFunction(String q) {
+    setState(() {
+      searchQuery = q;
+    });
+  }
+
   Widget scrollerSheet() {
     return SizedBox.expand(
       child: SlideTransition(
@@ -710,7 +854,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
     );
   }
 
-  // The App bar
   Widget appBar(Size size, BuildContext context) {
     return AppBar(
       elevation: 0,
@@ -718,9 +861,18 @@ class _AddTaskScreen extends State<AddTaskScreen>
       automaticallyImplyLeading: false,
       centerTitle: true,
       leading: IconButton(
-        icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
+          icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
+          onPressed: () {
+            if (textDueDate.text.length > 0 ||
+                textTitle.text.length > 0 ||
+                textDescription.text.length > 0 ||
+                textNotes.text.length > 0 ||
+                textTime.text.length > 0) {
+              onWillPop(size);
+            } else {
+              Navigator.pop(context);
+            }
+          }),
       title: Text(
         "task_text19".tr(),
         style: TextStyle(
@@ -748,14 +900,49 @@ class _AddTaskScreen extends State<AddTaskScreen>
     );
   }
 
-  // --------------------------Logic-----------------------------//
+  //==========================Function Logic ============================//
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2050));
+    if (picked != null)
+      setState(() {
+        selectedDate = picked;
+        DateFormat formatter = DateFormat('yyyy-MM-dd');
+        String formatted = formatter.format(selectedDate);
+        textDueDate.text = formatted;
+      });
+  }
+
+  TimeOfDay _time = TimeOfDay.now();
+  void _selectTime() async {
+    showCustomTimePicker(
+        context: context,
+        // It is a must if you provide selectableTimePredicate
+        onFailValidation: (context) => print('Unavailable Selection'),
+        initialTime: TimeOfDay(hour: _time.hour, minute: 0),
+        selectableTimePredicate: (time) => time.minute % 15 == 0).then((time) {
+      if (time != null) {
+        setState(() {
+          _time = time;
+          String data = _time.format(context);
+          textTime.text = data;
+        });
+      }
+    });
+  }
+
+  _addNewLabel(String newLabel) async {
+    BlocProvider.of<LabelTaskBloc>(context).add(AddLabelTaskEvent(newLabel));
+  }
 
   sharedPrefId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       myID = prefs.getString("myID");
     });
-    // print("This is my Id" + myID);
   }
 
   _addNewTask() {
@@ -827,6 +1014,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
       });
     }
 
+    print("FreeAssignTO" + freeAssignTo.toString());
     if (freeAssignTo) {
       if (!_titleValidator &&
           !_descValidation &&
@@ -865,14 +1053,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
           !_timeValidator &&
           !_labelValidator &&
           !_priorityValidator) {
-        /*for (int i = 0; i < hasilMultiple.length; i++) {
-          int temp = hasilMultiple[i];
-          if (temp == 0) {
-            idUser.add(int.parse(myID));
-          } else {
-            idUser.add(int.parse(allUser[temp - 1].userID));
-          }
-        }*/
         int idLabel;
         for (int i = 0; i < label.length; i++) {
           if (label[i].name == textLabel) {
@@ -895,118 +1075,5 @@ class _AddTaskScreen extends State<AddTaskScreen>
         BlocProvider.of<TaskBloc>(context).add(AddTaskEvent(task));
       }
     }
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2050));
-    if (picked != null)
-      setState(() {
-        selectedDate = picked;
-        DateFormat formatter = DateFormat('yyyy-MM-dd');
-        String formatted = formatter.format(selectedDate);
-        textDueDate.text = formatted;
-      });
-  }
-
-  void _selectTime() async {
-    TimeOfDay newTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (BuildContext context, Widget child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
-        );
-      },
-    );
-    if (newTime != null) {
-      // print("MASUK TIME");
-      setState(() {
-        _time = newTime;
-        String data = _time.format(context);
-        textTime.text = data;
-      });
-    }
-  }
-
-  _addNewLabel(String newLabel) async {
-    BlocProvider.of<LabelTaskBloc>(context).add(AddLabelTaskEvent(newLabel));
-  }
-
-  buildPopUpNewLabel(context) {
-    return AlertDialog(
-      title: Text(
-        "Create New Label",
-        style: TextStyle(
-            color: colorPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: colorNeutral2),
-                  color: colorBackground,
-                  boxShadow: [boxShadowStandard],
-                  borderRadius: BorderRadius.circular(5)),
-              child: Center(
-                child: TextFormField(
-                  controller: textNewLabel,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      hintText: "New Label",
-                      hintStyle: TextStyle(),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SmallButton(
-                  bgColor: colorError,
-                  title: "Cancel",
-                  textColor: colorBackground,
-                  size: 100,
-                  onClick: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SmallButton(
-                  bgColor: colorPrimary,
-                  title: "Add",
-                  textColor: colorBackground,
-                  size: 100,
-                  onClick: () {
-                    _addNewLabel(textNewLabel.text);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  void searchFunction(String q) {
-    setState(() {
-      searchQuery = q;
-    });
   }
 }

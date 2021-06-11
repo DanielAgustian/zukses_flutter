@@ -129,7 +129,7 @@ class HistoryBox extends StatelessWidget {
 class PostBox extends StatelessWidget {
   PostBox(
       {Key key,
-      @required this.user,
+      
       this.hint = "Add a comment.. ",
       this.date,
       @required this.onPost,
@@ -137,7 +137,7 @@ class PostBox extends StatelessWidget {
       @required this.textEditController})
       : super(key: key);
   final String hint;
-  final UserModel user;
+ 
   final DateTime date;
   final Size size;
   final TextEditingController textEditController;

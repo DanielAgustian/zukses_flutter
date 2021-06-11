@@ -226,18 +226,12 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           labelList.add(element.name);
                           print(element.name);
                         });
-                        //labelList.add("+ New Label");
-                        //textLabel = labelList[0];
-                        //waitingLabel = false;
                       });
                     } else if (state is LabelTaskStateFailLoad) {
                       setState(() {
                         //freeLabel = true;
                       });
                       labelList.clear();
-                      //labelList.add("Click Here for Label");
-                      //labelList.add("+ New Label");
-                      // print("Data Error");
                     } else if (state is LabelTaskAddStateSuccessLoad) {
                       BlocProvider.of<LabelTaskBloc>(context)
                           .add(LoadAllLabelTaskEvent());
@@ -411,84 +405,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         ));
   }
 
-  _buildList(int outerIndex) {
-    var innerList = dataTask[outerIndex];
-    dataIndex(outerIndex);
-    return DragAndDropList(
-      header: Container(
-        width: size.width * 0.8,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(7.0)),
-          color: colorPrimary,
-        ),
-        padding: EdgeInsets.all(10),
-        child: Text(
-          name,
-          style: Theme.of(context).primaryTextTheme.headline6,
-        ),
-      ),
-      leftSide: Divider(
-        color: colorPrimary,
-      ),
-      canDrag: false,
-      children: List.generate(
-          innerList.length, (index) => _buildItem(innerList[index], index)),
-    );
-  }
-
-  _buildItem(TaskModel item, index) {
-    return DragAndDropItem(
-      child: ListTaskDetail2(
-        priority: item.priority,
-        label: item.label == null ? "" : item.label,
-        size: size,
-        title: item.taskName,
-        detail: item.details,
-        date: util.yearFormat(DateTime.parse(item.date)),
-        hour: util.hourFormat(DateTime.parse(item.date)),
-        index: index,
-        onClick: () {
-          setState(() {
-            if (item.taskType.toLowerCase() == "in progress") {
-              historyMoveTo = dbEnum[1];
-            } else {
-              historyMoveTo = item.taskType.toLowerCase();
-            }
-          });
-          for (int i = 0; i < dbEnum.length; i++) {
-            if (item.taskType.toLowerCase() == dbEnum[i]) {
-              setState(() {
-                moveTo = moveToList[i];
-              });
-            } else {
-              if (item.taskType.toLowerCase() == "in progress") {
-                setState(() {
-                  moveTo = moveToList[1];
-                });
-              }
-            }
-          }
-
-          setState(() {
-            data = "";
-            upload = false;
-            clickTask = item;
-            chooseLabel = item.label;
-            priority = item.priority.titleCase;
-            print("Priorrity:" + item.priority);
-          });
-          BlocProvider.of<CommentBloc>(context)
-              .add(LoadAllCommentEvent(item.idTask.toString()));
-          BlocProvider.of<CLTBloc>(context)
-              .add(LoadAllCLTEvent(item.idTask.toString()));
-          BlocProvider.of<UploadAttachBloc>(context)
-              .add(UploadAttachGetEvent(item.idTask.toString()));
-          _onClickItem(item);
-        },
-      ),
-    );
-  }
-
+  //Widget forview detail in draggable scroll sheet
   Widget scrollerSheet(TaskModel clickTask) {
     Size size = MediaQuery.of(context).size;
     print("clickTask Attachment" + clickTask.attachment.length.toString());
@@ -649,91 +566,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                           color: colorPrimary,
                                           fontWeight: FontWeight.w500),
                                     ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: ListView.builder(
-                                          itemCount:
-                                              clickTask.assignment.length,
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.vertical,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          itemBuilder: (context, index) {
-                                            return Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 5),
-                                              child: Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Container(
-                                                  width: size.height < 569
-                                                      ? 140
-                                                      : 160,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      clickTask
-                                                                      .assignment[
-                                                                          index]
-                                                                      .imgUrl ==
-                                                                  null ||
-                                                              clickTask
-                                                                      .assignment[
-                                                                          index]
-                                                                      .imgUrl ==
-                                                                  ""
-                                                          ? Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                              decoration: BoxDecoration(
-                                                                  color:
-                                                                      colorPrimary,
-                                                                  shape: BoxShape
-                                                                      .circle),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  util.getInitials(clickTask
-                                                                      .assignment[
-                                                                          index]
-                                                                      .name),
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          colorBackground,
-                                                                      fontSize:
-                                                                          12),
-                                                                ),
-                                                              ))
-                                                          : Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                              decoration: BoxDecoration(
-                                                                  image: DecorationImage(
-                                                                      fit: BoxFit
-                                                                          .fitWidth,
-                                                                      image: NetworkImage(
-                                                                          "https://api-zukses.yokesen.com/${clickTask.assignment[index].imgUrl}")),
-                                                                  color:
-                                                                      colorPrimary,
-                                                                  shape: BoxShape
-                                                                      .circle),
-                                                            ),
-                                                      SizedBox(width: 10),
-                                                      Text(
-                                                        clickTask
-                                                            .assignment[index]
-                                                            .name,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                    )
+                                    //ListViewAssigneee Here
+                                    listViewAssignee(clickTask, size)
                                   ],
                                 )
                               : Container(),
@@ -826,135 +660,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                               ),
                             ],
                           ),
-                          BlocBuilder<UploadAttachBloc, UploadAttachState>(
-                              builder: (context, state) {
-                            if (state is UploadAttachStateSuccessLoad) {
-                              return Container(
-                                height: 150,
-                                child: Stack(
-                                  children: [
-                                    SizedBox(
-                                      child: ListView.builder(
-                                          itemCount: state.attach.length,
-                                          scrollDirection: Axis.horizontal,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) {
-                                            return Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 10),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          _buildCupertino(
-                                                              context: context,
-                                                              link: state
-                                                                  .attach[index]
-                                                                  .attachment));
-                                                },
-                                                child: Container(
-                                                  height: size.height * 0.2,
-                                                  width: size.width * 0.9,
-                                                  decoration: BoxDecoration(
-                                                      color: colorNeutral2,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      image: DecorationImage(
-                                                        fit: BoxFit.fitHeight,
-                                                        image: NetworkImage(
-                                                            "https://api-zukses.yokesen.com/" +
-                                                                state
-                                                                    .attach[
-                                                                        index]
-                                                                    .attachment),
-                                                      )),
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: InkWell(
-                                        onTap: () {
-                                          _showPicker(context);
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.bottomLeft,
-                                          height: size.height * 0.045,
-                                          decoration: BoxDecoration(
-                                            color: colorNeutral3,
-                                            borderRadius: BorderRadius.only(
-                                                bottomRight:
-                                                    Radius.circular(10),
-                                                bottomLeft:
-                                                    Radius.circular(10)),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Click Here to Upload",
-                                              style: TextStyle(
-                                                  color: colorBackground),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else if (state is UploadAttachStateFailLoad) {
-                              return Container(
-                                height: size.height * 0.2,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: colorNeutral2,
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                        fit: BoxFit.fitHeight,
-                                        image: data == ""
-                                            ? AssetImage(
-                                                "assets/images/camera.png")
-                                            : FileImage(File(data)))),
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: InkWell(
-                                    onTap: () {
-                                      _showPicker(context);
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.bottomLeft,
-                                      height: size.height * 0.045,
-                                      decoration: BoxDecoration(
-                                        color: colorNeutral3,
-                                        borderRadius: BorderRadius.only(
-                                            bottomRight: Radius.circular(10),
-                                            bottomLeft: Radius.circular(10)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          upload
-                                              ? "Upload Success"
-                                              : "Click Here to Upload",
-                                          style:
-                                              TextStyle(color: colorBackground),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else if (state is UploadAttachStateSuccess) {
-                              BlocProvider.of<UploadAttachBloc>(context).add(
-                                  UploadAttachGetEvent(
-                                      clickTask.idTask.toString()));
-                              return Container();
-                            }
-                            return Container();
-                          }),
                           SizedBox(height: 5),
+                          buildUploadAttach(),
                           SizedBox(
                             height: 20,
                           ),
@@ -997,106 +704,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   ))
                             ],
                           ),
-                          BlocBuilder<CLTBloc, CLTState>(
-                              builder: (context, state) {
-                            if (state is CLTStateGetSuccessLoad) {
-                              return ListView.builder(
-                                padding: EdgeInsets.all(0),
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount:
-                                    state.listCheckList.length + 1, //+ 1,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  if (index == state.listCheckList.length) {
-                                    return Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: CheckboxListTile(
-                                          value: checkBoxClick,
-                                          onChanged: _onCheckBoxClick,
-                                          controlAffinity:
-                                              ListTileControlAffinity.leading,
-                                          title: _textBoxCheck(
-                                              context, clickTask.idTask)),
-                                    );
-                                  }
-                                  return Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: CheckboxListTile(
-                                      value: state.boolCheckList[index],
-                                      onChanged: (val) {
-                                        setState(() {
-                                          state.boolCheckList[index] =
-                                              !state.boolCheckList[index];
-                                        });
-                                        BlocProvider.of<CLTPBloc>(context).add(
-                                            PutCLTPEvent(state
-                                                .listCheckList[index].id
-                                                .toString()));
-                                      },
-                                      controlAffinity:
-                                          ListTileControlAffinity.leading,
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          state.boolCheckList[index]
-                                              ? Text(
-                                                  state.listCheckList[index]
-                                                      .checkList,
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration
-                                                          .lineThrough,
-                                                      fontSize:
-                                                          size.height <= 569
-                                                              ? 12
-                                                              : 14,
-                                                      color: colorPrimary,
-                                                      fontWeight:
-                                                          FontWeight.bold))
-                                              : Text(
-                                                  state.listCheckList[index]
-                                                      .checkList,
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          size.height <= 569
-                                                              ? 12
-                                                              : 14,
-                                                      color: colorPrimary,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                          popUpButtonCheckList(
-                                              context,
-                                              state.listCheckList[index].id
-                                                  .toString())
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            } else if (state is CLTStateGetFailLoad) {
-                              return Container(
-                                alignment: Alignment.centerLeft,
-                                child: CheckboxListTile(
-                                    value: checkBoxClick,
-                                    onChanged: _onCheckBoxClick,
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                    title: _textBoxCheck(
-                                        context, clickTask.idTask)),
-                              );
-                            } else if (state is CLTStateAddSuccessLoad) {
-                              BlocProvider.of<CLTBloc>(context).add(
-                                  LoadAllCLTEvent(clickTask.idTask.toString()));
-                            } else if (state is CLTStateDeleteSuccessLoad) {
-                              BlocProvider.of<CLTBloc>(context).add(
-                                  LoadAllCLTEvent(clickTask.idTask.toString()));
-                            } else if (state is CLTStateEditSuccessLoad) {
-                              BlocProvider.of<CLTBloc>(context).add(
-                                  LoadAllCLTEvent(clickTask.idTask.toString()));
-                            }
-                            return Container();
-                          }),
+                          buildCheckboxListTile(),
                           SizedBox(
                             height: 10,
                           ),
@@ -1187,7 +795,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   _postComment(commentModel);
                                 }
                               },
-                              user: UserModel(userID: "41", name: "Daniel"),
                               size: size,
                               textEditController: textEditingController)
                         ],
@@ -1201,6 +808,259 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         ),
       ),
     );
+  }
+
+  Widget listViewAssignee(TaskModel tasks, Size size) {
+    return Expanded(
+      flex: 2,
+      child: ListView.builder(
+          itemCount: tasks.assignment.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: 5),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: size.height < 569 ? 140 : 160,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      tasks.assignment[index].imgUrl == null ||
+                              tasks.assignment[index].imgUrl == ""
+                          ? Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  color: colorPrimary, shape: BoxShape.circle),
+                              child: Center(
+                                child: Text(
+                                  util.getInitials(
+                                      tasks.assignment[index].name),
+                                  style: TextStyle(
+                                      color: colorBackground, fontSize: 12),
+                                ),
+                              ))
+                          : Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.fitWidth,
+                                      image: NetworkImage(
+                                          "https://api-zukses.yokesen.com/${tasks.assignment[index].imgUrl}")),
+                                  color: colorPrimary,
+                                  shape: BoxShape.circle),
+                            ),
+                      SizedBox(width: 10),
+                      Container(
+                        width: 0.3 * size.width,
+                        child: Text(
+                          tasks.assignment[index].name,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+    );
+  }
+
+  Widget buildUploadAttach() {
+    return BlocBuilder<UploadAttachBloc, UploadAttachState>(
+        builder: (context, state) {
+      if (state is UploadAttachStateSuccessLoad) {
+        return Container(
+          height: 150,
+          child: Stack(
+            children: [
+              SizedBox(
+                child: ListView.builder(
+                    itemCount: state.attach.length,
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => _buildCupertino(
+                                    context: context,
+                                    link: state.attach[index].attachment));
+                          },
+                          child: Container(
+                            height: size.height * 0.2,
+                            width: size.width * 0.9,
+                            decoration: BoxDecoration(
+                                color: colorNeutral2,
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  fit: BoxFit.fitHeight,
+                                  image: NetworkImage(
+                                      "https://api-zukses.yokesen.com/" +
+                                          state.attach[index].attachment),
+                                )),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: InkWell(
+                  onTap: () {
+                    _showPicker(context);
+                  },
+                  child: Container(
+                    alignment: Alignment.bottomLeft,
+                    height: size.height * 0.045,
+                    decoration: BoxDecoration(
+                      color: colorNeutral3,
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Click Here to Upload",
+                        style: TextStyle(color: colorBackground),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (state is UploadAttachStateFailLoad) {
+        return Container(
+          height: size.height * 0.2,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: colorNeutral2,
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                  fit: BoxFit.fitHeight,
+                  image: data == ""
+                      ? AssetImage("assets/images/camera.png")
+                      : FileImage(File(data)))),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: InkWell(
+              onTap: () {
+                _showPicker(context);
+              },
+              child: Container(
+                alignment: Alignment.bottomLeft,
+                height: size.height * 0.045,
+                decoration: BoxDecoration(
+                  color: colorNeutral3,
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10)),
+                ),
+                child: Center(
+                  child: Text(
+                    upload ? "Upload Success" : "Click Here to Upload",
+                    style: TextStyle(color: colorBackground),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      } else if (state is UploadAttachStateSuccess) {
+        BlocProvider.of<UploadAttachBloc>(context)
+            .add(UploadAttachGetEvent(clickTask.idTask.toString()));
+        return Container();
+      }
+      return Container();
+    });
+  }
+
+  Widget buildCheckboxListTile() {
+    return BlocBuilder<CLTBloc, CLTState>(builder: (context, state) {
+      if (state is CLTStateGetSuccessLoad) {
+        return ListView.builder(
+          padding: EdgeInsets.all(0),
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: state.listCheckList.length + 1, //+ 1,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            if (index == state.listCheckList.length) {
+              return Container(
+                alignment: Alignment.centerLeft,
+                child: CheckboxListTile(
+                    value: checkBoxClick,
+                    onChanged: _onCheckBoxClick,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: _textBoxCheck(context, clickTask.idTask)),
+              );
+            }
+            return Container(
+              alignment: Alignment.centerLeft,
+              child: CheckboxListTile(
+                value: state.boolCheckList[index],
+                onChanged: (val) {
+                  setState(() {
+                    state.boolCheckList[index] = !state.boolCheckList[index];
+                  });
+                  BlocProvider.of<CLTPBloc>(context).add(
+                      PutCLTPEvent(state.listCheckList[index].id.toString()));
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    state.boolCheckList[index]
+                        ? Text(state.listCheckList[index].checkList,
+                            style: TextStyle(
+                                decoration: TextDecoration.lineThrough,
+                                fontSize: size.height <= 569 ? 12 : 14,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold))
+                        : Text(state.listCheckList[index].checkList,
+                            style: TextStyle(
+                                fontSize: size.height <= 569 ? 12 : 14,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold)),
+                    popUpButtonCheckList(
+                        context, state.listCheckList[index].id.toString())
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      } else if (state is CLTStateGetFailLoad) {
+        return Container(
+          alignment: Alignment.centerLeft,
+          child: CheckboxListTile(
+              value: checkBoxClick,
+              onChanged: _onCheckBoxClick,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: _textBoxCheck(context, clickTask.idTask)),
+        );
+      } else if (state is CLTStateAddSuccessLoad) {
+        BlocProvider.of<CLTBloc>(context)
+            .add(LoadAllCLTEvent(clickTask.idTask.toString()));
+      } else if (state is CLTStateDeleteSuccessLoad) {
+        BlocProvider.of<CLTBloc>(context)
+            .add(LoadAllCLTEvent(clickTask.idTask.toString()));
+      } else if (state is CLTStateEditSuccessLoad) {
+        BlocProvider.of<CLTBloc>(context)
+            .add(LoadAllCLTEvent(clickTask.idTask.toString()));
+      }
+      return Container();
+    });
   }
 
   Widget buildCommentSection(Size size, TaskModel clickTask) {
@@ -1285,6 +1145,71 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                 })),
       ),
     );
+  }
+
+  _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imagePicker();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imagePickerCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.cancel),
+                    title: new Text('cancel_text').tr(),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _imagePicker() async {
+    //ImagePicker for gallery
+
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    } else {}
+  }
+
+  _imagePickerCamera() async {
+    //ImagePicker for Camera
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    }
   }
 
   //TO make alertdialog for picture preview
@@ -1395,27 +1320,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   // --------------------------Logic-----------------------------//
-  _getLabel() {
-    BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
-  }
-
-  _postComment(CommentModel comment) {
-    setState(() {
-      textEditingController.text = "";
-    });
-    BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
-  }
-
-  _searchEnum(String moving, String idtask) {
-    for (int i = 0; i < moveToList.length; i++) {
-      if (moving == moveToList[i]) {
-        print(moving + " - " + moveToList[i]);
-        if (dbEnum[i] != historyMoveTo) {
-          _changeProgressbyDropdown(dbEnum[i], idtask);
-        }
-      }
-    }
-  }
 
   _changeProgressbyDropdown(String progress, String idTask) {
     BlocProvider.of<ChangeTaskBloc>(context)
@@ -1441,6 +1345,84 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         name = "task_text7".tr();
       });
     }
+  }
+
+  _buildList(int outerIndex) {
+    var innerList = dataTask[outerIndex];
+    dataIndex(outerIndex);
+    return DragAndDropList(
+      header: Container(
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(7.0)),
+          color: colorPrimary,
+        ),
+        padding: EdgeInsets.all(10),
+        child: Text(
+          name,
+          style: Theme.of(context).primaryTextTheme.headline6,
+        ),
+      ),
+      leftSide: Divider(
+        color: colorPrimary,
+      ),
+      canDrag: false,
+      children: List.generate(
+          innerList.length, (index) => _buildItem(innerList[index], index)),
+    );
+  }
+
+  _buildItem(TaskModel item, index) {
+    return DragAndDropItem(
+      child: ListTaskDetail2(
+        priority: item.priority,
+        label: item.label == null ? "" : item.label,
+        size: size,
+        title: item.taskName,
+        detail: item.details,
+        date: util.yearFormat(DateTime.parse(item.date)),
+        hour: util.hourFormat(DateTime.parse(item.date)),
+        index: index,
+        onClick: () {
+          setState(() {
+            if (item.taskType.toLowerCase() == "in progress") {
+              historyMoveTo = dbEnum[1];
+            } else {
+              historyMoveTo = item.taskType.toLowerCase();
+            }
+          });
+          for (int i = 0; i < dbEnum.length; i++) {
+            if (item.taskType.toLowerCase() == dbEnum[i]) {
+              setState(() {
+                moveTo = moveToList[i];
+              });
+            } else {
+              if (item.taskType.toLowerCase() == "in progress") {
+                setState(() {
+                  moveTo = moveToList[1];
+                });
+              }
+            }
+          }
+
+          setState(() {
+            data = "";
+            upload = false;
+            clickTask = item;
+            chooseLabel = item.label;
+            priority = item.priority.titleCase;
+            print("Priorrity:" + item.priority);
+          });
+          BlocProvider.of<CommentBloc>(context)
+              .add(LoadAllCommentEvent(item.idTask.toString()));
+          BlocProvider.of<CLTBloc>(context)
+              .add(LoadAllCLTEvent(item.idTask.toString()));
+          BlocProvider.of<UploadAttachBloc>(context)
+              .add(UploadAttachGetEvent(item.idTask.toString()));
+          _onClickItem(item);
+        },
+      ),
+    );
   }
 
   _onItemReorder(
@@ -1535,67 +1517,33 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     _animationController.reverse();
   }
 
-  _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _imagePicker();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _imagePickerCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  new ListTile(
-                    leading: new Icon(Icons.cancel),
-                    title: new Text('cancel_text').tr(),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ),
-            ),
-          );
-        });
+  _getLabel() {
+    BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
   }
 
-  //ImagePicker for gallery
-  _imagePicker() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        data = pickedFile.path;
-        print(data);
-        _uploadAttachment(File(data));
-      });
-    } else {}
+  _postComment(CommentModel comment) {
+    setState(() {
+      textEditingController.text = "";
+    });
+    BlocProvider.of<CommentBloc>(context).add(AddCommentEvent(comment));
   }
 
-  _imagePickerCamera() async {
-    //ImagePicker for Camera
-    final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+  //Function for  checking if the progress has been changed or not.
+  _searchEnum(String moving, String idtask) {
+    // moveToList is list of progress in front end.
+    // dbEnum is list of progress in back end
+    // moving is current value in moveToList.
+    // mving will be checked with moveToList to get its index.
+    // The gotten index will checked again with historyMOveTO from DB.
+    // if it is same, it won't trigger the process, if it's different it will
+    // trigger process for change progress in database.
 
-    if (pickedFile != null) {
-      setState(() {
-        data = pickedFile.path;
-        print(data);
-        _uploadAttachment(File(data));
-      });
+    for (int i = 0; i < moveToList.length; i++) {
+      if (moving == moveToList[i]) {
+        if (dbEnum[i] != historyMoveTo) {
+          _changeProgressbyDropdown(dbEnum[i], idtask);
+        }
+      }
     }
   }
 

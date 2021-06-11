@@ -367,7 +367,7 @@ class _PaymentApprovedScreen extends State<PaymentApproved> {
                     height: size.height < 569 ? 10 : 15,
                   ),
                   Text(
-                    "payment_text17",
+                    "payment_text17".tr(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorGoogle,
