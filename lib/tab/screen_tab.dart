@@ -60,11 +60,11 @@ class _ScreenTab extends State<ScreenTab> {
     UserModel user;
     return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
       if (state is UserDataStateSuccessLoad) {
-        user = state.userModel; 
+        user = state.userModel;
         if (user != null) {
-          if (user.companyID == null || user.companyID == "") { 
+          if (user.companyID == null || user.companyID == "") {
             screenList.removeWhere((element) => element is AttendanceScreen);
-          } else { 
+          } else {
             if (screenList.length < 4) {
               screenList.insert(1, AttendanceScreen());
             }
