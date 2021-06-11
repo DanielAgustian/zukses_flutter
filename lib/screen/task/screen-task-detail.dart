@@ -472,6 +472,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                       ),
                     ],
                   ),
+                  SizedBox(height: 10),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -708,9 +709,10 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   ))
                             ],
                           ),
+                          SizedBox(height: 5),
                           buildCheckboxListTile(),
                           SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

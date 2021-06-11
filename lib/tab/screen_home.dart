@@ -1221,8 +1221,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             child: Text("home_text20".tr(args: ["Meeting"]),
                                 style: TextStyle(
                                     color: colorPrimary,
-                                    fontSize: size.height < 569 ? 12 : 14,
-                                    fontWeight: FontWeight.bold)),
+                                    fontSize: size.height < 569 ? 14 : 16,
+                                    )),
                           ),
                         ))),
             Padding(
@@ -1269,8 +1269,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: Text("home_text20".tr(args: ["Task"]),
                         style: TextStyle(
                             color: colorPrimary,
-                            fontSize: size.height < 569 ? 12 : 14,
-                            fontWeight: FontWeight.bold)),
+                            fontSize: size.height < 569 ? 14 : 16,
+                            )),
                   ),
                 )))
         : ListView.builder(

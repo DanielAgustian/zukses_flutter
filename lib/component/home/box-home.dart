@@ -73,7 +73,7 @@ class BoxHome extends StatelessWidget {
                     title,
                     style: TextStyle(
                         color: colorPrimary,
-                        fontSize: fontSize - 22,
+                        fontSize: fontSize - 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0),
                   ),
