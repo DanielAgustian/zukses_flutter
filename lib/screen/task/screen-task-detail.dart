@@ -539,11 +539,15 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                                 shape: BoxShape.circle),
                                           ),
                                     SizedBox(width: 10),
-                                    Text(clickTask.reporter.name,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize:
-                                                size.height < 569 ? 12 : 14)),
+                                    Container(
+                                      width: 0.3 * size.width,
+                                      child: Text(clickTask.reporter.name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize:
+                                                  size.height < 569 ? 12 : 14)),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -661,7 +665,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ),
                           SizedBox(height: 5),
                           buildUploadAttach(),
-                          
                           SizedBox(
                             height: 20,
                           ),
@@ -795,7 +798,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   _postComment(commentModel);
                                 }
                               },
-                              
                               size: size,
                               textEditController: textEditingController)
                         ],
