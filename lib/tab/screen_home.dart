@@ -1441,7 +1441,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _getMeetingToday() async {
-    BlocProvider.of<MeetingBloc>(context).add(GetAcceptedMeetingEvent());
+    BlocProvider.of<MeetingBloc>(context)
+        .add(GetAcceptedMeetingEvent(month: now.month, year: now.year));
   }
 
   void _getMeetingRequest() async {
