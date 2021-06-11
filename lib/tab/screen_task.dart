@@ -41,16 +41,6 @@ class _TaskScreen extends State<TaskScreen> {
     BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 
-  Future<bool> onWillPop() async {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ScreenTab(
-                  index: 0,
-                )));
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -168,10 +158,11 @@ class _TaskScreen extends State<TaskScreen> {
         ));
   }
 
+  // Widget to build project list
   Widget buildListProject(Size size) {
     List<ProjectModel> projects;
     List<bool> bools;
-    
+
     return BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
       if (state is ProjectStateSuccessLoad) {
         projects = state.project;
@@ -229,7 +220,6 @@ class _TaskScreen extends State<TaskScreen> {
                       detail: projects[index].details,
                       jumlahTask: projects[index].totalTask,
                       onTapStar: () {
-                        
                         setState(() {
                           bools[index] = !bools[index];
                           BlocProvider.of<ProjectBookmarkBloc>(context).add(
@@ -243,5 +233,16 @@ class _TaskScreen extends State<TaskScreen> {
     });
   }
 
-  
+  // --------------------------Logic-----------------------------//
+
+  // Function to handle click back on android
+  Future<bool> onWillPop() async {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ScreenTab(
+                  index: 0,
+                )));
+    return false;
+  }
 }

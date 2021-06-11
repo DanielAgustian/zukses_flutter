@@ -38,11 +38,6 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
     with SingleTickerProviderStateMixin {
   TextEditingController _textReasonReject = TextEditingController();
 
-  // Dragable scroll controller
-  // AnimationController _controller;
-  // Duration _duration = Duration(milliseconds: 800);
-  // Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
-
   Util util = Util();
   ScheduleModel model = ScheduleModel();
   bool shade = false;

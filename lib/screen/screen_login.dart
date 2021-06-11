@@ -50,108 +50,6 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
   Duration _duration = Duration(milliseconds: 800);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
 
-  _gotoLoginTeam() async {
-    String link = await Util()
-        .createDynamicLink2(short: false, link: widget.link.toString());
-    print(link);
-    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginTeam(
-        email: textUsernameScroll.text,
-        password: textPasswordScroll.text,
-        link: link));
-  }
-
-  void loginScroll() {
-    setState(() {
-      loading = true;
-    });
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-
-    if (textUsernameScroll.text == "" ||
-        !regex.hasMatch(textUsernameScroll.text)) {
-      setState(() {
-        _userScrollValidator = true;
-      });
-    } else {
-      setState(() {
-        _userScrollValidator = false;
-      });
-    }
-    if (textPasswordScroll.text == "" || textPasswordScroll.text.length < 6) {
-      setState(() {
-        _passScrollValidator = true;
-      });
-    } else {
-      setState(() {
-        _passScrollValidator = false;
-      });
-    }
-    if (!_userScrollValidator && !_passScrollValidator) {
-      _gotoLoginTeam();
-    }
-  }
-
-  void login() {
-    setState(() {
-      loading = true;
-    });
-    if (textUsername.text == "") {
-      setState(() {
-        _usernameValidator = true;
-      });
-    } else {
-      setState(() {
-        _usernameValidator = false;
-      });
-    }
-    if (textPassword.text == "" || textPassword.text.length < 6) {
-      setState(() {
-        _passValidator = true;
-      });
-    } else {
-      setState(() {
-        _passValidator = false;
-      });
-    }
-    print("Validator = " +
-        _usernameValidator.toString() +
-        "," +
-        _passValidator.toString());
-    if (!_usernameValidator && !_passValidator) {
-      BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
-          email: textUsername.text,
-          password: textPassword.text,
-          tokenFCM: tokenFCM));
-    }
-  }
-
-  _loginTeamSharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("userLogin", textUsernameScroll.text);
-    prefs.setString("passLogin", textPasswordScroll.text);
-  }
-
-  _loginSharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("userLogin", textUsername.text);
-    prefs.setString("passLogin", textPassword.text);
-  }
-
-  void googleLogin() {
-    BlocProvider.of<AuthenticationBloc>(context)
-        .add(AuthEventWithGoogle(tokenFCM: tokenFCM));
-
-    setState(() {
-      loading = true;
-    });
-  }
-
-  void gotoRegister() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
-  }
-
   @override
   void initState() {
     super.initState();
@@ -163,10 +61,6 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
       _controller.forward();
     }
     _getTokenFCM();
-  }
-
-  _getTokenFCM() async {
-    tokenFCM = await Util().getTokenFCM();
   }
 
   @override
@@ -359,45 +253,6 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               SizedBox(
                                 height: 25,
                               ),
-                              /*Center(
-                                child: Text(
-                                  "login_text3".tr(),
-                                  style: TextStyle(
-                                      fontSize: 16, color: colorPrimary70),
-                                ),
-                              ),
-                              SizedBox(height: 25),
-                              LongButtonIcon(
-                                size: size,
-                                title: "button_sign_in_google".tr(),
-                                bgColor: colorGoogle,
-                                textColor: colorBackground,
-                                iconWidget: Image.asset(
-                                  'assets/images/google-logo.png',
-                                  scale: 0.6,
-                                ),
-                                onClick: googleLogin,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              LongButtonIcon(
-                                size: size,
-                                title: "button_sign_in_fb".tr(),
-                                bgColor: colorFacebook,
-                                textColor: colorBackground,
-                                iconWidget: Image.asset(
-                                  'assets/images/facebook-logo.png',
-                                  fit: BoxFit.contain,
-                                ),
-                                onClick: () {
-                                  BlocProvider.of<AuthenticationBloc>(context)
-                                      .add(AuthEventWithFacebook());
-                                },
-                              ),
-                              SizedBox(
-                                height: 0.02 * size.height,
-                              ),*/
                               Center(
                                 child: RichText(
                                   text: TextSpan(
@@ -580,42 +435,6 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                       onClick: loginScroll,
                       size: size,
                     ),
-                    /*SizedBox(
-                      height: 25,
-                    ),
-                    
-                    Center(
-                      child: Text(
-                        "login_text3".tr(),
-                        style: TextStyle(fontSize: 16, color: colorPrimary70),
-                      ),
-                    ),
-                    SizedBox(height: 25),
-                    LongButtonIcon(
-                      size: size,
-                      title: "button_sign_in_google".tr(),
-                      bgColor: colorGoogle,
-                      textColor: colorBackground,
-                      iconWidget: Image.asset(
-                        'assets/images/google-logo.png',
-                        scale: 0.6,
-                      ),
-                      onClick: () {},
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    LongButtonIcon(
-                      size: size,
-                      title: "button_sign_in_fb".tr(),
-                      bgColor: colorFacebook,
-                      textColor: colorBackground,
-                      iconWidget: Image.asset(
-                        'assets/images/facebook-logo.png',
-                        fit: BoxFit.contain,
-                      ),
-                      onClick: () {},
-                    ),*/
                     SizedBox(
                       height: 0.02 * size.height,
                     ),
@@ -652,5 +471,112 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+  _gotoLoginTeam() async {
+    String link = await Util()
+        .createDynamicLink2(short: false, link: widget.link.toString());
+    print(link);
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginTeam(
+        email: textUsernameScroll.text,
+        password: textPasswordScroll.text,
+        link: link));
+  }
+
+  void loginScroll() {
+    setState(() {
+      loading = true;
+    });
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+
+    if (textUsernameScroll.text == "" ||
+        !regex.hasMatch(textUsernameScroll.text)) {
+      setState(() {
+        _userScrollValidator = true;
+      });
+    } else {
+      setState(() {
+        _userScrollValidator = false;
+      });
+    }
+    if (textPasswordScroll.text == "" || textPasswordScroll.text.length < 6) {
+      setState(() {
+        _passScrollValidator = true;
+      });
+    } else {
+      setState(() {
+        _passScrollValidator = false;
+      });
+    }
+    if (!_userScrollValidator && !_passScrollValidator) {
+      _gotoLoginTeam();
+    }
+  }
+
+  void login() {
+    setState(() {
+      loading = true;
+    });
+    if (textUsername.text == "") {
+      setState(() {
+        _usernameValidator = true;
+      });
+    } else {
+      setState(() {
+        _usernameValidator = false;
+      });
+    }
+    if (textPassword.text == "" || textPassword.text.length < 6) {
+      setState(() {
+        _passValidator = true;
+      });
+    } else {
+      setState(() {
+        _passValidator = false;
+      });
+    }
+    print("Validator = " +
+        _usernameValidator.toString() +
+        "," +
+        _passValidator.toString());
+    if (!_usernameValidator && !_passValidator) {
+      BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
+          email: textUsername.text,
+          password: textPassword.text,
+          tokenFCM: tokenFCM));
+    }
+  }
+
+  _loginTeamSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("userLogin", textUsernameScroll.text);
+    prefs.setString("passLogin", textPasswordScroll.text);
+  }
+
+  _loginSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("userLogin", textUsername.text);
+    prefs.setString("passLogin", textPassword.text);
+  }
+
+  void googleLogin() {
+    BlocProvider.of<AuthenticationBloc>(context)
+        .add(AuthEventWithGoogle(tokenFCM: tokenFCM));
+
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void gotoRegister() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ScreenSignUp()));
+  }
+
+  _getTokenFCM() async {
+    tokenFCM = await Util().getTokenFCM();
   }
 }

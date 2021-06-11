@@ -22,29 +22,6 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
     getImage();
   }
 
-  void getImage() async {
-    final pickedFile = await picker.getImage(
-        preferredCameraDevice: CameraDevice.front,
-        source: ImageSource.camera,
-        imageQuality: imageQualityCamera,
-        maxHeight: maxHeight,
-        maxWidth: maxWidth);
-    if (pickedFile != null) {
-      setState(() {
-        loadingData = true;
-      });
-      String data = pickedFile.path;
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PreviewCamera(
-                    path: data,
-                  )));
-    } else {
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -76,5 +53,30 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
               child: CircularProgressIndicator(),
             ),
           );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  void getImage() async {
+    final pickedFile = await picker.getImage(
+        preferredCameraDevice: CameraDevice.front,
+        source: ImageSource.camera,
+        imageQuality: imageQualityCamera,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth);
+    if (pickedFile != null) {
+      setState(() {
+        loadingData = true;
+      });
+      String data = pickedFile.path;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PreviewCamera(
+                    path: data,
+                  )));
+    } else {
+      Navigator.pop(context);
+    }
   }
 }

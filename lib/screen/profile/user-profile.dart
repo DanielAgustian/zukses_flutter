@@ -32,10 +32,6 @@ class _UserProfileScreen extends State<UserProfile> {
     // print("Id Company " + widget.company.id);
   }
 
-  _getProfile() {
-    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -157,8 +153,8 @@ class _UserProfileScreen extends State<UserProfile> {
                             Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
                                 child: AvatarBig(
-                                        imgUrl:
-                                            "https://api-zukses.yokesen.com/${user.imgUrl}")),
+                                    imgUrl:
+                                        "https://api-zukses.yokesen.com/${user.imgUrl}")),
                           ],
                         ),
                         SizedBox(
@@ -286,5 +282,11 @@ class _UserProfileScreen extends State<UserProfile> {
         ),
       ],
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  _getProfile() {
+    BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
   }
 }

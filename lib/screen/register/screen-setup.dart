@@ -55,123 +55,6 @@ class _SetupRegisterScreen extends State<SetupRegister> {
     super.initState();
   }
 
-  _clickableTrue() {
-    setState(() {
-      clickable = true;
-    });
-  }
-
-  _clickableFalse() {
-    setState(() {
-      clickable = false;
-    });
-  }
-
-  _searchFunction(String query) {
-    BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetCode(kode: query));
-  }
-
-  _registerAccount() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => RegisApproved()));
-  }
-
-  _registerTeam() async {
-    String data = await _makeLink();
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SetupTeam(
-                  link: data,
-                  namaTeam: textTeamName.text,
-                  token: widget.token,
-                )));
-  }
-
-  _catchPopPricing() async {
-    bool result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Pricing(
-                  token: widget.token,
-                )));
-    if (result != null) {
-      if (result == true) {
-        setState(() {
-          boolOrganization = [true, false];
-          boolTeam = [false, true];
-        });
-      }
-    }
-  }
-
-  _registerCompany() async {
-    var result = await showDialog(
-        context: context,
-        builder: (BuildContext context) => _buildCupertino(
-            context: context,
-            wData: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Company Code: " + companyCode),
-                Text("Company Name: " + textCompanyCode.text)
-              ],
-            )));
-    if (result) {
-      BlocProvider.of<RegisterBloc>(context)
-          .add(AddRegisterCompanyEvent(token: widget.token, kode: companyCode));
-    }
-  }
-
-  goTo() {
-    if (boolOrganization[0]) {
-      //THE WANT TO CREATE AS INDIVIDUAL
-      if (boolTeam[0]) {
-        //THEY WANT TO CREATE A TEAM
-
-        _registerTeam();
-        print("TextBox Team :" + textTeamName.text);
-      }
-      if (boolTeam[1]) {
-        //THEY DONT WANTED TO CREATE A TEAM
-        _registerAccount();
-      }
-    }
-    if (boolOrganization[1]) {
-      //THE WANT TO CREATE AS ORGANIZATION
-      if (boolOrganizationExist[0]) {
-        //THEIR ORGANIZATION IS REGISTERED
-
-        //if they choose company code
-        //Navigator.push(co);
-
-        _registerCompany();
-      }
-      if (boolOrganizationExist[1]) {
-        //THEIR ORGANIZATION ISNT REGISTERED
-        if (boolNewCompany[0]) {
-          //THEY WANTED TO SEE THE PRICE
-          _catchPopPricing();
-        }
-        if (boolNewCompany[1]) {
-          setState(() {
-            boolOrganization = [true, false];
-            boolTeam = [false, false];
-            _clickableFalse();
-          });
-        }
-      }
-    }
-  }
-
-  Future<String> _makeLink() async {
-    String prinitng =
-        await Util().createDynamicLink(page: "registerteam", short: false);
-    return prinitng;
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -630,5 +513,124 @@ class _SetupRegisterScreen extends State<SetupRegister> {
             }),
       ],
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  _clickableTrue() {
+    setState(() {
+      clickable = true;
+    });
+  }
+
+  _clickableFalse() {
+    setState(() {
+      clickable = false;
+    });
+  }
+
+  _searchFunction(String query) {
+    BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetCode(kode: query));
+  }
+
+  _registerAccount() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => RegisApproved()));
+  }
+
+  _registerTeam() async {
+    String data = await _makeLink();
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SetupTeam(
+                  link: data,
+                  namaTeam: textTeamName.text,
+                  token: widget.token,
+                )));
+  }
+
+  _catchPopPricing() async {
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Pricing(
+                  token: widget.token,
+                )));
+    if (result != null) {
+      if (result == true) {
+        setState(() {
+          boolOrganization = [true, false];
+          boolTeam = [false, true];
+        });
+      }
+    }
+  }
+
+  _registerCompany() async {
+    var result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => _buildCupertino(
+            context: context,
+            wData: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Company Code: " + companyCode),
+                Text("Company Name: " + textCompanyCode.text)
+              ],
+            )));
+    if (result) {
+      BlocProvider.of<RegisterBloc>(context)
+          .add(AddRegisterCompanyEvent(token: widget.token, kode: companyCode));
+    }
+  }
+
+  goTo() {
+    if (boolOrganization[0]) {
+      //THE WANT TO CREATE AS INDIVIDUAL
+      if (boolTeam[0]) {
+        //THEY WANT TO CREATE A TEAM
+
+        _registerTeam();
+        print("TextBox Team :" + textTeamName.text);
+      }
+      if (boolTeam[1]) {
+        //THEY DONT WANTED TO CREATE A TEAM
+        _registerAccount();
+      }
+    }
+    if (boolOrganization[1]) {
+      //THE WANT TO CREATE AS ORGANIZATION
+      if (boolOrganizationExist[0]) {
+        //THEIR ORGANIZATION IS REGISTERED
+
+        //if they choose company code
+        //Navigator.push(co);
+
+        _registerCompany();
+      }
+      if (boolOrganizationExist[1]) {
+        //THEIR ORGANIZATION ISNT REGISTERED
+        if (boolNewCompany[0]) {
+          //THEY WANTED TO SEE THE PRICE
+          _catchPopPricing();
+        }
+        if (boolNewCompany[1]) {
+          setState(() {
+            boolOrganization = [true, false];
+            boolTeam = [false, false];
+            _clickableFalse();
+          });
+        }
+      }
+    }
+  }
+
+  Future<String> _makeLink() async {
+    String prinitng =
+        await Util().createDynamicLink(page: "registerteam", short: false);
+    return prinitng;
   }
 }

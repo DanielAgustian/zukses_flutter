@@ -42,62 +42,6 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
     print(imagePath);
   }
 
-//For shared preferences clock IN
-  addClockInSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int counter = 1;
-    await prefs.setInt(key, counter);
-    // TO CHECKING when start the APP
-    // Is the date is same or not
-    // If id doesn't same, then it should reset `clock in` status into 0
-    // Else keep the `clock in` status
-    await prefs.setInt("tanggal", now.day);
-  }
-
-  /*void timer(BuildContext contextTimer) {
-    Timer(Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          Navigator.pop(contextTimer);
-
-          //Navigator.pop(contextTimer);
-        });
-      }
-    });
-  }*/
-
-  void clockIn() {
-    setState(() {
-      uploading = true;
-    });
-    if (_image != null) {
-      BlocProvider.of<AttendanceBloc>(context)
-          .add(AttendanceClockIn(image: _image));
-    } else {
-      Util().showToast(
-          msg: "Image Empty",
-          context: context,
-          duration: 3,
-          color: colorError,
-          txtColor: colorBackground);
-    }
-  }
-
-  void retakeButton() async {
-    final pickedFile = await picker.getImage(
-        preferredCameraDevice: CameraDevice.front,
-        source: ImageSource.camera,
-        imageQuality: imageQualityCamera,
-        maxHeight: maxHeight,
-        maxWidth: maxWidth);
-
-    String newImage = pickedFile.path;
-
-    setState(() {
-      _image = File(newImage);
-    });
-  }
-
   BuildContext mContext;
   Widget build(BuildContext context) {
     mContext = this.context;
@@ -239,6 +183,52 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
             })
       ],
     );
+  }
+
+// --------------------------Logic-----------------------------//
+
+//For shared preferences clock IN
+  addClockInSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int counter = 1;
+    await prefs.setInt(key, counter);
+    // TO CHECKING when start the APP
+    // Is the date is same or not
+    // If id doesn't same, then it should reset `clock in` status into 0
+    // Else keep the `clock in` status
+    await prefs.setInt("tanggal", now.day);
+  }
+
+  void clockIn() {
+    setState(() {
+      uploading = true;
+    });
+    if (_image != null) {
+      BlocProvider.of<AttendanceBloc>(context)
+          .add(AttendanceClockIn(image: _image));
+    } else {
+      Util().showToast(
+          msg: "Image Empty",
+          context: context,
+          duration: 3,
+          color: colorError,
+          txtColor: colorBackground);
+    }
+  }
+
+  void retakeButton() async {
+    final pickedFile = await picker.getImage(
+        preferredCameraDevice: CameraDevice.front,
+        source: ImageSource.camera,
+        imageQuality: imageQualityCamera,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth);
+
+    String newImage = pickedFile.path;
+
+    setState(() {
+      _image = File(newImage);
+    });
   }
 
   void getAuthData() async {

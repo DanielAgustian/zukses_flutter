@@ -918,25 +918,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
 
   TimeOfDay _time = TimeOfDay.now();
   void _selectTime() async {
-    /*
-    TimeOfDay newTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (BuildContext context, Widget child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
-        );
-      },
-    );
-    if (newTime != null) {
-      // print("MASUK TIME");
-      setState(() {
-        _time = newTime;
-        String data = _time.format(context);
-        textTime.text = data;
-      });
-    }*/
     showCustomTimePicker(
         context: context,
         // It is a must if you provide selectableTimePredicate
@@ -962,7 +943,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
     setState(() {
       myID = prefs.getString("myID");
     });
-    
   }
 
   _addNewTask() {
