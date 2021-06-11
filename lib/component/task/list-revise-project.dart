@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/util/util.dart';
+
 
 // ignore: must_be_immutable
 class ListReviseProject extends StatelessWidget {
@@ -55,7 +55,8 @@ class ListReviseProject extends StatelessWidget {
                         ),
                         onTap: onTapStar),
                     SizedBox(width: 10),
-                    AvatarMedium(
+                    AvatarMediumProject(
+                        projectName: title,
                         imgUrl: "https://api-zukses.yokesen.com/$image"),
                     SizedBox(width: 10),
                     Column(

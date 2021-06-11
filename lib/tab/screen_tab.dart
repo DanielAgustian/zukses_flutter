@@ -45,6 +45,112 @@ class _ScreenTab extends State<ScreenTab> {
   void initState() {
     super.initState();
     getUserProfile();
+
+    //Function for Init Screen
+    initializationScreen();
+
+    Util util = Util();
+    util.initDynamicLinks(context);
+
+    //Firebase Handler
+    firebaseMessagingHandler();
+  }
+
+  Widget build(BuildContext context) {
+    UserModel user;
+    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      if (state is UserDataStateSuccessLoad) {
+        user = state.userModel;
+        print("company id:" + user.companyID);
+        if (user != null) {
+          if (user.companyID == null || user.companyID == "") {
+            screenList.removeWhere((element) => element is AttendanceScreen);
+          }
+        }
+      }
+      return Scaffold(
+          backgroundColor: colorBackground,
+          body: screenList[_currentScreenIndex],
+          bottomNavigationBar: user != null
+              ? user.companyID == null || user.companyID == ""
+                  ? bootmNavBar3()
+                  : bootmNavBar4()
+              : bootmNavBar3());
+    });
+  }
+
+  //Nav bar for full version
+  Widget bootmNavBar4() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      onTap: onTabTapped,
+      currentIndex: _currentScreenIndex,
+      // this will be set when a new tab is tapped
+      items: [
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/images/home-icon.svg',
+            color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+          ),
+          label: 'tab_text1'.tr(),
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/images/attendance-icon.svg',
+            color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+          ),
+          label: 'tab_text2'.tr(),
+        ),
+        BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.clipboardList),
+            label: 'tab_text3'.tr()),
+        BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.solidCalendar),
+            label: 'tab_text4'.tr()),
+      ],
+      unselectedFontSize: 12,
+      selectedFontSize: 12,
+      showUnselectedLabels: true,
+      selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
+      unselectedItemColor: colorPrimary70,
+      selectedIconTheme: IconThemeData(color: colorPrimary),
+      unselectedIconTheme: IconThemeData(color: colorPrimary70),
+    );
+  }
+
+  //Navbar for free version
+  Widget bootmNavBar3() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      onTap: onTabTapped,
+      currentIndex: _currentScreenIndex,
+      // this will be set when a new tab is tapped
+      items: [
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/images/home-icon.svg',
+            color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+          ),
+          label: 'tab_text1'.tr(),
+        ),
+        BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.clipboardList),
+            label: 'tab_text3'.tr()),
+        BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.solidCalendar),
+            label: 'tab_text4'.tr()),
+      ],
+      unselectedFontSize: 12,
+      selectedFontSize: 12,
+      showUnselectedLabels: true,
+      selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
+      unselectedItemColor: colorPrimary70,
+      selectedIconTheme: IconThemeData(color: colorPrimary),
+      unselectedIconTheme: IconThemeData(color: colorPrimary70),
+    );
+  }
+
+  void initializationScreen() {
     if (widget.index != null) {
       _currentScreenIndex = widget.index;
     } else {
@@ -67,69 +173,6 @@ class _ScreenTab extends State<ScreenTab> {
     } else {
       screenList.add(MeetingScreen());
     }
-
-    Util util = Util();
-    util.initDynamicLinks(context);
-    //Firebase Handler
-    firebaseMessagingHandler();
-  }
-
-  Widget build(BuildContext context) {
-    UserModel user;
-    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
-      if (state is UserDataStateSuccessLoad) {
-        user = state.userModel;
-        print("company id:" + user.companyID);
-        if (user != null) {
-          if (user.companyID == null || user.companyID == "") {
-            screenList.removeWhere((element) => element is AttendanceScreen);
-          }
-        }
-      }
-      return Scaffold(
-          backgroundColor: colorBackground,
-          body: screenList[_currentScreenIndex],
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            onTap: onTabTapped,
-            currentIndex:
-                _currentScreenIndex, // this will be set when a new tab is tapped
-            items: [
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/images/home-icon.svg',
-                  color:
-                      _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
-                ),
-                label: 'tab_text1'.tr(),
-              ),
-              if (user != null)
-                if (user.companyID != null || user.companyID != "")
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      'assets/images/attendance-icon.svg',
-                      color: _currentScreenIndex == 1
-                          ? colorPrimary
-                          : colorPrimary70,
-                    ),
-                    label: 'tab_text2'.tr(),
-                  ),
-              BottomNavigationBarItem(
-                  icon: FaIcon(FontAwesomeIcons.clipboardList),
-                  label: 'tab_text3'.tr()),
-              BottomNavigationBarItem(
-                  icon: FaIcon(FontAwesomeIcons.solidCalendar),
-                  label: 'tab_text4'.tr()),
-            ],
-            unselectedFontSize: 12,
-            selectedFontSize: 12,
-            showUnselectedLabels: true,
-            selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
-            unselectedItemColor: colorPrimary70,
-            selectedIconTheme: IconThemeData(color: colorPrimary),
-            unselectedIconTheme: IconThemeData(color: colorPrimary70),
-          ));
-    });
   }
 
   void firebaseMessagingHandler() {

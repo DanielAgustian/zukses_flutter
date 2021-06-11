@@ -229,7 +229,7 @@ class _TaskScreen extends State<TaskScreen> {
                       detail: projects[index].details,
                       jumlahTask: projects[index].totalTask,
                       onTapStar: () {
-                        print("OnTapStar");
+                        
                         setState(() {
                           bools[index] = !bools[index];
                           BlocProvider.of<ProjectBookmarkBloc>(context).add(
