@@ -150,6 +150,8 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
           );
   }
 
+  // --------------------------Logic-----------------------------//
+
   void _onDontShowAgainChanged(bool newValue) => setState(() {
         dontShowAgain = newValue;
         changeSharedPreferences(dontShowAgain);

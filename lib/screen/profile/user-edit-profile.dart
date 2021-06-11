@@ -34,28 +34,6 @@ class _EditProfileScreen extends State<EditProfile> {
   UserModel userModel = UserModel();
   bool allowDelete = false;
 
-  void editData() {
-    if (data != null && data != "") {
-      //Edit Profile with Profile Pic Changes
-      BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
-        textEditName.text,
-        textEditPhone.text,
-        image: File(data),
-      ));
-    } else {
-      if (userModel.imgUrl == null || userModel.imgUrl == "" || allowDelete) {
-        //Edit Profile without any Picture
-        BlocProvider.of<UserDataBloc>(context).add(
-            UserDataUpdateProfileEvent(textEditName.text, textEditPhone.text));
-      } else {
-        //Edit Profile with Old Picture inside DB
-        BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
-            textEditName.text, textEditPhone.text,
-            link: userModel.imgUrl));
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -185,38 +163,6 @@ class _EditProfileScreen extends State<EditProfile> {
                                                 image: FileImage(File(data)))),
                                       ),
                               ),
-                        // Padding(
-                        //     padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                        //     child: (widget.user.imgUrl == "" ||
-                        //                 widget.user.imgUrl == null) &&
-                        //             (data == null || data == "")
-                        //         ? Container(
-                        //             width: size.height < 569 ? 75 : 90,
-                        //             height: size.height < 569 ? 75 : 90,
-                        //             decoration: BoxDecoration(
-                        //               color: colorNeutral2,
-                        //               shape: BoxShape.circle,
-                        //             ),
-                        //             child: Center(
-                        //               child: FaIcon(
-                        //                 FontAwesomeIcons.camera,
-                        //                 color: colorNeutral3,
-                        //               ),
-                        //             ))
-                        //         : Container(
-                        //             width: size.height < 569 ? 75 : 90,
-                        //             height: size.height < 569 ? 75 : 90,
-                        //             decoration: BoxDecoration(
-                        //                 color: colorNeutral2,
-                        //                 shape: BoxShape.circle,
-                        //                 image: DecorationImage(
-                        //                     fit: BoxFit.fitWidth,
-                        //                     image: data != ""
-                        //                         ? FileImage(File(data))
-                        //                         : NetworkImage(
-                        //                             "https://api-zukses.yokesen.com/${widget.user.imgUrl}"))),
-                        //           ),
-                        //   ),
                         Positioned(
                             right: 0.0,
                             bottom: 0.0,
@@ -335,6 +281,30 @@ class _EditProfileScreen extends State<EditProfile> {
         ],
       ),
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  void editData() {
+    if (data != null && data != "") {
+      //Edit Profile with Profile Pic Changes
+      BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+        textEditName.text,
+        textEditPhone.text,
+        image: File(data),
+      ));
+    } else {
+      if (userModel.imgUrl == null || userModel.imgUrl == "" || allowDelete) {
+        //Edit Profile without any Picture
+        BlocProvider.of<UserDataBloc>(context).add(
+            UserDataUpdateProfileEvent(textEditName.text, textEditPhone.text));
+      } else {
+        //Edit Profile with Old Picture inside DB
+        BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+            textEditName.text, textEditPhone.text,
+            link: userModel.imgUrl));
+      }
+    }
   }
 
   _imagePicker(int index) async {

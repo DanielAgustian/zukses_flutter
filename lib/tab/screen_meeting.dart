@@ -53,28 +53,11 @@ class _MeetingScreenState extends State<MeetingScreen>
   int waitingRequest = 0;
   List<String> date1 = [], date2 = [];
 
-  void selectDate(DateTime date) {
-    setState(() {
-      _selectedDate = date;
-    });
-  }
-
   Util util;
-  //INIT BLOC
   MeetingBloc _meetingBloc;
-  // FOR SKELETON -------------------------------------------------------------------------
 
   bool loading = false;
   bool searching = false;
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          bool loading = false;
-        });
-      }
-    });
-  }
 
   @override
   void initState() {
@@ -88,7 +71,6 @@ class _MeetingScreenState extends State<MeetingScreen>
     _selectedDate = _currentDate;
 
     util = Util();
-    // timer();
   }
 
   void getMeetingReq() async {
@@ -249,6 +231,7 @@ class _MeetingScreenState extends State<MeetingScreen>
         ));
   }
 
+  // Build the main body
   Widget buildMainBody(Size size) {
     return BlocListener<MeetingBloc, MeetingState>(
         listener: (context, state) {
@@ -270,163 +253,120 @@ class _MeetingScreenState extends State<MeetingScreen>
         },
         child: Stack(
           children: [
-            grid
-                ? Container(
-                    margin: EdgeInsets.all(10),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            child: CalendarWidget(
-                              fontSize:
-                                  size.height <= 600 ? textSizeSmall16 : 16,
-                              data: meetings,
-                              size: size,
-                              onSelectDate: (date, absence) {
-                                selectDate(date);
-                              },
-                              onClickToggle: (DateTime val) {
-                                _meetingBloc.add(GetAcceptedMeetingEvent(
-                                    month: val.month, year: val.year));
-                              },
-                            ),
-                          ),
-                          SizedBox(height: 30),
-                          TitleDayFormatted(
-                            currentDate: _selectedDate,
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Container(
-                            width: size.width,
-                            child: loading
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: 2,
-                                    itemBuilder: (context, index) =>
-                                        SkeletonLess3WithAvatar(
-                                            size: size, row: 2))
-                                : meetings == null
-                                    ? Container()
-                                    : ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: meetings.length,
-                                        itemBuilder: (context, index) => util
-                                                    .yearFormat(
-                                                        _selectedDate) ==
-                                                util.yearFormat(
-                                                    meetings[index].date)
-                                            ? ScheduleItem(
-                                                members:
-                                                    meetings[index].members,
-                                                count: meetings[index]
-                                                    .members
-                                                    .length,
-                                                size: size,
-                                                title: meetings[index].title,
-                                                time1: util.hourFormat(
-                                                    meetings[index].date),
-                                                time2: util.hourFormat(
-                                                    meetings[index]
-                                                        .meetingEndTime),
-                                                meetingId:
-                                                    meetings[index].meetingID,
-                                                onClick: () {
-                                                  showModalResult(
-                                                      size, meetings[index]);
-                                                },
-                                              )
-                                            : Container()),
-                          )
-                        ],
-                      ),
-                    ))
-                : Container(
-                    child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: size.width,
-                          height: size.height <= 569
-                              ? size.height * 0.21
-                              : size.height * 0.17,
-                          child: CalendarListWidget(
-                            fontSize: size.height <= 569 ? textSizeSmall14 : 16,
-                            onSelectDate: (date) {
-                              selectDate(date);
-                            },
-                            data: meetings,
-                          ),
-                        ),
-                        SizedBox(height: 30),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          width: size.width,
-                          height: size.height,
-                          child: Column(
-                            children: [
-                              TitleDayFormatted(
-                                currentDate: _selectedDate,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Expanded(
-                                  child: Container(
-                                width: size.width,
-                                child: loading
-                                    ? ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: 2,
-                                        itemBuilder: (context, index) =>
-                                            SkeletonLess3WithAvatar(
-                                                size: size, row: 2))
-                                    : meetings == null
-                                        ? Container()
-                                        : ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: meetings.length,
-                                            itemBuilder: (context, index) =>
-                                                util.yearFormat(
-                                                            _selectedDate) ==
-                                                        util.yearFormat(
-                                                            meetings[index]
-                                                                .date)
-                                                    ? ScheduleItem(
-                                                        members: meetings[index]
-                                                            .members,
-                                                        count: meetings[index]
-                                                            .members
-                                                            .length,
-                                                        size: size,
-                                                        title: meetings[index]
-                                                            .title,
-                                                        time1: util.hourFormat(
-                                                            meetings[index]
-                                                                .date),
-                                                        time2: util.hourFormat(
-                                                            meetings[index]
-                                                                .meetingEndTime),
-                                                        onClick: () {
-                                                          showModalResult(size,
-                                                              meetings[index]);
-                                                        },
-                                                      )
-                                                    : Container()),
-                              ))
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
+            grid ? buildViewGrid(size) : buildViewList(size),
           ],
         ));
+  }
+
+  // Build view with list version calendar
+  Widget buildViewList(Size size) {
+    return Container(
+        child: SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            width: size.width,
+            height:
+                size.height <= 569 ? size.height * 0.21 : size.height * 0.17,
+            child: CalendarListWidget(
+              fontSize: size.height <= 569 ? textSizeSmall14 : 16,
+              onSelectDate: (date) {
+                selectDate(date);
+              },
+              data: meetings,
+            ),
+          ),
+          SizedBox(height: 30),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            width: size.width,
+            height: size.height,
+            child: Column(
+              children: [
+                TitleDayFormatted(
+                  currentDate: _selectedDate,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                showMeetingList(size)
+              ],
+            ),
+          ),
+        ],
+      ),
+    ));
+  }
+
+  // Build view with grid version calendar
+  Widget buildViewGrid(Size size) {
+    return Container(
+        margin: EdgeInsets.all(10),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                child: CalendarWidget(
+                  fontSize: size.height <= 600 ? textSizeSmall16 : 16,
+                  data: meetings,
+                  size: size,
+                  onSelectDate: (date, absence) {
+                    selectDate(date);
+                  },
+                  onClickToggle: (DateTime val) {
+                    _meetingBloc.add(GetAcceptedMeetingEvent(
+                        month: val.month, year: val.year));
+                  },
+                ),
+              ),
+              SizedBox(height: 30),
+              TitleDayFormatted(
+                currentDate: _selectedDate,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              showMeetingList(size)
+            ],
+          ),
+        ));
+  }
+
+  // Show the meeting list of the day
+  Widget showMeetingList(Size size) {
+    return Container(
+      width: size.width,
+      child: loading
+          ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: 2,
+              itemBuilder: (context, index) =>
+                  SkeletonLess3WithAvatar(size: size, row: 2))
+          : meetings == null
+              ? Container()
+              : ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: meetings.length,
+                  itemBuilder: (context, index) => util
+                              .yearFormat(_selectedDate) ==
+                          util.yearFormat(meetings[index].date)
+                      ? ScheduleItem(
+                          members: meetings[index].members,
+                          count: meetings[index].members.length,
+                          size: size,
+                          title: meetings[index].title,
+                          time1: util.hourFormat(meetings[index].date),
+                          time2:
+                              util.hourFormat(meetings[index].meetingEndTime),
+                          onClick: () {
+                            showModalResult(size, meetings[index]);
+                          },
+                        )
+                      : Container()),
+    );
   }
 
   // Show modal detail
@@ -576,8 +516,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                                               width: 10,
                                             ),
                                             Text(
-                                              "User " +
-                                                  scheduleModel
+                                              scheduleModel
                                                       .members[index].name +
                                                   " (" +
                                                   util.acceptancePrint(
@@ -612,6 +551,7 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
   }
 
+  // Search view
   Widget searchingData(BuildContext context, Size size) {
     return Stack(
       children: [
@@ -631,6 +571,7 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
   }
 
+  // Did a filter data
   Widget _filterMethod(List<ScheduleModel> meetings, String query, Size size) {
     return Expanded(
       child: ListView.builder(
@@ -677,5 +618,13 @@ class _MeetingScreenState extends State<MeetingScreen>
             }
           }),
     );
+  }
+
+  // --------------------------Logic-----------------------------//
+
+  void selectDate(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+    });
   }
 }

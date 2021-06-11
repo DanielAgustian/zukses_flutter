@@ -111,6 +111,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   int lengthTask = 0;
   var projectTask = [1, 5, 2, 0];
   TabController tabController;
+  String name = "";
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
 
@@ -661,7 +662,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           ),
                           SizedBox(height: 5),
                           buildUploadAttach(),
-                          
                           SizedBox(
                             height: 20,
                           ),
@@ -795,7 +795,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                   _postComment(commentModel);
                                 }
                               },
-                              
                               size: size,
                               textEditController: textEditingController)
                         ],
@@ -1320,8 +1319,18 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     );
   }
 
-  //---------------- Function for Drag-Drop List--------------------------------//
-  String name = "";
+  // --------------------------Logic-----------------------------//
+
+  _changeProgressbyDropdown(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateByDropdownEvent(idTask, progress));
+  }
+
+  _changeProgress(String progress, String idTask) {
+    BlocProvider.of<ChangeTaskBloc>(context)
+        .add(ChangeTaskUpdateEvent(idTask, progress));
+  }
+
   void dataIndex(int outerIndex) {
     if (outerIndex == 0) {
       setState(() {
@@ -1508,7 +1517,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     _animationController.reverse();
   }
 
-  //-------------------------- Logic --------------------------------------------//
   _getLabel() {
     BlocProvider.of<LabelTaskBloc>(context).add(LoadAllLabelTaskEvent());
   }
@@ -1537,16 +1545,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         }
       }
     }
-  }
-
-  _changeProgressbyDropdown(String progress, String idTask) {
-    BlocProvider.of<ChangeTaskBloc>(context)
-        .add(ChangeTaskUpdateByDropdownEvent(idTask, progress));
-  }
-
-  _changeProgress(String progress, String idTask) {
-    BlocProvider.of<ChangeTaskBloc>(context)
-        .add(ChangeTaskUpdateEvent(idTask, progress));
   }
 
   _uploadAttachment(File image) {

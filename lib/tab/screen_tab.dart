@@ -71,21 +71,17 @@ class _ScreenTab extends State<ScreenTab> {
       return Scaffold(
           backgroundColor: colorBackground,
           body: screenList[_currentScreenIndex],
-          bottomNavigationBar: user != null
-              ? user.companyID == null || user.companyID == ""
-                  ? bootmNavBar3()
-                  : bootmNavBar4()
-              : bootmNavBar3());
+          bottomNavigationBar: bottomNavbar(user));
     });
   }
 
   //Nav bar for full version
-  Widget bootmNavBar4() {
+  Widget bottomNavbar(UserModel user) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       onTap: onTabTapped,
-      currentIndex: _currentScreenIndex,
-      // this will be set when a new tab is tapped
+      currentIndex:
+          _currentScreenIndex, // this will be set when a new tab is tapped
       items: [
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
@@ -94,45 +90,15 @@ class _ScreenTab extends State<ScreenTab> {
           ),
           label: 'tab_text1'.tr(),
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/attendance-icon.svg',
-            color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
-          ),
-          label: 'tab_text2'.tr(),
-        ),
-        BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.clipboardList),
-            label: 'tab_text3'.tr()),
-        BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidCalendar),
-            label: 'tab_text4'.tr()),
-      ],
-      unselectedFontSize: 12,
-      selectedFontSize: 12,
-      showUnselectedLabels: true,
-      selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
-      unselectedItemColor: colorPrimary70,
-      selectedIconTheme: IconThemeData(color: colorPrimary),
-      unselectedIconTheme: IconThemeData(color: colorPrimary70),
-    );
-  }
-
-  //Navbar for free version
-  Widget bootmNavBar3() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      onTap: onTabTapped,
-      currentIndex: _currentScreenIndex,
-      // this will be set when a new tab is tapped
-      items: [
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/home-icon.svg',
-            color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
-          ),
-          label: 'tab_text1'.tr(),
-        ),
+        if (user != null)
+          if (user.companyID != null && user.companyID != "")
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/attendance-icon.svg',
+                color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+              ),
+              label: 'tab_text2'.tr(),
+            ),
         BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.clipboardList),
             label: 'tab_text3'.tr()),

@@ -239,6 +239,8 @@ class _UserSettingsScreen extends State<UserSettings> {
     );
   }
 
+  // --------------------------Logic-----------------------------//
+
   clearAllSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //prefs?.clear();

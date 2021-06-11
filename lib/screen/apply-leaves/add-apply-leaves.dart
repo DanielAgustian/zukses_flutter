@@ -68,6 +68,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   List<AttendanceModel> userModel = [];
   String attendanceId = "";
   bool isLoading2 = false;
+
   @override
   void initState() {
     super.initState();
@@ -599,6 +600,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       }
     }
   }
+
+  // --------------------------Logic-----------------------------//
 
   //Method to PickTime.
   pickTime(BuildContext context, int index) async {

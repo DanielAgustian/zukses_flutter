@@ -29,21 +29,12 @@ class _RequestInboxState extends State<RequestInbox>
   List<int> requestSchedule = [0, 0];
   bool isLoading = true;
 
-  void timer() {
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
-
   @override
   void initState() {
     super.initState();
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
     BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
     tabController = TabController(length: 2, vsync: this);
-    // timer();
     if (widget.animate != null) {
       tabController.animateTo(1);
     }
