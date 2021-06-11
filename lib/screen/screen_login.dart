@@ -445,7 +445,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                               fontSize: size.height < 569 ? 12 : 14,
                               color: Colors.black),
                           children: <TextSpan>[
-                            new TextSpan(text: "login_text4 ".tr()),
+                            new TextSpan(text: "login_text4".tr()),
                             TextSpan(
                                 text: ' ' + 'button_sign_up'.tr(),
                                 style: new TextStyle(
