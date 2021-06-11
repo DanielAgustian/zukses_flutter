@@ -294,8 +294,6 @@ class _AddProjectScreen extends State<AddProject> {
     );
   }
 
-  // --------------------------Logic-----------------------------//
-
   _imagePicker() async {
     //ImagePicker for gallery
 
