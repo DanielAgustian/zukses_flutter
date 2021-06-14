@@ -118,7 +118,7 @@ class UserDataServiceHTTP {
         body: jsonEncode(<String, dynamic>{"notif": status}));
 
     print("change notification status " + res.statusCode.toString());
-    print(res.body);
+    // print(res.body);
     String msg = "";
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
