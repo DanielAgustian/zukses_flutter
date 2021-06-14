@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/punch-system/camera-clock-in.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CameraNonInstruction extends StatefulWidget {
   CameraNonInstruction({Key key, this.title}) : super(key: key);
@@ -40,7 +41,7 @@ class _CameraNonInstructionScreen extends State<CameraNonInstruction> {
                     height: 5,
                   ),
                   Text(
-                    "Directing to Next Page ... ",
+                    "home_text21".tr(),
                     style: TextStyle(color: colorPrimary),
                   )
                 ],

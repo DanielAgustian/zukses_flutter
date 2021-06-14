@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SuccessChange extends StatefulWidget {
   SuccessChange({Key key, this.title}) : super(key: key);
@@ -62,7 +62,7 @@ class _SuccessChangeScreen extends State<SuccessChange> {
                     height: size.height < 569 ? 15 : 25,
                   ),
                   Text(
-                    "Password Changed",
+                    "reset_text6".tr(),
                     style: TextStyle(
                         color: colorGoogle,
                         fontSize: size.height < 569 ? 18 : 20,
@@ -75,7 +75,7 @@ class _SuccessChangeScreen extends State<SuccessChange> {
                     width: 0.9 * size.width,
                     child: Center(
                       child: Text(
-                        "Your Password has been changed succesfully",
+                        "reset_text7".tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: colorGoogle,

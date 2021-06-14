@@ -33,7 +33,6 @@ import 'package:zukses_app_1/model/comment-model.dart';
 import 'package:zukses_app_1/model/label-task-model.dart';
 import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
-import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
@@ -345,7 +344,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                         height: 0.6 * size.height,
                                         child: Center(
                                           child: Text(
-                                              "No task done in this project at the moment",
+                                              "task_text29".tr(),
                                               style: TextStyle(
                                                   color: colorPrimary,
                                                   fontSize: 14,

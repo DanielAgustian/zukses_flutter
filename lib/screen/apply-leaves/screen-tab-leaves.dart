@@ -13,7 +13,7 @@ import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-details.dart';
 import 'package:zukses_app_1/util/util.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenTabLeaves extends StatefulWidget {
   const ScreenTabLeaves({
@@ -211,7 +211,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                       screen: widget.permission,
                       title: list[index].typeName,
                       detail: list[index].leaveDate == null
-                          ? "Data can't be fetched"
+                          ? "apply_overtime_text8".tr()
                           : Util().dateNumbertoCalendar(
                               DateTime.parse(list[index].leaveDate)),
                       status: list[index].status,

@@ -11,6 +11,7 @@ import 'package:zukses_app_1/component/text-seq-vertical.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/team-model.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MemberScreen extends StatefulWidget {
   @override
@@ -34,7 +35,7 @@ class _MemberScreenState extends State<MemberScreen> {
     return Scaffold(
       appBar: customAppBar(context,
           size: size,
-          title: "Team Member",
+          title: "home_text5".tr(),
           leadingIcon: IconButton(
             icon: FaIcon(
               FontAwesomeIcons.chevronLeft,
@@ -117,14 +118,14 @@ class _MemberScreenState extends State<MemberScreen> {
                               ),
                               TextSequentialVertical(
                                   size: size,
-                                  text1: "Start Time",
+                                  text1: "team_member_text1".tr(),
                                   text2: teams[index].clockIn == null
                                       ? "-"
                                       : util.hourFormat(teams[index].clockIn),
                                   textcolor: colorPrimary70),
                               TextSequentialVertical(
                                   size: size,
-                                  text1: "End Time",
+                                  text1: "team_member_text2".tr(),
                                   text2: teams[index].clockOut == null
                                       ? "-"
                                       : util.hourFormat(teams[index].clockOut),

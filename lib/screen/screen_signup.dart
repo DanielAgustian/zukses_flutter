@@ -86,8 +86,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                             );
                           } else if (state is RegisterStateFailed) {
                             setState(() {
-                              failedRegister =
-                                  "Email already used. Please try another email.";
+                              failedRegister = "register_text5".tr();
                               _emailValidator = true;
                             });
                           } else if (state is RegisterStateTeamMemberSuccess) {
@@ -167,7 +166,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                                 decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.symmetric(horizontal: 20),
-                                    hintText: "Full Name",
+                                    hintText: "register_text6".tr(),
                                     hintStyle: TextStyle(
                                       color: _usernameValidator
                                           ? colorError
@@ -262,7 +261,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                                 decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.only(left: 20, top: 15),
-                                    hintText: "Confirm Password",
+                                    hintText: "reset_text5".tr(),
                                     hintStyle: TextStyle(
                                       color: _confirmPassValidator
                                           ? colorError
@@ -288,7 +287,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                             empty[0] || empty[1] || empty[2] || empty[3]
                                 ? Center(
                                     child: Text(
-                                      "Please fill the textfield.",
+                                      "register_text7".tr(),
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: colorError, fontSize: 10),
@@ -311,7 +310,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                                               textPassword.text.length < 6
                                           ? Center(
                                               child: Text(
-                                                "Short password easy to guess. Try at least 6 characters.",
+                                                "register_text8".tr(),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: colorError,
@@ -322,7 +321,7 @@ class _ScreenSignUp extends State<ScreenSignUp> with TickerProviderStateMixin {
                                       _passValidator && _confirmPassValidator
                                           ? Center(
                                               child: Text(
-                                                "Those passwords didn't match. Please make sure your password match.",
+                                                "register_text9".tr(),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: colorError,
