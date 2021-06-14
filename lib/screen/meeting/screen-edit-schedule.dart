@@ -495,6 +495,14 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
               ),
             ),
             scrollerSheet(),
+            Container(
+              width: size.width,
+              height: size.height,
+              child: CircularProgressIndicator(
+                backgroundColor: colorPrimary70,
+                valueColor: AlwaysStoppedAnimation(colorBackground),
+              ),
+            )
           ],
         ),
       ),

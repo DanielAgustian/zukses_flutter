@@ -141,7 +141,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
                 children: [
                   CircularProgressIndicator(),
                   Text(
-                    "Directing to Next Page ... ",
+                    "home_text21".tr(),
                     style: TextStyle(color: colorPrimary),
                   )
                 ],

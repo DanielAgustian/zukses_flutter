@@ -84,7 +84,7 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
               )
             : Center(
                 child: Text(
-                  "No Meeting has been Rejected.",
+                  "schedule_text16".tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: colorPrimary, fontWeight: FontWeight.bold),
@@ -219,5 +219,5 @@ class _ScreenTabRequest2State extends State<ScreenTabRequest2>
         );
       },
     );
-  } 
+  }
 }

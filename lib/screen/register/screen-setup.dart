@@ -398,7 +398,7 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                           ),
                           child: Center(
                             child: Text(
-                              "That code hasn't been registered.",
+                              "invite_confirm_text3".tr(),
                               style:
                                   TextStyle(fontSize: 14, color: colorPrimary),
                             ),

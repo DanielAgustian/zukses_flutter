@@ -15,6 +15,7 @@ import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-project.dart';
 import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key key, this.title, this.projectId}) : super(key: key);
@@ -176,7 +177,7 @@ class _TaskScreen extends State<TaskScreen> {
               child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              text: 'No project listed at the moment. Click',
+              text: 'task_text30'.tr(),
               style: TextStyle(color: colorPrimary),
               children: <TextSpan>[
                 TextSpan(
@@ -187,10 +188,10 @@ class _TaskScreen extends State<TaskScreen> {
                             MaterialPageRoute(
                                 builder: (context) => AddProject()));
                       },
-                    text: ' here',
+                    text: 'task_text31'.tr(),
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: colorPrimary)),
-                TextSpan(text: ' add a new Project'),
+                TextSpan(text: 'task_text32'.tr()),
               ],
             ),
           )),

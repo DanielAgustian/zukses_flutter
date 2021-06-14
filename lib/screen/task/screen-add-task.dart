@@ -407,7 +407,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                           },
                         ),
                         _priorityValidator
-                            ? Text("Please Choose another priority.",
+                            ? Text("task_text27".tr(),
                                 style: TextStyle(
                                   color: colorError,
                                   fontSize: 12,
@@ -543,7 +543,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                                 },
                               ),
                         _labelValidator
-                            ? Text("Please Choose another label.",
+                            ? Text("task_text28".tr(),
                                 style: TextStyle(
                                   color: colorError,
                                   fontSize: 12,
@@ -625,7 +625,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
               children: [
                 SmallButton(
                   bgColor: colorError,
-                  title: "Cancel",
+                  title: "cancel_text".tr(),
                   textColor: colorBackground,
                   size: 100,
                   onClick: () {
@@ -634,7 +634,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                 ),
                 SmallButton(
                   bgColor: colorPrimary,
-                  title: "Add",
+                  title: "add_text".tr(),
                   textColor: colorBackground,
                   size: 100,
                   onClick: () {
@@ -683,7 +683,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                           _controller.reverse();
                         },
                         child: Text(
-                          "Cancel",
+                          "cancel_text".tr(),
                           style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height < 600
                                   ? 14
@@ -692,7 +692,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                         ),
                       ),
                       Text(
-                        "Add Assignee",
+                        "schedule_text1".tr(),
                         style: TextStyle(
                             fontSize: MediaQuery.of(context).size.height < 600
                                 ? 18
@@ -705,7 +705,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                           _controller.reverse();
                         },
                         child: Text(
-                          "Done",
+                          "done_text".tr(),
                           style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height < 600
                                   ? 14

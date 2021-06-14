@@ -44,6 +44,7 @@
     "post_text": "Post", 
     "permission_text": "Perizinan", 
     "exploring_text": "Mulai Menjelajahi", 
+    "add_text": "Tambah",
 
     "title_text": "Judul",
     "date_text": "Tanggal",
@@ -63,11 +64,17 @@
     "login_text2": "Lupa password ?",
     "login_text3": "ATAU",
     "login_text4": "Belum punya akun?",  
+    "login_text5": "Email atau Password salah",  
 
     "register_text1": "Silakan isi formulir ini untuk membuat akun",
     "register_text2": "ATAU", 
     "register_text3": "Sudah punya akun ?",
     "register_text4": "Apakah anda yakin data yang dimasukan sudah benar ?", 
+    "register_text5": "Email telah terpakai, coba masukan email lain",
+    "register_text6": "Nama Lengkap",
+    "register_text7": "Kolom wajib diisi",
+    "register_text8": "Password terlalu pendek dan mudah ditebak, minimal 6 karakter",
+    "register_text9": "Password berbeda, pastikan kedua password yang dimasukan sama",
 
     "setup_account_text1": "Siapkan akun",
     "setup_account_text2": "Sebagai apa kamu ingin menggunakan Zukses?",
@@ -151,6 +158,7 @@
 
     "invite_confirm_text1": "Undangan Tim",
     "invite_confirm_text2": "Anda diundang ke tim 'Tech Squad'. Mohon konfirmasi untuk bergabung dengan tim.", 
+    "invite_confirm_text3": "Kode perusahaan belum terdaftar",
 
     "tab_text1": "Beranda",
     "tab_text2": "Kehadiran",
@@ -177,6 +185,7 @@
     "home_text18": "Jam kerjamu belum selesai",
     "home_text19": "Apakah kamu yakin ingin clock out?",
     "home_text20": "Tidak ada {} hari ini.",
+    "home_text21": "Memindahkan ke halaman selanjutnya . . .",
 
     "instruction_text1": "Pencahayaan yang bagus",
     "instruction_text2": "Pastikan kamu mengambil foto dengan pencahayaan yang baik",
@@ -260,6 +269,8 @@
     "schedule_text12": "Hapus Rapat Ini", 
     "schedule_text13": "Mengapa kamu menolak agenda ini?", 
     "schedule_text14": "Alasan", 
+    "schedule_text15": "Tidak ada permintaan agenda", 
+    "schedule_text16": "Tidak ada agenda yang ditolak", 
 
     "task_text1": "Daftar Proyek", 
     "task_text2": "Tambahkan Proyek", 
@@ -287,6 +298,12 @@
     "task_text24": "Atur Waktu",  
     "task_text25": "Catatan", 
     "task_text26": "Log Aktivitas - Riwayat", 
+    "task_text27": "Tolong pilih prioritas lain.", 
+    "task_text28": "Tolong pilih label lain.", 
+    "task_text29": "Belum ada tugas yang sudah selesai pada proyek ini", 
+    "task_text30": "Tidak ada proyek untuk sekarang. Klik", 
+    "task_text31": " di sini", 
+    "task_text32": " untuk menambah proyek baru", 
 
     "forgot_text1": "Tolong cek email untuk mendapatkan tautan mengatur ulang password",
     "forgot_text2": "Tolong cek email anda",
@@ -350,5 +367,5 @@
     "nov_min_text": "Nov", 
     "dec_min_text": "Des",
 
-    "dialog_text1": "Perizinan cuti anda sukses",
+    "dialog_text1": "Perizinan cuti anda sukses"
 }

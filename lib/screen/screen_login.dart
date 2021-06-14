@@ -15,7 +15,6 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ScreenLogin extends StatefulWidget {
@@ -207,7 +206,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                   : Container(),
                               Center(
                                 child: errorLogin
-                                    ? Text("Wrong Email or Password",
+                                    ? Text("login_text5".tr(),
                                         style: TextStyle(
                                           fontSize: size.height < 569 ? 10 : 11,
                                           color: colorError,

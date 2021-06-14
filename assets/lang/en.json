@@ -44,6 +44,7 @@
     "post_text": "Post", 
     "permission_text": "Permission", 
     "exploring_text": "Start Exploring",  
+    "add_text": "Add",  
 
     "title_text": "Title",
     "date_text": "Date",
@@ -62,12 +63,18 @@
     "login_text1": "Sign in to your account",
     "login_text2": "Forgot password ?",
     "login_text3": "OR",
-    "login_text4": "Doesn’t have an account?",  
+    "login_text4": "Doesn’t have an account?", 
+    "login_text5": "Wrong Email or Password",   
 
     "register_text1": "Please fill in this form to create an account",
     "register_text2": "OR", 
     "register_text3": "Already have an account ?", 
     "register_text4": "Are you sure to register with this data ?",
+    "register_text5": "Email already used. Please try another email.",
+    "register_text6": "Fullname",
+    "register_text7": "Please fill the textfield.",
+    "register_text8": "Short password easy to guess. Try at least 6 characters.",
+    "register_text9": "Passwords didn't match. Please make sure your password match.",
 
     "setup_account_text1": "Set up account",
     "setup_account_text2": "How do you want to use Zukses?",
@@ -151,6 +158,7 @@
 
     "invite_confirm_text1": "Team Invitation",
     "invite_confirm_text2": "You are invited to “{}” team. Please confirm to join the team.", 
+    "invite_confirm_text3": "That code hasn't been registered.",
 
     "tab_text1": "Home",
     "tab_text2": "Attendance",
@@ -177,6 +185,7 @@
     "home_text18": "Your work hour not finished yet",
     "home_text19": "Are you sure want to clock out?",
     "home_text20": "No {} Today.",
+    "home_text21": "Directing to next page . . .",
     
     "instruction_text1": "Good lighting",
     "instruction_text2": "Make sure you take the photo with good lighting",
@@ -260,6 +269,8 @@
     "schedule_text12": "Delete This Meeting", 
     "schedule_text13": "Why you reject the meeting?", 
     "schedule_text14": "Reason", 
+    "schedule_text15": "No Meeting Request.", 
+    "schedule_text16": "No Meeting has been Rejected.", 
 
     "task_text1": "Project List", 
     "task_text2": "Add Project", 
@@ -287,6 +298,12 @@
     "task_text24": "Set Time",  
     "task_text25": "Notes", 
     "task_text26": "Activity Log - History", 
+    "task_text27": "Please Choose another priority.", 
+    "task_text28": "Please Choose another label.", 
+    "task_text29": "No task done in this project at the moment", 
+    "task_text30": "No project listed at the moment. Click", 
+    "task_text31": " here", 
+    "task_text32": " to add a new project", 
 
     "forgot_text1": "Please check your email and click the given link to reset password",
     "forgot_text2": "Check your email", 
@@ -350,5 +367,5 @@
     "nov_min_text": "Nov", 
     "dec_min_text": "Dec",
 
-    "dialog_text1": "You successfully applied for leave",
+    "dialog_text1": "You successfully applied for leave"
 }

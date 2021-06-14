@@ -79,7 +79,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
         isLoading = false;
         return Center(
           child: Text(
-            "No Meeting Request.",
+            "schedule_text15".tr(),
             style: TextStyle(color: colorPrimary, fontWeight: FontWeight.bold),
           ),
         );
@@ -96,7 +96,7 @@ class _ScreenTabRequestState extends State<ScreenTabRequest>
           : meetings == null || meetings.length == 0
               ? Center(
                   child: Text(
-                    "No Meeting Request.",
+                    "schedule_text15".tr(),
                     style: TextStyle(
                         color: colorPrimary, fontWeight: FontWeight.bold),
                   ),
