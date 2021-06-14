@@ -109,7 +109,7 @@ class UserDataServiceHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
 
-    var res = await http.post(Uri.https(baseURI, 'api/notiff'),
+    var res = await http.post(Uri.https(baseURI, 'api/notif'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
@@ -118,7 +118,7 @@ class UserDataServiceHTTP {
         body: jsonEncode(<String, dynamic>{"notif": status}));
 
     print("change notification status " + res.statusCode.toString());
-    // print(res.body);
+    print(res.body);
     String msg = "";
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
