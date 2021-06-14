@@ -86,7 +86,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
   bool freeAssignTo = false;
 
   bool getAllUser = false;
-
+  //bool loading = false;
   String myID = "";
 
   @override
@@ -160,6 +160,14 @@ class _AddTaskScreen extends State<AddTaskScreen>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    return Stack(
+      children: [
+        buildBody(context, size),
+      ],
+    );
+  }
+
+  Widget buildBody(BuildContext context, Size size) {
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: appBar(size, context),
@@ -583,6 +591,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
         ));
   }
 
+  // Widget for Create NEw Label
   buildPopUpNewLabel(context) {
     return AlertDialog(
       title: Text(
@@ -1021,8 +1030,9 @@ class _AddTaskScreen extends State<AddTaskScreen>
           !_dateValidator &&
           !_timeValidator &&
           !_priorityValidator) {
+
+        
         int idLabel;
-        print("textLabel" + textLabel);
         for (int i = 0; i < label.length; i++) {
           if (label[i].name == textLabel) {
             setState(() {
@@ -1032,6 +1042,8 @@ class _AddTaskScreen extends State<AddTaskScreen>
             print("idLabel" + idLabel.toString());
           }
         }
+       
+        
         DateTime datePush = DateTime(selectedDate.year, selectedDate.month,
             selectedDate.day, _time.hour, _time.minute);
         TaskModel task = TaskModel(

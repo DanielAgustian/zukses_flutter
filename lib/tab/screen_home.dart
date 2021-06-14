@@ -1479,6 +1479,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   //---------------------Function Logic----------------------------//
+
+  //Fungsi untuk Click di Jam.
   void onClickWatch(Size size) {
     if (companyAcceptance == 1) {
       if (_authModel.maxClockIn != null && _authModel.attendance != null) {
