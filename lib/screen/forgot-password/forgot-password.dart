@@ -12,6 +12,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/forgot-password/check-your-email.dart';
 import 'package:zukses_app_1/screen/screen_login.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ForgotPassword extends StatefulWidget {
   ForgotPassword({Key key, this.title}) : super(key: key);
@@ -24,7 +25,7 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordScreen extends State<ForgotPassword> {
   final textEmail = TextEditingController();
   bool errorEmail = false;
-  
+
   /*Future<void> _createDynamicLink(bool short) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://zuksesapplication.page.link',
@@ -125,9 +126,8 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
                 ),
                 TitleFormat(
                   size: size,
-                  title: "Forgot Password",
-                  detail:
-                      "Please Enter Your Email Address  and we will send you instruction to reset your password",
+                  title: "forgot_text5".tr(),
+                  detail: "forgot_text6".tr(),
                 ),
                 SizedBox(
                   height: size.height < 569 ? 10 : 15,
@@ -173,9 +173,9 @@ class _ForgotPasswordScreen extends State<ForgotPassword> {
                             fontSize: size.height < 569 ? 12 : 14,
                             color: Colors.black),
                         children: [
-                      TextSpan(text: "Back to "),
+                      TextSpan(text: "forgot_text7".tr()),
                       TextSpan(
-                          text: "Login",
+                          text: "button_sign_in".tr(),
                           style: TextStyle(
                               color: colorPrimary, fontWeight: FontWeight.bold),
                           recognizer: TapGestureRecognizer()

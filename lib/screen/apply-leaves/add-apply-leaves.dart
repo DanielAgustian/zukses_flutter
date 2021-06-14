@@ -438,70 +438,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   },
                   child: Container(),
                 ),
-                /*BlocListener<AttendanceBloc, AttendanceState>(
-                  listener: (context, state) {
-                    if (state is AttendanceStateSuccessLoad) {
-                      dateDisplayList.clear();
-                      userModel.clear();
-                      userModel.addAll(state.attendanceList);
-
-                      int i = 0;
-                      state.attendanceList.forEach((element) {
-                        dateDisplayList.add(element.clockOut.toString());
-
-                        if (i < 1) {
-                          setState(() {
-                            dateDisplay = element.clockOut.toString();
-                          });
-                          i++;
-                        }
-                      });
-                      setState(() {
-                        user = userModel.first;
-                        isLoading2 = true;
-                      });
-                    } else {}
-                  },
-                  child: Container(),
-                ),*/
-                /*isLoading2
-                    ? AddScheduleRow2(
-                        fontSize: size.height <= 569 ? 14 : 16,
-                        title: "Date",
-                        textItem:
-                            dateDisplay, //"${formater.format(dateDisplay)}",
-                        items: dateDisplayList,
-                        onSelectedItem: (val) {
-                          _changeDate();
-                          setState(() {
-                            dateDisplay = val;
-                          });
-                        })
-                    : CircularProgressIndicator(),*/
-                /*isLoading2
-                    ? AddScheduleRowOvertimeDate(
-                        fontSize: size.height <= 569 ? 14 : 16,
-                        title: "date_text".tr(),
-                        attendance: user,
-                        attendanceList: userModel,
-                        onSelectedItem: (val) {
-                          //_changeDate();
-                          setState(() {
-                            user = val;
-                          });
-                        })
-                    : CircularProgressIndicator(),
-                isLoading2
-                    ? AddScheduleRow(
-                        lowerOpacity: true,
-                        arrowRight: "false",
-                        title: "apply_overtime_text2".tr(),
-                        textItem: durationOvertime == ""
-                            ? "00:00:00"
-                            : durationOvertime,
-                        fontSize: size.height <= 569 ? 14 : 16,
-                      )
-                    : CircularProgressIndicator(),*/
                 InkWell(
                   onTap: () {
                     _selectDate(context, 0);
@@ -648,12 +584,6 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       } else {
         print("GetDataError");
       }
-
-      /*startMeeting =
-            DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
-        endMeeting =
-            DateTime(date.year, date.month, date.day, time2.hour, time2.minute);*/
-
     }
   }
 
@@ -752,8 +682,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   _gotoLeavesList() async {
     bool result = await showDialog(
         context: context,
-        builder: (context) => _buildCupertino(
-            context: context, title: "You successfully applied for leave"));
+        builder: (context) =>
+            _buildCupertino(context: context, title: "dialog_text1".tr()));
     if (result == null) {
       Navigator.pushReplacement(
           context,

@@ -136,7 +136,7 @@ class _UserProfileScreen extends State<UserProfile> {
                   height: 0.8 * size.height,
                   child: Center(
                     child: Text(
-                      "Profile data not found. Please try again.",
+                      "profile_text16".tr(),
                       textAlign: TextAlign.center,
                     ),
                   ),

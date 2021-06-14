@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/forgot-password/reset-password.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CheckEmail extends StatefulWidget {
   CheckEmail({Key key, this.title, this.email}) : super(key: key);
@@ -54,7 +55,6 @@ class _CheckEmailScreen extends State<CheckEmail> {
 
   @override
   void initState() {
-   
     super.initState();
     Util util = Util();
     util.initDynamicLinks(context);
@@ -113,7 +113,7 @@ class _CheckEmailScreen extends State<CheckEmail> {
                   height: size.height < 569 ? 15 : 25,
                 ),
                 Text(
-                  "Check Your email",
+                  "forgot_text2".tr(),
                   style: TextStyle(
                       color: colorGoogle,
                       fontSize: size.height < 569 ? 18 : 20,
@@ -126,7 +126,7 @@ class _CheckEmailScreen extends State<CheckEmail> {
                   width: 0.9 * size.width,
                   child: Center(
                     child: Text(
-                      "Please check your email and click the given link to reset password",
+                      "forgot_text1".tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: colorGoogle,
@@ -144,9 +144,9 @@ class _CheckEmailScreen extends State<CheckEmail> {
                             fontSize: size.height < 569 ? 12 : 14,
                             color: Colors.black),
                         children: [
-                      TextSpan(text: "Didn't receive an email? "),
+                      TextSpan(text: "forgot_text4".tr()),
                       TextSpan(
-                          text: "Resend",
+                          text: "forgot_text3".tr(),
                           style: TextStyle(
                               color: colorPrimary, fontWeight: FontWeight.bold),
                           recognizer: TapGestureRecognizer()

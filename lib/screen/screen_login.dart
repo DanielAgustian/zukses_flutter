@@ -206,7 +206,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                                   : Container(),
                               Center(
                                 child: errorLogin
-                                    ? Text("Wrong Email or Password",
+                                    ? Text("login_text5".tr(),
                                         style: TextStyle(
                                           fontSize: size.height < 569 ? 10 : 11,
                                           color: colorError,

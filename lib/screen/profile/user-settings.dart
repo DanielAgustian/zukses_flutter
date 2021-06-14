@@ -276,13 +276,13 @@ class _UserSettingsScreen extends State<UserSettings> {
   Widget _buildPopupDialog(BuildContext context) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Do you want to log out?",
+        "profile_text17".tr(),
       ),
-      content: new Text("Temporary Data will be deleted"),
+      content: new Text("profile_text18".tr()),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text(
-              "No",
+              "no_text".tr(),
               style: TextStyle(color: colorError),
             ),
             onPressed: () {
@@ -290,7 +290,7 @@ class _UserSettingsScreen extends State<UserSettings> {
             }),
         CupertinoDialogAction(
             child: Text(
-              "Yes",
+              "yes_text".tr(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {
