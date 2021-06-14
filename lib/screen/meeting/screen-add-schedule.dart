@@ -71,6 +71,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   //INIT Employee BLOC
   EmployeeBloc _employeeBloc;
 
+  bool loadingAdd = false;
+
   // Search Function
   void searchFunction(String q) {
     setState(() {
@@ -178,7 +180,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         (time2.minute <= 9) ? "0${time2.minute}" : time2.minute.toString();
 
     // loading when add
-    bool loadingAdd = false;
 
     return WillPopScope(
       onWillPop: () {
@@ -214,7 +215,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             Center(
               child: InkWell(
                 onTap: () {
-                  loadingAdd = true;
                   addMeeting();
                 },
                 child: Container(
@@ -240,6 +240,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                 if (state is MeetingStateSuccess) {
                   Navigator.pop(context, true);
                 } else if (state is MeetingStateFail) {
+                  setState(() {
+                    loadingAdd = false;
+                  });
                   Util().showToast(
                       msg: "Something Wrong !",
                       color: colorError,
@@ -463,7 +466,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
               Container(
                 width: size.width,
                 height: size.height,
-                color: colorBackground.withOpacity(0.3),
+                color: Colors.black.withOpacity(0.4),
                 child: Center(
                   child: CircularProgressIndicator(
                     backgroundColor: colorPrimary70,
@@ -775,6 +778,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     // print("dateValidator = " + _dateStartEndValidator.toString());
     if (!_descriptionValidator && !_titleValidator && !_timeValidator) {
       // print(repeat);
+      setState(() {
+        loadingAdd = true;
+      });
       String temp = repeat.replaceAll(" ", "");
       startMeeting =
           DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
