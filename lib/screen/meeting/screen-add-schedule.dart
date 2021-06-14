@@ -36,7 +36,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   bool _titleValidator = false;
   bool _descriptionValidator = false;
   bool _timeValidator = false;
-  
+
   // Search controlerr
   TextEditingController textSearch = new TextEditingController();
   String searchQuery = "";
@@ -177,6 +177,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     String m2 =
         (time2.minute <= 9) ? "0${time2.minute}" : time2.minute.toString();
 
+    // loading when add
+    bool loadingAdd = false;
+
     return WillPopScope(
       onWillPop: () {
         if (textDescription.text != "" || textTitle.text != "")
@@ -210,7 +213,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
           actions: [
             Center(
               child: InkWell(
-                onTap: addMeeting,
+                onTap: () {
+                  loadingAdd = true;
+                  addMeeting();
+                },
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
@@ -453,14 +459,18 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
               ),
             ),
             scrollerSheet(),
-            Container(
-              width: size.width,
-              height: size.height,
-              child: CircularProgressIndicator(
-                backgroundColor: colorPrimary70,
-                valueColor: AlwaysStoppedAnimation(colorBackground),
-              ),
-            )
+            if (loadingAdd)
+              Container(
+                width: size.width,
+                height: size.height,
+                color: colorBackground.withOpacity(0.3),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: colorPrimary70,
+                    valueColor: AlwaysStoppedAnimation(colorBackground),
+                  ),
+                ),
+              )
           ],
         ),
       ),

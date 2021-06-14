@@ -135,6 +135,9 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
     String m2 =
         (time2.minute <= 9) ? "0${time2.minute}" : time2.minute.toString();
 
+    // handle loading when click done
+    bool loadingAdd = false;
+
     return WillPopScope(
       onWillPop: () {
         if (textDescription.text != "" || textTitle.text != "")
@@ -178,7 +181,10 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
           actions: [
             Center(
               child: InkWell(
-                onTap: addMeeting,
+                onTap: () {
+                  addMeeting();
+                  loadingAdd = true;
+                },
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
@@ -495,14 +501,18 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
               ),
             ),
             scrollerSheet(),
-            Container(
-              width: size.width,
-              height: size.height,
-              child: CircularProgressIndicator(
-                backgroundColor: colorPrimary70,
-                valueColor: AlwaysStoppedAnimation(colorBackground),
-              ),
-            )
+            if (loadingAdd)
+              Container(
+                width: size.width,
+                height: size.height,
+                color: colorBackground.withOpacity(0.3),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: colorPrimary70,
+                    valueColor: AlwaysStoppedAnimation(colorBackground),
+                  ),
+                ),
+              )
           ],
         ),
       ),
