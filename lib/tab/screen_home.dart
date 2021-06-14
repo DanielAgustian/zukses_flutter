@@ -1139,7 +1139,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       title: new Text(
         "Clock Out " + "success_text".tr() + " !",
       ),
-      content: new Text("Clock Out in" + getSystemTime()),
+      content: new Text("Clock Out in " + getSystemTime()),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text("OK"),
@@ -1220,9 +1220,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Text("home_text20".tr(args: ["Meeting"]),
                                 style: TextStyle(
-                                    color: colorPrimary,
-                                    fontSize: size.height < 569 ? 14 : 16,
-                                    )),
+                                  color: colorPrimary,
+                                  fontSize: size.height < 569 ? 14 : 16,
+                                )),
                           ),
                         ))),
             Padding(
@@ -1268,9 +1268,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Text("home_text20".tr(args: ["Task"]),
                         style: TextStyle(
-                            color: colorPrimary,
-                            fontSize: size.height < 569 ? 14 : 16,
-                            )),
+                          color: colorPrimary,
+                          fontSize: size.height < 569 ? 14 : 16,
+                        )),
                   ),
                 )))
         : ListView.builder(
