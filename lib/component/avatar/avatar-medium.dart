@@ -34,7 +34,37 @@ class AvatarMedium extends StatelessWidget {
             ));
   }
 }
+class AvatarMedium25 extends StatelessWidget {
+  const AvatarMedium25({
+    Key key,
+    @required this.imgUrl,
+  }) : super(key: key);
 
+  final String imgUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return CachedNetworkImage(
+        imageUrl: imgUrl,
+        imageBuilder: (context, imageProvider) => CircleAvatar(
+              backgroundColor: colorPrimary,
+              radius: size.width <= 569 ? 15 : 25,
+              backgroundImage: imageProvider,
+            ),
+        placeholder: (context, url) => CircleAvatar(
+              backgroundColor: colorPrimary,
+              radius: size.width <= 569 ? 15 : 25,
+              child: Image.asset("assets/images/ava.png"),
+            ),
+        errorWidget: (context, url, error) => CircleAvatar(
+              backgroundColor: colorPrimary,
+              radius: size.width <= 569 ? 15 : 25,
+              child: Image.asset("assets/images/ava.png"),
+            ));
+  }
+}
 class AvatarMediumProject extends StatelessWidget {
   const AvatarMediumProject(
       {Key key, @required this.imgUrl, @required this.projectName})

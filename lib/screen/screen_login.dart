@@ -95,7 +95,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                 txtColor: colorBackground);
           } else if (state is AuthStateSuccessTeamLoad) {
             _loginTeamSharedPref();
-            // print(state);
+           
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),

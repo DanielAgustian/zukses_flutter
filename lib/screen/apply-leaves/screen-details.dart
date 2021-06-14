@@ -28,6 +28,7 @@ class LeavesDetailScreen extends StatefulWidget {
 
 class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
   final textReason = TextEditingController();
+  final textReasonRejected = TextEditingController();
   final textReason2 = TextEditingController();
   LeaveModel leaveModel = LeaveModel();
   OvertimeModel overtimeModel = OvertimeModel();
@@ -39,6 +40,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
     overtimeModel = widget.overtime;
     if (overtimeModel == null) {
       textReason2.text = leaveModel.reason;
+      textReasonRejected.text = leaveModel.rejectReason;
     } else {
       textReason.text = overtimeModel.reason;
     }
@@ -339,6 +341,47 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "apply_leaves_text18".tr(),
+                            style: TextStyle(
+                              color: colorPrimary,
+                              fontSize: size.height < 569 ? 14 : 16,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.transparent),
+                                color: colorBackground,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colorNeutral1.withOpacity(1),
+                                    blurRadius: 15,
+                                  )
+                                ],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              readOnly: true,
+                              maxLines: 8,
+                              textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.text,
+                              onChanged: (val) {},
+                              controller: textReasonRejected,
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(20),
+                                  hintText: "apply_leaves_text18".tr(),
+                                  hintStyle: TextStyle(
+                                    color: colorNeutral1,
+                                  ),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            ),
+                          ),
                           SizedBox(
                             height: size.height < 569 ? 15 : 20,
                           ),

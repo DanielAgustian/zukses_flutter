@@ -501,14 +501,14 @@ class _MeetingScreenState extends State<MeetingScreen>
                                       children: [
                                         Row(
                                           children: [
-                                            UserAvatarSchedule(
+                                            UserAvatarScheduleBigger(
                                               imgURL:
                                                   "https://api-zukses.yokesen.com/${scheduleModel.members[index].imgUrl}",
                                               status: util.acceptancePrint(
                                                   scheduleModel
                                                       .members[index].accepted),
                                               avatarRadius:
-                                                  size.height <= 570 ? 15 : 20,
+                                                  size.height <= 570 ? 15 : 25,
                                               dotSize:
                                                   size.height <= 570 ? 8 : 10,
                                             ),

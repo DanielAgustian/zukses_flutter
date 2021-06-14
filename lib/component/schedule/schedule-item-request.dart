@@ -83,7 +83,12 @@ class ScheduleItemRequest extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: count,
                     itemBuilder: (context, index) {
-                      return UserAvatar();
+                      return UserAvatarSchedule(
+                        imgURL:
+                            "https://api-zukses.yokesen.com/${listMember[index].imgUrl}",
+                        status:
+                            Util().acceptancePrint(listMember[index].accepted),
+                      );
                     },
                   ))
             ],

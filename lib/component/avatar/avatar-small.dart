@@ -18,17 +18,17 @@ class AvatarSmaller extends StatelessWidget {
         imageUrl: imgUrl,
         imageBuilder: (context, imageProvider) => CircleAvatar(
               backgroundColor: colorPrimary,
-              radius: size.width <= 569 ? 15 : 20,
+              radius: size.width <= 569 ? 12 : 17,
               backgroundImage: imageProvider,
             ),
         placeholder: (context, url) => CircleAvatar(
               backgroundColor: colorPrimary,
-              radius: size.width <= 569 ? 15 : 20,
+              radius: size.width <= 569 ? 12 : 17,
               child: Image.asset("assets/images/ava.png"),
             ),
         errorWidget: (context, url, error) => CircleAvatar(
               backgroundColor: colorPrimary,
-              radius: size.width <= 569 ? 15 : 20,
+              radius: size.width <= 569 ? 12 : 17,
               child: Image.asset("assets/images/ava.png"),
             ));
   }

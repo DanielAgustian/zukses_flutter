@@ -1,6 +1,14 @@
 class LeaveModel {
   int id;
-  String typeName, duration, leaveDate, startTime, endTime, reason, status, leaveDateEnd;
+  String typeName,
+      duration,
+      leaveDate,
+      startTime,
+      endTime,
+      reason,
+      status,
+      leaveDateEnd,
+      rejectReason;
 
   LeaveModel(
       {this.id,
@@ -11,6 +19,7 @@ class LeaveModel {
       this.startTime,
       this.endTime,
       this.reason,
+      this.rejectReason,
       this.status});
 
   LeaveModel.fromJson(Map<String, dynamic> map) {
@@ -22,6 +31,6 @@ class LeaveModel {
     this.endTime = map["endTime"];
     this.reason = map["reason"];
     this.status = map["status"];
-    
+    this.rejectReason = map["reject_reason"] == null? null:map["reject_reason"];
   }
 }

@@ -13,6 +13,7 @@ import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/button/button-small-outlined.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
+import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
 
 import 'package:zukses_app_1/constant/constant.dart';
@@ -240,6 +241,7 @@ class _RequestInboxState extends State<RequestInbox>
                     child: ListView.builder(
                         itemCount: meetings.length,
                         itemBuilder: (context, index) => ScheduleItemRequest(
+                            listMember: meetings[index].members,
                             count: meetings[index].members.length,
                             date:
                                 util.dateNumbertoCalendar(meetings[index].date),
@@ -364,6 +366,7 @@ class _RequestInboxState extends State<RequestInbox>
                           itemCount: model.members.length,
                           itemBuilder: (BuildContext context, int index) {
                             return UserAssignedItem(
+                                imgUrl: model.members[index].imgUrl,
                                 size: size,
                                 name: model.members[index].name,
                                 status: util.acceptancePrint(
@@ -517,6 +520,7 @@ class _RequestInboxState extends State<RequestInbox>
                       child: ListView.builder(
                           itemCount: state.meetings.length,
                           itemBuilder: (context, index) => ScheduleItemRequest(
+                              listMember: state.meetings[index].members,
                               count: state.meetings[index].members.length,
                               size: size,
                               onClick: () {
@@ -650,6 +654,7 @@ class _RequestInboxState extends State<RequestInbox>
                           itemCount: model.members.length,
                           itemBuilder: (BuildContext context, int index) {
                             return UserAssignedItem(
+                                imgUrl: model.members[index].imgUrl,
                                 size: size,
                                 name: model.members[index].name,
                                 status: util.acceptancePrint(
