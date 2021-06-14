@@ -463,14 +463,29 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
             ),
             scrollerSheet(),
             if (loadingAdd)
-              Container(
-                width: size.width,
-                height: size.height,
-                color: Colors.black.withOpacity(0.4),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: colorPrimary70,
-                    valueColor: AlwaysStoppedAnimation(colorBackground),
+              BackdropFilter(
+                filter: new ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                child: Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.white.withOpacity(0),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 200),
+                      CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Add meeting . .".tr(),
+                        style: TextStyle(
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               )

@@ -76,6 +76,9 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   //INIT Employee BLOC
   EmployeeBloc _employeeBloc;
 
+  // handle loading when click done
+  bool loadingAdd = false;
+
   @override
   void initState() {
     super.initState();
@@ -107,18 +110,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
           hour: widget.model.meetingEndTime.hour,
           minute: widget.model.meetingEndTime.minute);
     });
-    // Handle view of `time2` on condition auto set 30 minutes after `time1`
-    // if hour = 24, tjhen it should be 00
-    // and if minutes = 60, it should be 00
-    /*int h, m;
-    m = time1.minute >= 30 ? (time1.minute + 30) - 60 : (time1.minute + 30);
-    h = time1.minute >= 30
-        ? time1.hour >= 23
-            ? 00
-            : time1.hour + 1
-        : time1.hour;
-
-    time2 = TimeOfDay(hour: h, minute: m);*/
   }
 
   @override
@@ -134,9 +125,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
     String h2 = (time2.hour <= 9) ? "0${time2.hour}" : time2.hour.toString();
     String m2 =
         (time2.minute <= 9) ? "0${time2.minute}" : time2.minute.toString();
-
-    // handle loading when click done
-    bool loadingAdd = false;
 
     return WillPopScope(
       onWillPop: () {
@@ -183,7 +171,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
               child: InkWell(
                 onTap: () {
                   addMeeting();
-                  loadingAdd = true;
                 },
                 child: Container(
                   padding: EdgeInsets.only(right: 20),
@@ -217,6 +204,9 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                       color: colorError,
                       context: this.context,
                       txtColor: colorBackground);
+                  setState(() {
+                    loadingAdd = false;
+                  });
                 } else if (state is MeetingStateSuccess) {
                   Navigator.pushReplacement(
                       context,
@@ -228,6 +218,9 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                       color: colorError,
                       context: this.context,
                       txtColor: colorBackground);
+                  setState(() {
+                    loadingAdd = false;
+                  });
                 }
               },
               child: Container(),
@@ -502,14 +495,29 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
             ),
             scrollerSheet(),
             if (loadingAdd)
-              Container(
-                width: size.width,
-                height: size.height,
-                color: colorBackground.withOpacity(0.3),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: colorPrimary70,
-                    valueColor: AlwaysStoppedAnimation(colorBackground),
+              BackdropFilter(
+                filter: new ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                child: Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.white.withOpacity(0),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 200),
+                      CircularProgressIndicator(
+                        backgroundColor: colorPrimary70,
+                        valueColor: AlwaysStoppedAnimation(colorBackground),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Add meeting . .".tr(),
+                        style: TextStyle(
+                            color: colorPrimary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               )
@@ -892,6 +900,9 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         startMeeting != null &&
         endMeeting != null &&
         !_timeValidator) {
+      setState(() {
+        loadingAdd = true;
+      });
       String temp = repeat.replaceAll(" ", "");
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text.titleCase,
