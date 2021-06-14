@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/model/attendance-model.dart';
-import 'package:zukses_app_1/model/leave-type-model.dart';
 
-import 'package:zukses_app_1/util/util.dart';
+import 'package:zukses_app_1/model/leave-type-model.dart';
+import 'package:zukses_app_1/model/project-model.dart';
+
+
 
 class AddScheduleRow extends StatelessWidget {
   const AddScheduleRow({
@@ -219,21 +220,22 @@ class AddScheduleRow2 extends StatelessWidget {
   }
 }
 
-class AddScheduleRowOvertimeDate extends StatelessWidget {
-  const AddScheduleRowOvertimeDate(
+//Add Row for Project
+class AddScheduleRowProject extends StatelessWidget {
+  const AddScheduleRowProject(
       {Key key,
       this.title,
-      this.attendance,
+      this.project,
       this.fontSize,
       this.onSelectedItem,
-      this.attendanceList})
+      this.projectList})
       : super(key: key);
 
   final String title;
-  final AttendanceModel attendance;
+  final ProjectModel project;
   final double fontSize;
   final Function onSelectedItem;
-  final List<AttendanceModel> attendanceList;
+  final List<ProjectModel> projectList;
 
   @override
   Widget build(BuildContext context) {
@@ -248,8 +250,8 @@ class AddScheduleRowOvertimeDate extends StatelessWidget {
           ),
           ButtonTheme(
             alignedDropdown: true,
-            child: DropdownButton<AttendanceModel>(
-              value: attendance,
+            child: DropdownButton<ProjectModel>(
+              value: project,
               icon: FaIcon(
                 FontAwesomeIcons.chevronRight,
                 color: colorPrimary,
@@ -260,12 +262,12 @@ class AddScheduleRowOvertimeDate extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   fontSize: fontSize),
               underline: Container(),
-              onChanged: (AttendanceModel newValue) {
+              onChanged: (ProjectModel newValue) {
                 onSelectedItem(newValue);
               },
-              items: attendanceList.map<DropdownMenuItem<AttendanceModel>>(
-                  (AttendanceModel value) {
-                return DropdownMenuItem<AttendanceModel>(
+              items: projectList
+                  .map<DropdownMenuItem<ProjectModel>>((ProjectModel value) {
+                return DropdownMenuItem<ProjectModel>(
                   value: value,
                   child: SizedBox(
                     width: 100,
@@ -274,7 +276,7 @@ class AddScheduleRowOvertimeDate extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 10),
                         child: Text(
-                          Util().dateNumbertoCalendar(value.clockOut),
+                          value.name,
                           textAlign: TextAlign.right,
                           style: TextStyle(
                               fontSize: fontSize,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class CommentBox extends StatelessWidget {

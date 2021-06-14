@@ -15,7 +15,6 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/component/button/button-long-icon.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class ScreenLogin extends StatefulWidget {
