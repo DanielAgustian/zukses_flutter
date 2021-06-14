@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
-import 'package:zukses_app_1/component/avatar/avatar-big.dart';
 import 'package:zukses_app_1/component/avatar/avatar-bigger.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';

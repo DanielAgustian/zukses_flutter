@@ -12,7 +12,6 @@ import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/project-model.dart';
-import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:recase/recase.dart';
 import 'package:easy_localization/easy_localization.dart';

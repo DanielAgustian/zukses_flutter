@@ -166,9 +166,9 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                   child: ListLeavesOvertime(
                     screen: widget.permission,
                     title: list[index].project,
-                    detail: list[index].startTime +
-                        "-" +
-                        list[index].endTime, //list[index].clockOut,
+                    detail: Util().cutTime(list[index].startTime) +
+                        " - " +
+                        Util().cutTime(list[index].endTime),
                     status: list[index].status,
                   ),
                 );

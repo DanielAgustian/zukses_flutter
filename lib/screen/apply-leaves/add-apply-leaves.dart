@@ -14,6 +14,8 @@ import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/bloc/project/project-bloc.dart';
+import 'package:zukses_app_1/bloc/project/project-state.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
@@ -21,6 +23,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/attendance-model.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/leave-type-model.dart';
+import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -465,17 +468,32 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     fontSize: size.height <= 600 ? 14 : 16,
                   ),
                 ),
-                AddScheduleRow2(
-                    fontSize: size.height <= 600 ? 14 : 16,
-                    title: "apply_overtime_text3".tr(),
-                    textItem: project,
-                    items: projectList,
-                    onSelectedItem: (val) {
-                      setState(() {
-                        project = val;
-                      });
-                    }),
-                AddScheduleRow2(
+                BlocBuilder<ProjectBloc, ProjectState>(
+                    builder: (context, state) {
+                  if (state is ProjectStateSuccessLoad) {
+                    ProjectModel firstProject = state.project[0];
+                    return AddScheduleRowProject(
+                        fontSize: size.height <= 600 ? 14 : 16,
+                        title: "apply_overtime_text3".tr(),
+                        project: firstProject,
+                        projectList: state.project,
+                        onSelectedItem: (val) {
+                          setState(() {
+                            firstProject = val;
+                            project = firstProject.name;
+                          });
+                        });
+                  }
+                  return SizedBox(
+                    height: 40,
+                    width: size.width,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }),
+                
+                /*AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
                     title: "apply_overtime_text4".tr(),
                     textItem: task,
@@ -484,7 +502,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                       setState(() {
                         task = val;
                       });
-                    }),
+                    }),*/
                 Container(
                   decoration: BoxDecoration(
                       border: _reasonValidator

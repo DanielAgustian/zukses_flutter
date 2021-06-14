@@ -36,7 +36,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   bool _titleValidator = false;
   bool _descriptionValidator = false;
   bool _timeValidator = false;
-  bool _dateStartEndValidator = false;
+  
   // Search controlerr
   TextEditingController textSearch = new TextEditingController();
   String searchQuery = "";
