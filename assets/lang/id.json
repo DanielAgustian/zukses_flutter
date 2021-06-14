@@ -42,6 +42,7 @@
     "requested_text": "Permintaan", 
     "rejected_text": "Ditolak", 
     "post_text": "Post", 
+    "permission_text": "Perizinan", 
     "exploring_text": "Mulai Menjelajahi", 
 
     "title_text": "Judul",
@@ -216,6 +217,7 @@
     "apply_overtime_text5": "Alasan",   
     "apply_overtime_text6": "Pengajuan Terkirim",   
     "apply_overtime_text7": "Lembur berhasil diajukan",   
+    "apply_overtime_text8": "Gagal mendapatkan data",   
 
     "setting_text1": "Pengaturan",  
     "setting_text2": "Bahasa",  
@@ -240,6 +242,9 @@
     "profile_text13": "Posisi",    
     "profile_text14": "Email dari perusahaan",     
     "profile_text15": "Tidak Terdaftar",     
+    "profile_text16": "Data profil tidak ditemukan. Tolong coba lagi.",   
+    "profile_text17": "Anda yakin ingin keluar ?",      
+    "profile_text18": "Beberapa data sementara akan dihapus",    
 
     "schedule_text1": "Ditugaskan untuk", 
     "schedule_text2": "Tambahkan Jadwal",  
@@ -282,6 +287,22 @@
     "task_text24": "Atur Waktu",  
     "task_text25": "Catatan", 
     "task_text26": "Log Aktivitas - Riwayat", 
+
+    "forgot_text1": "Tolong cek email untuk mendapatkan tautan mengatur ulang password",
+    "forgot_text2": "Tolong cek email anda",
+    "forgot_text3": "Kirim ulang",
+    "forgot_text4": "Tidak mendapatkan email ? ",
+    "forgot_text5": "Lupa Password",
+    "forgot_text6": "Tolong masukan email anda dan kami akan mengirim intruksi mengatur ulang password ke email anda",
+    "forgot_text7": "Kembali ke ",
+
+    "reset_text1": "Terjadi kesalahan saat mengatur ulang password !",
+    "reset_text2": "Atur ulang password",
+    "reset_text3": "Tolong masukan password baru",
+    "reset_text4": "Password Baru",
+    "reset_text5": "Konfirmasi Password",
+    "reset_text6": "Password telah diubah",
+    "reset_text7": "Password anda telah sukses diubah", 
 
     "priority_text1": "Tinggi", 
     "priority_text2": "Menengah", 
@@ -327,5 +348,7 @@
     "sep_min_text": "Sep", 
     "oct_min_text": "Okt", 
     "nov_min_text": "Nov", 
-    "dec_min_text": "Des"
+    "dec_min_text": "Des",
+
+    "dialog_text1": "Perizinan cuti anda sukses",
 }

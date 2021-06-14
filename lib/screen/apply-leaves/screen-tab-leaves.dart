@@ -211,7 +211,7 @@ class _ScreenTabLeavesState extends State<ScreenTabLeaves> {
                       screen: widget.permission,
                       title: list[index].typeName,
                       detail: list[index].leaveDate == null
-                          ? "Data can't be fetched"
+                          ? "apply_overtime_text8".tr()
                           : Util().dateNumbertoCalendar(
                               DateTime.parse(list[index].leaveDate)),
                       status: list[index].status,

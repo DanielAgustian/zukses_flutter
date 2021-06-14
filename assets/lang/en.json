@@ -42,7 +42,8 @@
     "requested_text": "Requested", 
     "rejected_text": "Rejected", 
     "post_text": "Post", 
-    "exploring_text": "Start Exploring", 
+    "permission_text": "Permission", 
+    "exploring_text": "Start Exploring",  
 
     "title_text": "Title",
     "date_text": "Date",
@@ -216,6 +217,7 @@
     "apply_overtime_text5": "Reason",   
     "apply_overtime_text6": "Application Submitted",   
     "apply_overtime_text7": "You succesfully applied for overtime",   
+    "apply_overtime_text8": "Data can't be fetched", 
 
     "setting_text1": "Settings",  
     "setting_text2": "Language",  
@@ -240,6 +242,9 @@
     "profile_text13": "Position",    
     "profile_text14": "Company email",     
     "profile_text15": "Not Registered",     
+    "profile_text16": "Profile data not found. Please try again.", 
+    "profile_text17": "Do you want to log out ?",      
+    "profile_text18": "Temporary Data will be deleted",      
 
     "schedule_text1": "Assigned to", 
     "schedule_text2": "Add Schedule",  
@@ -282,6 +287,22 @@
     "task_text24": "Set Time",  
     "task_text25": "Notes", 
     "task_text26": "Activity Log - History", 
+
+    "forgot_text1": "Please check your email and click the given link to reset password",
+    "forgot_text2": "Check your email", 
+    "forgot_text3": "Resend",
+    "forgot_text4": "Didn't receive the email ? ",
+    "forgot_text5": "Forgot Password",
+    "forgot_text6": "Please Enter Your Email Address  and we will send you instruction to reset your password",
+    "forgot_text7": "Back to ",
+
+    "reset_text1": "Reset Password goes wrong !",
+    "reset_text2": "Reset Password",
+    "reset_text3": "Please input your new password",
+    "reset_text4": "New Password",
+    "reset_text5": "Confirm Password",
+    "reset_text6": "Password Changed",
+    "reset_text7": "Your Password has been changed succesfully", 
 
     "priority_text1": "High", 
     "priority_text2": "Medium", 
@@ -327,5 +348,7 @@
     "sep_min_text": "Sep", 
     "oct_min_text": "Oct", 
     "nov_min_text": "Nov", 
-    "dec_min_text": "Dec"
+    "dec_min_text": "Dec",
+
+    "dialog_text1": "You successfully applied for leave",
 }

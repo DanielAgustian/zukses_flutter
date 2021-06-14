@@ -9,6 +9,7 @@ import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/screen/forgot-password/success-change.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ResetPassword extends StatefulWidget {
   ResetPassword({Key key, this.title, this.email, this.token})
@@ -77,7 +78,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                           context: context,
                           color: colorError,
                           txtColor: colorBackground,
-                          msg: "Reset Password goes wrong!",
+                          msg: "reset_text1".tr(),
                           duration: 3);
                     }
                   },
@@ -85,8 +86,8 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                 ),
                 TitleFormat(
                   size: size,
-                  title: "Reset Password",
-                  detail: "Please input your new password",
+                  title: "reset_text2".tr(),
+                  detail: "reset_text3".tr(),
                 ),
                 Container(
                   height: 50,
@@ -103,7 +104,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                     controller: textNewPassword,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(left: 20, top: 15),
-                        hintText: "New Password",
+                        hintText: "reset_text4".tr(),
                         hintStyle: TextStyle(
                           color: errorPassword ? colorError : colorNeutral2,
                         ),
@@ -142,7 +143,7 @@ class _ResetPasswordScreen extends State<ResetPassword> {
                     controller: textConfirmPassword,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(left: 20, top: 15),
-                        hintText: "Confirm Password",
+                        hintText: "reset_text5".tr(),
                         hintStyle: TextStyle(
                           color: errorPassword ? colorError : colorNeutral2,
                         ),
