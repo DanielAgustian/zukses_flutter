@@ -174,7 +174,11 @@ class _UserProfileScreen extends State<UserProfile> {
                             SizedBox(
                               height: 5,
                             ),
-                            Text("profile_text2".tr(),
+                            Text(
+                                (user.companyAcceptance == 1 &&
+                                        user.companyID != "")
+                                    ? "profile_text2_alt".tr()
+                                    : "profile_text2".tr(),
                                 style: TextStyle(
                                     color: colorPrimary,
                                     fontSize: size.height < 569 ? 14 : 16))

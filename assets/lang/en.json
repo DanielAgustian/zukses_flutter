@@ -238,7 +238,8 @@
     "setting_text7": "log out from your account",  
 
     "profile_text1": "Profile",  
-    "profile_text2": "Personal",  
+    "profile_text2": "Personal", 
+    "profile_text2_alt":"Organization", 
     "profile_text3": "Personal Information",  
     "profile_text4": "Name",  
     "profile_text5": "Username",  

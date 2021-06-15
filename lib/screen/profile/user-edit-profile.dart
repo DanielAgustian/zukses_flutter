@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/avatar/avatar-bigger.dart';
+import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/user-profile/text-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/user-model.dart';
