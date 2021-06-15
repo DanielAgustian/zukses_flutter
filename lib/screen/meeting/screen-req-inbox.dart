@@ -13,14 +13,10 @@ import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/button/button-small-outlined.dart';
 import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
-import 'package:zukses_app_1/component/schedule/schedule-item.dart';
 import 'package:zukses_app_1/component/schedule/user-assigned-item.dart';
-
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/util/util.dart';
@@ -422,86 +418,99 @@ class _RequestInboxState extends State<RequestInbox>
   }
 
   Widget _dialog(BuildContext context, {ScheduleModel model}) {
+    bool reasonReject = false;
     return AlertDialog(
       //title: const Text('Popup example'),
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Text(
-              "schedule_text11".tr(),
-              style: TextStyle(
-                  color: colorPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
+      content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Center(
+              child: Text(
+                "schedule_text11".tr(),
+                style: TextStyle(
+                    color: colorPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(color: colorBackground, boxShadow: [
-              BoxShadow(
-                color: colorNeutral2.withOpacity(0.7),
-                spreadRadius: 4,
-                blurRadius: 10,
-                offset: Offset(0, 3),
-              )
-            ]),
-            width: double.infinity,
-            child: TextFormField(
-              controller: _textReasonReject,
-              keyboardType: TextInputType.multiline,
-              minLines: 6,
-              maxLines: 6,
-              decoration: new InputDecoration(
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(5),
-                  hintText: 'schedule_text14'.tr(),
-                  hintStyle: TextStyle(fontSize: 14, color: colorNeutral2)),
+            SizedBox(
+              height: 10,
             ),
-          ),
-          SizedBox(height: 10),
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SmallButton(
-                  bgColor: colorPrimary,
-                  textColor: colorBackground,
-                  title: "cancel_text".tr(),
-                  onClick: () {
-                    Navigator.pop(context);
-                    //loadBeginningData();
-                  },
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                SmallButtonOutlined(
-                  bgColor: colorBackground,
-                  textColor: colorPrimary,
-                  borderColor: colorPrimary,
-                  title: "confirm_text".tr(),
-                  onClick: () {
-                    print(model.meetingID);
-                    BlocProvider.of<MeetingBloc>(context).add(
-                        PostAcceptanceMeetingEvent(
-                            meetingId: model.meetingID,
-                            accept: "0",
-                            reason: _textReasonReject.text));
-                    Navigator.pop(context);
-                    //loadBeginningData();
-                  },
-                ),
-              ],
+            Container(
+              decoration: BoxDecoration(
+                  color: colorBackground,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorNeutral2.withOpacity(0.7),
+                      spreadRadius: 4,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                  border: Border.all(
+                      color: reasonReject ? colorError : Colors.transparent)),
+              width: double.infinity,
+              child: TextFormField(
+                controller: _textReasonReject,
+                keyboardType: TextInputType.multiline,
+                minLines: 6,
+                maxLines: 6,
+                decoration: new InputDecoration(
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.all(5),
+                    hintText: 'schedule_text14'.tr(),
+                    hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: reasonReject ? colorError : colorNeutral2)),
+              ),
             ),
-          )
-        ],
-      ),
+            SizedBox(height: 10),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SmallButton(
+                    bgColor: colorPrimary,
+                    textColor: colorBackground,
+                    title: "cancel_text".tr(),
+                    onClick: () {
+                      Navigator.pop(context);
+                      //loadBeginningData();
+                    },
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  SmallButtonOutlined(
+                    bgColor: colorBackground,
+                    textColor: colorPrimary,
+                    borderColor: colorPrimary,
+                    title: "confirm_text".tr(),
+                    onClick: () {
+                      print(model.meetingID);
+                      if (_textReasonReject.text != "") {
+                        BlocProvider.of<MeetingBloc>(context).add(
+                            PostAcceptanceMeetingEvent(
+                                meetingId: model.meetingID,
+                                accept: "0",
+                                reason: _textReasonReject.text));
+                        Navigator.pop(context);
+                      } else {
+                        setState(() => reasonReject = true);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      }),
       actions: <Widget>[],
     );
   }
@@ -534,13 +543,6 @@ class _RequestInboxState extends State<RequestInbox>
                               time2: util.hourFormat(
                                   state.meetings[index].meetingEndTime),
                               title: state.meetings[index].title))),
-                  /*shade
-                      ? Container(
-                          width: size.width,
-                          height: size.height,
-                          color: Colors.black38.withOpacity(0.5),
-                        )
-                      : Container(),*/
                 ],
               )
             : Center(

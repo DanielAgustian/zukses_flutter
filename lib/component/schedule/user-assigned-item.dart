@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
-import 'package:zukses_app_1/util/util.dart';
+
 
 class UserAssignedItem extends StatelessWidget {
   const UserAssignedItem(

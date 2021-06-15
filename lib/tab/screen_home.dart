@@ -41,7 +41,6 @@ import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
 import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
-import 'package:zukses_app_1/component/avatar/avatar-small.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -105,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String dialogText = "Clock In ";
   bool instruction = false;
 
-  TimeOfDay _time = TimeOfDay.now();
+  
   Util util = Util();
 
 // Dummy data

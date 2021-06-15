@@ -193,9 +193,7 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
 
   void changeSharedPreferences(value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setBool("instruction", value);
+      await prefs.setBool("instruction", value);
       print("instruction changed to " + value.toString());
-    });
   }
 }
