@@ -6,6 +6,9 @@ const colorPrimary = Color(0xFF142B6F);
 const colorPrimary70 = Color(0xFF5B6B9B);
 const colorPrimary50 = Color(0xFF8A95B7);
 const colorPrimary30 = Color(0xFFB9C0D4);
+const colorPrimaryGradient1 = Color(0xFF012E67);
+const colorPrimaryGradient2 = Color(0xFF00468C);
+const colorPrimaryGradient3 = Color(0xFF032E42);
 
 const colorSecondaryRed = Color(0xFFF05769);
 const colorSecondaryRed70 = Color(0xFFF58A96);

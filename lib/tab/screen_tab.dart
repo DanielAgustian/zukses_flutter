@@ -150,7 +150,8 @@ class _ScreenTab extends State<ScreenTab> {
         .getInitialMessage()
         .then((RemoteMessage message) {
       if (message != null) {
-        notificationChecker(message);
+        print("Received notification from Background . . . !");
+        // notificationChecker(message);
       }
     });
     // handle click notif from foreground
@@ -162,7 +163,9 @@ class _ScreenTab extends State<ScreenTab> {
         flutterLocalNotificationsPlugin.initialize(
           initSetttings,
           onSelectNotification: (payload) {
-            notificationChecker(message);
+            // notificationChecker(message);
+
+            print("Received notification on Foreground . . . !");
             return;
           },
         );
