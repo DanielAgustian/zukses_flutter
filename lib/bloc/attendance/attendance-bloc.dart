@@ -45,12 +45,9 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       LoadUserAttendanceEvent event) async* {
     yield AttendanceStateLoading();
     // return user model
-    print("Banyak data attendance ${event.date}");
     var res = await _attendanceService.getUserAttendaceList(date: event.date);
     if (res != null) {
-      print(res.length);
       yield AttendanceStateSuccessLoad(attendanceList: res);
-      print(state);
     } else {
       yield AttendanceStateFailLoad();
     }
@@ -70,7 +67,6 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     } else if (event is AttendanceClockOut) {
       yield* mapClockOut();
     } else if (event is LoadUserAttendanceEvent) {
-      print("broadcast");
       yield* mapLoadUserAttendanceList(event);
     } else if (event is AttendanceEventDidUpdated) {
       yield* mapUpdatingAttendanceState(event);

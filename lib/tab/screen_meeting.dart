@@ -13,6 +13,7 @@ import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -53,7 +54,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   int waitingRequest = 0;
   List<String> date1 = [], date2 = [];
 
-  Util util;
+  Util util = Util();
   MeetingBloc _meetingBloc;
 
   bool loading = false;
@@ -69,34 +70,6 @@ class _MeetingScreenState extends State<MeetingScreen>
     _meetingBloc.add(GetAcceptedMeetingEvent(
         month: _currentDate.month, year: _currentDate.year));
     _selectedDate = _currentDate;
-
-    util = Util();
-  }
-
-  void getMeetingReq() async {
-    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
-  }
-
-  _getPopAddScreen() async {
-    bool result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddScheduleScreen()),
-    );
-    if (result != null) {
-      if (result == true) {
-        getMeetingReq();
-      }
-    }
-  }
-
-  Future<bool> onWillPop() async {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ScreenTab(
-                  index: 0,
-                )));
-    return false;
   }
 
   @override
@@ -145,13 +118,6 @@ class _MeetingScreenState extends State<MeetingScreen>
               ),
             ),
           ),
-          /*Text(
-            "Schedule",
-            style: TextStyle(
-                color: colorPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 18 : 22),
-          ),*/
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -227,35 +193,42 @@ class _MeetingScreenState extends State<MeetingScreen>
         ),
         body: WillPopScope(
           onWillPop: onWillPop,
-          child: searching ? searchingData(context, size) : buildMainBody(size),
+          child: RefreshIndicator(
+              backgroundColor: colorPrimary70,
+              color: colorBackground,
+              strokeWidth: 1,
+              onRefresh: refreshData,
+              child: searching
+                  ? searchingData(context, size)
+                  : buildMainBody(size)),
         ));
   }
 
   // Build the main body
   Widget buildMainBody(Size size) {
     return BlocListener<MeetingBloc, MeetingState>(
-        listener: (context, state) {
-          setState(() {
-            if (state is MeetingStateSuccessLoad) {
-              print(state.meetings.length);
-              loading = false;
-              meetings = state.meetings;
-            } else if (state is MeetingStateFailLoad) {
-              loading = false;
-            } else if (state is MeetingStateSuccess) {
-              loading = false;
-              _meetingBloc.add(GetAcceptedMeetingEvent(
-                  month: _currentDate.month, year: _currentDate.year));
-            } else if (state is MeetingStateLoading) {
-              loading = true;
-            }
-          });
-        },
-        child: Stack(
-          children: [
-            grid ? buildViewGrid(size) : buildViewList(size),
-          ],
-        ));
+      listener: (context, state) {
+        setState(() {
+          if (state is MeetingStateSuccessLoad) {
+            loading = false;
+            meetings = state.meetings;
+          } else if (state is MeetingStateFailLoad) {
+            loading = false;
+          } else if (state is MeetingStateSuccess) {
+            loading = false;
+            _meetingBloc.add(GetAcceptedMeetingEvent(
+                month: _currentDate.month, year: _currentDate.year));
+          } else if (state is MeetingStateLoading) {
+            loading = true;
+          }
+        });
+      },
+      child: Stack(
+        children: [
+          grid ? buildViewGrid(size) : buildViewList(size),
+        ],
+      ),
+    );
   }
 
   // Build view with list version calendar
@@ -376,6 +349,7 @@ class _MeetingScreenState extends State<MeetingScreen>
     String time2 = util.hourFormat(scheduleModel.meetingEndTime != null
         ? scheduleModel.meetingEndTime
         : scheduleModel.date);
+    bool showmore = false;
 
     return showModalBottomSheet<void>(
       isScrollControlled: true,
@@ -384,7 +358,7 @@ class _MeetingScreenState extends State<MeetingScreen>
       barrierColor: Colors.white.withOpacity(0.1),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState2) {
+          builder: (context, setStateModal) {
             return DraggableScrollableSheet(
               maxChildSize: 0.8,
               initialChildSize: 0.8,
@@ -486,60 +460,51 @@ class _MeetingScreenState extends State<MeetingScreen>
                         height: 5,
                       ),
                       scheduleModel.members == null
-                          ? Text("Data Null")
-                          : Container(
-                              height: 0.3 * size.height,
+                          ? Text("Empty")
+                          : Expanded(
                               child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: scheduleModel.members.length,
+                                  controller: scrollController,
+                                  itemCount: countShowItem(
+                                      members: scheduleModel.members,
+                                      show: showmore),
                                   itemBuilder: (context, index) {
-                                    return Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            UserAvatarScheduleBigger(
-                                              imgURL:
-                                                  "https://api-zukses.yokesen.com/${scheduleModel.members[index].imgUrl}",
-                                              status: util.acceptancePrint(
-                                                  scheduleModel
-                                                      .members[index].accepted),
-                                              avatarRadius:
-                                                  size.height <= 570 ? 15 : 25,
-                                              dotSize:
-                                                  size.height <= 570 ? 8 : 10,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              scheduleModel
-                                                      .members[index].name +
-                                                  " (" +
-                                                  util.acceptancePrint(
-                                                      scheduleModel
-                                                          .members[index]
-                                                          .accepted) +
-                                                  ") ",
-                                              style: TextStyle(
-                                                fontSize: size.height <= 570
-                                                    ? 14
-                                                    : 16,
-                                                color: colorPrimary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: size.height < 569 ? 2 : 5,
-                                        )
-                                      ],
-                                    );
+                                    // if assigned people more than 5
+                                    // and it is the last man or index number 4
+                                    // and [show more] button not clicked yet
+                                    if (scheduleModel.members.length > 5 &&
+                                        !showmore &&
+                                        index == 4) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          assignedUserIteminModal(size,
+                                              schedule: scheduleModel,
+                                              index: index),
+                                          TextButton(
+                                              onPressed: () {
+                                                setStateModal(() {
+                                                  showmore = !showmore;
+                                                });
+                                              },
+                                              child: Text(
+                                                "Show more",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: size.height <= 570
+                                                      ? 12
+                                                      : 14,
+                                                  color: colorPrimary,
+                                                ),
+                                              )),
+                                        ],
+                                      );
+                                    }
+
+                                    return assignedUserIteminModal(size,
+                                        schedule: scheduleModel, index: index);
                                   }),
-                            )
+                            ),
                     ],
                   ),
                 );
@@ -548,6 +513,38 @@ class _MeetingScreenState extends State<MeetingScreen>
           },
         );
       },
+    );
+  }
+
+  // user item in modal
+  Widget assignedUserIteminModal(Size size,
+      {@required ScheduleModel schedule, @required int index}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          UserAvatarScheduleBigger(
+            imgURL:
+                "https://api-zukses.yokesen.com/${schedule.members[index].imgUrl}",
+            status: util.acceptancePrint(schedule.members[index].accepted),
+            avatarRadius: size.height <= 570 ? 15 : 25,
+            dotSize: size.height <= 570 ? 8 : 10,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            schedule.members[index].name +
+                " (" +
+                util.acceptancePrint(schedule.members[index].accepted) +
+                ") ",
+            style: TextStyle(
+              fontSize: size.height <= 570 ? 14 : 16,
+              color: colorPrimary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -581,6 +578,7 @@ class _MeetingScreenState extends State<MeetingScreen>
             //return (Text("DADADADADADAD"));
             if (textSearch.text == "" || textSearch.text == null) {
               return ScheduleItemRequest(
+                  listMember: meetings[index].members,
                   size: size,
                   count: meetings[index].members.length,
                   date: util.yearFormat(meetings[index].date),
@@ -601,6 +599,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                   .contains(query.toLowerCase())) {
                 return ScheduleItemRequest(
                     size: size,
+                    listMember: meetings[index].members,
                     count: meetings[index].members.length,
                     date: util.yearFormat(meetings[index].date),
                     onClick: () {
@@ -621,6 +620,52 @@ class _MeetingScreenState extends State<MeetingScreen>
   }
 
   // --------------------------Logic-----------------------------//
+  // Logic to limit the showed member in detail meeting modal
+  int countShowItem({@required List<UserModel> members, @required bool show}) {
+    int total = members.length;
+    if (total <= 4) {
+      return total;
+    } else {
+      return show ? total : 5;
+    }
+  }
+
+  Future<void> refreshData() async {
+    DateTime _currentDate = DateTime.now();
+    getMeetingReq();
+    BlocProvider.of<MeetingSearchBloc>(context)
+        .add(LoadAllMeetingSearchEvent());
+    _meetingBloc = BlocProvider.of<MeetingBloc>(context);
+    _meetingBloc.add(GetAcceptedMeetingEvent(
+        month: _currentDate.month, year: _currentDate.year));
+    _selectedDate = _currentDate;
+  }
+
+  void getMeetingReq() async {
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
+  }
+
+  _getPopAddScreen() async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddScheduleScreen()),
+    );
+    if (result != null) {
+      if (result == true) {
+        getMeetingReq();
+      }
+    }
+  }
+
+  Future<bool> onWillPop() async {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ScreenTab(
+                  index: 0,
+                )));
+    return false;
+  }
 
   void selectDate(DateTime date) {
     setState(() {

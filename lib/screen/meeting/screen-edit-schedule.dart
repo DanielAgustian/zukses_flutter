@@ -187,255 +187,446 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
           ],
         ),
         backgroundColor: colorBackground,
-        body: Stack(
-          children: [
-            // Listener for success add meeting
-            BlocListener<MeetingBloc, MeetingState>(
-              listener: (context, state) {
-                if (state is MeetingStateUpdateSuccess) {
-                  //Navigator.pop(context, true);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenTab(index: 3)));
-                } else if (state is MeetingStateUpdateFailed) {
-                  Util().showToast(
-                      msg: "Something Wrong !",
-                      color: colorError,
-                      context: this.context,
-                      txtColor: colorBackground);
-                  setState(() {
-                    loadingAdd = false;
-                  });
-                } else if (state is MeetingStateSuccess) {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenTab(index: 3)));
-                } else if (state is MeetingStateFail) {
-                  Util().showToast(
-                      msg: "Delete Failed!",
-                      color: colorError,
-                      context: this.context,
-                      txtColor: colorBackground);
-                  setState(() {
-                    loadingAdd = false;
-                  });
-                }
-              },
-              child: Container(),
-            ),
-            //
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: paddingVertical),
-              child: Container(
-                color: colorBackground,
-                child: SingleChildScrollView(
+        body: BlocListener<MeetingBloc, MeetingState>(
+          listener: (context, state) {
+            if (state is MeetingStateUpdateSuccess) {
+              //Navigator.pop(context, true);
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ScreenTab(index: 3)));
+            } else if (state is MeetingStateUpdateFailed) {
+              Util().showToast(
+                  msg: "Something Wrong !",
+                  color: colorError,
+                  context: this.context,
+                  txtColor: colorBackground);
+              setState(() {
+                loadingAdd = false;
+              });
+            } else if (state is MeetingStateSuccess) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ScreenTab(index: 3)));
+            } else if (state is MeetingStateFail) {
+              Util().showToast(
+                  msg: "Delete Failed!",
+                  color: colorError,
+                  context: this.context,
+                  txtColor: colorBackground);
+              setState(() {
+                loadingAdd = false;
+              });
+            }
+          },
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: paddingVertical),
+                child: Container(
+                  color: colorBackground,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: paddingHorizontal),
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border: _titleValidator
+                                    ? Border.all(color: colorError)
+                                    : Border.all(color: Colors.transparent),
+                                color: colorBackground,
+                                boxShadow: [boxShadowStandard],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.streetAddress,
+                              onChanged: (val) {},
+                              controller: textTitle,
+                              decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 10),
+                                  hintText: "title_text".tr(),
+                                  hintStyle: TextStyle(
+                                    color: _titleValidator
+                                        ? colorError
+                                        : colorNeutral2,
+                                  ),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: paddingHorizontal),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: _descriptionValidator
+                                    ? Border.all(color: colorError)
+                                    : Border.all(color: Colors.transparent),
+                                color: colorBackground,
+                                boxShadow: [boxShadowStandard],
+                                borderRadius: BorderRadius.circular(5)),
+                            child: TextFormField(
+                              maxLines: 8,
+                              textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.text,
+                              onChanged: (val) {},
+                              controller: textDescription,
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  hintText: "task_text20".tr(),
+                                  hintStyle: TextStyle(
+                                    color: _descriptionValidator
+                                        ? colorError
+                                        : colorNeutral2,
+                                  ),
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: paddingHorizontal),
+                          child: Column(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  _selectDate(this.context);
+                                },
+                                child: AddScheduleRow(
+                                  fontSize: size.height <= 569 ? 14 : 16,
+                                  title: "date_text".tr(),
+                                  textItem: "${formater.format(date)}",
+                                ),
+                              ),
+
+                              InkWell(
+                                onTap: () {
+                                  FocusScopeNode currentFocus =
+                                      FocusScope.of(context);
+                                  if (!currentFocus.hasPrimaryFocus) {
+                                    currentFocus.unfocus();
+                                  }
+                                  pickTime(this.context, index: 1);
+                                  //pickTime(this.context);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: colorBackground,
+                                      border: Border.all(
+                                          color: _timeValidator
+                                              ? colorError
+                                              : colorBackground)),
+                                  child: AddScheduleRow(
+                                    fontSize: size.height <= 569 ? 14 : 16,
+                                    title: "start_time_text".tr(),
+                                    textItem: "$h1.$m1",
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  FocusScopeNode currentFocus =
+                                      FocusScope.of(context);
+                                  if (!currentFocus.hasPrimaryFocus) {
+                                    currentFocus.unfocus();
+                                  }
+                                  //pickTime(this.context, index: 2);
+                                  pickTime(this.context, index: 2);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: colorBackground,
+                                      border: Border.all(
+                                          color: _timeValidator
+                                              ? colorError
+                                              : colorBackground)),
+                                  child: AddScheduleRow(
+                                    fontSize: size.height <= 569 ? 14 : 16,
+                                    title: "end_time_text".tr(),
+                                    textItem: "$h2.$m2",
+                                  ),
+                                ),
+                              ),
+                              AddScheduleRow2(
+                                fontSize: size.height <= 569 ? 14 : 16,
+                                title: "schedule_text4".tr(),
+                                textItem: repeat,
+                                items: items,
+                                onSelectedItem: (val) {
+                                  setState(() {
+                                    repeat = val;
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "schedule_text5".tr(),
+                                  style: TextStyle(
+                                      fontSize: size.height <= 569 ? 14 : 16,
+                                      color: colorPrimary),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ////
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: paddingHorizontal),
+                          child: LongButtonIconShadow(
+                            size: size,
+                            title: "schedule_text6".tr(),
+                            bgColor: colorBackground,
+                            textColor: colorPrimary,
+                            iconWidget: FaIcon(
+                              FontAwesomeIcons.plusCircle,
+                              color: colorPrimary,
+                            ),
+                            onClick: () {
+                              showModalResult(size);
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: paddingHorizontal),
+                          child: LongButtonOutline(
+                              size: size,
+                              title: "schedule_text7".tr(),
+                              bgColor: colorBackground,
+                              textColor: colorError,
+                              outlineColor: colorError,
+                              onClick: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => _buildPopupClockOut(
+                                        context,
+                                        size: size));
+                              }),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        BlocBuilder<EmployeeBloc, EmployeeState>(
+                          builder: (context, state) {
+                            if (state is EmployeeStateSuccessLoad) {
+                              return Container(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: choosedUser.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 4,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    // If user has been choos attendance
+                                    if (choosedUser.length != 0) {
+                                      for (var i = 0;
+                                          i < state.employees.length;
+                                          i++) {
+                                        if (state.employees[i].userID ==
+                                            choosedUser[index]) {
+                                          return Column(
+                                            children: [
+                                              CircleAvatar(
+                                                backgroundColor:
+                                                    colorSecondaryRed,
+                                                radius: size.height <= 569
+                                                    ? 20
+                                                    : 30,
+                                              ),
+                                              Text(
+                                                "${state.employees[i].name}",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: colorPrimary,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                      }
+                                    }
+                                    return SizedBox();
+                                  },
+                                ),
+                              );
+                            }
+                            return Container();
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (loadingAdd)
+                BackdropFilter(
+                  filter: new ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                  child: Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.white.withOpacity(0),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 200),
+                        CircularProgressIndicator(
+                          backgroundColor: colorPrimary70,
+                          valueColor: AlwaysStoppedAnimation(colorBackground),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Add meeting . .".tr(),
+                          style: TextStyle(
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Show modal detail
+  Future<void> showModalResult(Size size) {
+    return showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.3),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setStateModal) {
+            return DraggableScrollableSheet(
+              maxChildSize: 0.9,
+              initialChildSize: 0.9,
+              minChildSize: 0.6,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(blurRadius: 10, color: colorNeutral2)
+                      ],
+                      color: colorBackground,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20))),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                              border: _titleValidator
-                                  ? Border.all(color: colorError)
-                                  : Border.all(color: Colors.transparent),
-                              color: colorBackground,
-                              boxShadow: [boxShadowStandard],
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.streetAddress,
-                            onChanged: (val) {},
-                            controller: textTitle,
-                            decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 10),
-                                hintText: "title_text".tr(),
-                                hintStyle: TextStyle(
-                                  color: _titleValidator
-                                      ? colorError
-                                      : colorNeutral2,
-                                ),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "cancel_text".tr(),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 14
+                                          : 16,
+                                  color: colorPrimary),
+                            ),
                           ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: _descriptionValidator
-                                  ? Border.all(color: colorError)
-                                  : Border.all(color: Colors.transparent),
-                              color: colorBackground,
-                              boxShadow: [boxShadowStandard],
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            maxLines: 8,
-                            textInputAction: TextInputAction.done,
-                            keyboardType: TextInputType.text,
-                            onChanged: (val) {},
-                            controller: textDescription,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                hintText: "task_text20".tr(),
-                                hintStyle: TextStyle(
-                                  color: _descriptionValidator
-                                      ? colorError
-                                      : colorNeutral2,
-                                ),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none),
+                          Text(
+                            "schedule_text6".tr(),
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height < 600
+                                        ? 18
+                                        : 20,
+                                color: colorPrimary,
+                                fontWeight: FontWeight.w700),
                           ),
-                        ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "done_text".tr(),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 14
+                                          : 16,
+                                  color: colorPrimary,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          )
+                        ],
                       ),
                       SizedBox(
                         height: 20,
                       ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                _selectDate(this.context);
-                              },
-                              child: AddScheduleRow(
-                                fontSize: size.height <= 569 ? 14 : 16,
-                                title: "date_text".tr(),
-                                textItem: "${formater.format(date)}",
-                              ),
-                            ),
-
-                            InkWell(
-                              onTap: () {
-                                FocusScopeNode currentFocus =
-                                    FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
-                                pickTime(this.context, index: 1);
-                                //pickTime(this.context);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: colorBackground,
-                                    border: Border.all(
-                                        color: _timeValidator
-                                            ? colorError
-                                            : colorBackground)),
-                                child: AddScheduleRow(
-                                  fontSize: size.height <= 569 ? 14 : 16,
-                                  title: "start_time_text".tr(),
-                                  textItem: "$h1.$m1",
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                FocusScopeNode currentFocus =
-                                    FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
-                                //pickTime(this.context, index: 2);
-                                pickTime(this.context, index: 2);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: colorBackground,
-                                    border: Border.all(
-                                        color: _timeValidator
-                                            ? colorError
-                                            : colorBackground)),
-                                child: AddScheduleRow(
-                                  fontSize: size.height <= 569 ? 14 : 16,
-                                  title: "end_time_text".tr(),
-                                  textItem: "$h2.$m2",
-                                ),
-                              ),
-                            ),
-                            AddScheduleRow2(
-                              fontSize: size.height <= 569 ? 14 : 16,
-                              title: "schedule_text4".tr(),
-                              textItem: repeat,
-                              items: items,
-                              onSelectedItem: (val) {
-                                setState(() {
-                                  repeat = val;
-                                });
-                              },
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "schedule_text5".tr(),
-                                style: TextStyle(
-                                    fontSize: size.height <= 569 ? 14 : 16,
-                                    color: colorPrimary),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ////
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: LongButtonIconShadow(
-                          size: size,
-                          title: "schedule_text6".tr(),
-                          bgColor: colorBackground,
-                          textColor: colorPrimary,
-                          iconWidget: FaIcon(
-                            FontAwesomeIcons.plusCircle,
-                            color: colorPrimary,
-                          ),
-                          onClick: () {
-                            if (_controller.isDismissed)
-                              _controller.forward();
-                            else if (_controller.isCompleted)
-                              _controller.reverse();
+                      Container(
+                        // height: 50,
+                        decoration: BoxDecoration(
+                            color: colorBackground,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, 0),
+                                  color: Color.fromRGBO(240, 239, 242, 1),
+                                  blurRadius: 15),
+                            ],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: TextFormField(
+                          textInputAction: TextInputAction.search,
+                          keyboardType: TextInputType.streetAddress,
+                          onChanged: (val) {
+                            // Search Function
+                            setStateModal(() {
+                              searchQuery = val;
+                            });
                           },
+                          controller: textSearch,
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.symmetric(vertical: 20),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: colorNeutral1,
+                              ),
+                              hintText: "Search",
+                              hintStyle: TextStyle(
+                                color: colorNeutral1,
+                              ),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                        child: LongButtonOutline(
-                            size: size,
-                            title: "schedule_text7".tr(),
-                            bgColor: colorBackground,
-                            textColor: colorError,
-                            outlineColor: colorError,
-                            onClick: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      _buildPopupClockOut(context, size: size));
-                            }),
                       ),
                       SizedBox(
                         height: 10,
@@ -443,281 +634,83 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                       BlocBuilder<EmployeeBloc, EmployeeState>(
                         builder: (context, state) {
                           if (state is EmployeeStateSuccessLoad) {
-                            print(choosedUser);
-                            return Container(
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                itemCount: choosedUser.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4,
-                                ),
-                                itemBuilder: (context, index) {
-                                  // If user has been choos attendance
-                                  if (choosedUser.length != 0) {
-                                    for (var i = 0;
-                                        i < state.employees.length;
-                                        i++) {
-                                      if (state.employees[i].userID ==
-                                          choosedUser[index]) {
-                                        return Column(
-                                          children: [
-                                            CircleAvatar(
-                                              backgroundColor:
-                                                  colorSecondaryRed,
-                                              radius:
-                                                  size.height <= 569 ? 20 : 30,
-                                            ),
-                                            Text(
-                                              "${state.employees[i].name}",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: colorPrimary,
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }
+                            return Expanded(
+                              child: ListView.builder(
+                                controller: scrollController,
+                                itemCount: state.employees.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (textSearch.text == "" ||
+                                      textSearch.text == null) {
+                                    return UserInvitationItem(
+                                      val: state.checklist[index],
+                                      title: state.employees[index].name,
+                                      imgURL:
+                                          "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
+                                      checkboxCallback: (val) {
+                                        setStateModal(() {
+                                          state.checklist[index] =
+                                              !state.checklist[index];
+
+                                          // If user is checked, add to list choosed User
+                                          if (state.checklist[index]) {
+                                            choosedUser.add(
+                                                state.employees[index].userID);
+
+                                            // If uncheck, remove from the list
+                                          } else {
+                                            choosedUser.remove(
+                                                state.employees[index].userID);
+                                          }
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    // Handle for search function
+                                    if (state.employees[index].name
+                                        .toLowerCase()
+                                        .contains(searchQuery.toLowerCase())) {
+                                      return UserInvitationItem(
+                                        val: state.checklist[index],
+                                        title: state.employees[index].name,
+                                        imgURL:
+                                            "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
+                                        checkboxCallback: (val) {
+                                          setStateModal(() {
+                                            state.checklist[index] =
+                                                !state.checklist[index];
+
+                                            // If user is checked, add to list choosed User
+                                            if (state.checklist[index]) {
+                                              choosedUser.add(state
+                                                  .employees[index].userID);
+
+                                              // If uncheck, remove from the list
+                                            } else {
+                                              choosedUser.remove(state
+                                                  .employees[index].userID);
+                                            }
+                                          });
+                                        },
+                                      );
                                     }
                                   }
-                                  return SizedBox();
+
+                                  return Container();
                                 },
                               ),
                             );
-                          }
+                          } else {}
                           return Container();
                         },
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            scrollerSheet(),
-            if (loadingAdd)
-              BackdropFilter(
-                filter: new ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-                child: Container(
-                  width: size.width,
-                  height: size.height,
-                  color: Colors.white.withOpacity(0),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 200),
-                      CircularProgressIndicator(
-                        backgroundColor: colorPrimary70,
-                        valueColor: AlwaysStoppedAnimation(colorBackground),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Add meeting . .".tr(),
-                        style: TextStyle(
-                            color: colorPrimary,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14),
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
-                ),
-              )
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Scroller invvitation function
-  Widget scrollerSheet() {
-    return SizedBox.expand(
-      child: SlideTransition(
-        position: _tween.animate(_controller),
-        child: DraggableScrollableSheet(
-          maxChildSize: 0.8,
-          initialChildSize: 0.7,
-          minChildSize: 0.4,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  boxShadow: [BoxShadow(blurRadius: 15)],
-                  color: colorBackground,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          _controller.reverse();
-                        },
-                        child: Text(
-                          "cancel_text".tr(),
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.height < 600
-                                  ? 14
-                                  : 16,
-                              color: colorPrimary),
-                        ),
-                      ),
-                      Text(
-                        "schedule_text6".tr(),
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.height < 600
-                                ? 18
-                                : 20,
-                            color: colorPrimary,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          _controller.reverse();
-                        },
-                        child: Text(
-                          "done_text".tr(),
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.height < 600
-                                  ? 14
-                                  : 16,
-                              color: colorPrimary,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    // height: 50,
-                    decoration: BoxDecoration(
-                        color: colorBackground,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(0, 0),
-                              color: Color.fromRGBO(240, 239, 242, 1),
-                              blurRadius: 15),
-                        ],
-                        borderRadius: BorderRadius.circular(10)),
-                    child: TextFormField(
-                      textInputAction: TextInputAction.search,
-                      keyboardType: TextInputType.streetAddress,
-                      onChanged: (val) {
-                        searchFunction(val);
-                      },
-                      controller: textSearch,
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 20),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: colorNeutral1,
-                          ),
-                          hintText: "Search",
-                          hintStyle: TextStyle(
-                            color: colorNeutral1,
-                          ),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  BlocListener<EmployeeBloc, EmployeeState>(
-                    listener: (context, state) {
-                      if (state is EmployeeStateSuccessLoad) {
-                        setState(() {
-                          listUser.clear();
-                          checklistdata.clear();
-                        });
-                        for (int i = 0; i < state.employees.length; i++) {
-                          setState(() {
-                            listUser.add(state.employees[i]);
-                            checklistdata.add(state.checklist[i]);
-                            choosedUser.forEach((element) {
-                              if (element == state.employees[i].userID) {
-                                checklistdata[i] = !checklistdata[i];
-                              }
-                            });
-                          });
-                        }
-                        setState(() {
-                          getDataDone = true;
-                        });
-                      } else {}
-                    },
-                    child: Container(),
-                  ),
-                  getDataDone
-                      ? showMember(scrollController, listUser, checklistdata,
-                          query: searchQuery)
-                      : Container()
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  // List to show the member
-  Widget showMember(ScrollController scrollController, List<UserModel> user,
-      List<bool> checkList,
-      {String query}) {
-    return Expanded(
-      child: ListView.builder(
-        controller: scrollController,
-        itemCount: user.length,
-        itemBuilder: (BuildContext context, int index) {
-          if (textSearch.text == "" || textSearch.text == null) {
-            return UserInvitationItem(
-              val: checkList[index],
-              title: user[index].name,
-              checkboxCallback: (val) {
-                setState(() {
-                  checkList[index] = !checkList[index];
-
-                  // If user is checked, add to list choosed User
-                  if (checkList[index]) {
-                    choosedUser.add(user[index].userID);
-                    // If uncheck, remove from the list
-                  } else {
-                    choosedUser.remove(user[index].userID);
-                  }
-                });
+                );
               },
             );
-          } else {
-            // Handle for search function
-            if (user[index].name.toLowerCase().contains(query.toLowerCase())) {
-              return UserInvitationItem(
-                val: checkList[index],
-                title: user[index].name,
-                checkboxCallback: (val) {
-                  setState(() {
-                    checkList[index] = !checkList[index];
-
-                    // If user is checked, add to list choosed User
-                    if (checkList[index]) {
-                      choosedUser.add(user[index].userID);
-
-                      // If uncheck, remove from the list
-                    } else {
-                      choosedUser.remove(user[index].userID);
-                    }
-                  });
-                },
-              );
-            }
-          }
-
-          return Container();
-        },
-      ),
+          },
+        );
+      },
     );
   }
 
@@ -763,8 +756,8 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
       ),
     );
   }
+
   //--------------------------Logic-----------------------------//
-// --------------------------Logic-----------------------------//
 
   // Handle if user click back using button in device not in app (usually for android)
   Future<bool> _onWillPop({size}) async {
@@ -932,7 +925,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   _getMyID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myId = prefs.getString("myID");
-    print("myId: " + myId);
     widget.model.members.forEach((element) {
       if (element.userIDSchedule != myId) {
         choosedUser.add(element.userIDSchedule);

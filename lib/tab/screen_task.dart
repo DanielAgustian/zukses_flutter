@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,82 +80,39 @@ class _TaskScreen extends State<TaskScreen> {
         ),
         body: WillPopScope(
           onWillPop: onWillPop,
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  BlocListener<ProjectBloc, ProjectState>(
-                    listener: (context, state) {
-                      if (state is ProjectStateAddSuccessLoad) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        BlocProvider.of<ProjectBloc>(context)
-                            .add(GetAllProjectEvent());
-                      } else if (state is ProjectStateSuccessLoad) {
-                        setState(() {
-                          isLoading = false;
-                          if (widget.projectId != null) {
-                            ProjectModel project;
-                            if (widget.projectId != null) {
-                              for (int i = 0; i < state.project.length; i++) {
-                                if (state.project[i].id.toString() ==
-                                    widget.projectId) {
-                                  project = state.project[i];
-                                }
-                              }
-                            }
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TaskDetailScreen(
-                                          project: project,
-                                        )));
-                          }
-                        });
-                      } else if (state is ProjectStateFailLoad) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      } else if (state is ProjectStateAddFailLoad) {
-                        BlocProvider.of<ProjectBloc>(context)
-                            .add(GetAllProjectEvent());
-                      }
-                    },
-                    child: Container(),
-                  ),
-                  BlocListener<TaskBloc, TaskState>(
-                    listener: (context, state) {
-                      if (state is TaskStateSuccessLoad) {
-                        BlocProvider.of<ProjectBloc>(context)
-                            .add(GetAllProjectEvent());
-                      }
-                    },
-                    child: Container(),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  buildListProject(size),
-                ],
-              )),
-              isLoading
-                  ? Container(
-                      width: size.width,
-                      height: size.height,
-                      color: Colors.black38.withOpacity(0.5),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: colorPrimary70,
-                          // strokeWidth: 0,
-                          valueColor: AlwaysStoppedAnimation(colorBackground),
-                        ),
-                      ),
-                    )
-                  : Container()
-            ],
+          child: RefreshIndicator(
+            backgroundColor: colorPrimary70,
+            color: colorBackground,
+            strokeWidth: 1,
+            onRefresh: refreshData,
+            child: MultiBlocListener(
+                listeners: listeners(),
+                child: Stack(
+                  children: [
+                    buildListProject(size),
+                    isLoading
+                        ? BackdropFilter(
+                            filter:
+                                new ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                            child: Container(
+                              width: size.width,
+                              height: size.height,
+                              color: Colors.white.withOpacity(0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    backgroundColor: colorPrimary70,
+                                    valueColor:
+                                        AlwaysStoppedAnimation(colorBackground),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container()
+                  ],
+                )),
           ),
         ));
   }
@@ -198,7 +156,8 @@ class _TaskScreen extends State<TaskScreen> {
         );
       }
       return projects == null || projects.length == 0
-          ? Container()
+          ? SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(), child: Container())
           : ListView.builder(
               itemCount: projects.length,
               scrollDirection: Axis.vertical,
@@ -235,6 +194,56 @@ class _TaskScreen extends State<TaskScreen> {
   }
 
   // --------------------------Logic-----------------------------//
+
+  Future<void> refreshData() async {
+    BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
+  }
+
+  List<BlocListener> listeners() => [
+        BlocListener<ProjectBloc, ProjectState>(
+          listener: (context, state) {
+            if (state is ProjectStateAddSuccessLoad) {
+              setState(() {
+                isLoading = true;
+              });
+              BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
+            } else if (state is ProjectStateSuccessLoad) {
+              setState(() {
+                isLoading = false;
+                if (widget.projectId != null) {
+                  ProjectModel project;
+                  if (widget.projectId != null) {
+                    for (int i = 0; i < state.project.length; i++) {
+                      if (state.project[i].id.toString() == widget.projectId) {
+                        project = state.project[i];
+                      }
+                    }
+                  }
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TaskDetailScreen(
+                                project: project,
+                              )));
+                }
+              });
+            } else if (state is ProjectStateFailLoad) {
+              setState(() {
+                isLoading = false;
+              });
+            } else if (state is ProjectStateAddFailLoad) {
+              BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
+            }
+          },
+        ),
+        BlocListener<TaskBloc, TaskState>(
+          listener: (context, state) {
+            if (state is TaskStateSuccessLoad) {
+              BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
+            }
+          },
+        )
+      ];
 
   // Function to handle click back on android
   Future<bool> onWillPop() async {

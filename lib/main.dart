@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -286,34 +287,32 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        body: Stack(
-      children: [
-        Center(
-          child: Text(
-            "ZUKSES",
-            style: TextStyle(
-                color: colorPrimary,
-                letterSpacing: 2,
-                fontSize: size.height < 569 ? 40 : 46,
-                fontWeight: FontWeight.bold),
+        body: Container(
+      width: size.width,
+      height: size.height,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colorPrimaryGradient1,
+              colorPrimaryGradient2,
+              colorPrimaryGradient3,
+            ]),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          SvgPicture.asset(
+            "assets/images/zukses-logo.svg",
           ),
-        ),
-        Positioned(
-            bottom: 0.2 * size.height,
-            left: 0.45 * size.width,
-            child: CircularProgressIndicator()),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Text(
-              "from Yokesen Technology Ltd.",
-              style: TextStyle(
-                  color: colorPrimary, fontSize: size.height < 569 ? 16 : 18),
-            ),
+          CircularProgressIndicator(
+            strokeWidth: 2,
+            backgroundColor: Colors.transparent,
+            valueColor: AlwaysStoppedAnimation(Colors.white),
           ),
-        )
-      ],
+        ],
+      ),
     ));
   }
 }
