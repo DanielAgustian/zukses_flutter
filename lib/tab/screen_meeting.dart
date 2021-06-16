@@ -516,7 +516,7 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
   }
 
-  // List user in modal
+  // user item in modal
   Widget assignedUserIteminModal(Size size,
       {@required ScheduleModel schedule, @required int index}) {
     return Padding(

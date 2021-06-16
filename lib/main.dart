@@ -296,9 +296,7 @@ class _SplashScreenState extends State<SplashScreen> {
             end: Alignment.bottomRight,
             colors: [
               colorPrimaryGradient1,
-              colorPrimaryGradient1,
               colorPrimaryGradient2,
-              colorPrimaryGradient3,
               colorPrimaryGradient3,
             ]),
       ),
@@ -309,6 +307,7 @@ class _SplashScreenState extends State<SplashScreen> {
             "assets/images/zukses-logo.svg",
           ),
           CircularProgressIndicator(
+            strokeWidth: 2,
             backgroundColor: Colors.transparent,
             valueColor: AlwaysStoppedAnimation(Colors.white),
           ),
