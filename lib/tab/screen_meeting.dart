@@ -53,7 +53,7 @@ class _MeetingScreenState extends State<MeetingScreen>
   int waitingRequest = 0;
   List<String> date1 = [], date2 = [];
 
-  Util util;
+  Util util = Util();
   MeetingBloc _meetingBloc;
 
   bool loading = false;
@@ -69,34 +69,6 @@ class _MeetingScreenState extends State<MeetingScreen>
     _meetingBloc.add(GetAcceptedMeetingEvent(
         month: _currentDate.month, year: _currentDate.year));
     _selectedDate = _currentDate;
-
-    util = Util();
-  }
-
-  void getMeetingReq() async {
-    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
-  }
-
-  _getPopAddScreen() async {
-    bool result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddScheduleScreen()),
-    );
-    if (result != null) {
-      if (result == true) {
-        getMeetingReq();
-      }
-    }
-  }
-
-  Future<bool> onWillPop() async {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ScreenTab(
-                  index: 0,
-                )));
-    return false;
   }
 
   @override
@@ -145,13 +117,6 @@ class _MeetingScreenState extends State<MeetingScreen>
               ),
             ),
           ),
-          /*Text(
-            "Schedule",
-            style: TextStyle(
-                color: colorPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: size.height <= 569 ? 18 : 22),
-          ),*/
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -227,35 +192,43 @@ class _MeetingScreenState extends State<MeetingScreen>
         ),
         body: WillPopScope(
           onWillPop: onWillPop,
-          child: searching ? searchingData(context, size) : buildMainBody(size),
+          child: RefreshIndicator(
+              backgroundColor: colorPrimary70,
+              color: colorBackground,
+              strokeWidth: 1,
+              onRefresh: refreshData,
+              child: searching
+                  ? searchingData(context, size)
+                  : buildMainBody(size)),
         ));
   }
 
   // Build the main body
   Widget buildMainBody(Size size) {
     return BlocListener<MeetingBloc, MeetingState>(
-        listener: (context, state) {
-          setState(() {
-            if (state is MeetingStateSuccessLoad) {
-              print(state.meetings.length);
-              loading = false;
-              meetings = state.meetings;
-            } else if (state is MeetingStateFailLoad) {
-              loading = false;
-            } else if (state is MeetingStateSuccess) {
-              loading = false;
-              _meetingBloc.add(GetAcceptedMeetingEvent(
-                  month: _currentDate.month, year: _currentDate.year));
-            } else if (state is MeetingStateLoading) {
-              loading = true;
-            }
-          });
-        },
-        child: Stack(
-          children: [
-            grid ? buildViewGrid(size) : buildViewList(size),
-          ],
-        ));
+      listener: (context, state) {
+        setState(() {
+          if (state is MeetingStateSuccessLoad) {
+            print(state.meetings.length);
+            loading = false;
+            meetings = state.meetings;
+          } else if (state is MeetingStateFailLoad) {
+            loading = false;
+          } else if (state is MeetingStateSuccess) {
+            loading = false;
+            _meetingBloc.add(GetAcceptedMeetingEvent(
+                month: _currentDate.month, year: _currentDate.year));
+          } else if (state is MeetingStateLoading) {
+            loading = true;
+          }
+        });
+      },
+      child: Stack(
+        children: [
+          grid ? buildViewGrid(size) : buildViewList(size),
+        ],
+      ),
+    );
   }
 
   // Build view with list version calendar
@@ -581,6 +554,7 @@ class _MeetingScreenState extends State<MeetingScreen>
             //return (Text("DADADADADADAD"));
             if (textSearch.text == "" || textSearch.text == null) {
               return ScheduleItemRequest(
+                  listMember: meetings[index].members,
                   size: size,
                   count: meetings[index].members.length,
                   date: util.yearFormat(meetings[index].date),
@@ -601,6 +575,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                   .contains(query.toLowerCase())) {
                 return ScheduleItemRequest(
                     size: size,
+                    listMember: meetings[index].members,
                     count: meetings[index].members.length,
                     date: util.yearFormat(meetings[index].date),
                     onClick: () {
@@ -621,6 +596,43 @@ class _MeetingScreenState extends State<MeetingScreen>
   }
 
   // --------------------------Logic-----------------------------//
+
+  Future<void> refreshData() async {
+    DateTime _currentDate = DateTime.now();
+    getMeetingReq();
+    BlocProvider.of<MeetingSearchBloc>(context)
+        .add(LoadAllMeetingSearchEvent());
+    _meetingBloc = BlocProvider.of<MeetingBloc>(context);
+    _meetingBloc.add(GetAcceptedMeetingEvent(
+        month: _currentDate.month, year: _currentDate.year));
+    _selectedDate = _currentDate;
+  }
+
+  void getMeetingReq() async {
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
+  }
+
+  _getPopAddScreen() async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddScheduleScreen()),
+    );
+    if (result != null) {
+      if (result == true) {
+        getMeetingReq();
+      }
+    }
+  }
+
+  Future<bool> onWillPop() async {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ScreenTab(
+                  index: 0,
+                )));
+    return false;
+  }
 
   void selectDate(DateTime date) {
     setState(() {

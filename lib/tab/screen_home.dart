@@ -104,7 +104,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String dialogText = "Clock In ";
   bool instruction = false;
 
-  
   Util util = Util();
 
 // Dummy data
@@ -179,148 +178,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: colorBackground,
       body: WillPopScope(
         onWillPop: onWillPop,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+        child: RefreshIndicator(
+          backgroundColor: colorPrimary70,
+          color: colorBackground,
+          strokeWidth: 1,
+          onRefresh: refreshData,
+          child: MultiBlocListener(
+            listeners: listeners(),
+            child: Stack(
               children: [
-                BlocListener<MeetingReqBloc, MeetingReqState>(
-                  listener: (context, state) async {
-                    if (state is MeetingReqStateSuccessLoad) {
-                      setState(() {
-                        scheduleReqLength = state.schedule.length;
-                      });
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<MeetingBloc, MeetingState>(
-                    listener: (context, state) async {
-                      if (state is MeetingStateSuccessLoad) {
-                        setState(() {
-                          _scheduleAccepted.clear();
-                          state.meetings.forEach((element) {
-                            if (util.yearFormat(now) ==
-                                util.yearFormat(element.date)) {
-                              _scheduleAccepted.add(element);
-                            }
-                          });
-                          if (_scheduleAccepted.length < 1) {
-                            print("No Data");
-                          }
-                        });
-                      }
-                    },
-                    child: Container()),
-                BlocListener<AuthenticationBloc, AuthenticationState>(
-                    listener: (context, state) async {
-                      if (state is AuthStateFailLoad) {
-                        Util().showToast(
-                            context: context,
-                            msg: "Something Wrong!",
-                            duration: 3,
-                            color: colorError,
-                            txtColor: colorBackground);
-                      } else if (state is AuthStateSuccessLoad) {
-                        setState(() {
-                          _authModel = state.authUser;
-                          isLoadingAuth = true;
-                          // handle to get company acceptance after register
-                          companyAcceptance = _authModel.user.companyAcceptance;
-                          companyID = _authModel.user.companyID;
-                        });
-
-                        //This function is for employee not yet accepted.
-                        pushToWaitRegis();
-
-                        if (_authModel.maxClockIn == "false") {
-                          //if they arent clockout today
-                          if (_authModel.attendance == "true") {
-                            // if they already clock in.
-                            setState(() {
-                              stringTap = enumTap[1];
-                            });
-                          }
-                        } else if (_authModel.maxClockIn == "true") {
-                          //If they already clock out for today
-                          setState(() {
-                            stringTap = enumTap[2];
-                          });
-                        }
-                        doneLoading();
-                      } else if (state is AuthStateSuccessTeamLoad) {
-                        _controller.reverse();
-                      }
-                    },
-                    child: Container()),
-                BlocListener<AttendanceBloc, AttendanceState>(
-                  listener: (context, state) async {
-                    if (state is AttendanceStateFailed) {
-                      Util().showToast(
-                          context: this.context,
-                          msg: "Something Wrong !",
-                          color: colorError,
-                          txtColor: colorBackground);
-                    } else if (state is AttendanceStateSuccessClockIn) {
-                      //if they already clock in
-                      setState(() {
-                        stringTap = enumTap[1];
-                        dialogText = "Clock In";
-                      });
-                    } else if (state is AttendanceStateSuccessClockOut) {
-                      //if they already clock out
-                      setState(() {
-                        stringTap = enumTap[2];
-                        dialogText = "Clock Out";
-                      });
-                      // show confirm dialog success clock out
-
-                      showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildPopupDialog(context, "_BlocListener"))
-                          .then((value) => stringTap = enumTap[2]);
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<CompanyBloc, CompanyState>(
-                  listener: (context, state) async {
-                    if (state is CompanyStateSuccessLoad) {
-                      _company = state.company;
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<TaskPriorityBloc, TaskPriorityState>(
-                  listener: (context, state) {
-                    if (state is TaskPriorityStateSuccessLoad) {
-                      setState(() {
-                        lengthHighPriority = state.task.length;
-                      });
-                      for (int i = 0; i < state.task.length; i++) {
-                        _taskHighPriority.add(state.task[i]);
-                      }
-                    }
-                  },
-                  child: Container(),
-                ),
-                isLoading
-                    // FOR SKELETON LOADING
-                    ? skeletonSection(size)
-                    // LIMIT FOR THE REAL COMPONENT
-                    : realComponent(context, size)
+                SingleChildScrollView(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    isLoading
+                        // FOR SKELETON LOADING
+                        ? skeletonSection(size)
+                        // LIMIT FOR THE REAL COMPONENT
+                        : realComponent(context, size)
+                  ],
+                )),
+                BlocBuilder<TeamDetailBloc, TeamDetailState>(
+                    builder: (context, state) {
+                  if (state is TeamDetailStateSuccess) {
+                    return scrollInvitation(context, size, state.team);
+                  }
+                  return Container();
+                })
               ],
-            )),
-            BlocBuilder<TeamDetailBloc, TeamDetailState>(
-                builder: (context, state) {
-              if (state is TeamDetailStateSuccess) {
-                return scrollInvitation(context, size, state.team);
-              }
-              return Container();
-            })
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -1347,6 +1234,137 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   //---------------------Get Bloc Function-------------------------------//
+
+  // getter for listener
+  List<BlocListener> listeners() => [
+        BlocListener<MeetingReqBloc, MeetingReqState>(
+            listener: (context, state) async {
+          if (state is MeetingReqStateSuccessLoad) {
+            setState(() {
+              scheduleReqLength = state.schedule.length;
+            });
+          }
+        }),
+        BlocListener<MeetingBloc, MeetingState>(
+            listener: (context, state) async {
+              if (state is MeetingStateSuccessLoad) {
+                setState(() {
+                  _scheduleAccepted.clear();
+                  state.meetings.forEach((element) {
+                    if (util.yearFormat(now) == util.yearFormat(element.date)) {
+                      _scheduleAccepted.add(element);
+                    }
+                  });
+                  if (_scheduleAccepted.length < 1) {
+                    print("No Data");
+                  }
+                });
+              }
+            },
+            child: Container()),
+        BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) async {
+              if (state is AuthStateFailLoad) {
+                Util().showToast(
+                    context: context,
+                    msg: "Something Wrong!",
+                    duration: 3,
+                    color: colorError,
+                    txtColor: colorBackground);
+              } else if (state is AuthStateSuccessLoad) {
+                setState(() {
+                  _authModel = state.authUser;
+                  isLoadingAuth = true;
+                  // handle to get company acceptance after register
+                  companyAcceptance = _authModel.user.companyAcceptance;
+                  companyID = _authModel.user.companyID;
+                });
+
+                //This function is for employee not yet accepted.
+                pushToWaitRegis();
+
+                if (_authModel.maxClockIn == "false") {
+                  //if they arent clockout today
+                  if (_authModel.attendance == "true") {
+                    // if they already clock in.
+                    setState(() {
+                      stringTap = enumTap[1];
+                    });
+                  }
+                } else if (_authModel.maxClockIn == "true") {
+                  //If they already clock out for today
+                  setState(() {
+                    stringTap = enumTap[2];
+                  });
+                }
+                doneLoading();
+              } else if (state is AuthStateSuccessTeamLoad) {
+                _controller.reverse();
+              }
+            },
+            child: Container()),
+        BlocListener<AttendanceBloc, AttendanceState>(
+            listener: (context, state) async {
+          if (state is AttendanceStateFailed) {
+            Util().showToast(
+                context: this.context,
+                msg: "Something Wrong !",
+                color: colorError,
+                txtColor: colorBackground);
+          } else if (state is AttendanceStateSuccessClockIn) {
+            //if they already clock in
+            setState(() {
+              stringTap = enumTap[1];
+              dialogText = "Clock In";
+            });
+          } else if (state is AttendanceStateSuccessClockOut) {
+            //if they already clock out
+            setState(() {
+              stringTap = enumTap[2];
+              dialogText = "Clock Out";
+            });
+            // show confirm dialog success clock out
+
+            showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context, "_BlocListener"))
+                .then((value) => stringTap = enumTap[2]);
+          }
+        }),
+        BlocListener<CompanyBloc, CompanyState>(
+            listener: (context, state) async {
+          if (state is CompanyStateSuccessLoad) {
+            _company = state.company;
+          }
+        }),
+        BlocListener<TaskPriorityBloc, TaskPriorityState>(
+            listener: (context, state) {
+          if (state is TaskPriorityStateSuccessLoad) {
+            setState(() {
+              lengthHighPriority = state.task.length;
+            });
+            for (int i = 0; i < state.task.length; i++) {
+              _taskHighPriority.add(state.task[i]);
+            }
+          }
+        })
+      ];
+
+  Future<void> refreshData() async {
+    _getTokenFCM();
+    getMember();
+    checkStatusClock("initState");
+    getCompanyProfile();
+    sharedPrefInstruction();
+    getUserProfile();
+    _getTaskLowPriority();
+    _getTaskHighPriority();
+
+    _getMeetingToday();
+    _getMeetingRequest();
+  }
+
   void checkStatusClock(String where) async {
     if (where == "initState") {
       SharedPreferences prefs = await SharedPreferences.getInstance();

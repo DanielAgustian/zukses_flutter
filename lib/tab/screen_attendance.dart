@@ -43,18 +43,10 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
   // for weekly
   List<AttendanceModel> absensiList = [];
-// for monthly
+  // for monthly
   List<AttendanceModel> attendanceList;
   bool isLoading = false;
   bool isLoadingAttendance = false;
-  void selectDate(DateTime date, AttendanceModel absence) {
-    setState(() {
-      _currentDate = date;
-      selected = absence;
-
-      kata = "$_currentDate";
-    });
-  }
 
   //INIT ATTENDANCE BLOC
   AttendanceBloc _attendanceBloc;
@@ -65,7 +57,6 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   @override
   void initState() {
     super.initState();
-    // timer();
     getCompanyAcceptance();
     _attendanceBloc = BlocProvider.of<AttendanceBloc>(context);
     _attendanceBloc.add(LoadUserAttendanceEvent(date: _currentDate));
@@ -79,115 +70,124 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     Size size = MediaQuery.of(context).size;
 
     return BlocListener<AttendanceBloc, AttendanceState>(
-        listener: (context, state) {
-          // BLOC when success load
-          setState(() {
-            if (state is AttendanceStateSuccessLoad) {
-              attendanceList = state.attendanceList;
-              isLoading = false;
+      listener: (context, state) {
+        // BLOC when success load
+        setState(() {
+          if (state is AttendanceStateSuccessLoad) {
+            attendanceList = state.attendanceList;
+            isLoading = false;
 
-              absensiList = attendanceList.where((data) {
-                var day = CustomCalendar().findFirstDateOfTheWeek(data.clockIn);
-                var nowWeek =
-                    CustomCalendar().findFirstDateOfTheWeek(DateTime.now());
-                return (nowWeek.day == day.day &&
-                    nowWeek.month == day.month &&
-                    nowWeek.year == day.year);
-              }).toList();
-            } else if (state is AttendanceStateFailLoad) {
-              isLoading = false;
-              attendanceList = null;
-            } else if (state is AttendanceStateLoading) {
-              isLoading = true;
-            }
-          });
-        },
+            absensiList = attendanceList.where((data) {
+              var day = CustomCalendar().findFirstDateOfTheWeek(data.clockIn);
+              var nowWeek =
+                  CustomCalendar().findFirstDateOfTheWeek(DateTime.now());
+              return (nowWeek.day == day.day &&
+                  nowWeek.month == day.month &&
+                  nowWeek.year == day.year);
+            }).toList();
+          } else if (state is AttendanceStateFailLoad) {
+            isLoading = false;
+            attendanceList = null;
+          } else if (state is AttendanceStateLoading) {
+            isLoading = true;
+          }
+        });
+      },
+      child: RefreshIndicator(
+        backgroundColor: colorPrimary70,
+        color: colorBackground,
+        strokeWidth: 1,
+        onRefresh: refreshData,
         child: attendanceList == null
             ? noStateLoadSection(size)
             : buildMainBody(size, context,
-                attendanceList: attendanceList, loading: isLoading));
+                attendanceList: attendanceList, loading: isLoading),
+      ),
+    );
   }
 
   // THE MAIN BODY
   Widget buildMainBody(Size size, BuildContext context,
       {List<AttendanceModel> attendanceList, bool loading}) {
     return Scaffold(
+      backgroundColor: colorBackground,
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: colorBackground,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: colorBackground,
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            splashColor: Colors.transparent,
+            icon: FaIcon(
+              monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
+              color: colorPrimary,
+              size: size.height <= 600 ? 16 : 20,
+            ),
+            onPressed: () {
+              setState(() {
+                monthly = !monthly;
+                if ((attendanceList != null && attendanceList.length > 0) ||
+                    monthly == false) {
+                  _attendanceBloc
+                      .add(LoadUserAttendanceEvent(date: _currentDate));
+                }
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
               splashColor: Colors.transparent,
-              icon: FaIcon(
-                monthly ? FontAwesomeIcons.bars : FontAwesomeIcons.th,
-                color: colorPrimary,
-                size: size.height <= 600 ? 16 : 20,
-              ),
-              onPressed: () {
-                setState(() {
-                  monthly = !monthly;
-                  if ((attendanceList != null && attendanceList.length > 0) ||
-                      monthly == false) {
-                    _attendanceBloc
-                        .add(LoadUserAttendanceEvent(date: _currentDate));
-                  }
-                });
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                splashColor: Colors.transparent,
-                child: Container(
-                  child: SvgPicture.asset(
-                    "assets/images/leave-symbol.svg",
-                    height: size.height <= 569 ? 20 : 25,
-                    width: size.height <= 569 ? 20 : 25,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ScreenListLeaves(permission: "leaves")),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: InkWell(
-                splashColor: Colors.transparent,
+              child: Container(
                 child: SvgPicture.asset(
-                  "assets/images/overtime-symbol.svg",
+                  "assets/images/leave-symbol.svg",
                   height: size.height <= 569 ? 20 : 25,
                   width: size.height <= 569 ? 20 : 25,
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ScreenListLeaves(permission: "overtime")),
-                  );
-                },
               ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenListLeaves(permission: "leaves")),
+                );
+              },
             ),
-          ],
-        ),
-        body: WillPopScope(
-            onWillPop: onWillPop,
-            child: Container(
-                padding: EdgeInsets.all(10),
-                child: monthly
-                    ? buildMonthlyView(size,
-                        attendanceList: attendanceList, loading: loading)
-                    // Weekly Calendar
-                    : buildWeeklyView(size,
-                        attendanceList: attendanceList, loading: loading))));
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              child: SvgPicture.asset(
+                "assets/images/overtime-symbol.svg",
+                height: size.height <= 569 ? 20 : 25,
+                width: size.height <= 569 ? 20 : 25,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ScreenListLeaves(permission: "overtime")),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      body: WillPopScope(
+        onWillPop: onWillPop,
+        child: Container(
+            padding: EdgeInsets.all(10),
+            child: monthly
+                ? buildMonthlyView(size,
+                    attendanceList: attendanceList, loading: loading)
+                // Weekly Calendar
+                : buildWeeklyView(size,
+                    attendanceList: attendanceList, loading: loading)),
+      ),
+    );
   }
 
   // Build weekly view calendar
@@ -283,6 +283,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   Widget buildMonthlyView(Size size,
       {List<AttendanceModel> attendanceList, bool loading}) {
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       scrollDirection: Axis.vertical,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -412,6 +413,25 @@ class _AttendanceScreen extends State<AttendanceScreen> {
   }
 
   // --------------------------Logic-----------------------------//
+
+  Future<void> refreshData() async {
+    DateTime _currentDate = DateTime.now();
+    getCompanyAcceptance();
+    _attendanceBloc = BlocProvider.of<AttendanceBloc>(context);
+    _attendanceBloc.add(LoadUserAttendanceEvent(date: _currentDate));
+    _selectedWeek = WeeklyCalendar(
+        date: _currentDate,
+        firstWeekDate: CustomCalendar().findFirstDateOfTheWeek(_currentDate));
+  }
+
+  void selectDate(DateTime date, AttendanceModel absence) {
+    setState(() {
+      _currentDate = date;
+      selected = absence;
+
+      kata = "$_currentDate";
+    });
+  }
 
   // check company of the user
   getCompanyAcceptance() async {

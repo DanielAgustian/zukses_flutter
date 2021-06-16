@@ -250,9 +250,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                       txtColor: colorBackground);
                 }
               },
-              child: Container(),
             ),
-            //
 
             Padding(
               padding: EdgeInsets.symmetric(vertical: paddingVertical),
