@@ -27,6 +27,8 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
   int midYear;
   CalendarViews _currentView = CalendarViews.dates;
 
+  final date = DateTime.now();
+
   final List<String> _monthNames = [
     'January',
     'February',
@@ -45,7 +47,6 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
   @override
   void initState() {
     super.initState();
-    final date = DateTime.now();
     _currentDateTime = DateTime(date.year, date.month);
     _selectedDateTime = DateTime(date.year, date.month, date.day);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -105,7 +106,6 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
     _sequentialDates = CustomCalendar().getMonthCalendar(
         _currentDateTime.month, _currentDateTime.year,
         startWeekDay: StartWeekDay.monday);
-    print(_sequentialDates.length);
   }
 
   // dates view
@@ -124,7 +124,6 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
             Container(
               child: InkWell(
                 onTap: () {
-                  print("click bulan");
                   setState(() => _currentView = CalendarViews.months);
                 },
                 child: Center(
@@ -187,15 +186,16 @@ class _CalendarListWidgetState extends State<CalendarListWidget> {
 
   // calendar
   Widget _calendarBody() {
+    ScrollController _controller =
+        ScrollController(initialScrollOffset: 32 * double.parse("${date.day}"));
     if (_sequentialDates == null) return Container();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: _sequentialDates.length,
-        itemBuilder: (context, index) {
-          // if (_sequentialDates[index].date == _selectedDateTime)
-          //   return _selector(_sequentialDates[index]);
+        controller: _controller,
+        itemBuilder: (context, index) { 
           return _calendarDates(_sequentialDates[index], data: widget.data);
         },
       ),

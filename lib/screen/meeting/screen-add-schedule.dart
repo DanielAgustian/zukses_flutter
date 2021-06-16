@@ -535,7 +535,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       barrierColor: Colors.black.withOpacity(0.3),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState2) {
+          builder: (context, setStateModal) {
             return DraggableScrollableSheet(
               maxChildSize: 0.9,
               initialChildSize: 0.9,
@@ -617,7 +617,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           keyboardType: TextInputType.streetAddress,
                           onChanged: (val) {
                             // Search Function
-                            setState2(() {
+                            setStateModal(() {
                               searchQuery = val;
                             });
                           },
@@ -656,7 +656,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                       imgURL:
                                           "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
                                       checkboxCallback: (val) {
-                                        setState2(() {
+                                        setStateModal(() {
                                           state.checklist[index] =
                                               !state.checklist[index];
 
@@ -684,7 +684,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                         imgURL:
                                             "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
                                         checkboxCallback: (val) {
-                                          setState2(() {
+                                          setStateModal(() {
                                             state.checklist[index] =
                                                 !state.checklist[index];
 

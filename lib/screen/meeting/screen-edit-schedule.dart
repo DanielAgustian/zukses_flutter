@@ -433,7 +433,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                         BlocBuilder<EmployeeBloc, EmployeeState>(
                           builder: (context, state) {
                             if (state is EmployeeStateSuccessLoad) {
-                              print(choosedUser);
                               return Container(
                                 child: GridView.builder(
                                   shrinkWrap: true,
@@ -527,7 +526,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
       barrierColor: Colors.black.withOpacity(0.3),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState2) {
+          builder: (context, setStateModal) {
             return DraggableScrollableSheet(
               maxChildSize: 0.9,
               initialChildSize: 0.9,
@@ -609,7 +608,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                           keyboardType: TextInputType.streetAddress,
                           onChanged: (val) {
                             // Search Function
-                            setState2(() {
+                            setStateModal(() {
                               searchQuery = val;
                             });
                           },
@@ -648,7 +647,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                                       imgURL:
                                           "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
                                       checkboxCallback: (val) {
-                                        setState2(() {
+                                        setStateModal(() {
                                           state.checklist[index] =
                                               !state.checklist[index];
 
@@ -676,7 +675,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                                         imgURL:
                                             "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
                                         checkboxCallback: (val) {
-                                          setState2(() {
+                                          setStateModal(() {
                                             state.checklist[index] =
                                                 !state.checklist[index];
 
@@ -926,7 +925,6 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   _getMyID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myId = prefs.getString("myID");
-    print("myId: " + myId);
     widget.model.members.forEach((element) {
       if (element.userIDSchedule != myId) {
         choosedUser.add(element.userIDSchedule);

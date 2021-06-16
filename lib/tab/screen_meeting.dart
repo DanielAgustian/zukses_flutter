@@ -13,6 +13,7 @@ import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/module/calendar-widget.dart';
 import 'package:zukses_app_1/module/calendar-list-widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -209,7 +210,6 @@ class _MeetingScreenState extends State<MeetingScreen>
       listener: (context, state) {
         setState(() {
           if (state is MeetingStateSuccessLoad) {
-            print(state.meetings.length);
             loading = false;
             meetings = state.meetings;
           } else if (state is MeetingStateFailLoad) {
@@ -349,6 +349,7 @@ class _MeetingScreenState extends State<MeetingScreen>
     String time2 = util.hourFormat(scheduleModel.meetingEndTime != null
         ? scheduleModel.meetingEndTime
         : scheduleModel.date);
+    bool showmore = false;
 
     return showModalBottomSheet<void>(
       isScrollControlled: true,
@@ -357,7 +358,7 @@ class _MeetingScreenState extends State<MeetingScreen>
       barrierColor: Colors.white.withOpacity(0.1),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState2) {
+          builder: (context, setStateModal) {
             return DraggableScrollableSheet(
               maxChildSize: 0.8,
               initialChildSize: 0.8,
@@ -459,59 +460,51 @@ class _MeetingScreenState extends State<MeetingScreen>
                         height: 5,
                       ),
                       scheduleModel.members == null
-                          ? Text("Data Null")
+                          ? Text("Empty")
                           : Expanded(
                               child: ListView.builder(
                                   controller: scrollController,
-                                  itemCount: scheduleModel.members.length,
+                                  itemCount: countShowItem(
+                                      members: scheduleModel.members,
+                                      show: showmore),
                                   itemBuilder: (context, index) {
-                                    return Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            UserAvatarScheduleBigger(
-                                              imgURL:
-                                                  "https://api-zukses.yokesen.com/${scheduleModel.members[index].imgUrl}",
-                                              status: util.acceptancePrint(
-                                                  scheduleModel
-                                                      .members[index].accepted),
-                                              avatarRadius:
-                                                  size.height <= 570 ? 15 : 25,
-                                              dotSize:
-                                                  size.height <= 570 ? 8 : 10,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              scheduleModel
-                                                      .members[index].name +
-                                                  " (" +
-                                                  util.acceptancePrint(
-                                                      scheduleModel
-                                                          .members[index]
-                                                          .accepted) +
-                                                  ") ",
-                                              style: TextStyle(
-                                                fontSize: size.height <= 570
-                                                    ? 14
-                                                    : 16,
-                                                color: colorPrimary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: size.height < 569 ? 2 : 5,
-                                        )
-                                      ],
-                                    );
+                                    // if assigned people more than 5
+                                    // and it is the last man or index number 4
+                                    // and [show more] button not clicked yet
+                                    if (scheduleModel.members.length > 5 &&
+                                        !showmore &&
+                                        index == 4) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          assignedUserIteminModal(size,
+                                              schedule: scheduleModel,
+                                              index: index),
+                                          TextButton(
+                                              onPressed: () {
+                                                setStateModal(() {
+                                                  showmore = !showmore;
+                                                });
+                                              },
+                                              child: Text(
+                                                "Show more",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: size.height <= 570
+                                                      ? 12
+                                                      : 14,
+                                                  color: colorPrimary,
+                                                ),
+                                              )),
+                                        ],
+                                      );
+                                    }
+
+                                    return assignedUserIteminModal(size,
+                                        schedule: scheduleModel, index: index);
                                   }),
-                            )
+                            ),
                     ],
                   ),
                 );
@@ -520,6 +513,38 @@ class _MeetingScreenState extends State<MeetingScreen>
           },
         );
       },
+    );
+  }
+
+  // List user in modal
+  Widget assignedUserIteminModal(Size size,
+      {@required ScheduleModel schedule, @required int index}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          UserAvatarScheduleBigger(
+            imgURL:
+                "https://api-zukses.yokesen.com/${schedule.members[index].imgUrl}",
+            status: util.acceptancePrint(schedule.members[index].accepted),
+            avatarRadius: size.height <= 570 ? 15 : 25,
+            dotSize: size.height <= 570 ? 8 : 10,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            schedule.members[index].name +
+                " (" +
+                util.acceptancePrint(schedule.members[index].accepted) +
+                ") ",
+            style: TextStyle(
+              fontSize: size.height <= 570 ? 14 : 16,
+              color: colorPrimary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -595,6 +620,15 @@ class _MeetingScreenState extends State<MeetingScreen>
   }
 
   // --------------------------Logic-----------------------------//
+  // Logic to limit the showed member in detail meeting modal
+  int countShowItem({@required List<UserModel> members, @required bool show}) {
+    int total = members.length;
+    if (total <= 4) {
+      return total;
+    } else {
+      return show ? total : 5;
+    }
+  }
 
   Future<void> refreshData() async {
     DateTime _currentDate = DateTime.now();

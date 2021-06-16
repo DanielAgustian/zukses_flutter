@@ -77,6 +77,8 @@ class _AttendanceScreen extends State<AttendanceScreen> {
             attendanceList = state.attendanceList;
             isLoading = false;
 
+            // auto pass data when open screen
+            // used for weekly calendar
             absensiList = attendanceList.where((data) {
               var day = CustomCalendar().findFirstDateOfTheWeek(data.clockIn);
               var nowWeek =
@@ -85,6 +87,14 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                   nowWeek.month == day.month &&
                   nowWeek.year == day.year);
             }).toList();
+
+            // auto show data when screen open
+            if (attendanceList != null || attendanceList.length > 0) {
+              AttendanceModel absence = attendanceList
+                  .where((element) => element.clockIn.day == _currentDate.day)
+                  .single;
+              if (absence != null) selectDate(_currentDate, absence);
+            }
           } else if (state is AttendanceStateFailLoad) {
             isLoading = false;
             attendanceList = null;
