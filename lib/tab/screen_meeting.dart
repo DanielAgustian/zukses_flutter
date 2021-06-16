@@ -460,10 +460,9 @@ class _MeetingScreenState extends State<MeetingScreen>
                       ),
                       scheduleModel.members == null
                           ? Text("Data Null")
-                          : Container(
-                              height: 0.3 * size.height,
+                          : Expanded(
                               child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
+                                  controller: scrollController,
                                   itemCount: scheduleModel.members.length,
                                   itemBuilder: (context, index) {
                                     return Column(
