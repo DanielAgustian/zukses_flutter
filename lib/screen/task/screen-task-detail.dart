@@ -207,200 +207,96 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     return Scaffold(
         backgroundColor: colorBackground,
         appBar: appBar,
-        body: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                BlocListener<LabelTaskBloc, LabelTaskState>(
-                  listener: (context, state) {
-                    if (state is LabelTaskStateSuccessLoad) {
-                      labelList.clear();
-                      //labelList.add("Click Here for Label");
-                      //print("labelTask legth ${state.labelTask.length}");
-                      setState(() {
-                        label = state.labelTask;
-                        state.labelTask.forEach((element) {
-                          labelList.add(element.name);
-                          print(element.name);
-                        });
-                      });
-                    } else if (state is LabelTaskStateFailLoad) {
-                      setState(() {
-                        //freeLabel = true;
-                      });
-                      labelList.clear();
-                    } else if (state is LabelTaskAddStateSuccessLoad) {
-                      BlocProvider.of<LabelTaskBloc>(context)
-                          .add(LoadAllLabelTaskEvent());
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<ChangeTaskBloc, ChangeTaskState>(
-                  listener: (context, state) {
-                    if (state is ChangeTaskStateDropdownSuccessLoad) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      BlocProvider.of<TaskBloc>(context)
-                          .add(GetAllTaskEvent(projectId: widget.project.id));
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<UploadAttachBloc, UploadAttachState>(
-                  listener: (context, state) {
-                    if (state is UploadAttachStateSuccess) {
-                      setState(() {
-                        upload = true;
-                      });
-                    }
-                  },
-                  child: Container(),
-                ),
-                BlocListener<TaskBloc, TaskState>(
-                  listener: (context, state) {
-                    if (state is TaskStateSuccessLoad) {
-                      setState(() {
-                        isLoading = false;
-                        lengthTask = state.task.length;
-                      });
-                      taskToDo.clear();
-                      taskInProgress.clear();
-                      taskDone.clear();
-                      state.task.forEach((element) {
-                        //print("LAbel in Task" + element.label.toString());
-                        if (element.taskType.toLowerCase() == "to-do") {
-                          taskToDo.add(element);
-                        } else if (element.taskType.toLowerCase() ==
-                            "in-progress") {
-                          taskInProgress.add(element);
-                        } else if (element.taskType.toLowerCase() == "done") {
-                          taskDone.add(element);
-                        }
-                      });
-                      dataTask = List.generate(3, (index) {
-                        if (index == 0) {
-                          return taskToDo;
-                        } else if (index == 1) {
-                          return taskInProgress;
-                        }
-                        return taskDone;
-                      });
-                    } else if (state is TaskStateAddSuccessLoad) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      BlocProvider.of<TaskBloc>(context)
-                          .add(GetAllTaskEvent(projectId: widget.project.id));
-                    } else if (state is TaskStateFailLoad) {
-                      setState(() {
-                        isLoading = false;
-                      });
-                    } else if (state is TaskStateUpdateSuccess) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      BlocProvider.of<TaskBloc>(context)
-                          .add(GetAllTaskEvent(projectId: widget.project.id));
-                    }
-                  },
-                  child: Container(),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height:
-                      size.height * 0.95 - (appBar.preferredSize.height + 10),
-                  child: DefaultTabController(
-                    length: 3,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Scaffold(
-                          appBar: PreferredSize(
-                            preferredSize: Size.fromHeight(35),
-                            child: insideAppBar,
-                          ),
-                          body: Container(
-                            width: double.infinity,
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 0,
-                                  height: 0,
-                                  child: TabBarView(
-                                      controller: tabController,
-                                      children: <Widget>[
-                                        Container(),
-                                        Container(),
-                                        Container()
-                                      ]),
-                                ),
-                                lengthTask < 1
-                                    ? Container(
-                                        height: 0.6 * size.height,
-                                        child: Center(
-                                          child: Text(
-                                              "task_text29".tr(),
-                                              style: TextStyle(
-                                                  color: colorPrimary,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold)),
-                                        ))
-                                    : Expanded(
-                                        child: DragAndDropLists(
-                                          scrollController: _controller,
-                                          children: List.generate(
-                                              dataTask.length,
-                                              (index) => _buildList(index)),
-                                          onItemReorder: _onItemReorder,
-                                          onListReorder: _onListReorder,
-                                          axis: Axis.horizontal,
-                                          listWidth: size.width * 0.85 - 5,
-                                          listDraggingWidth: 300,
-                                          listDecoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(7.0)),
-                                            boxShadow: <BoxShadow>[
-                                              BoxShadow(
-                                                color: Colors.black45,
-                                                spreadRadius: 3.0,
-                                                blurRadius: 6.0,
-                                                offset: Offset(2, 3),
-                                              ),
-                                            ],
-                                          ),
-                                          listPadding: EdgeInsets.all(8.0),
+        body: MultiBlocListener(
+          listeners: listeners(),
+          child: Stack(
+            children: [
+              Expanded(
+                child: DefaultTabController(
+                  length: 3,
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                    child: Scaffold(
+                        appBar: PreferredSize(
+                          preferredSize: Size.fromHeight(35),
+                          child: insideAppBar,
+                        ),
+                        body: Container(
+                          width: double.infinity,
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 0,
+                                height: 0,
+                                child: TabBarView(
+                                    controller: tabController,
+                                    children: <Widget>[
+                                      Container(),
+                                      Container(),
+                                      Container()
+                                    ]),
+                              ),
+                              lengthTask < 1
+                                  ? Container(
+                                      height: 0.6 * size.height,
+                                      child: Center(
+                                        child: Text("task_text29".tr(),
+                                            style: TextStyle(
+                                                color: colorPrimary,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                      ))
+                                  : Expanded(
+                                      child: DragAndDropLists(
+                                        scrollController: _controller,
+                                        children: List.generate(dataTask.length,
+                                            (index) => _buildList(index)),
+                                        onItemReorder: _onItemReorder,
+                                        onListReorder: _onListReorder,
+                                        axis: Axis.horizontal,
+                                        listWidth: size.width * 0.85 - 5,
+                                        listDraggingWidth: 300,
+                                        listDecoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(7.0)),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color: Colors.black45,
+                                              spreadRadius: 3.0,
+                                              blurRadius: 6.0,
+                                              offset: Offset(2, 3),
+                                            ),
+                                          ],
                                         ),
+                                        listPadding: EdgeInsets.all(8.0),
                                       ),
-                              ],
-                            ),
-                          )),
-                    ),
+                                    ),
+                            ],
+                          ),
+                        )),
                   ),
                 ),
-              ],
-            ),
-            clickTask.idTask == null ? Container() : scrollerSheet(clickTask),
-            isLoading
-                ? Container(
-                    width: size.width,
-                    height: size.height,
-                    color: Colors.black38.withOpacity(0.5),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: colorPrimary70,
-                        // strokeWidth: 0,
-                        valueColor: AlwaysStoppedAnimation(colorBackground),
+              ),
+              clickTask.idTask == null ? Container() : scrollerSheet(clickTask),
+              isLoading
+                  ? Container(
+                      width: size.width,
+                      height: size.height,
+                      color: Colors.black38.withOpacity(0.5),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: colorPrimary70,
+                          // strokeWidth: 0,
+                          valueColor: AlwaysStoppedAnimation(colorBackground),
+                        ),
                       ),
-                    ),
-                  )
-                : Container()
-          ],
+                    )
+                  : Container()
+            ],
+          ),
         ));
   }
 
@@ -1152,71 +1048,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     );
   }
 
-  _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _imagePicker();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _imagePickerCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  new ListTile(
-                    leading: new Icon(Icons.cancel),
-                    title: new Text('cancel_text').tr(),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  _imagePicker() async {
-    //ImagePicker for gallery
-
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        data = pickedFile.path;
-        print(data);
-        _uploadAttachment(File(data));
-      });
-    } else {}
-  }
-
-  _imagePickerCamera() async {
-    //ImagePicker for Camera
-    final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
-
-    if (pickedFile != null) {
-      setState(() {
-        data = pickedFile.path;
-        print(data);
-        _uploadAttachment(File(data));
-      });
-    }
-  }
-
   //TO make alertdialog for picture preview
   Widget _buildCupertino({BuildContext context, String link}) {
     return new CupertinoAlertDialog(
@@ -1325,6 +1156,166 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   // --------------------------Logic-----------------------------//
+
+  // Bloc Listener getter
+  List<BlocListener> listeners() => [
+        BlocListener<LabelTaskBloc, LabelTaskState>(
+          listener: (context, state) {
+            if (state is LabelTaskStateSuccessLoad) {
+              labelList.clear();
+              //labelList.add("Click Here for Label");
+              //print("labelTask legth ${state.labelTask.length}");
+              setState(() {
+                label = state.labelTask;
+                state.labelTask.forEach((element) {
+                  labelList.add(element.name);
+                  print(element.name);
+                });
+              });
+            } else if (state is LabelTaskStateFailLoad) {
+              setState(() {
+                //freeLabel = true;
+              });
+              labelList.clear();
+            } else if (state is LabelTaskAddStateSuccessLoad) {
+              BlocProvider.of<LabelTaskBloc>(context)
+                  .add(LoadAllLabelTaskEvent());
+            }
+          },
+        ),
+        BlocListener<ChangeTaskBloc, ChangeTaskState>(
+          listener: (context, state) {
+            if (state is ChangeTaskStateDropdownSuccessLoad) {
+              setState(() {
+                isLoading = true;
+              });
+              BlocProvider.of<TaskBloc>(context)
+                  .add(GetAllTaskEvent(projectId: widget.project.id));
+            }
+          },
+        ),
+        BlocListener<UploadAttachBloc, UploadAttachState>(
+          listener: (context, state) {
+            if (state is UploadAttachStateSuccess) {
+              setState(() {
+                upload = true;
+              });
+            }
+          },
+        ),
+        BlocListener<TaskBloc, TaskState>(
+          listener: (context, state) {
+            if (state is TaskStateSuccessLoad) {
+              setState(() {
+                isLoading = false;
+                lengthTask = state.task.length;
+              });
+              taskToDo.clear();
+              taskInProgress.clear();
+              taskDone.clear();
+              state.task.forEach((element) {
+                //print("LAbel in Task" + element.label.toString());
+                if (element.taskType.toLowerCase() == "to-do") {
+                  taskToDo.add(element);
+                } else if (element.taskType.toLowerCase() == "in-progress") {
+                  taskInProgress.add(element);
+                } else if (element.taskType.toLowerCase() == "done") {
+                  taskDone.add(element);
+                }
+              });
+              dataTask = List.generate(3, (index) {
+                if (index == 0) {
+                  return taskToDo;
+                } else if (index == 1) {
+                  return taskInProgress;
+                }
+                return taskDone;
+              });
+            } else if (state is TaskStateAddSuccessLoad) {
+              setState(() {
+                isLoading = true;
+              });
+              BlocProvider.of<TaskBloc>(context)
+                  .add(GetAllTaskEvent(projectId: widget.project.id));
+            } else if (state is TaskStateFailLoad) {
+              setState(() {
+                isLoading = false;
+              });
+            } else if (state is TaskStateUpdateSuccess) {
+              setState(() {
+                isLoading = true;
+              });
+              BlocProvider.of<TaskBloc>(context)
+                  .add(GetAllTaskEvent(projectId: widget.project.id));
+            }
+          },
+        ),
+      ];
+
+  _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imagePicker();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imagePickerCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.cancel),
+                    title: new Text('cancel_text').tr(),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _imagePicker() async {
+    //ImagePicker for gallery
+
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    } else {}
+  }
+
+  _imagePickerCamera() async {
+    //ImagePicker for Camera
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+
+    if (pickedFile != null) {
+      setState(() {
+        data = pickedFile.path;
+        print(data);
+        _uploadAttachment(File(data));
+      });
+    }
+  }
 
   _changeProgressbyDropdown(String progress, String idTask) {
     BlocProvider.of<ChangeTaskBloc>(context)
