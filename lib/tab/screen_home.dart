@@ -1323,8 +1323,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               stringTap = enumTap[2];
               dialogText = "Clock Out";
             });
-            // show confirm dialog success clock out
-
+            
+            // show confirm dialog success clock out 
             showDialog(
                     context: context,
                     builder: (BuildContext context) =>
