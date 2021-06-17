@@ -143,11 +143,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
                         onClick: () {
                           Navigator.pop(context, true);
                           Navigator.pop(context, true);
-                          /*Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      (ScreenTab(index: 3))));*/
                         },
                       )
                     ],
@@ -379,7 +374,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                               if (allUser[i].userID == hasilMultiple[index]) {
                                 return Container(
                                   height: 5,
-                                  margin: EdgeInsets.only(top: 5),
+                                  margin: EdgeInsets.fromLTRB(0, 5, 5, 0),
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 5, vertical: 5),
                                   decoration: BoxDecoration(

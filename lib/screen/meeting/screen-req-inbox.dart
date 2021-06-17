@@ -114,6 +114,11 @@ class _RequestInboxState extends State<RequestInbox>
                 setState(() {
                   loadingData = true;
                 });
+              } else if (state is MeetingReqStateFailLoad) {
+                setState(() {
+                  loadingData = false;
+                  requestSchedule[0] = 0;
+                });
               }
             },
             child: Container(),
@@ -137,6 +142,11 @@ class _RequestInboxState extends State<RequestInbox>
               } else if (state is MeetingStateLoading) {
                 setState(() {
                   loadingData = true;
+                });
+              } else if (state is MeetingStateFailLoad) {
+                setState(() {
+                  loadingData = false;
+                  requestSchedule[1] = 0;
                 });
               }
             },

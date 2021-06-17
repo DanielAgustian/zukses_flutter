@@ -87,8 +87,8 @@ class ListLeavesInside extends StatelessWidget {
     if (status == "pending") {
       textHasil = "Requested";
       colorText = colorSecondaryYellow;
-    } else if (status == "approved") {
-      textHasil = "Approval";
+    } else if (status == "accepted") {
+      textHasil = "Accepted";
       colorText = colorClear;
     } else if (status == "rejected") {
       textHasil = "Rejected";
@@ -100,23 +100,5 @@ class ListLeavesInside extends StatelessWidget {
           color: colorText, fontWeight: FontWeight.bold, fontSize: 16),
     );
   }
-  /*Widget _buildText(BuildContext context) {
-    String textHasil = "";
-    Color colorText;
-    if (status == 0) {
-      textHasil = "Requested";
-      colorText = colorSecondaryYellow;
-    } else if (status == 1) {
-      textHasil = "Approval";
-      colorText = colorClear;
-    } else if (status == 2) {
-      textHasil = "Rejected";
-      colorText = colorError;
-    }
-    return Text(
-      textHasil,
-      style: TextStyle(
-          color: colorText, fontWeight: FontWeight.bold, fontSize: 16),
-    );
-  }*/
+  
 }

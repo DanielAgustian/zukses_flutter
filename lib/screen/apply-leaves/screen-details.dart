@@ -342,9 +342,9 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: 15,
+                            height: size.height < 569 ? 15 : 20,
                           ),
-                          Text(
+                          /*Text(
                             "apply_leaves_text18".tr(),
                             style: TextStyle(
                               color: colorPrimary,
@@ -384,7 +384,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
                           ),
                           SizedBox(
                             height: size.height < 569 ? 15 : 20,
-                          ),
+                          ),*/
                           LongButton(
                             size: size,
                             onClick: () {},
