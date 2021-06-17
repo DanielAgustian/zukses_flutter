@@ -26,7 +26,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     }
   }
 
-  // BLOC clock in
+  // BLOC clock out
   Stream<AttendanceState> mapClockOut() async* {
     yield AttendanceStateLoading();
     // return user model

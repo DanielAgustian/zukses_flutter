@@ -2,9 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
@@ -87,26 +85,49 @@ class _ScreenTab extends State<ScreenTab> {
           _currentScreenIndex, // this will be set when a new tab is tapped
       items: [
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/home-icon.svg',
-            color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: SvgPicture.asset(
+              'assets/images/home-icon.svg',
+              color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+            ),
           ),
           label: 'tab_text1'.tr(),
         ),
         if (user != null)
           if (user.companyID != null && user.companyID != "")
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/images/attendance-icon.svg',
-                color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: SvgPicture.asset(
+                  'assets/images/attendance-icon.svg',
+                  color:
+                      _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+                ),
               ),
               label: 'tab_text2'.tr(),
             ),
         BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.clipboardList),
+            icon: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
+                  child: FaIcon(FontAwesomeIcons.clipboardList),
+                ),
+                badgeNotification(count: "100+")
+              ],
+            ),
             label: 'tab_text3'.tr()),
         BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidCalendar),
+            icon: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
+                  child: FaIcon(FontAwesomeIcons.solidCalendar),
+                ),
+                badgeNotification(count: "99")
+              ],
+            ),
             label: 'tab_text4'.tr()),
       ],
       unselectedFontSize: 12,
@@ -116,6 +137,22 @@ class _ScreenTab extends State<ScreenTab> {
       unselectedItemColor: colorPrimary70,
       selectedIconTheme: IconThemeData(color: colorPrimary),
       unselectedIconTheme: IconThemeData(color: colorPrimary70),
+    );
+  }
+
+  Widget badgeNotification({String count}) {
+    return Positioned(
+      right: 0,
+      top: 0,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        decoration: BoxDecoration(
+          color: colorError,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child:
+            Text(count, style: TextStyle(color: colorBackground, fontSize: 10)),
+      ),
     );
   }
 

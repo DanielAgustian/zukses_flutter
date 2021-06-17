@@ -6,9 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zukses_app_1/bloc/register/register-bloc.dart';
-import 'package:zukses_app_1/bloc/register/register-event.dart';
-import 'package:zukses_app_1/bloc/register/register-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';

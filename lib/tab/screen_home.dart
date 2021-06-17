@@ -10,36 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-event.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-state.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
-import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
-import 'package:zukses_app_1/bloc/company-profile/company-event.dart';
-import 'package:zukses_app_1/bloc/company-profile/company-state.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
-import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
-import 'package:zukses_app_1/bloc/task-priority/task-priority-event.dart';
-import 'package:zukses_app_1/bloc/task-priority/task-priority-state.dart';
-import 'package:zukses_app_1/bloc/task/task-bloc.dart';
-import 'package:zukses_app_1/bloc/task/task-event.dart';
-import 'package:zukses_app_1/bloc/task/task-state.dart';
-import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
-import 'package:zukses_app_1/bloc/team-detail/team-detail-event.dart';
-import 'package:zukses_app_1/bloc/team-detail/team-detail-state.dart';
-import 'package:zukses_app_1/bloc/team/team-bloc.dart';
-import 'package:zukses_app_1/bloc/team/team-event.dart';
-import 'package:zukses_app_1/bloc/team/team-state.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/component/schedule/user-avatar.dart';
@@ -1323,8 +1294,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               stringTap = enumTap[2];
               dialogText = "Clock Out";
             });
-            // show confirm dialog success clock out
 
+            // show confirm dialog success clock out
             showDialog(
                     context: context,
                     builder: (BuildContext context) =>

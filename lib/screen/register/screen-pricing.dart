@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
-import 'package:zukses_app_1/bloc/pricing/pricing-event.dart';
-import 'package:zukses_app_1/bloc/pricing/pricing-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/register/pricing-card.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:zukses_app_1/constant/constant.dart';

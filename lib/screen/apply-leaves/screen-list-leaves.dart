@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
-import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
-import 'package:zukses_app_1/bloc/leaves/leave-state.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
-import 'package:zukses_app_1/bloc/overtime/overtime-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/app-bar/custom-app-bar.dart';
 import 'package:zukses_app_1/screen/apply-leaves/add-apply-leaves.dart';
 import 'package:zukses_app_1/constant/constant.dart';

@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-event.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/register/title-format.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:zukses_app_1/screen/forgot-password/forgot-password.dart';
@@ -95,7 +93,7 @@ class _ScreenLogin extends State<ScreenLogin> with TickerProviderStateMixin {
                 txtColor: colorBackground);
           } else if (state is AuthStateSuccessTeamLoad) {
             _loginTeamSharedPref();
-           
+
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => ScreenTab()),
