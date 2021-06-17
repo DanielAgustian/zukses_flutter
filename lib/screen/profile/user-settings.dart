@@ -5,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/auth-service.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 
 import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';

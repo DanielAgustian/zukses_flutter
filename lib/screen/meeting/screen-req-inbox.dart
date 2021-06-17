@@ -2,12 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/button/button-small-outlined.dart';
@@ -114,6 +109,11 @@ class _RequestInboxState extends State<RequestInbox>
                 setState(() {
                   loadingData = true;
                 });
+              } else if (state is MeetingReqStateFailLoad) {
+                setState(() {
+                  loadingData = false;
+                  requestSchedule[0] = 0;
+                });
               }
             },
             child: Container(),
@@ -137,6 +137,11 @@ class _RequestInboxState extends State<RequestInbox>
               } else if (state is MeetingStateLoading) {
                 setState(() {
                   loadingData = true;
+                });
+              } else if (state is MeetingStateFailLoad) {
+                setState(() {
+                  loadingData = false;
+                  requestSchedule[1] = 0;
                 });
               }
             },

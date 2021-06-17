@@ -9,30 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zukses_app_1/bloc/attendance/attendance-bloc.dart';
-import 'package:zukses_app_1/bloc/authentication/auth-bloc.dart';
-import 'package:zukses_app_1/bloc/bussiness-scope/business-scope-bloc.dart';
-import 'package:zukses_app_1/bloc/change-task-bloc/change-task-bloc.dart';
-import 'package:zukses_app_1/bloc/checklist-task-put/checklist-task-put-bloc.dart';
-import 'package:zukses_app_1/bloc/checklist-task/checklist-task-bloc.dart';
-import 'package:zukses_app_1/bloc/comment/comment-bloc.dart';
-import 'package:zukses_app_1/bloc/company-profile/company-bloc.dart';
-import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
-import 'package:zukses_app_1/bloc/forgot-password/forgot-password-bloc.dart';
-import 'package:zukses_app_1/bloc/label-task/business-scope-bloc.dart';
-import 'package:zukses_app_1/bloc/leave-type/leave-type-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-search/meeting-search-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
-import 'package:zukses_app_1/bloc/payment/payment-bloc.dart';
-import 'package:zukses_app_1/bloc/pricing/pricing-bloc.dart';
-import 'package:zukses_app_1/bloc/project-bookmark/project-bookmark-bloc.dart';
-import 'package:zukses_app_1/bloc/project/project-bloc.dart';
-import 'package:zukses_app_1/bloc/register/register-bloc.dart';
-import 'package:zukses_app_1/bloc/task-priority/task-priority-bloc.dart';
-import 'package:zukses_app_1/bloc/team-detail/team-detail-bloc.dart';
-import 'package:zukses_app_1/bloc/upload-attachment/upload-attachment-bloc.dart';
-import 'package:zukses_app_1/bloc/user-data/user-data-bloc.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
@@ -46,11 +23,6 @@ import 'package:zukses_app_1/component/onboarding/dots-indicator.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/test_ios.dart';
 import 'package:zukses_app_1/util/util.dart';
-
-import 'bloc/leaves/leave-bloc.dart';
-import 'bloc/overtime/overtime-bloc.dart';
-import 'bloc/task/task-bloc.dart';
-import 'bloc/team/team-bloc.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,

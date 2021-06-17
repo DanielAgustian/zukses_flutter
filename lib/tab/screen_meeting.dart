@@ -1,15 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-event.dart';
-import 'package:zukses_app_1/bloc/meeting-req/meeting-req-state.dart';
-import 'package:zukses_app_1/bloc/meeting-search/meeting-search-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting-search/meeting-search-event.dart';
-import 'package:zukses_app_1/bloc/meeting-search/meeting-search-state.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-bloc.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-event.dart';
-import 'package:zukses_app_1/bloc/meeting/meeting-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';

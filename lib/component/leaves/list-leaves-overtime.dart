@@ -20,7 +20,6 @@ class ListLeavesOvertime extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: InkWell(
@@ -77,8 +76,8 @@ class ListLeavesOvertime extends StatelessWidget {
     if (status == "pending") {
       textHasil = "Requested";
       colorText = colorSecondaryYellow;
-    } else if (status == "approved") {
-      textHasil = "Approval";
+    } else if (status == "accepted") {
+      textHasil = "Accepted";
       colorText = colorClear;
     } else if (status == "rejected") {
       textHasil = "Rejected";

@@ -6,15 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:time_picker_widget/time_picker_widget.dart';
-import 'package:zukses_app_1/bloc/employee/employee-bloc.dart';
-import 'package:zukses_app_1/bloc/employee/employee-event.dart';
-import 'package:zukses_app_1/bloc/employee/employee-state.dart';
-import 'package:zukses_app_1/bloc/label-task/business-scope-bloc.dart';
-import 'package:zukses_app_1/bloc/label-task/label-task-event.dart';
-import 'package:zukses_app_1/bloc/label-task/label-task-state.dart';
-import 'package:zukses_app_1/bloc/task/task-bloc.dart';
-import 'package:zukses_app_1/bloc/task/task-event.dart';
-import 'package:zukses_app_1/bloc/task/task-state.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/user-invitation-item.dart';
@@ -143,11 +135,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
                         onClick: () {
                           Navigator.pop(context, true);
                           Navigator.pop(context, true);
-                          /*Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      (ScreenTab(index: 3))));*/
                         },
                       )
                     ],
@@ -379,7 +366,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                               if (allUser[i].userID == hasilMultiple[index]) {
                                 return Container(
                                   height: 5,
-                                  margin: EdgeInsets.only(top: 5),
+                                  margin: EdgeInsets.fromLTRB(0, 5, 5, 0),
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 5, vertical: 5),
                                   decoration: BoxDecoration(
