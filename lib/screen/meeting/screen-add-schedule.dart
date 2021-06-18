@@ -723,7 +723,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: date,
-      firstDate: DateTime(2020),
+      firstDate: DateTime.now(),
       lastDate: DateTime(3500),
     );
     if (picked != null && picked != date)

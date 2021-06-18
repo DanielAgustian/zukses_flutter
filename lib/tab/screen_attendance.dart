@@ -203,6 +203,9 @@ class _AttendanceScreen extends State<AttendanceScreen> {
       {List<AttendanceModel> attendanceList, bool loading}) {
     return Column(
       children: [
+        SizedBox(
+          height: 13,
+        ),
         Container(
           width: size.width,
           height: size.height * 0.06,
@@ -260,22 +263,22 @@ class _AttendanceScreen extends State<AttendanceScreen> {
                                       style: TextStyle(
                                           color: colorPrimary,
                                           fontSize: size.width <= 569
-                                              ? textSizeSmall16
-                                              : 16)),
+                                              ? textSizeSmall18
+                                              : 18)),
                                   Text(
                                       "${getFormatListDate.format(absensiList[index].clockIn)}",
                                       style: TextStyle(
                                           color: colorPrimary,
                                           fontSize: size.width <= 569
-                                              ? textSizeSmall14
-                                              : 14))
+                                              ? textSizeSmall16
+                                              : 16))
                                 ],
                               ),
                               TimeBox(
                                 selected: absensiList[index],
                                 space: size.width * 0.01,
                                 fontSize:
-                                    size.width <= 569 ? textSizeSmall12 : 14,
+                                    size.width <= 569 ? textSizeSmall18 : 18,
                               )
                             ],
                           ),

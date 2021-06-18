@@ -105,6 +105,22 @@ class _MeetingScreenState extends State<MeetingScreen>
                   child: FaIcon(FontAwesomeIcons.search,
                       color: colorNeutral2, size: size.height < 569 ? 14 : 16),
                 ),
+                suffixIcon: InkWell(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
+                    
+                    child: FaIcon(FontAwesomeIcons.times,
+                        color: colorNeutral2,
+                        size: size.height < 569 ? 14 : 16),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      textSearch.text = "";
+                      searching = false;
+                      isVisible = true;
+                    });
+                  },
+                ),
                 hintText: "Search",
                 hintStyle: TextStyle(color: colorNeutral2),
               ),

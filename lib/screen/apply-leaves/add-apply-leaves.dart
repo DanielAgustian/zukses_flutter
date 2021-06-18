@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:zukses_app_1/bloc/bloc-core.dart'; 
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
@@ -68,9 +68,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     if (widget.permission == "leaves") {
       BlocProvider.of<LeaveTypeBloc>(context).add(LoadAllLeaveTypeEvent());
     } else if (widget.permission == "overtime") {
-      /*BlocProvider.of<AttendanceBloc>(context)
-          .add(LoadUserAttendanceEvent(date: DateTime.now()));*/
-      /*BlocProvider.of<>(context)*/
+      BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
     } else {
       Util().showToast(
           txtColor: colorError,
@@ -482,7 +480,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     ),
                   );
                 }),
-                
+
                 /*AddScheduleRow2(
                     fontSize: size.height <= 600 ? 14 : 16,
                     title: "apply_overtime_text4".tr(),

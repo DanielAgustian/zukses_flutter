@@ -192,73 +192,71 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
           listeners: listeners(),
           child: Stack(
             children: [
-              Expanded(
-                child: DefaultTabController(
-                  length: 3,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                    child: Scaffold(
-                        appBar: PreferredSize(
-                          preferredSize: Size.fromHeight(35),
-                          child: insideAppBar,
-                        ),
-                        body: Container(
-                          width: double.infinity,
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 0,
-                                height: 0,
-                                child: TabBarView(
-                                    controller: tabController,
-                                    children: <Widget>[
-                                      Container(),
-                                      Container(),
-                                      Container()
-                                    ]),
-                              ),
-                              lengthTask < 1
-                                  ? Container(
-                                      height: 0.6 * size.height,
-                                      child: Center(
-                                        child: Text("task_text29".tr(),
-                                            style: TextStyle(
-                                                color: colorPrimary,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold)),
-                                      ))
-                                  : Expanded(
-                                      child: DragAndDropLists(
-                                        scrollController: _controller,
-                                        children: List.generate(dataTask.length,
-                                            (index) => _buildList(index)),
-                                        onItemReorder: _onItemReorder,
-                                        onListReorder: _onListReorder,
-                                        axis: Axis.horizontal,
-                                        listWidth: size.width * 0.85 - 5,
-                                        listDraggingWidth: 300,
-                                        listDecoration: BoxDecoration(
-                                          color: Colors.grey[200],
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(7.0)),
-                                          boxShadow: <BoxShadow>[
-                                            BoxShadow(
-                                              color: Colors.black45,
-                                              spreadRadius: 3.0,
-                                              blurRadius: 6.0,
-                                              offset: Offset(2, 3),
-                                            ),
-                                          ],
-                                        ),
-                                        listPadding: EdgeInsets.all(8.0),
+              DefaultTabController(
+                length: 3,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: Scaffold(
+                      appBar: PreferredSize(
+                        preferredSize: Size.fromHeight(35),
+                        child: insideAppBar,
+                      ),
+                      body: Container(
+                        width: double.infinity,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 0,
+                              height: 0,
+                              child: TabBarView(
+                                  controller: tabController,
+                                  children: <Widget>[
+                                    Container(),
+                                    Container(),
+                                    Container()
+                                  ]),
+                            ),
+                            lengthTask < 1
+                                ? Container(
+                                    height: 0.6 * size.height,
+                                    child: Center(
+                                      child: Text("task_text29".tr(),
+                                          style: TextStyle(
+                                              color: colorPrimary,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold)),
+                                    ))
+                                : Expanded(
+                                    child: DragAndDropLists(
+                                      scrollController: _controller,
+                                      children: List.generate(dataTask.length,
+                                          (index) => _buildList(index)),
+                                      onItemReorder: _onItemReorder,
+                                      onListReorder: _onListReorder,
+                                      axis: Axis.horizontal,
+                                      listWidth: size.width * 0.85 - 5,
+                                      listDraggingWidth: 300,
+                                      listDecoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(7.0)),
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                            color: Colors.black45,
+                                            spreadRadius: 3.0,
+                                            blurRadius: 6.0,
+                                            offset: Offset(2, 3),
+                                          ),
+                                        ],
                                       ),
+                                      listPadding: EdgeInsets.all(8.0),
                                     ),
-                            ],
-                          ),
-                        )),
-                  ),
+                                  ),
+                          ],
+                        ),
+                      )),
                 ),
               ),
               clickTask.idTask == null ? Container() : scrollerSheet(clickTask),

@@ -31,7 +31,8 @@ class _EditProfileScreen extends State<EditProfile> {
   String data = "";
   UserModel userModel = UserModel();
   bool allowDelete = false;
-
+  bool errorName = false;
+  bool errorPhone = false;
   @override
   void initState() {
     super.initState();
@@ -82,7 +83,6 @@ class _EditProfileScreen extends State<EditProfile> {
                 ),
               ),
               onTap: () {
-                // _editData();
                 editData();
               })
         ],
@@ -233,6 +233,7 @@ class _EditProfileScreen extends State<EditProfile> {
                     size: size,
                     title: "profile_text4".tr(),
                     onChanged: (val) {},
+                    error: errorName,
                   ),
                   TextFormat1(
                       txtColor: colorPrimary70,
@@ -247,6 +248,7 @@ class _EditProfileScreen extends State<EditProfile> {
                     data: widget.user.userID,
                   ),
                   TextFormatEdit(
+                    error: errorPhone,
                     size: size,
                     title: "profile_text7".tr(),
                     textEdit: textEditPhone,
@@ -284,23 +286,45 @@ class _EditProfileScreen extends State<EditProfile> {
   // --------------------------Logic-----------------------------//
 
   void editData() {
-    if (data != null && data != "") {
-      //Edit Profile with Profile Pic Changes
-      BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
-        textEditName.text,
-        textEditPhone.text,
-        image: File(data),
-      ));
+    if (textEditName.text.length < 1) {
+      setState(() {
+        errorName = true;
+      });
     } else {
-      if (userModel.imgUrl == null || userModel.imgUrl == "" || allowDelete) {
-        //Edit Profile without any Picture
-        BlocProvider.of<UserDataBloc>(context).add(
-            UserDataUpdateProfileEvent(textEditName.text, textEditPhone.text));
-      } else {
-        //Edit Profile with Old Picture inside DB
+      setState(() {
+        errorName = false;
+      });
+    }
+    if (textEditPhone.text.length < 1) {
+      setState(() {
+        errorPhone = true;
+      });
+    } else {
+      setState(() {
+        errorPhone = false;
+      });
+    }
+    if (!errorPhone && !errorName) {
+      if (data != null && data != "") {
+        //Edit Profile with Profile Pic Changes
         BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
-            textEditName.text, textEditPhone.text,
-            link: userModel.imgUrl));
+          textEditName.text,
+          textEditPhone.text,
+          image: File(data),
+        ));
+      } else {
+        if (userModel.imgUrl == null || userModel.imgUrl == "" || allowDelete) {
+          //Edit Profile without any Picture
+          BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+              textEditName.text, textEditPhone.text));
+        } else {
+          //Edit Profile with Old Picture inside DB
+          print("Edit Profile, Sent Link to DB");
+          print("Link img" + userModel.imgUrl);
+          BlocProvider.of<UserDataBloc>(context).add(UserDataUpdateProfileEvent(
+              textEditName.text, textEditPhone.text,
+              link: userModel.imgUrl));
+        }
       }
     }
   }

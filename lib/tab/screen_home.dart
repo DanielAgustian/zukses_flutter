@@ -27,6 +27,7 @@ import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/screen/profile/user-settings.dart';
 import 'package:zukses_app_1/screen/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
@@ -515,28 +516,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           }
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
-            child: InkWell(
-              onTap: () {
-                if (_company != null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserProfile(
-                            company: _company, user: state.userModel),
-                      ));
-                } else {
-                  Util().showToast(
-                      msg: "Company Empty!",
-                      color: colorError,
-                      txtColor: colorBackground,
-                      context: context,
-                      duration: 3);
-                }
-              },
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (_company != null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UserProfile(
+                                  company: _company, user: state.userModel),
+                            ));
+                      } else {
+                        Util().showToast(
+                            msg: "Company Empty!",
+                            color: colorError,
+                            txtColor: colorBackground,
+                            context: context,
+                            duration: 3);
+                      }
+                    },
+                    child: Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -562,17 +563,49 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.solidBell,
-                          size: size.height < 569 ? 18 : 25,
-                          color: colorPrimary,
+                  ),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UserSettings(user: state.userModel),
+                              ));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          child: FaIcon(
+                            FontAwesomeIcons.solidBell,
+                            size: size.height < 569 ? 18 : 25,
+                            color: colorPrimary,
+                          ),
                         ),
-                        SizedBox(
-                          width: size.height < 569 ? 10 : 15,
-                        ),
-                        Padding(
+                      ),
+                      SizedBox(
+                        width: size.height < 569 ? 10 : 15,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          if (_company != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserProfile(
+                                      company: _company, user: state.userModel),
+                                ));
+                          } else {
+                            Util().showToast(
+                                msg: "Company Empty!",
+                                color: colorError,
+                                txtColor: colorBackground,
+                                context: context,
+                                duration: 3);
+                          }
+                        },
+                        child: Padding(
                             padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -583,10 +616,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 ),
                               ],
                             )),
-                      ],
-                    )
-                  ]),
-            ),
+                      ),
+                    ],
+                  )
+                ]),
           );
         } else if (state is UserDataStateFailLoad) {
           return Container(
@@ -1051,7 +1084,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ? ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.all(1.0),
-                    itemCount: taskName.length,
+                    itemCount: data.length > 2 ? 2 : data.length,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {

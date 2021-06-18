@@ -114,7 +114,7 @@ class _ScreenTab extends State<ScreenTab> {
                   padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
                   child: FaIcon(FontAwesomeIcons.clipboardList),
                 ),
-                badgeNotification(count: "100+")
+                //badgeNotification(count: "100+")
               ],
             ),
             label: 'tab_text3'.tr()),
@@ -125,7 +125,7 @@ class _ScreenTab extends State<ScreenTab> {
                   padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
                   child: FaIcon(FontAwesomeIcons.solidCalendar),
                 ),
-                badgeNotification(count: "99")
+                //badgeNotification(count: "99")
               ],
             ),
             label: 'tab_text4'.tr()),

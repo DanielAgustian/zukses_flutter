@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:time_picker_widget/time_picker_widget.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/component/avatar/avatar-medium.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -53,6 +54,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
   DateTime startMeeting;
   DateTime endMeeting;
   String myId = "";
+  bool loadingData = false;
   // Dropdown menu
   List<String> items = [
     "apply_leaves_text9".tr(),
@@ -70,7 +72,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
 
   //INIT Employee BLOC
   EmployeeBloc _employeeBloc;
-
+  List<bool> boolEmployee = [];
   // handle loading when click done
   bool loadingAdd = false;
 
@@ -128,12 +130,12 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         return Future.value(true);
       },
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           onPressed: () {
             print("Repeat : " + repeat);
             print("Repeat List:" + items.toString());
           },
-        ),
+        ),*/
         appBar: AppBar(
           elevation: 0,
           backgroundColor: colorBackground,
@@ -213,6 +215,30 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
           },
           child: Stack(
             children: [
+              BlocListener<EmployeeBloc, EmployeeState>(
+                listener: (context, state) {
+                  if (state is EmployeeStateSuccessLoad) {
+                    setState(() {
+                      listUser = state.employees;
+                      boolEmployee = state.checklist;
+                    });
+                    for (int i = 0; i < choosedUser.length; i++) {
+                      for (int j = 0; j < state.employees.length; j++) {
+                        if (choosedUser[i] == state.employees[j].userID) {
+                          setState(() {
+                            boolEmployee[j] = true;
+                          });
+                        }
+                      }
+                    }
+
+                    setState(() {
+                      loadingData = true;
+                    });
+                  }
+                },
+                child: Container(),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: paddingVertical),
                 child: Container(
@@ -446,15 +472,13 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                                             choosedUser[index]) {
                                           return Column(
                                             children: [
-                                              CircleAvatar(
-                                                backgroundColor:
-                                                    colorSecondaryRed,
-                                                radius: size.height <= 569
-                                                    ? 20
-                                                    : 30,
+                                              AvatarMedium(
+                                                imgUrl:
+                                                    "https://api-zukses.yokesen.com/${state.employees[i].imgUrl}",
                                               ),
                                               Text(
                                                 "${state.employees[i].name}",
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: colorPrimary,
@@ -626,63 +650,62 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                       SizedBox(
                         height: 10,
                       ),
-                      BlocBuilder<EmployeeBloc, EmployeeState>(
-                        builder: (context, state) {
-                          if (state is EmployeeStateSuccessLoad) {
-                            return Expanded(
+                      loadingData
+                          ? Expanded(
                               child: ListView.builder(
                                 controller: scrollController,
-                                itemCount: state.employees.length,
+                                itemCount: listUser.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   if (textSearch.text == "" ||
                                       textSearch.text == null) {
                                     return UserInvitationItem(
-                                      val: state.checklist[index],
-                                      title: state.employees[index].name,
+                                      val: boolEmployee[index],
+                                      title: listUser[index].name,
                                       imgURL:
-                                          "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
+                                          "https://api-zukses.yokesen.com/${listUser[index].imgUrl}",
                                       checkboxCallback: (val) {
                                         setStateModal(() {
-                                          state.checklist[index] =
-                                              !state.checklist[index];
+                                          boolEmployee[index] =
+                                              !boolEmployee[index];
 
                                           // If user is checked, add to list choosed User
-                                          if (state.checklist[index]) {
-                                            choosedUser.add(
-                                                state.employees[index].userID);
+                                          if (boolEmployee[index]) {
+                                            choosedUser
+                                                .add(listUser[index].userID);
 
                                             // If uncheck, remove from the list
                                           } else {
-                                            choosedUser.remove(
-                                                state.employees[index].userID);
+                                            choosedUser
+                                                .remove(listUser[index].userID);
                                           }
                                         });
                                       },
                                     );
                                   } else {
                                     // Handle for search function
-                                    if (state.employees[index].name
+                                    if (listUser[index]
+                                        .name
                                         .toLowerCase()
                                         .contains(searchQuery.toLowerCase())) {
                                       return UserInvitationItem(
-                                        val: state.checklist[index],
-                                        title: state.employees[index].name,
+                                        val: boolEmployee[index],
+                                        title: listUser[index].name,
                                         imgURL:
-                                            "https://api-zukses.yokesen.com/${state.employees[index].imgUrl}",
+                                            "https://api-zukses.yokesen.com/${listUser[index].imgUrl}",
                                         checkboxCallback: (val) {
                                           setStateModal(() {
-                                            state.checklist[index] =
-                                                !state.checklist[index];
+                                            boolEmployee[index] =
+                                                !boolEmployee[index];
 
                                             // If user is checked, add to list choosed User
-                                            if (state.checklist[index]) {
-                                              choosedUser.add(state
-                                                  .employees[index].userID);
+                                            if (boolEmployee[index]) {
+                                              choosedUser
+                                                  .add(listUser[index].userID);
 
                                               // If uncheck, remove from the list
                                             } else {
-                                              choosedUser.remove(state
-                                                  .employees[index].userID);
+                                              choosedUser.remove(
+                                                  listUser[index].userID);
                                             }
                                           });
                                         },
@@ -693,11 +716,18 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                                   return Container();
                                 },
                               ),
-                            );
+                            )
+                          : Container(),
+                      /*BlocBuilder<EmployeeBloc, EmployeeState>(
+                        builder: (context, state) {
+                          if (state is EmployeeStateSuccessLoad) {
+                            print("Jumlah Employee" +
+                                state.employees.length.toString());
+                            return Expanded();
                           } else {}
                           return Container();
                         },
-                      ),
+                      ),*/
                     ],
                   ),
                 );
@@ -816,7 +846,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: date,
-      firstDate: DateTime(2020),
+      firstDate: DateTime.now(),
       lastDate: DateTime(3500),
     );
     if (picked != null && picked != date)
@@ -922,7 +952,9 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
     myId = prefs.getString("myID");
     widget.model.members.forEach((element) {
       if (element.userIDSchedule != myId) {
-        choosedUser.add(element.userIDSchedule);
+        setState(() {
+          choosedUser.add(element.userIDSchedule);
+        });
       }
       print(element.userIDSchedule + ";" + myId);
     });

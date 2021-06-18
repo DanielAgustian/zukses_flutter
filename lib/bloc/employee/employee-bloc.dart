@@ -18,12 +18,14 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     var res = await _userDataService.fetchEmployeeData();
     // return checkbox handler
     List<bool> bools = [];
+
     // directly throw into success load or fail load
     if (res != null) {
       if (res.length > 0) {
         for (var i = 0; i < res.length; i++) {
           bools.add(false);
         }
+        print('EMPLOYEE STATE GET ALL EMPLOYEE');
         yield EmployeeStateSuccessLoad(employees: res, checklist: bools);
       } else {
         yield EmployeeStateFailLoad();
