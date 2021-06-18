@@ -51,6 +51,7 @@ class TextFormatEdit extends StatelessWidget {
       this.title,
       @required this.size,
       @required this.textEdit,
+      this.error = false,
       this.onChanged})
       : super(key: key);
 
@@ -58,6 +59,7 @@ class TextFormatEdit extends StatelessWidget {
   final TextEditingController textEdit;
   final Size size;
   final Function onChanged;
+  final bool error;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -80,7 +82,7 @@ class TextFormatEdit extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               color: colorNeutral130,
-              border: Border.all(color: colorNeutral2),
+              border: Border.all(color: error?colorError:colorNeutral2),
               borderRadius: BorderRadius.circular(5)),
           child: TextField(
             decoration: InputDecoration(

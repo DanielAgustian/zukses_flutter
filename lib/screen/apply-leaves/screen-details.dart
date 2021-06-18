@@ -75,7 +75,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               },
               child: Center(
                 child: Text(
-                  "cancel_text".tr(),
+                  "back_text".tr(),
                   style: TextStyle(
                       fontSize: size.height <= 600 ? 14 : 16,
                       color: colorPrimary,
@@ -90,27 +90,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               fontWeight: FontWeight.bold,
               fontSize: size.height <= 600 ? 20 : 22),
         ),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  child: Text(
-                    "done_text".tr(),
-                    style: TextStyle(
-                        fontSize: size.height <= 600 ? 14 : 16,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        actions: [],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -236,7 +216,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               },
               child: Center(
                 child: Text(
-                  "cancel_text".tr(),
+                  "back_text".tr(),
                   style: TextStyle(
                       fontSize: size.height <= 600 ? 14 : 16,
                       color: colorPrimary,
@@ -251,25 +231,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
               fontWeight: FontWeight.bold,
               fontSize: size.height <= 600 ? 20 : 22),
         ),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: InkWell(
-                onTap: () {},
-                child: Container(
-                  child: Text(
-                    "done_text".tr(),
-                    style: TextStyle(
-                        fontSize: size.height <= 600 ? 14 : 16,
-                        color: colorPrimary,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        actions: [],
       ),
       body: SingleChildScrollView(
         child: Container(
