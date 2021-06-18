@@ -134,7 +134,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
       if (message != null) {
         // print("MESSAGE ========================");
         // print(message.data);
-        notificationChecker(message);
+        // notificationChecker(message);
       }
     });
 
@@ -146,7 +146,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
       if (message != null) {
         // print("MESSAGE ========================");
         // print(message.data);
-        notificationChecker(message);
+        // notificationChecker(message);
       }
     });
 
