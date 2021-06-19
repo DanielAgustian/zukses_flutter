@@ -174,7 +174,7 @@ class _WaitRegisApprovedScreen extends State<WaitRegisApproved> {
                 channel.id,
                 channel.name,
                 channel.description,
-                // TODO add a proper drawable resource to android, for now using
+                // TODO add a proper drawable resource to android, for now usingu  
                 //      one that already exists in example app.
                 //icon: '@mipmap/traderindo_logo',
               ),
