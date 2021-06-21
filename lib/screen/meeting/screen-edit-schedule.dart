@@ -545,7 +545,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
       barrierColor: Colors.black.withOpacity(0.3),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setStateModal) {
+          builder: (context, StateSetter setStateModal) {
             return DraggableScrollableSheet(
               maxChildSize: 0.9,
               initialChildSize: 0.9,
@@ -667,18 +667,22 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                                         setStateModal(() {
                                           boolEmployee[index] =
                                               !boolEmployee[index];
+                                        });
 
-                                          // If user is checked, add to list choosed User
-                                          if (boolEmployee[index]) {
+                                        // If user is checked, add to list choosed User
+                                        if (boolEmployee[index]) {
+                                          setState(() {
                                             choosedUser
                                                 .add(listUser[index].userID);
+                                          });
 
-                                            // If uncheck, remove from the list
-                                          } else {
+                                          // If uncheck, remove from the list
+                                        } else {
+                                          setState(() {
                                             choosedUser
                                                 .remove(listUser[index].userID);
-                                          }
-                                        });
+                                          });
+                                        }
                                       },
                                     );
                                   } else {
@@ -826,11 +830,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
                         title: "schedule_text10".tr(),
                         onClick: () {
                           Navigator.pop(context, true);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      (ScreenTab(index: 3))));
+                          Navigator.pop(context, true);
                         },
                       )
                     ],

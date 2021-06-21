@@ -579,6 +579,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                           InkWell(
                             onTap: () {
                               Navigator.pop(context);
+                              setState(() {});
                             },
                             child: Text(
                               "done_text".tr(),
@@ -654,18 +655,23 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                         setStateModal(() {
                                           state.checklist[index] =
                                               !state.checklist[index];
+                                        });
 
-                                          // If user is checked, add to list choosed User
-                                          if (state.checklist[index]) {
+                                        // If user is checked, add to list choosed User
+                                        if (state.checklist[index]) {
+                                          setState(() {
                                             choosedUser.add(
                                                 state.employees[index].userID);
-
-                                            // If uncheck, remove from the list
-                                          } else {
+                                          });
+                                          print("User:" +
+                                              state.employees[index].userID);
+                                          // If uncheck, remove from the list
+                                        } else {
+                                          setState(() {
                                             choosedUser.remove(
                                                 state.employees[index].userID);
-                                          }
-                                        });
+                                          });
+                                        }
                                       },
                                     );
                                   } else {
