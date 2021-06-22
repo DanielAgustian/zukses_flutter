@@ -377,6 +377,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             color: colorError,
             txtColor: colorBackground);
       } else if (state is AuthStateSuccessLoad) {
+        doneLoading();
         authModel = state.authUser;
         // handle to get company acceptance after register
         companyAcceptance = authModel.user.companyAcceptance;
@@ -515,7 +516,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         itemCount: state.team.length,
                         itemBuilder: (context, index) => index >= 9
                             ? UserAvatar(
-                                value: "+" + (state.team.length - 9).toString(),
+                                value: state.team[index].imgUrl,
+                                status: state.team[index].late,
                               )
                             : UserAvatar(
                                 dotSize: 7, status: state.team[index].late),
@@ -1311,7 +1313,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             setState(() {
               scheduleReqLength = state.schedule.length;
             });
-            doneLoading();
           }
         }),
         BlocListener<MeetingBloc, MeetingState>(
