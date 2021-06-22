@@ -104,9 +104,9 @@ class _MemberScreenState extends State<MemberScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               UserAvatar(
-                                avatarRadius: 20,
                                 dotSize: 10,
                                 status: teams[index].late,
+                                value: teams[index].imgUrl,
                               ),
                               Text(
                                 teams[index].name,
