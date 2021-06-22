@@ -28,6 +28,7 @@ class AuthenticationBloc
   // BLOC for login with google
   Stream<AuthenticationState> mapLoginGoogle(AuthEventWithGoogle event) async* {
     // try catch google sign in
+    yield AuthStateLoading();
     try {
       // get all data from google
       var googleData = await _authenticationService.googleSignIn();
@@ -43,7 +44,7 @@ class AuthenticationBloc
         yield AuthStateSuccessLoad(res);
       } else {
         yield AuthStateFailLoad();
-      } 
+      }
     } catch (err) {
       print("Error Google Try Catch $err");
       yield AuthStateFailLoad();
@@ -52,12 +53,14 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> mapLoginFacebook(
       AuthEventWithFacebook event) async* {
+    yield AuthStateLoading();
+
     FBAuthModel fbAuthData = FBAuthModel();
 
     final facebookLogin = FacebookLogin();
     final result = await facebookLogin.logIn(['email']);
 
-    String tokenFacebook = ""; 
+    String tokenFacebook = "";
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         tokenFacebook = result.accessToken.token;
@@ -84,7 +87,6 @@ class AuthenticationBloc
           prefs.setInt("in-company", res.user.companyAcceptance);
           prefs.setString("company_id", res.user.companyID);
           yield AuthStateSuccessLoad(res);
-          
         } else {
           yield AuthStateFailLoad();
         }
@@ -106,6 +108,7 @@ class AuthenticationBloc
   // BLOC for login manually using email and password
   Stream<AuthenticationState> mapLoginManual(
       AuthEventLoginManual event) async* {
+    yield AuthStateLoading();
     // return auth model
     var res = await _authenticationService.createLogin(
         event.email, event.password, event.tokenFCM);
@@ -137,6 +140,7 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> mapLoginTeam(AuthEventLoginTeam event) async* {
+    yield AuthStateLoading();
     // return auth model
     var res = await _authenticationService.createLoginTeam(
         event.email, event.password, event.link);
@@ -147,7 +151,7 @@ class AuthenticationBloc
       prefs.setInt("in-company", res.user.companyAcceptance);
       prefs.setString("company_id", res.user.companyID);
       yield AuthStateSuccessTeamLoad(res);
-    } else { 
+    } else {
       yield AuthStateFailLoad();
     }
   }
