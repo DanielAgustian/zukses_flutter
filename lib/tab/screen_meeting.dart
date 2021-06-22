@@ -108,7 +108,6 @@ class _MeetingScreenState extends State<MeetingScreen>
                 suffixIcon: InkWell(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
-                    
                     child: FaIcon(FontAwesomeIcons.times,
                         color: colorNeutral2,
                         size: size.height < 569 ? 14 : 16),
@@ -202,8 +201,7 @@ class _MeetingScreenState extends State<MeetingScreen>
         body: WillPopScope(
           onWillPop: onWillPop,
           child: RefreshIndicator(
-              backgroundColor: colorPrimary70,
-              color: colorBackground,
+              color: colorPrimary,
               strokeWidth: 1,
               onRefresh: refreshData,
               child: searching

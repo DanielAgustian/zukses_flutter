@@ -102,8 +102,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
         });
       },
       child: RefreshIndicator(
-        backgroundColor: colorPrimary70,
-        color: colorBackground,
+        color: colorPrimary,
         strokeWidth: 1,
         onRefresh: refreshData,
         child: attendanceList == null
