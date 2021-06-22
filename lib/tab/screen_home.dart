@@ -65,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String key = "clock in";
   // String stringTap = "home_text1".tr();
   String teamId = "";
-  AuthModel _authModel = AuthModel();
   CompanyModel _company = CompanyModel();
   List<ScheduleModel> _scheduleAccepted = [];
   int scheduleReqLength = 0;
@@ -73,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int lengthHighPriority = 0;
   //For Disabling Button ============================//
   DateTime now = DateTime.now();
-  String dialogText = "Clock In ";
   bool instruction = false;
 
   Util util = Util();
@@ -87,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
-  bool isLoadingAuth = false;
+  // bool isLoadingAuth = false;
   bool changeTime = false;
 
   AnimationController _controller;
@@ -380,7 +378,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             txtColor: colorBackground);
       } else if (state is AuthStateSuccessLoad) {
         authModel = state.authUser;
-        isLoadingAuth = true;
         // handle to get company acceptance after register
         companyAcceptance = authModel.user.companyAcceptance;
         companyID = authModel.user.companyID;
@@ -405,7 +402,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       return InkWell(
         onTap: () {
-          onClickWatch(size, companyAcceptance: companyAcceptance);
+          onClickWatch(size,
+              companyAcceptance: companyAcceptance, authModel: authModel);
         },
         child: Container(
             width: double.infinity,
@@ -1555,11 +1553,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   //Fungsi untuk Click di Jam.
-  void onClickWatch(Size size, {@required int companyAcceptance}) {
+  void onClickWatch(Size size,
+      {@required int companyAcceptance, @required AuthModel authModel}) {
     if (companyAcceptance == 1) {
-      if (_authModel.maxClockIn != null && _authModel.attendance != null) {
-        if (_authModel.maxClockIn == "false") {
-          if (_authModel.attendance == "false") {
+      if (authModel.maxClockIn != null && authModel.attendance != null) {
+        if (authModel.maxClockIn == "false") {
+          if (authModel.attendance == "false") {
             if (instruction == true) {
               Navigator.push(
                   context,
@@ -1571,7 +1570,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 MaterialPageRoute(builder: (context) => CameraInstruction()),
               );
             }
-          } else if (_authModel.attendance == "true") {
+          } else if (authModel.attendance == "true") {
             //Clock Out
             int diff = timeCalculation(_company.endOfficeTime);
             //if employee clock out before office closing time
