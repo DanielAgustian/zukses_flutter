@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   String statusOvertime = "";
   String key = "clock in";
-  String stringTap = "home_text1".tr();
+  // String stringTap = "home_text1".tr();
   String teamId = "";
   AuthModel _authModel = AuthModel();
   CompanyModel _company = CompanyModel();
@@ -98,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   String tokenFCM = "";
   String companyID = "";
-  int companyAcceptance = 0;
 
   @override
   void initState() {
@@ -109,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     getUserProfile();
     _getTaskLowPriority();
     _getTaskHighPriority();
-
+    // checkStatusClock();
     _getMeetingToday();
     _getMeetingRequest();
 
@@ -187,123 +186,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     AuthModel authModel;
     int companyAcceptance;
     String companyID;
+    String stringTap = "home_text1".tr();
 
     return Column(
       children: [
-        BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            if (state is AuthStateFailLoad) {
+        BlocListener<AttendanceBloc, AttendanceState>(
+          listener: (context, state) async {
+            if (state is AttendanceStateFailed) {
               Util().showToast(
-                  context: context,
-                  msg: "Authentication Failed!",
-                  duration: 3,
+                  context: this.context,
+                  msg: "Something Wrong !",
                   color: colorError,
                   txtColor: colorBackground);
-            } else if (state is AuthStateSuccessLoad) {
-              authModel = state.authUser;
-              isLoadingAuth = true;
-              // handle to get company acceptance after register
-              companyAcceptance = authModel.user.companyAcceptance;
-              companyID = authModel.user.companyID;
+            } else if (state is AttendanceStateSuccessClockIn) {
+              //if they already clock in
+              stringTap = enumTap[1];
+            } else if (state is AttendanceStateSuccessClockOut) {
+              //if they already clock out
+              stringTap = enumTap[2];
 
-              //This function is for employee not yet accepted.
-              pushToWaitRegis(
-                  companyAcceptance: companyAcceptance, companyID: companyID);
-
-              if (authModel.maxClockIn == "false") {
-                //if they arent clockout today
-                if (authModel.attendance == "true") {
-                  // if they already clock in.
-                  setState(() {
-                    stringTap = enumTap[1];
-                  });
-                }
-              } else if (authModel.maxClockIn == "true") {
-                //If they already clock out for today
-                setState(() {
-                  stringTap = enumTap[2];
-                });
-              }
-              doneLoading();
-            } else if (state is AuthStateSuccessTeamLoad) {
-              _controller.reverse();
+              // show confirm dialog success clock out
+              showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _buildPopupDialog(context, "_BlocListener"))
+                  .then((value) => stringTap = enumTap[2]);
             }
           },
-          child: InkWell(
-            onTap: () {
-              onClickWatch(size);
-            },
-            child: Container(
-                width: double.infinity,
-                height: size.height * 0.40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(40),
-                      bottomLeft: Radius.circular(40)),
-                  color: colorPrimary,
-                ),
-                child: Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                      TimerBuilder.periodic(Duration(seconds: 1),
-                          builder: (context) {
-                        return Text(
-                          getSystemTime(),
-                          style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 1.5,
-                              fontSize: size.height < 600 ? 56 : 72,
-                              fontWeight: FontWeight.w500),
-                        );
-                      }),
-                      Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: colorBackground,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: companyAcceptance == 1
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                        "assets/images/tap-clock-in.svg",
-                                        width: size.height < 569 ? 20 : 25,
-                                        height: size.height < 569 ? 20 : 25),
-                                    // SizedBox(width: 10),
-                                    Text(
-                                      stringTap,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: colorPrimary,
-                                          fontSize:
-                                              size.height < 600 ? 14 : 16),
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Center(
-                                      child: Text(
-                                        "Welcome to Zukses!",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: colorPrimary,
-                                            fontSize:
-                                                size.height < 600 ? 14 : 16),
-                                      ),
-                                    )
-                                  ],
-                                ))
-                    ]))),
-          ),
+          child: buildTapPresence(size,
+              authModel: authModel,
+              companyAcceptance: companyAcceptance,
+              companyID: companyID,
+              stringTap: stringTap),
         ),
         SizedBox(
           height: 10,
@@ -447,6 +361,122 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         )
       ],
     );
+  }
+
+  // Widget to tap clock in or clock out
+  Widget buildTapPresence(Size size,
+      {@required AuthModel authModel,
+      @required int companyAcceptance,
+      @required String companyID,
+      @required String stringTap}) {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+      if (state is AuthStateFailLoad) {
+        Util().showToast(
+            context: context,
+            msg: "Authentication Failed!",
+            duration: 3,
+            color: colorError,
+            txtColor: colorBackground);
+      } else if (state is AuthStateSuccessLoad) {
+        authModel = state.authUser;
+        isLoadingAuth = true;
+        // handle to get company acceptance after register
+        companyAcceptance = authModel.user.companyAcceptance;
+        companyID = authModel.user.companyID;
+        //This function is for employee not yet accepted.
+        pushToWaitRegis(
+            companyAcceptance: companyAcceptance, companyID: companyID);
+
+        if (authModel.maxClockIn == "false") {
+          //if they arent clockout today
+          if (authModel.attendance == "true") {
+            // if they already clock in.
+            stringTap = enumTap[1];
+          }
+        } else if (authModel.maxClockIn == "true") {
+          //If they already clock out for today
+          stringTap = enumTap[2];
+        }
+        // doneLoading();
+      } else if (state is AuthStateSuccessTeamLoad) {
+        _controller.reverse();
+      }
+
+      return InkWell(
+        onTap: () {
+          onClickWatch(size, companyAcceptance: companyAcceptance);
+        },
+        child: Container(
+            width: double.infinity,
+            height: size.height * 0.40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(40),
+                  bottomLeft: Radius.circular(40)),
+              color: colorPrimary,
+            ),
+            child: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  TimerBuilder.periodic(Duration(seconds: 1),
+                      builder: (context) {
+                    return Text(
+                      getSystemTime(),
+                      style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 1.5,
+                          fontSize: size.height < 600 ? 56 : 72,
+                          fontWeight: FontWeight.w500),
+                    );
+                  }),
+                  Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: colorBackground,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: companyAcceptance == 1
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                    "assets/images/tap-clock-in.svg",
+                                    width: size.height < 569 ? 20 : 25,
+                                    height: size.height < 569 ? 20 : 25),
+                                // SizedBox(width: 10),
+                                Text(
+                                  stringTap,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorPrimary,
+                                      fontSize: size.height < 600 ? 14 : 16),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    "Welcome to Zukses!",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: colorPrimary,
+                                        fontSize: size.height < 600 ? 14 : 16),
+                                  ),
+                                )
+                              ],
+                            ))
+                ]))),
+      );
+    });
   }
 
   // build widget to show team
@@ -1070,20 +1100,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildPopupDialog(BuildContext context, String where) {
     return new CupertinoAlertDialog(
       title: new Text(
-        "Clock Out " + "success_text".tr() + " !",
+        "Clock out " + "success_text".tr() + " !",
       ),
-      content: new Text("Clock Out in " + getSystemTime()),
+      content: new Text("Clock out in " + getSystemTime()),
       actions: <Widget>[
         CupertinoDialogAction(
             child: Text("OK"),
             onPressed: () {
               Navigator.pop(context);
-
-              setState(() {
-                stringTap = enumTap[2];
-              });
-              String timeClockOut = getSystemTime();
-              // }
             })
       ],
     );
@@ -1289,6 +1313,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             setState(() {
               scheduleReqLength = state.schedule.length;
             });
+            doneLoading();
           }
         }),
         BlocListener<MeetingBloc, MeetingState>(
@@ -1348,35 +1373,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         //     _controller.reverse();
         //   }
         // }),
-        BlocListener<AttendanceBloc, AttendanceState>(
-            listener: (context, state) async {
-          if (state is AttendanceStateFailed) {
-            Util().showToast(
-                context: this.context,
-                msg: "Something Wrong !",
-                color: colorError,
-                txtColor: colorBackground);
-          } else if (state is AttendanceStateSuccessClockIn) {
-            //if they already clock in
-            setState(() {
-              stringTap = enumTap[1];
-              dialogText = "Clock In";
-            });
-          } else if (state is AttendanceStateSuccessClockOut) {
-            //if they already clock out
-            setState(() {
-              stringTap = enumTap[2];
-              dialogText = "Clock Out";
-            });
+        // BlocListener<AttendanceBloc, AttendanceState>(
+        //     listener: (context, state) async {
+        //   if (state is AttendanceStateFailed) {
+        //     Util().showToast(
+        //         context: this.context,
+        //         msg: "Something Wrong !",
+        //         color: colorError,
+        //         txtColor: colorBackground);
+        //   } else if (state is AttendanceStateSuccessClockIn) {
+        //     //if they already clock in
+        //     setState(() {
+        //       stringTap = enumTap[1];
+        //       dialogText = "Clock In";
+        //     });
+        //   } else if (state is AttendanceStateSuccessClockOut) {
+        //     //if they already clock out
+        //     setState(() {
+        //       stringTap = enumTap[2];
+        //       dialogText = "Clock Out";
+        //     });
 
-            // show confirm dialog success clock out
-            showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupDialog(context, "_BlocListener"))
-                .then((value) => stringTap = enumTap[2]);
-          }
-        }),
+        //     // show confirm dialog success clock out
+        //     showDialog(
+        //             context: context,
+        //             builder: (BuildContext context) =>
+        //                 _buildPopupDialog(context, "_BlocListener"))
+        //         .then((value) => stringTap = enumTap[2]);
+        //   }
+        // }),
         BlocListener<CompanyBloc, CompanyState>(
             listener: (context, state) async {
           if (state is CompanyStateSuccessLoad) {
@@ -1530,7 +1555,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   //Fungsi untuk Click di Jam.
-  void onClickWatch(Size size) {
+  void onClickWatch(Size size, {@required int companyAcceptance}) {
     if (companyAcceptance == 1) {
       if (_authModel.maxClockIn != null && _authModel.attendance != null) {
         if (_authModel.maxClockIn == "false") {
