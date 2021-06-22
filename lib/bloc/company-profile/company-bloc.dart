@@ -20,6 +20,7 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
 
     // directly throw into success load or fail load
     if (res != null) {
+      print("CompanyStateSuccessLoad");
       yield CompanyStateSuccessLoad(company: res);
     } else {
       yield CompanyStateFailLoad();
