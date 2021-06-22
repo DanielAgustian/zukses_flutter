@@ -75,8 +75,7 @@ class _TaskScreen extends State<TaskScreen> {
         body: WillPopScope(
           onWillPop: onWillPop,
           child: RefreshIndicator(
-            backgroundColor: colorPrimary70,
-            color: colorBackground,
+            color: colorPrimary,
             strokeWidth: 1,
             onRefresh: refreshData,
             child: MultiBlocListener(
