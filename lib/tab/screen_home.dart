@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:timer_builder/timer_builder.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
@@ -85,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   // FOR SKELETON -------------------------------------------------------------------------
   bool isLoading = true;
-  // bool isLoadingAuth = false;
+
   bool changeTime = false;
 
   AnimationController _controller;

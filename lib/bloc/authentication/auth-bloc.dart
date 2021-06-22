@@ -86,7 +86,6 @@ class AuthenticationBloc
           prefs.setInt("in-company", res.user.companyAcceptance);
           prefs.setString("company_id", res.user.companyID);
           yield AuthStateSuccessLoad(res);
-          
         } else {
           yield AuthStateFailLoad();
         }
@@ -117,8 +116,10 @@ class AuthenticationBloc
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt("in-company", res.user.companyAcceptance);
       prefs.setString("company_id", res.user.companyID);
+      print("AuthStateSuccessLoad");
       yield AuthStateSuccessLoad(res);
     } else {
+      print("AuthStateFailedLoad");
       yield AuthStateFailLoad();
     }
   }
