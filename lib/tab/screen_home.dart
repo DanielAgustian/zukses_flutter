@@ -165,7 +165,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     AuthModel authModel;
     int companyAcceptance;
     String companyID;
-    String stringTap = "home_text1".tr();
     CompanyModel company;
 
     return BlocBuilder<CompanyBloc, CompanyState>(
@@ -173,39 +172,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         if (state is CompanyStateSuccessLoad) {
           company = state.company;
         }
-
         return Column(
           children: [
-            BlocListener<AttendanceBloc, AttendanceState>(
-              listener: (context, state) async {
-                if (state is AttendanceStateFailed) {
-                  Util().showToast(
-                      context: this.context,
-                      msg: "Something Wrong !",
-                      color: colorError,
-                      txtColor: colorBackground);
-                } else if (state is AttendanceStateSuccessClockIn) {
-                  //if they already clock in
-                  stringTap = enumTap[1];
-                } else if (state is AttendanceStateSuccessClockOut) {
-                  //if they already clock out
-                  stringTap = enumTap[2];
+            buildTapPresence(size,
+                company: company,
+                authModel: authModel,
+                companyAcceptance: companyAcceptance,
+                companyID: companyID),
 
-                  // show confirm dialog success clock out
-                  showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              _buildPopupDialog(context, "_BlocListener"))
-                      .then((value) => stringTap = enumTap[2]);
-                }
-              },
-              child: buildTapPresence(size,
-                  company: company,
-                  authModel: authModel,
-                  companyAcceptance: companyAcceptance,
-                  companyID: companyID,
-                  stringTap: stringTap),
-            ),
             SizedBox(
               height: 10,
             ),
@@ -479,9 +453,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       {@required AuthModel authModel,
       @required int companyAcceptance,
       @required String companyID,
-      @required String stringTap,
       @required CompanyModel company}) {
     bool loading = true;
+    String stringTap = "home_text1".tr();
 
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
@@ -520,95 +494,140 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _controller.reverse();
       }
 
-      return InkWell(
-        onTap: () {
-          onClickWatch(size,
-              company: company,
-              companyAcceptance: companyAcceptance,
-              authModel: authModel);
-        },
-        child: Container(
-            width: double.infinity,
-            height: size.height * 0.40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(40),
-                  bottomLeft: Radius.circular(40)),
-              color: colorPrimary,
-            ),
-            child: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                  TimerBuilder.periodic(Duration(seconds: 1),
-                      builder: (context) {
-                    return Text(
-                      getSystemTime(),
-                      style: TextStyle(
-                          color: Colors.white,
-                          letterSpacing: 1.5,
-                          fontSize: size.height < 600 ? 56 : 72,
-                          fontWeight: FontWeight.w500),
-                    );
-                  }),
-                  loading
-                      ? SkeletonAnimation(
-                          shimmerColor: colorNeutral170,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: colorSkeleton,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            width: size.width * 0.4,
-                            height: 20,
-                          ),
-                        )
-                      : Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: colorBackground,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: companyAcceptance == 1
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                        "assets/images/tap-clock-in.svg",
-                                        width: size.height < 569 ? 20 : 25,
-                                        height: size.height < 569 ? 20 : 25),
-                                    // SizedBox(width: 10),
-                                    Text(
-                                      stringTap,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: colorPrimary,
-                                          fontSize:
-                                              size.height < 600 ? 14 : 16),
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Center(
-                                      child: Text(
-                                        "Welcome to Zukses!",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: colorPrimary,
-                                            fontSize:
-                                                size.height < 600 ? 14 : 16),
-                                      ),
+      return BlocConsumer<AttendanceBloc, AttendanceState>(
+        builder: (context, state) {
+          if (state is AttendanceStateSuccessClockIn) {
+            //if they already clock in
+            authModel.maxClockIn = "false";
+            authModel.attendance = "true";
+            stringTap = enumTap[1];
+          } else if (state is AttendanceStateSuccessClockOut) {
+            //if they already clock out
+            stringTap = enumTap[2];
+            authModel.maxClockIn = "true";
+          }
+
+          return InkWell(
+            onTap: () {
+              onClickWatch(size,
+                  company: company,
+                  companyAcceptance: companyAcceptance,
+                  authModel: authModel);
+            },
+            child: Container(
+                width: double.infinity,
+                height: size.height * 0.40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(40),
+                      bottomLeft: Radius.circular(40)),
+                  color: colorPrimary,
+                ),
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                      TimerBuilder.periodic(Duration(seconds: 1),
+                          builder: (context) {
+                        return Text(
+                          getSystemTime(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              letterSpacing: 1.5,
+                              fontSize: size.height < 600 ? 56 : 72,
+                              fontWeight: FontWeight.w500),
+                        );
+                      }),
+                      loading
+                          ? SkeletonAnimation(
+                              shimmerColor: colorNeutral170,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: colorSkeleton,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                width: size.width * 0.4,
+                                height: 20,
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: colorBackground,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: companyAcceptance == 1
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                            "assets/images/tap-clock-in.svg",
+                                            width: size.height < 569 ? 20 : 25,
+                                            height:
+                                                size.height < 569 ? 20 : 25),
+                                        // SizedBox(width: 10),
+                                        Text(
+                                          stringTap,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: colorPrimary,
+                                              fontSize:
+                                                  size.height < 600 ? 14 : 16),
+                                        ),
+                                      ],
                                     )
-                                  ],
-                                ))
-                ]))),
+                                  : Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            "Welcome to Zukses!",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: colorPrimary,
+                                                fontSize: size.height < 600
+                                                    ? 14
+                                                    : 16),
+                                          ),
+                                        )
+                                      ],
+                                    ))
+                    ]))),
+          );
+        },
+        listener: (context, state) {
+          if (state is AttendanceStateFailed) {
+            Util().showToast(
+                context: this.context,
+                msg: "Something Wrong !",
+                color: colorError,
+                txtColor: colorBackground);
+          } else if (state is AttendanceStateSuccessClockIn) {
+            //if they already clock in
+            // stringTap = enumTap[1];
+          } else if (state is AttendanceStateSuccessClockOut) {
+            //if they already clock out
+            // stringTap = enumTap[2];
+            // authModel.maxClockIn = "true";
+
+            // show confirm dialog success clock out
+            showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context, "_BlocListener"))
+                .then((value) => stringTap = enumTap[2]);
+          }
+          print(stringTap);
+        },
       );
     });
   }
