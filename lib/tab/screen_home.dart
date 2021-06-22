@@ -184,81 +184,126 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget realComponent(BuildContext context, Size size) {
+    AuthModel authModel;
+    int companyAcceptance;
+    String companyID;
+
     return Column(
       children: [
-        InkWell(
-          onTap: () {
-            onClickWatch(size);
+        BlocListener<AuthenticationBloc, AuthenticationState>(
+          listener: (context, state) {
+            if (state is AuthStateFailLoad) {
+              Util().showToast(
+                  context: context,
+                  msg: "Authentication Failed!",
+                  duration: 3,
+                  color: colorError,
+                  txtColor: colorBackground);
+            } else if (state is AuthStateSuccessLoad) {
+              authModel = state.authUser;
+              isLoadingAuth = true;
+              // handle to get company acceptance after register
+              companyAcceptance = authModel.user.companyAcceptance;
+              companyID = authModel.user.companyID;
+
+              //This function is for employee not yet accepted.
+              pushToWaitRegis(
+                  companyAcceptance: companyAcceptance, companyID: companyID);
+
+              if (authModel.maxClockIn == "false") {
+                //if they arent clockout today
+                if (authModel.attendance == "true") {
+                  // if they already clock in.
+                  setState(() {
+                    stringTap = enumTap[1];
+                  });
+                }
+              } else if (authModel.maxClockIn == "true") {
+                //If they already clock out for today
+                setState(() {
+                  stringTap = enumTap[2];
+                });
+              }
+              doneLoading();
+            } else if (state is AuthStateSuccessTeamLoad) {
+              _controller.reverse();
+            }
           },
-          child: Container(
-              width: double.infinity,
-              height: size.height * 0.40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(40),
-                    bottomLeft: Radius.circular(40)),
-                color: colorPrimary,
-              ),
-              child: Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                    TimerBuilder.periodic(Duration(seconds: 1),
-                        builder: (context) {
-                      return Text(
-                        getSystemTime(),
-                        style: TextStyle(
-                            color: Colors.white,
-                            letterSpacing: 1.5,
-                            fontSize: size.height < 600 ? 56 : 72,
-                            fontWeight: FontWeight.w500),
-                      );
-                    }),
-                    Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: colorBackground,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: companyAcceptance == 1
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                      "assets/images/tap-clock-in.svg",
-                                      width: size.height < 569 ? 20 : 25,
-                                      height: size.height < 569 ? 20 : 25),
-                                  // SizedBox(width: 10),
-                                  Text(
-                                    stringTap,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: colorPrimary,
-                                        fontSize: size.height < 600 ? 14 : 16),
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      "Welcome to Zukses!",
+          child: InkWell(
+            onTap: () {
+              onClickWatch(size);
+            },
+            child: Container(
+                width: double.infinity,
+                height: size.height * 0.40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(40),
+                      bottomLeft: Radius.circular(40)),
+                  color: colorPrimary,
+                ),
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                      TimerBuilder.periodic(Duration(seconds: 1),
+                          builder: (context) {
+                        return Text(
+                          getSystemTime(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              letterSpacing: 1.5,
+                              fontSize: size.height < 600 ? 56 : 72,
+                              fontWeight: FontWeight.w500),
+                        );
+                      }),
+                      Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: colorBackground,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: companyAcceptance == 1
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                        "assets/images/tap-clock-in.svg",
+                                        width: size.height < 569 ? 20 : 25,
+                                        height: size.height < 569 ? 20 : 25),
+                                    // SizedBox(width: 10),
+                                    Text(
+                                      stringTap,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: colorPrimary,
                                           fontSize:
                                               size.height < 600 ? 14 : 16),
                                     ),
-                                  )
-                                ],
-                              ))
-                  ]))),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        "Welcome to Zukses!",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: colorPrimary,
+                                            fontSize:
+                                                size.height < 600 ? 14 : 16),
+                                      ),
+                                    )
+                                  ],
+                                ))
+                    ]))),
+          ),
         ),
         SizedBox(
           height: 10,
@@ -1038,7 +1083,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 stringTap = enumTap[2];
               });
               String timeClockOut = getSystemTime();
-              print(timeClockOut);
               // }
             })
       ],
@@ -1249,62 +1293,61 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }),
         BlocListener<MeetingBloc, MeetingState>(
             listener: (context, state) async {
-              if (state is MeetingStateSuccessLoad) {
-                setState(() {
-                  _scheduleAccepted.clear();
-                  state.meetings.forEach((element) {
-                    if (util.yearFormat(now) == util.yearFormat(element.date)) {
-                      _scheduleAccepted.add(element);
-                    }
-                  });
-                  if (_scheduleAccepted.length < 1) {
-                    print("No Data");
-                  }
-                });
-              }
-            },
-            child: Container()),
-        BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) async {
-              if (state is AuthStateFailLoad) {
-                Util().showToast(
-                    context: context,
-                    msg: "Something Wrong!",
-                    duration: 3,
-                    color: colorError,
-                    txtColor: colorBackground);
-              } else if (state is AuthStateSuccessLoad) {
-                setState(() {
-                  _authModel = state.authUser;
-                  isLoadingAuth = true;
-                  // handle to get company acceptance after register
-                  companyAcceptance = _authModel.user.companyAcceptance;
-                  companyID = _authModel.user.companyID;
-                });
-
-                //This function is for employee not yet accepted.
-                pushToWaitRegis();
-
-                if (_authModel.maxClockIn == "false") {
-                  //if they arent clockout today
-                  if (_authModel.attendance == "true") {
-                    // if they already clock in.
-                    setState(() {
-                      stringTap = enumTap[1];
-                    });
-                  }
-                } else if (_authModel.maxClockIn == "true") {
-                  //If they already clock out for today
-                  setState(() {
-                    stringTap = enumTap[2];
-                  });
+          if (state is MeetingStateSuccessLoad) {
+            setState(() {
+              _scheduleAccepted.clear();
+              state.meetings.forEach((element) {
+                if (util.yearFormat(now) == util.yearFormat(element.date)) {
+                  _scheduleAccepted.add(element);
                 }
-                doneLoading();
-              } else if (state is AuthStateSuccessTeamLoad) {
-                _controller.reverse();
+              });
+              if (_scheduleAccepted.length < 1) {
+                print("No Data");
               }
-            },
-            child: Container()),
+            });
+          }
+        }),
+        // BlocListener<AuthenticationBloc, AuthenticationState>(
+        //     listener: (context, state) async {
+        //   if (state is AuthStateFailLoad) {
+        //     Util().showToast(
+        //         context: context,
+        //         msg: "Authentication Failed!",
+        //         duration: 3,
+        //         color: colorError,
+        //         txtColor: colorBackground);
+        //   } else if (state is AuthStateSuccessLoad) {
+        //     setState(() {
+        //       _authModel = state.authUser;
+        //       isLoadingAuth = true;
+        //       // handle to get company acceptance after register
+        //       companyAcceptance = _authModel.user.companyAcceptance;
+        //       companyID = _authModel.user.companyID;
+        //     });
+
+        //     //This function is for employee not yet accepted.
+        //     pushToWaitRegis(
+        //         companyAcceptance: companyAcceptance, companyID: companyID);
+
+        //     if (_authModel.maxClockIn == "false") {
+        //       //if they arent clockout today
+        //       if (_authModel.attendance == "true") {
+        //         // if they already clock in.
+        //         setState(() {
+        //           stringTap = enumTap[1];
+        //         });
+        //       }
+        //     } else if (_authModel.maxClockIn == "true") {
+        //       //If they already clock out for today
+        //       setState(() {
+        //         stringTap = enumTap[2];
+        //       });
+        //     }
+        //     doneLoading();
+        //   } else if (state is AuthStateSuccessTeamLoad) {
+        //     _controller.reverse();
+        //   }
+        // }),
         BlocListener<AttendanceBloc, AttendanceState>(
             listener: (context, state) async {
           if (state is AttendanceStateFailed) {
@@ -1368,11 +1411,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void doneLoading() {
-    if (isLoadingAuth) {
-      setState(() {
-        isLoading = false;
-      });
-    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void clockOut() async {
@@ -1478,7 +1519,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         .add(LoadHighPriorityEvent("high"));
   }
 
-  pushToWaitRegis() async {
+  pushToWaitRegis(
+      {@required String companyID, @required int companyAcceptance}) async {
     if (companyID != "" && companyAcceptance == 0) {
       Navigator.pushAndRemoveUntil(
           context,
