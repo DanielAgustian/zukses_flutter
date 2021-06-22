@@ -18,8 +18,6 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     // return list user model
     var res = await _companyServiceHTTP.fetchCompanyProfile();
 
-    // return checkbox handler
-
     // directly throw into success load or fail load
     if (res != null) {
       yield CompanyStateSuccessLoad(company: res);

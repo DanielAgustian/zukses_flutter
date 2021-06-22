@@ -43,8 +43,7 @@ class AuthenticationBloc
         yield AuthStateSuccessLoad(res);
       } else {
         yield AuthStateFailLoad();
-      }
-      print(state);
+      } 
     } catch (err) {
       print("Error Google Try Catch $err");
       yield AuthStateFailLoad();
@@ -58,8 +57,7 @@ class AuthenticationBloc
     final facebookLogin = FacebookLogin();
     final result = await facebookLogin.logIn(['email']);
 
-    String tokenFacebook = "";
-    print(result.status);
+    String tokenFacebook = ""; 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         tokenFacebook = result.accessToken.token;
@@ -150,8 +148,7 @@ class AuthenticationBloc
       prefs.setInt("in-company", res.user.companyAcceptance);
       prefs.setString("company_id", res.user.companyID);
       yield AuthStateSuccessTeamLoad(res);
-    } else {
-      print("AuthStateFailLoad");
+    } else { 
       yield AuthStateFailLoad();
     }
   }
