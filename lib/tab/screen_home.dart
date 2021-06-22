@@ -103,9 +103,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _getTokenFCM();
     getMember();
-    checkStatusClock("initState");
     getCompanyProfile();
     sharedPrefInstruction();
     getUserProfile();
@@ -1355,34 +1353,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         })
       ];
 
+  //---------------------Function Logic----------------------------//
+
   Future<void> refreshData() async {
-    _getTokenFCM();
     getMember();
-    checkStatusClock("initState");
     getCompanyProfile();
     sharedPrefInstruction();
     getUserProfile();
     _getTaskLowPriority();
     _getTaskHighPriority();
-
     _getMeetingToday();
     _getMeetingRequest();
-  }
-
-  void checkStatusClock(String where) async {
-    if (where == "initState") {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var googleSign = prefs.getInt('google');
-      var facebookSign = prefs.getInt('facebook');
-      // print("Allow Google Sign " + googleSign.toString());
-      if (googleSign != null) {
-        getAuthGoogle();
-      } else if (facebookSign != null) {
-        getAuthFacebook();
-      } else {
-        getAuthData();
-      }
-    }
+    checkStatusClock();
   }
 
   void doneLoading() {
@@ -1405,9 +1387,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
   }
 
-  void getAuthData() async {
-    // await _getTokenFCM();
+  void checkStatusClock() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var googleSign = prefs.getInt('google');
+    var facebookSign = prefs.getInt('facebook');
+    String tokenFCM = prefs.getString('fcmToken');
 
+    if (googleSign != null) {
+      getAuthGoogle(tokenFCM);
+    } else if (facebookSign != null) {
+      getAuthFacebook(tokenFCM);
+    } else {
+      getAuthData(tokenFCM);
+    }
+  }
+
+  void getAuthData(String tokenFCM) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("userLogin");
     String password = prefs.getString("passLogin");
@@ -1416,7 +1411,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         email: username, password: password, tokenFCM: tokenFCM));
   }
 
-  void getAuthGoogle() async {
+  void getAuthGoogle(String tokenFCM) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.getString('google_data');
     GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
@@ -1430,7 +1425,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             tokenFCM: tokenFCM));
   }
 
-  void getAuthFacebook() async {
+  void getAuthFacebook(String tokenFCM) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.getString('facebook_data');
 
@@ -1483,13 +1478,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         .add(LoadHighPriorityEvent("high"));
   }
 
-  void _getTokenFCM() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      tokenFCM = prefs.getString('fcmToken');
-    });
-  }
-
   pushToWaitRegis() async {
     if (companyID != "" && companyAcceptance == 0) {
       Navigator.pushAndRemoveUntil(
@@ -1498,8 +1486,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           (route) => false);
     }
   }
-
-  //---------------------Function Logic----------------------------//
 
   //Fungsi untuk Click di Jam.
   void onClickWatch(Size size) {
@@ -1518,7 +1504,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 MaterialPageRoute(builder: (context) => CameraInstruction()),
               );
             }
-            checkStatusClock("initState");
           } else if (_authModel.attendance == "true") {
             //Clock Out
             int diff = timeCalculation(_company.endOfficeTime);

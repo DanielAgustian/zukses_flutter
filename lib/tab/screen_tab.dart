@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/model/fb_model_sender.dart';
+import 'package:zukses_app_1/model/google-sign-in-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
@@ -52,6 +57,9 @@ class _ScreenTab extends State<ScreenTab> {
 
     //Firebase Handler
     firebaseMessagingHandler();
+
+    // Init data user and pass it to home via bloc listener
+    checkStatusClock();
   }
 
   Widget build(BuildContext context) {
@@ -233,6 +241,61 @@ class _ScreenTab extends State<ScreenTab> {
 
   void getUserProfile() async {
     BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
+  }
+
+  void checkStatusClock() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var googleSign = prefs.getInt('google');
+    var facebookSign = prefs.getInt('facebook');
+    String tokenFCM = prefs.getString('fcmToken');
+
+    if (googleSign != null) {
+      getAuthGoogle(tokenFCM);
+    } else if (facebookSign != null) {
+      getAuthFacebook(tokenFCM);
+    } else {
+      getAuthData(tokenFCM);
+    }
+  }
+
+  void getAuthData(String tokenFCM) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString("userLogin");
+    String password = prefs.getString("passLogin");
+    // print("username " + username);
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthEventLoginManual(
+        email: username, password: password, tokenFCM: tokenFCM));
+  }
+
+  void getAuthGoogle(String tokenFCM) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('google_data');
+    GoogleSignInModel model = GoogleSignInModel.fromJson(jsonDecode(data));
+    // print("Email from Google = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.image,
+            tokenGoogle: model.token,
+            tokenFCM: tokenFCM));
+  }
+
+  void getAuthFacebook(String tokenFCM) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.getString('facebook_data');
+
+    String tokenFacebook = prefs.getString('facebook_token');
+    FBModelSender model = FBModelSender.fromJson(jsonDecode(data));
+
+    // print("Email from facebook = " + model.email);
+    BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthEventDetectGoogleSignIn(
+            email: model.email,
+            name: model.name,
+            image: model.url,
+            tokenGoogle: tokenFacebook,
+            tokenFCM: tokenFCM));
   }
 
   void notificationChecker(RemoteMessage message) {
