@@ -169,103 +169,104 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     String stringTap = "home_text1".tr();
     CompanyModel company;
 
-    return BlocListener<CompanyBloc, CompanyState>(
-      listener: (context, state) {
+    return BlocBuilder<CompanyBloc, CompanyState>(
+      builder: (context, state) {
         if (state is CompanyStateSuccessLoad) {
           company = state.company;
         }
+
+        return Column(
+          children: [
+            BlocListener<AttendanceBloc, AttendanceState>(
+              listener: (context, state) async {
+                if (state is AttendanceStateFailed) {
+                  Util().showToast(
+                      context: this.context,
+                      msg: "Something Wrong !",
+                      color: colorError,
+                      txtColor: colorBackground);
+                } else if (state is AttendanceStateSuccessClockIn) {
+                  //if they already clock in
+                  stringTap = enumTap[1];
+                } else if (state is AttendanceStateSuccessClockOut) {
+                  //if they already clock out
+                  stringTap = enumTap[2];
+
+                  // show confirm dialog success clock out
+                  showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPopupDialog(context, "_BlocListener"))
+                      .then((value) => stringTap = enumTap[2]);
+                }
+              },
+              child: buildTapPresence(size,
+                  company: company,
+                  authModel: authModel,
+                  companyAcceptance: companyAcceptance,
+                  companyID: companyID,
+                  stringTap: stringTap),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            //======================BlocBuilder Profile User===========================
+            buildHeaderProfile(size, company: company),
+
+            //====================BlocBuilder Team =================================
+            SizedBox(height: 20),
+            buildTeamWidget(context, size),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "home_text6".tr(),
+                  style: TextStyle(
+                      color: colorPrimary,
+                      letterSpacing: 0,
+                      fontSize: size.width <= 600 ? 20 : 22,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            buildCounterBoxTask(size),
+            SizedBox(
+              height: 15,
+            ),
+            buildTaskList(size, context),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "home_text10".tr(),
+                  style: TextStyle(
+                      color: colorPrimary,
+                      letterSpacing: 0,
+                      fontSize: size.width <= 600 ? 20 : 22,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            buildCounterBoxMeeting(size),
+            SizedBox(
+              height: 15,
+            ),
+            buildMeetingList(size),
+            SizedBox(
+              height: 20,
+            )
+          ],
+        );
       },
-      child: Column(
-        children: [
-          BlocListener<AttendanceBloc, AttendanceState>(
-            listener: (context, state) async {
-              if (state is AttendanceStateFailed) {
-                Util().showToast(
-                    context: this.context,
-                    msg: "Something Wrong !",
-                    color: colorError,
-                    txtColor: colorBackground);
-              } else if (state is AttendanceStateSuccessClockIn) {
-                //if they already clock in
-                stringTap = enumTap[1];
-              } else if (state is AttendanceStateSuccessClockOut) {
-                //if they already clock out
-                stringTap = enumTap[2];
-
-                // show confirm dialog success clock out
-                showDialog(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            _buildPopupDialog(context, "_BlocListener"))
-                    .then((value) => stringTap = enumTap[2]);
-              }
-            },
-            child: buildTapPresence(size,
-                company: company,
-                authModel: authModel,
-                companyAcceptance: companyAcceptance,
-                companyID: companyID,
-                stringTap: stringTap),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          //======================BlocBuilder Profile User===========================
-          buildHeaderProfile(size, company: company),
-
-          //====================BlocBuilder Team =================================
-          SizedBox(height: 20),
-          buildTeamWidget(context, size),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "home_text6".tr(),
-                style: TextStyle(
-                    color: colorPrimary,
-                    letterSpacing: 0,
-                    fontSize: size.width <= 600 ? 20 : 22,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-
-          buildCounterBoxTask(size),
-          SizedBox(
-            height: 15,
-          ),
-          buildTaskList(size, context),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "home_text10".tr(),
-                style: TextStyle(
-                    color: colorPrimary,
-                    letterSpacing: 0,
-                    fontSize: size.width <= 600 ? 20 : 22,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          buildCounterBoxMeeting(size),
-          SizedBox(
-            height: 15,
-          ),
-          buildMeetingList(size),
-          SizedBox(
-            height: 20,
-          )
-        ],
-      ),
     );
   }
 
