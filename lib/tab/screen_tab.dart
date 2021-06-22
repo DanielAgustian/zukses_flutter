@@ -59,7 +59,7 @@ class _ScreenTab extends State<ScreenTab> {
     firebaseMessagingHandler();
 
     // Init data user and pass it to home via bloc listener
-    checkStatusClock();
+    authenticateUser();
   }
 
   Widget build(BuildContext context) {
@@ -243,7 +243,7 @@ class _ScreenTab extends State<ScreenTab> {
     BlocProvider.of<UserDataBloc>(context).add(UserDataGettingEvent());
   }
 
-  void checkStatusClock() async {
+  void authenticateUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var googleSign = prefs.getInt('google');
     var facebookSign = prefs.getInt('facebook');

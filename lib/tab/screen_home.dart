@@ -377,11 +377,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             color: colorError,
             txtColor: colorBackground);
       } else if (state is AuthStateSuccessLoad) {
-        doneLoading();
         authModel = state.authUser;
         // handle to get company acceptance after register
         companyAcceptance = authModel.user.companyAcceptance;
         companyID = authModel.user.companyID;
+        
         //This function is for employee not yet accepted.
         pushToWaitRegis(
             companyAcceptance: companyAcceptance, companyID: companyID);
@@ -1404,6 +1404,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         BlocListener<CompanyBloc, CompanyState>(
             listener: (context, state) async {
           if (state is CompanyStateSuccessLoad) {
+            doneLoading();
             _company = state.company;
           }
         }),
