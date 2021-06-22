@@ -381,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         // handle to get company acceptance after register
         companyAcceptance = authModel.user.companyAcceptance;
         companyID = authModel.user.companyID;
-        
+
         //This function is for employee not yet accepted.
         pushToWaitRegis(
             companyAcceptance: companyAcceptance, companyID: companyID);
@@ -1315,6 +1315,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             });
           }
         }),
+        BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) async {
+          if (state is AuthStateFailLoad) {
+            Util().showToast(
+                context: context,
+                msg: "Authentication Failed!",
+                duration: 3,
+                color: colorError,
+                txtColor: colorBackground);
+          } else if (state is AuthStateSuccessLoad) {
+            doneLoading();
+          } else if (state is AuthStateSuccessTeamLoad) {
+            _controller.reverse();
+            doneLoading();
+          }
+        }),
         BlocListener<MeetingBloc, MeetingState>(
             listener: (context, state) async {
           if (state is MeetingStateSuccessLoad) {
@@ -1331,80 +1347,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             });
           }
         }),
-        // BlocListener<AuthenticationBloc, AuthenticationState>(
-        //     listener: (context, state) async {
-        //   if (state is AuthStateFailLoad) {
-        //     Util().showToast(
-        //         context: context,
-        //         msg: "Authentication Failed!",
-        //         duration: 3,
-        //         color: colorError,
-        //         txtColor: colorBackground);
-        //   } else if (state is AuthStateSuccessLoad) {
-        //     setState(() {
-        //       _authModel = state.authUser;
-        //       isLoadingAuth = true;
-        //       // handle to get company acceptance after register
-        //       companyAcceptance = _authModel.user.companyAcceptance;
-        //       companyID = _authModel.user.companyID;
-        //     });
-
-        //     //This function is for employee not yet accepted.
-        //     pushToWaitRegis(
-        //         companyAcceptance: companyAcceptance, companyID: companyID);
-
-        //     if (_authModel.maxClockIn == "false") {
-        //       //if they arent clockout today
-        //       if (_authModel.attendance == "true") {
-        //         // if they already clock in.
-        //         setState(() {
-        //           stringTap = enumTap[1];
-        //         });
-        //       }
-        //     } else if (_authModel.maxClockIn == "true") {
-        //       //If they already clock out for today
-        //       setState(() {
-        //         stringTap = enumTap[2];
-        //       });
-        //     }
-        //     doneLoading();
-        //   } else if (state is AuthStateSuccessTeamLoad) {
-        //     _controller.reverse();
-        //   }
-        // }),
-        // BlocListener<AttendanceBloc, AttendanceState>(
-        //     listener: (context, state) async {
-        //   if (state is AttendanceStateFailed) {
-        //     Util().showToast(
-        //         context: this.context,
-        //         msg: "Something Wrong !",
-        //         color: colorError,
-        //         txtColor: colorBackground);
-        //   } else if (state is AttendanceStateSuccessClockIn) {
-        //     //if they already clock in
-        //     setState(() {
-        //       stringTap = enumTap[1];
-        //       dialogText = "Clock In";
-        //     });
-        //   } else if (state is AttendanceStateSuccessClockOut) {
-        //     //if they already clock out
-        //     setState(() {
-        //       stringTap = enumTap[2];
-        //       dialogText = "Clock Out";
-        //     });
-
-        //     // show confirm dialog success clock out
-        //     showDialog(
-        //             context: context,
-        //             builder: (BuildContext context) =>
-        //                 _buildPopupDialog(context, "_BlocListener"))
-        //         .then((value) => stringTap = enumTap[2]);
-        //   }
-        // }),
         BlocListener<CompanyBloc, CompanyState>(
             listener: (context, state) async {
           if (state is CompanyStateSuccessLoad) {
-            doneLoading();
             _company = state.company;
           }
         }),
