@@ -1518,7 +1518,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 MaterialPageRoute(builder: (context) => CameraInstruction()),
               );
             }
-            checkStatusClock("initState");
+            //checkStatusClock("initState");
           } else if (_authModel.attendance == "true") {
             //Clock Out
             int diff = timeCalculation(_company.endOfficeTime);

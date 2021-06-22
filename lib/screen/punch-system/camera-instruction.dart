@@ -176,8 +176,8 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
     if (pickedFile != null) {
       setState(() {
         String data = pickedFile.path;
-        Navigator.pop(context);
-        Navigator.push(
+        
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => PreviewCamera(
