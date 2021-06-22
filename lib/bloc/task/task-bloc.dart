@@ -19,7 +19,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* mapAddTaskFree(event);
     } else if (event is UpdateTaskEvent) {
       yield* mapUpdateTask(event);
-    }
+    } 
   }
 
   Stream<TaskState> mapGetTask(GetAllTaskEvent event) async* {
@@ -29,10 +29,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     if (res != null) {
       yield TaskStateSuccessLoad(task: res);
-      //print(state);
+      
     } else {
       yield TaskStateFailLoad();
-      //print(state);
+      
     }
   }
 
