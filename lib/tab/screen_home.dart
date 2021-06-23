@@ -306,6 +306,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           loading = false;
           tasks =
               state.task.length < 2 ? state.task : state.task.take(2).toList();
+        } else if (state is TaskPriorityStateFailLoad) {
+          loading = false;
+          tasks = [];
         }
 
         return Container(
@@ -322,20 +325,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         col: 1,
                       ))
                 else
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(1.0),
-                    itemCount: tasks.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ListViewBox(
-                        title: tasks[index].taskName,
-                        detail: tasks[index].details,
-                        viewType: "task",
-                      );
-                    },
-                  ),
+                  tasks == null || tasks.length == 0
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: colorBorder))),
+                              height: 40,
+                              child: Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Text("home_text20".tr(args: ["Task"]),
+                                      style: TextStyle(
+                                        color: colorPrimary,
+                                        fontSize: size.height < 569 ? 14 : 16,
+                                      )),
+                                ),
+                              )))
+                      : ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.all(1.0),
+                          itemCount: tasks.length,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return ListViewBox(
+                              title: tasks[index].taskName,
+                              detail: tasks[index].details,
+                              viewType: "task",
+                            );
+                          },
+                        ),
 
                 Padding(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),

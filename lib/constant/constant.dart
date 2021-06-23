@@ -93,6 +93,6 @@ AppBar appBarOutside = AppBar(
         fontWeight: FontWeight.bold),
   ),
 );
-const int imageQualityCamera = 55;
-const double maxHeight = 600;
-const double maxWidth = 480;
+const int imageQualityCamera = 60;
+const double maxHeight = 400;
+const double maxWidth = 320;
