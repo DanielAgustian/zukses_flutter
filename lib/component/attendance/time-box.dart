@@ -71,11 +71,17 @@ class TimeBox extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: colorPrimary, width: 2)),
+                border: Border.all(
+                    color: selected == null || selected.clockOut != null
+                        ? colorPrimary
+                        : colorError,
+                    width: 2)),
             child: Text(
               "$h2.$m2",
               style: TextStyle(
-                  color: colorPrimary,
+                  color: selected == null || selected.clockOut != null
+                      ? colorPrimary
+                      : colorError,
                   fontWeight: FontWeight.w700,
                   fontSize: fontSize),
             ),
