@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           tasks =
               state.task.length < 2 ? state.task : state.task.take(2).toList();
         }
-        
+
         return Container(
             margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
             decoration: BoxDecoration(
