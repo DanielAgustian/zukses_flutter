@@ -323,6 +323,19 @@ class _AttendanceScreen extends State<AttendanceScreen> {
             fontSize: size.height <= 569 ? textSizeSmall18 : 18,
           ),
           SizedBox(height: 15),
+          if (selected != null && selected.clockOut == null)
+            Container(
+              margin: EdgeInsets.only(bottom: 8),
+              child: Center(
+                child: Text(
+                  "You have no clock out record.",
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: colorError,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
           OvertimeText(selected: selected, size: size)
         ],
       ),
