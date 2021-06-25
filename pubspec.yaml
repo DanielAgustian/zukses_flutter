@@ -26,7 +26,7 @@ dependencies:
   google_fonts:
   font_awesome_flutter:
   intl: 
-  image_picker: ^0.7.5
+  image_picker: ^0.8.0
   drag_and_drop_lists:
   http:
   clipboard:
