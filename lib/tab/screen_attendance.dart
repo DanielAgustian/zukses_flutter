@@ -88,10 +88,20 @@ class _AttendanceScreen extends State<AttendanceScreen> {
 
             // auto show data when screen open
             if (attendanceList != null || attendanceList.length > 0) {
-              AttendanceModel absence = attendanceList
-                  .where((element) => element.clockIn.day == _currentDate.day)
-                  .single;
-              if (absence != null) selectDate(_currentDate, absence);
+              AttendanceModel absence = AttendanceModel();
+              try {
+                absence = attendanceList
+                    .where((element) => element.clockIn.day == _currentDate.day)
+                    .single;
+              } catch (e) {
+                print(e);
+              }
+              if (absence != null) {
+                selectDate(_currentDate, absence);
+              } else {
+                AttendanceModel model = AttendanceModel();
+                selectDate(_currentDate, model);
+              }
             }
           } else if (state is AttendanceStateFailLoad) {
             isLoading = false;

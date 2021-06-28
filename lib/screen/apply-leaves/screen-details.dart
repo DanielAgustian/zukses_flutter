@@ -6,6 +6,7 @@ import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
+import 'package:zukses_app_1/screen/send-feedback/screen-contact-supervisor.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -62,6 +63,14 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
 
   Widget overtimeDetails(BuildContext context, Size size) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ScreenContactSupervisor()));
+        },
+      ),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,

@@ -497,13 +497,13 @@ class _RequestInboxState extends State<RequestInbox>
                     borderColor: colorPrimary,
                     title: "confirm_text".tr(),
                     onClick: () {
-                      print(model.meetingID);
                       if (_textReasonReject.text != "") {
                         BlocProvider.of<MeetingBloc>(context).add(
                             PostAcceptanceMeetingEvent(
                                 meetingId: model.meetingID,
                                 accept: "0",
                                 reason: _textReasonReject.text));
+                        setState(() => _textReasonReject.text = "");
                         Navigator.pop(context);
                       } else {
                         setState(() => reasonReject = true);

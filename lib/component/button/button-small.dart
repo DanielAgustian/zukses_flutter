@@ -8,7 +8,7 @@ class SmallButton extends StatelessWidget {
       this.title,
       this.bgColor,
       this.textColor,
-      this.size = 100,
+      this.size = 120,
       this.loading = false})
       : super(key: key);
 
