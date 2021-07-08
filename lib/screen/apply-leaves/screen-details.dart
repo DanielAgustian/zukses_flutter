@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-bloc.dart';
+import 'package:zukses_app_1/bloc/leaves/leave-event.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-bloc.dart';
+import 'package:zukses_app_1/bloc/overtime/overtime-event.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/component/schedule/row-schedule.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/leave-model.dart';
+import 'package:zukses_app_1/model/leave-type-model.dart';
 import 'package:zukses_app_1/model/overtime-model.dart';
+import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:zukses_app_1/screen/contact-supervisor/screen-contact-supervisor.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -34,6 +42,8 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
   LeaveModel leaveModel = LeaveModel();
   OvertimeModel overtimeModel = OvertimeModel();
   Util util = Util();
+
+  List<LeaveTypeModel> leaveType = [];
   @override
   void initState() {
     super.initState();
@@ -42,6 +52,7 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
     if (overtimeModel == null) {
       textReason2.text = leaveModel.reason;
       textReasonRejected.text = leaveModel.rejectReason;
+      BlocProvider.of<LeaveTypeBloc>(context).add(LoadAllLeaveTypeEvent());
     } else {
       textReason.text = overtimeModel.reason;
     }
@@ -62,338 +73,383 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
   }
 
   Widget overtimeDetails(BuildContext context, Size size) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ScreenContactSupervisor()));
-        },
-      ),
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: colorBackground,
-        leadingWidth: 70,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Center(
-                child: Text(
-                  "back_text".tr(),
-                  style: TextStyle(
-                      fontSize: size.height <= 600 ? 14 : 16,
-                      color: colorPrimary,
-                      fontWeight: FontWeight.w500),
-                ),
-              )),
+    return Stack(
+      children: [
+        BlocListener<OvertimeBloc, OvertimeState>(
+          listener: (context, state) {
+            if (state is OvertimeStateSuccess) {
+              _gotoOvertimeList();
+            }
+          },
+          child: Container(),
         ),
-        title: Text(
-          "Overtime Details",
-          style: TextStyle(
-              color: colorPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: size.height <= 600 ? 20 : 22),
-        ),
-        actions: [],
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: size.width,
-          padding: EdgeInsets.symmetric(
-              horizontal: paddingHorizontal, vertical: paddingVertical),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AddScheduleRowStatus(
-                title: "Status",
-                textItem: overtimeModel.status,
-              ),
-              AddScheduleRowNonArrow(
-                lowerOpacity: true,
-                title: "date_text".tr(),
-                textItem: util.dateNumbertoCalendar(overtimeModel.date),
-              ),
-              AddScheduleRowNonArrow(
-                lowerOpacity: true,
-                title: "apply_overtime_text2".tr(),
-                textItem: util.cutTime(overtimeModel.startTime) +
-                    " - " +
-                    util.cutTime(
-                        overtimeModel.endTime), //nanti get dari OvertimeModel
-              ),
-              AddScheduleRowNonArrow(
-                title: "apply_overtime_text3".tr(),
-                textItem: overtimeModel.project,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "apply_overtime_text5".tr(),
-                style: TextStyle(
+        Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            centerTitle: true,
+            backgroundColor: colorBackground,
+            leadingWidth: 70,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Center(
+                    child: Text(
+                      "back_text".tr(),
+                      style: TextStyle(
+                          fontSize: size.height <= 600 ? 14 : 16,
+                          color: colorPrimary,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  )),
+            ),
+            title: Text(
+              "Overtime Details",
+              style: TextStyle(
                   color: colorPrimary,
-                  fontSize: size.height < 569 ? 14 : 16,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.transparent),
-                    color: colorBackground,
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorNeutral1.withOpacity(1),
-                        blurRadius: 15,
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  readOnly: true,
-                  maxLines: 8,
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textReason,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(20),
-                      hintText: "task_text20".tr(),
-                      hintStyle: TextStyle(
-                        color: colorNeutral1,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              overtimeModel.status == "rejected"
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: size.height < 569 ? 15 : 20,
-                          ),
-                          LongButton(
-                            size: size,
-                            onClick: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ScreenContactSupervisor()));
-                            },
-                            title: "apply_leaves_text13".tr(),
-                            bgColor: colorPrimary,
-                            textColor: colorBackground,
-                          ),
-                          SizedBox(
-                            height: size.height < 569 ? 5 : 10,
-                          ),
-                          LongButtonOutline(
-                            size: size,
-                            onClick: () {},
-                            title: "apply_leaves_text14".tr(),
-                            bgColor: colorBackground,
-                            textColor: colorPrimary,
-                            outlineColor: colorPrimary,
-                          ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.height <= 600 ? 20 : 22),
+            ),
+            actions: [],
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              width: size.width,
+              padding: EdgeInsets.symmetric(
+                  horizontal: paddingHorizontal, vertical: paddingVertical),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AddScheduleRowStatus(
+                    title: "Status",
+                    textItem: overtimeModel.status,
+                  ),
+                  AddScheduleRowNonArrow(
+                    lowerOpacity: true,
+                    title: "date_text".tr(),
+                    textItem: util.dateNumbertoCalendar(overtimeModel.date),
+                  ),
+                  AddScheduleRowNonArrow(
+                    lowerOpacity: true,
+                    title: "apply_overtime_text2".tr(),
+                    textItem: util.cutTime(overtimeModel.startTime) +
+                        " - " +
+                        util.cutTime(overtimeModel
+                            .endTime), //nanti get dari OvertimeModel
+                  ),
+                  AddScheduleRowNonArrow(
+                    title: "apply_overtime_text3".tr(),
+                    textItem: overtimeModel.project,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    "apply_overtime_text5".tr(),
+                    style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: size.height < 569 ? 14 : 16,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.transparent),
+                        color: colorBackground,
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorNeutral1.withOpacity(1),
+                            blurRadius: 15,
+                          )
                         ],
-                      ),
-                    )
-                  : Container()
-            ],
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      readOnly: true,
+                      maxLines: 8,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
+                      onChanged: (val) {},
+                      controller: textReason,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(20),
+                          hintText: "task_text20".tr(),
+                          hintStyle: TextStyle(
+                            color: colorNeutral1,
+                          ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none),
+                    ),
+                  ),
+                  overtimeModel.status == "rejected"
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: size.height < 569 ? 15 : 20,
+                              ),
+                              LongButton(
+                                size: size,
+                                onClick: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ScreenContactSupervisor(
+                                                  data: "overtime")));
+                                },
+                                title: "apply_leaves_text13".tr(),
+                                bgColor: colorPrimary,
+                                textColor: colorBackground,
+                              ),
+                              SizedBox(
+                                height: size.height < 569 ? 5 : 10,
+                              ),
+                              LongButtonOutline(
+                                size: size,
+                                onClick: () {
+                                  resubmitOvertime(overtimeModel);
+                                },
+                                title: "apply_leaves_text14".tr(),
+                                bgColor: colorBackground,
+                                textColor: colorPrimary,
+                                outlineColor: colorPrimary,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container()
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
   Widget leavesDetails(BuildContext context, Size size) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: colorBackground,
-        leadingWidth: 70,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Center(
-                child: Text(
-                  "back_text".tr(),
-                  style: TextStyle(
-                      fontSize: size.height <= 600 ? 14 : 16,
-                      color: colorPrimary,
-                      fontWeight: FontWeight.w500),
-                ),
-              )),
+    return Stack(
+      children: [
+        BlocListener<LeaveTypeBloc, LeaveTypeState>(
+          listener: (context, state) {
+            if (state is LeaveTypeStateSuccessLoad) {
+              setState(() {
+                leaveType = state.leaveType;
+              });
+            }
+          },
+          child: Container(),
         ),
-        title: Text(
-          "Leaves Details",
-          style: TextStyle(
-              color: colorPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: size.height <= 600 ? 20 : 22),
-        ),
-        actions: [],
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: size.width,
-          padding: EdgeInsets.symmetric(
-              horizontal: paddingHorizontal, vertical: paddingVertical),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AddScheduleRowStatus(
-                title: "Status",
-                textItem: leaveModel.status,
-              ),
-              AddScheduleRowNonArrow(
-                title: "date_text".tr(),
-                textItem: util
-                    .dateNumbertoCalendar(DateTime.parse(leaveModel.leaveDate)),
-              ),
-              AddScheduleRowNonArrow(
-                title: "apply_overtime_text2".tr(),
-                textItem: leaveModel.duration, //nanti get dari OvertimeModel
-              ),
-              datePeriod(context, size, leaveModel.duration, leaveModel),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "apply_overtime_text5".tr(),
-                style: TextStyle(
+        BlocListener<LeaveBloc, LeaveState>(
+            listener: (context, state) {
+              if (state is LeaveStateSuccess) {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => (ScreenListLeaves(
+                              permission: "leaves",
+                              animate: true,
+                            ))));
+              } else if (state is LeaveStateFail) {
+                Util().showToast(
+                    context: this.context,
+                    msg: "Something Wrong !",
+                    color: colorError,
+                    txtColor: colorBackground);
+              }
+            },
+            child: Container()),
+        Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            centerTitle: true,
+            backgroundColor: colorBackground,
+            leadingWidth: 70,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Center(
+                    child: Text(
+                      "back_text".tr(),
+                      style: TextStyle(
+                          fontSize: size.height <= 600 ? 14 : 16,
+                          color: colorPrimary,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  )),
+            ),
+            title: Text(
+              "Leaves Details",
+              style: TextStyle(
                   color: colorPrimary,
-                  fontSize: size.height < 569 ? 14 : 16,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.transparent),
-                    color: colorBackground,
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorNeutral1.withOpacity(1),
-                        blurRadius: 15,
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(5)),
-                child: TextFormField(
-                  readOnly: true,
-                  maxLines: 8,
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  controller: textReason2,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(20),
-                      hintText: "apply_overtime_text5".tr(),
-                      hintStyle: TextStyle(
-                        color: colorNeutral1,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              ),
-              leaveModel.status == "rejected"
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: size.height < 569 ? 15 : 20,
-                          ),
-                          /*Text(
-                            "apply_leaves_text18".tr(),
-                            style: TextStyle(
-                              color: colorPrimary,
-                              fontSize: size.height < 569 ? 14 : 16,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.transparent),
-                                color: colorBackground,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: colorNeutral1.withOpacity(1),
-                                    blurRadius: 15,
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(5)),
-                            child: TextFormField(
-                              readOnly: true,
-                              maxLines: 8,
-                              textInputAction: TextInputAction.done,
-                              keyboardType: TextInputType.text,
-                              onChanged: (val) {},
-                              controller: textReasonRejected,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(20),
-                                  hintText: "apply_leaves_text18".tr(),
-                                  hintStyle: TextStyle(
-                                    color: colorNeutral1,
-                                  ),
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height < 569 ? 15 : 20,
-                          ),*/
-                          LongButton(
-                            size: size,
-                            onClick: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ScreenContactSupervisor()));
-                            },
-                            title: "apply_leaves_text13".tr(),
-                            bgColor: colorPrimary,
-                            textColor: colorBackground,
-                          ),
-                          SizedBox(
-                            height: size.height < 569 ? 5 : 10,
-                          ),
-                          LongButtonOutline(
-                            size: size,
-                            onClick: () {},
-                            title: "apply_leaves_text14".tr(),
-                            bgColor: colorBackground,
-                            textColor: colorPrimary,
-                            outlineColor: colorPrimary,
-                          ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.height <= 600 ? 20 : 22),
+            ),
+            actions: [],
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              width: size.width,
+              padding: EdgeInsets.symmetric(
+                  horizontal: paddingHorizontal, vertical: paddingVertical),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AddScheduleRowStatus(
+                    title: "Status",
+                    textItem: leaveModel.status,
+                  ),
+                  AddScheduleRowNonArrow(
+                    title: "date_text".tr(),
+                    textItem: util.dateNumbertoCalendar(
+                        DateTime.parse(leaveModel.leaveDate)),
+                  ),
+                  AddScheduleRowNonArrow(
+                    title: "apply_overtime_text2".tr(),
+                    textItem:
+                        leaveModel.duration, //nanti get dari OvertimeModel
+                  ),
+                  datePeriod(context, size, leaveModel.duration, leaveModel),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    "apply_overtime_text5".tr(),
+                    style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: size.height < 569 ? 14 : 16,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.transparent),
+                        color: colorBackground,
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorNeutral1.withOpacity(1),
+                            blurRadius: 15,
+                          )
                         ],
-                      ),
-                    )
-                  : Container()
-            ],
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      readOnly: true,
+                      maxLines: 8,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
+                      onChanged: (val) {},
+                      controller: textReason2,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(20),
+                          hintText: "apply_overtime_text5".tr(),
+                          hintStyle: TextStyle(
+                            color: colorNeutral1,
+                          ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none),
+                    ),
+                  ),
+                  leaveModel.status == "rejected"
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: size.height < 569 ? 15 : 20,
+                              ),
+                              /*Text(
+                                "apply_leaves_text18".tr(),
+                                style: TextStyle(
+                                  color: colorPrimary,
+                                  fontSize: size.height < 569 ? 14 : 16,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.transparent),
+                                    color: colorBackground,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: colorNeutral1.withOpacity(1),
+                                        blurRadius: 15,
+                                      )
+                                    ],
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: TextFormField(
+                                  readOnly: true,
+                                  maxLines: 8,
+                                  textInputAction: TextInputAction.done,
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (val) {},
+                                  controller: textReasonRejected,
+                                  decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(20),
+                                      hintText: "apply_leaves_text18".tr(),
+                                      hintStyle: TextStyle(
+                                        color: colorNeutral1,
+                                      ),
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none),
+                                ),
+                              ),
+                              SizedBox(
+                                height: size.height < 569 ? 15 : 20,
+                              ),*/
+                              LongButton(
+                                size: size,
+                                onClick: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ScreenContactSupervisor(
+                                                data: "leaves",
+                                              )));
+                                },
+                                title: "apply_leaves_text13".tr(),
+                                bgColor: colorPrimary,
+                                textColor: colorBackground,
+                              ),
+                              SizedBox(
+                                height: size.height < 569 ? 5 : 10,
+                              ),
+                              LongButtonOutline(
+                                size: size,
+                                onClick: () {
+                                  resubmitLeaves(leaveModel);
+                                },
+                                title: "apply_leaves_text14".tr(),
+                                bgColor: colorBackground,
+                                textColor: colorPrimary,
+                                outlineColor: colorPrimary,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container()
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -423,5 +479,35 @@ class _LeavesDetailScreenState extends State<LeavesDetailScreen> {
         return Container();
         break;
     }
+  }
+
+  resubmitOvertime(OvertimeModel overtime) {
+    BlocProvider.of<OvertimeBloc>(context).add(AddOvertimeEvent(
+        date: overtime.date,
+        startTime: overtimeModel.startTime,
+        endTime: overtimeModel.endTime,
+        project: overtime.project,
+        reason: overtime.reason));
+  }
+
+  resubmitLeaves(LeaveModel leave) {
+    int idLeaveType = 0;
+    leaveType.forEach((element) {
+      if (element.typeName == leave.typeName) {
+        idLeaveType = element.id;
+      }
+    });
+    BlocProvider.of<LeaveBloc>(context)
+        .add(AddLeaveEvent(leaveModel: leave, leaveId: idLeaveType));
+  }
+
+  _gotoOvertimeList() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => (ScreenListLeaves(
+                  permission: "overtime",
+                  animate: true,
+                ))));
   }
 }

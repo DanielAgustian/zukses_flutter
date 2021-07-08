@@ -119,7 +119,7 @@ class ContactSupervisorServiceHTTP {
       );
 
       print("Get Contact Supervisor List label ${res.statusCode}");
-      print(res.body);
+
       if (res.statusCode >= 200 && res.statusCode < 300) {
         var responseJson = jsonDecode(res.body);
         return (responseJson['data'] as List)
@@ -131,6 +131,33 @@ class ContactSupervisorServiceHTTP {
     } catch (e) {
       print("Error : $e");
       return null;
+    }
+  }
+
+  Future<int> deleteContactSupervisor(String messageId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    try {
+      var res = await http.delete(
+        Uri.https(baseURI, 'api/dltContactSupervisor/$messageId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      print("Delete Contact Supervisor label ${res.statusCode}");
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return res.statusCode;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print("Error : $e");
+      return 0;
     }
   }
 }

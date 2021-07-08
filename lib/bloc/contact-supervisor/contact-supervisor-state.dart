@@ -12,7 +12,7 @@ abstract class ContactSupervisorState extends Equatable {
 
 class ContactSupervisorStateFailed extends ContactSupervisorState {}
 
-class ContactSupervisorGetListStateFailed extends ContactSupervisorState {}
+
 
 class ContactSupervisorAddStateSuccess extends ContactSupervisorState {
   ContactSupervisorAddStateSuccess();
@@ -23,7 +23,15 @@ class ContactSupervisorAddStateSuccess extends ContactSupervisorState {
     return 'Data : { }';
   }
 }
+class ContactSupervisorDeleteStateSuccess extends ContactSupervisorState {
+  ContactSupervisorDeleteStateSuccess();
+  List<Object> get props => [];
 
+  @override
+  String toString() {
+    return 'Data : { }';
+  }
+}
 class ContactSupervisorGetStateSuccess extends ContactSupervisorState {
   final List<ContactSupervisorModel> model;
   final ContactSupervisorModel lastConversation;
@@ -38,17 +46,7 @@ class ContactSupervisorGetStateSuccess extends ContactSupervisorState {
   }
 }
 
-class ContactSupervisorGetListStateSuccess extends ContactSupervisorState {
-  final List<ContactSupervisorListModel> model;
 
-  ContactSupervisorGetListStateSuccess(this.model);
-  List<Object> get props => [model];
-
-  @override
-  String toString() {
-    return 'Data : { employee List: $model }';
-  }
-}
 
 class ContactSupervisorAnswerStateSuccess extends ContactSupervisorState {
   ContactSupervisorAnswerStateSuccess();

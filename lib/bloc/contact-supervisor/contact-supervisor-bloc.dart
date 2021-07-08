@@ -21,8 +21,8 @@ class ContactSupervisorBloc
       yield* mapGetContactSupervisor(event);
     } else if (event is ContactSupervisorAnswerEvent) {
       yield* mapAnswerContactSupervisor(event);
-    } else if (event is ContactSupervisorGetListEvent) {
-      yield* mapGetContactSupervisorList(event);
+    } else if (event is ContactSupervisorDeleteEvent) {
+      yield* mapDeleteContactSupervisor(event);
     }
   }
 
@@ -31,6 +31,19 @@ class ContactSupervisorBloc
     yield ContactSupervisorStateLoading();
     var res = await _cspv.createContactSupervisor(
         event.message, event.typeId, event.about, event.receiverId);
+
+    if (res >= 200 && res < 300) {
+      yield ContactSupervisorAddStateSuccess();
+    } else {
+      yield ContactSupervisorStateFailed();
+    }
+  }
+
+  Stream<ContactSupervisorState> mapDeleteContactSupervisor(
+      ContactSupervisorDeleteEvent event) async* {
+    yield ContactSupervisorStateLoading();
+    var res = await _cspv.deleteContactSupervisor(
+        event.conversationId);
 
     if (res >= 200 && res < 300) {
       yield ContactSupervisorAddStateSuccess();
@@ -71,18 +84,6 @@ class ContactSupervisorBloc
           res, lastConversation, myLastConversation);
     } else {
       yield ContactSupervisorStateFailed();
-    }
-  }
-
-  Stream<ContactSupervisorState> mapGetContactSupervisorList(
-      ContactSupervisorGetListEvent event) async* {
-    yield ContactSupervisorStateLoading();
-    var res = await _cspv.getContactSupervisorList();
-
-    if (res != null) {
-      yield ContactSupervisorGetListStateSuccess(res);
-    } else {
-      yield ContactSupervisorGetListStateFailed();
     }
   }
 

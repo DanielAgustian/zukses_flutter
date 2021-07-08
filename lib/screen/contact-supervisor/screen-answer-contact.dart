@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/bloc/contact-supervisor/contact-supervisor-bloc.dart';
 import 'package:zukses_app_1/bloc/contact-supervisor/contact-supervisor-event.dart';
 import 'package:zukses_app_1/bloc/contact-supervisor/contact-supervisor-state.dart';
@@ -204,6 +205,7 @@ class _ScreenAnswerContact extends State<ScreenAnswerContact> {
           } else if (state is ContactSupervisorAnswerStateSuccess) {
             BlocProvider.of<ContactSupervisorBloc>(context)
                 .add(ContactSupervisorGetEvent(conversationId: messageId));
+            BlocProvider.of<ListCSVBloc>(context).add(ListCSVGetListEvent());
           }
           return Container(
             width: size.width,

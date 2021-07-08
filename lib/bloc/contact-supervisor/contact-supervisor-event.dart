@@ -19,8 +19,9 @@ class ContactSupervisorGetEvent extends ContactSupervisorEvent {
   List<Object> get props => [];
 }
 
-class ContactSupervisorGetListEvent extends ContactSupervisorEvent {
-  ContactSupervisorGetListEvent();
+class ContactSupervisorDeleteEvent extends ContactSupervisorEvent {
+  final String conversationId;
+  ContactSupervisorDeleteEvent({this.conversationId});
   List<Object> get props => [];
 }
 

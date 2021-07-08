@@ -82,22 +82,27 @@ class ContactSPVBox extends StatelessWidget {
                   children: [
                     Container(
                       width: 0.48 * size.width - 5,
+                      
                       child: Column(
                         children: [
                           Column(
+                            
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
                                 height: 10,
                               ),
-                              Text(
-                                title,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.height < 569 ? 14 : 16,
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  title,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.height < 569 ? 14 : 16,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                               SizedBox(
                                 height: 5,

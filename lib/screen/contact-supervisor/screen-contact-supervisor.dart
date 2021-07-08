@@ -11,8 +11,8 @@ import 'package:zukses_app_1/model/message-type-model.dart';
 import 'package:zukses_app_1/screen/contact-supervisor/screen-answer-contact.dart';
 
 class ScreenContactSupervisor extends StatefulWidget {
-  ScreenContactSupervisor({this.model});
-  final model;
+  ScreenContactSupervisor({this.data});
+  final String data;
   _ScreenContactSupervisor createState() => _ScreenContactSupervisor();
 }
 
@@ -22,7 +22,8 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
   MessageTypeModel messageItem = MessageTypeModel();
   AdminModel admin = AdminModel();
   bool emptyMessage = false;
-
+  List<MessageTypeModel> models = [];
+  List<AdminModel> admins = [];
   @override
   void initState() {
     super.initState();
@@ -34,12 +35,6 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ScreenAnswerContact()));
-        },
-      ),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -75,6 +70,16 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              BlocListener<ContactSupervisorBloc, ContactSupervisorState>(
+                listener: (context, state) {
+                  if (state is ContactSupervisorAddStateSuccess) {
+                    BlocProvider.of<ListCSVBloc>(context)
+                        .add(ListCSVGetListEvent());
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(),
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -167,13 +172,25 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
   }
 
   Widget dropdownMessageType(BuildContext context, Size size) {
-    return BlocBuilder<MessageTypeBloc, MessageTypeState>(
-        builder: (context, state) {
-      if (state is MessageTypeStateSuccess) {
-        MessageTypeModel modelFirst = state.models[0];
-        List<MessageTypeModel> models = state.models;
+    return BlocListener<MessageTypeBloc, MessageTypeState>(
+        listener: (context, state) {
+          if (state is MessageTypeStateSuccess) {
+            setState(() {
+              messageItem = state.models[0];
+            });
+            models = state.models;
 
-        return Container(
+            //return
+          }
+
+          // return Container(
+          //   width: size.width,
+          //   child: Center(
+          //     child: CircularProgressIndicator(),
+          //   ),
+          // );
+        },
+        child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.transparent),
               color: colorBackground,
@@ -203,12 +220,11 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
                   isEmpty: false,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<MessageTypeModel>(
-                      value: modelFirst,
+                      value: messageItem,
                       isDense: true,
                       onChanged: (MessageTypeModel newValue) {
                         setState(() {
-                          modelFirst = newValue;
-                          messageItem = modelFirst;
+                          messageItem = newValue;
                         });
                       },
                       items: models.map((MessageTypeModel value) {
@@ -221,81 +237,68 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
                   ),
                 );
               },
-            ));
-      }
-
-      return Container(
-        width: size.width,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    });
+            )));
   }
 
   Widget dropdownAdmin(BuildContext context, Size size) {
-    return BlocBuilder<GetAdminBloc, GetAdminState>(builder: (context, state) {
-      if (state is GetAdminStateSuccess) {
-        AdminModel modelFirst = state.model[0];
-        List<AdminModel> models = state.model;
-        return Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.transparent),
-              color: colorBackground,
-              boxShadow: [
-                BoxShadow(
-                  color: colorNeutral1.withOpacity(1),
-                  blurRadius: 15,
-                )
-              ],
-            ),
-            child: FormField<String>(
-              builder: (FormFieldState<String> state) {
-                return InputDecorator(
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(fontSize: 12),
-                    errorStyle: TextStyle(color: colorError, fontSize: 16.0),
-                    hintText: 'company_text8'.tr(),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide:
-                            BorderSide(color: Colors.transparent, width: 0)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide:
-                            BorderSide(color: Colors.transparent, width: 0)),
+    return BlocListener<GetAdminBloc, GetAdminState>(
+      listener: (context, state) {
+        if (state is GetAdminStateSuccess) {
+          setState(() {
+            admin = state.model[0];
+            admins = state.model;
+          });
+        }
+      },
+      child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.transparent),
+            color: colorBackground,
+            boxShadow: [
+              BoxShadow(
+                color: colorNeutral1.withOpacity(1),
+                blurRadius: 15,
+              )
+            ],
+          ),
+          child: FormField<String>(
+            builder: (FormFieldState<String> state) {
+              return InputDecorator(
+                decoration: InputDecoration(
+                  labelStyle: TextStyle(fontSize: 12),
+                  errorStyle: TextStyle(color: colorError, fontSize: 16.0),
+                  hintText: 'company_text8'.tr(),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide:
+                          BorderSide(color: Colors.transparent, width: 0)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide:
+                          BorderSide(color: Colors.transparent, width: 0)),
+                ),
+                isEmpty: false,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<AdminModel>(
+                    value: admin,
+                    isDense: true,
+                    onChanged: (AdminModel newValue) {
+                      setState(() {
+                        admin = newValue;
+                      });
+                    },
+                    items: admins.map((AdminModel value) {
+                      return DropdownMenuItem<AdminModel>(
+                        value: value,
+                        child: Text(value.name),
+                      );
+                    }).toList(),
                   ),
-                  isEmpty: false,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<AdminModel>(
-                      value: modelFirst,
-                      isDense: true,
-                      onChanged: (AdminModel newValue) {
-                        setState(() {
-                          modelFirst = newValue;
-                          admin = modelFirst;
-                        });
-                      },
-                      items: models.map((AdminModel value) {
-                        return DropdownMenuItem<AdminModel>(
-                          value: value,
-                          child: Text(value.name),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                );
-              },
-            ));
-      }
-
-      return Container(
-        width: size.width,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    });
+                ),
+              );
+            },
+          )),
+    );
   }
 
   void sentData() {
@@ -315,7 +318,7 @@ class _ScreenContactSupervisor extends State<ScreenContactSupervisor> {
               message: textMessage.text,
               receiverId: admin.id.toString(),
               typeId: messageItem.id.toString(),
-              about: "others"));
+              about: widget.data));
     }
   }
 }
