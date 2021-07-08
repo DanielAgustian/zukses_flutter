@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:zukses_app_1/model/admin-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 
 class CompanyServiceHTTP {
@@ -86,6 +87,30 @@ class CompanyServiceHTTP {
       return res.statusCode;
     } catch (e) {
       return 0;
+    }
+  }
+
+  Future<List<AdminModel>> fetchAdmin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    try {
+      var res = await http.get(
+        Uri.https(baseURI, "/api/user/admin"),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      // print(res.body);
+      print("Fetch Admin${res.statusCode}");
+      var responseJson = jsonDecode(res.body);
+      return (responseJson['getAdmin'] as List)
+          .map((p) => AdminModel.fromJson(p))
+          .toList();
+    } catch (e) {
+      print("Error: $e");
+      return null;
     }
   }
 }

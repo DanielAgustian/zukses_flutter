@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -51,11 +52,12 @@ class _MeetingScreenState extends State<MeetingScreen>
 
   bool loading = false;
   bool searching = false;
-
+  String myId = '';
   @override
   void initState() {
     super.initState();
     getMeetingReq();
+    _getMyID();
     BlocProvider.of<MeetingSearchBloc>(context)
         .add(LoadAllMeetingSearchEvent());
     _meetingBloc = BlocProvider.of<MeetingBloc>(context);
@@ -222,8 +224,8 @@ class _MeetingScreenState extends State<MeetingScreen>
             loading = false;
           } else if (state is MeetingStateSuccess) {
             loading = false;
-            _meetingBloc.add(GetAcceptedMeetingEvent(
-                month: _currentDate.month, year: _currentDate.year));
+            // _meetingBloc.add(GetAcceptedMeetingEvent(
+            //     month: _currentDate.month, year: _currentDate.year));
           } else if (state is MeetingStateLoading) {
             loading = true;
           }
@@ -356,7 +358,7 @@ class _MeetingScreenState extends State<MeetingScreen>
         ? scheduleModel.meetingEndTime
         : scheduleModel.date);
     bool showmore = false;
-
+    print("Id on Meeting:" + scheduleModel.makerId);
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
@@ -394,18 +396,11 @@ class _MeetingScreenState extends State<MeetingScreen>
                                     color: colorPrimary,
                                     fontWeight: FontWeight.bold)),
                           ),
-                          editable
+                          myId == scheduleModel.makerId
                               ? InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EditScheduleScreen(
-                                                    model: scheduleModel)));
-                                    setState(() {
-                                      isVisible = true;
-                                    });
+                                    //Edit place
+                                    _gotoEditScreen(scheduleModel);
                                   },
                                   child: Text(
                                     "edit_text".tr(),
@@ -647,6 +642,12 @@ class _MeetingScreenState extends State<MeetingScreen>
     _selectedDate = _currentDate;
   }
 
+  _getMyID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    myId = prefs.getString('myID');
+    
+  }
+
   void getMeetingReq() async {
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
   }
@@ -658,7 +659,22 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
     if (result != null) {
       if (result == true) {
-        getMeetingReq();
+        refreshData();
+      }
+    }
+  }
+
+  _gotoEditScreen(ScheduleModel scheduleModel) async {
+    setState(() {
+      isVisible = true;
+    });
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditScheduleScreen(model: scheduleModel)));
+    if (result != null) {
+      if (result == true) {
+        refreshData();
       }
     }
   }

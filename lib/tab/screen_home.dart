@@ -26,6 +26,7 @@ import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/screen/contact-supervisor/screen-notification-list.dart';
 import 'package:zukses_app_1/screen/profile/user-settings.dart';
 import 'package:zukses_app_1/screen/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
@@ -671,7 +672,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         itemCount: state.team.length,
                         itemBuilder: (context, index) => index >= 9
                             ? UserAvatar(
-                                value: state.team[index].imgUrl,
+                                value: "https://api-zukses.yokesen.com/" +
+                                    state.team[index].imgUrl,
                                 status: state.team[index].late,
                               )
                             : UserAvatar(
@@ -793,8 +795,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    UserSettings(user: state.userModel),
+                                builder: (context) => ScreenNotificationList(),
                               ));
                         },
                         child: Container(

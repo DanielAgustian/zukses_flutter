@@ -232,7 +232,7 @@
     "setting_text1": "Pengaturan",  
     "setting_text2": "Bahasa",  
     "setting_text3": "Terima Notifikasi",  
-    "setting_text4": "Kirim Umpan Balik",  
+    "setting_text4": "Hubungi Supervisor",  
     "setting_text5": "Kami terbuka dengan setiap saran",  
     "setting_text6": "Keluar",  
     "setting_text7": "Keluar dari akunmu",  
@@ -369,5 +369,19 @@
     "nov_min_text": "Nov", 
     "dec_min_text": "Des",
 
-    "dialog_text1": "Perizinan cuti anda sukses"
+    "dialog_text1": "Perizinan cuti anda sukses",
+    
+    "contact_spv_1": "Hubungi Supervisor",
+    "contact_spv_2": "Tulis Pesanmu Disini",
+    "contact_spv_3": "Tulis pertanyaan yang ingin kamu tanyakan",
+    "contact_spv_4": "Jenis Pesan",
+    "contact_spv_5": "Kepada Admin: ",
+    "contact_spv_6": "Kirim",
+    "contact_spv_7": "Response",
+    "contact_spv_8": "Simpan",
+    "contact_spv_9": "Pertanyaan",
+    "contact_spv_10": "Jawaban",
+    "contact_spv_11": "Telah Dijawab",
+    "contact_spv_12": "Menunggu",
+    "contact_spv_13": "Dibaca"
 }

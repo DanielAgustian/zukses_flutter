@@ -34,7 +34,8 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
         event.leaveModel.leaveDate,
         event.leaveModel.reason,
         event.leaveModel.startTime,
-        event.leaveModel.endTime);
+        event.leaveModel.endTime,
+        event.leaveModel.leaveDateEnd);
     print("MapCreateLeave Here");
     print("Delete leave Status" + res.toString());
     // directly throw into success load or fail add

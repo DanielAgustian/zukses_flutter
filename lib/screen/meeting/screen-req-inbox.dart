@@ -669,6 +669,23 @@ class _RequestInboxState extends State<RequestInbox>
                           },
                         ),
                       ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      LongButton(
+                        size: size,
+                        bgColor: colorPrimary,
+                        textColor: colorBackground,
+                        title: "accept_text".tr(),
+                        onClick: () {
+                          BlocProvider.of<MeetingBloc>(context).add(
+                              PostAcceptanceMeetingEvent(
+                                  meetingId: model.meetingID,
+                                  accept: "1",
+                                  reason: ""));
+                          Navigator.pop(context);
+                        },
+                      ),
                     ],
                   ),
                 );

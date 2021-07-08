@@ -187,9 +187,7 @@ class _EditScheduleScreenState extends State<EditScheduleScreen>
         body: BlocListener<MeetingBloc, MeetingState>(
           listener: (context, state) {
             if (state is MeetingStateUpdateSuccess) {
-              //Navigator.pop(context, true);
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ScreenTab(index: 3)));
+              Navigator.pop(context, true);
             } else if (state is MeetingStateUpdateFailed) {
               Util().showToast(
                   msg: "Something Wrong !",

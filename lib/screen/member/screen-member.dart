@@ -106,7 +106,8 @@ class _MemberScreenState extends State<MemberScreen> {
                               UserAvatar(
                                 dotSize: 10,
                                 status: teams[index].late,
-                                value: teams[index].imgUrl,
+                                value: "https://api-zukses.yokesen.com/" +
+                                    teams[index].imgUrl,
                               ),
                               Text(
                                 teams[index].name,

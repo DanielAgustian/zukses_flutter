@@ -597,6 +597,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
           reason: textReason.text);
     } else if (repeat == items[1]) {
       //Duration: Multiple Day
+      print("Date End: " + endDate.toString());
       sentLeave = LeaveModel(
           duration: repeat,
           leaveDate: Util().yearFormat(startDate),

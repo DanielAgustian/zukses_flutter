@@ -11,6 +11,7 @@ import 'package:zukses_app_1/component/user-profile/textformat-settings.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/main.dart';
 import 'package:zukses_app_1/model/user-model.dart';
+import 'package:zukses_app_1/screen/contact-supervisor/screen-contact-supervisor-inbox.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class UserSettings extends StatefulWidget {
@@ -197,10 +198,15 @@ class _UserSettingsScreen extends State<UserSettings> {
                           ),
                         ),
                       ),
-                      TextFormatSettings2(
-                          size: size,
-                          title: "setting_text4".tr(),
-                          detail: "setting_text5".tr()),
+                      InkWell(
+                        onTap: () {
+                          gotoContactSPVList();
+                        },
+                        child: TextFormatSettings2(
+                            size: size,
+                            title: "setting_text4".tr(),
+                            detail: "setting_text5".tr()),
+                      ),
                       InkWell(
                         onTap: () {
                           showDialog(
@@ -296,5 +302,12 @@ class _UserSettingsScreen extends State<UserSettings> {
             }),
       ],
     );
+  }
+
+  gotoContactSPVList() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ScreenContactSupervisorInbox()));
   }
 }

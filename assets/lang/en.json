@@ -232,7 +232,7 @@
     "setting_text1": "Settings",  
     "setting_text2": "Language",  
     "setting_text3": "Receive Notification",  
-    "setting_text4": "Send Feedback",  
+    "setting_text4": "Contact Supervisor",  
     "setting_text5": "We are pleased with your suggestions",  
     "setting_text6": "Log out",  
     "setting_text7": "log out from your account",  
@@ -369,5 +369,19 @@
     "nov_min_text": "Nov", 
     "dec_min_text": "Dec",
 
-    "dialog_text1": "You successfully applied for leave"
+    "dialog_text1": "You successfully applied for leave",
+
+    "contact_spv_1": "Contact Supervisor",
+    "contact_spv_2": "Write Your Message Here",
+    "contact_spv_3": "Tell the question you want to ask",
+    "contact_spv_4": "Message Type",
+    "contact_spv_5": "To Admin: ",
+    "contact_spv_6": "Send",
+    "contact_spv_7": "Response",
+    "contact_spv_8": "Save",
+    "contact_spv_9": "Question",
+    "contact_spv_10": "Answer",
+    "contact_spv_11": "Answered",
+    "contact_spv_12": "Pending",
+    "contact_spv_13": "Read"
 }

@@ -23,6 +23,7 @@ class LeaveServiceHTTP {
       'endTime': endTime == null ? "" : endTime,
       'leaveDateEnd': leaveDateEnd == null ? "" : leaveDateEnd
     };
+
     final response = await http.post(
       Uri.https(baseURI, '/api/leave'),
       headers: <String, String>{
@@ -40,6 +41,7 @@ class LeaveServiceHTTP {
       //print("response.body:" + response.body);
       return response.statusCode;
     } else {
+      print("Failed to Create Leave");
       return null;
     }
   }
@@ -65,8 +67,8 @@ class LeaveServiceHTTP {
           .map((p) => LeaveModel.fromJson(p))
           .toList();
     } else {
-      print("Failed TO Load Alubm");
-      throw Exception('Failed to load album');
+      print("Failed to Get Leave");
+      return null;
     }
   }
 }

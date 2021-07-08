@@ -223,7 +223,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         body: BlocListener<MeetingBloc, MeetingState>(
           listener: (context, state) {
             if (state is MeetingStateSuccess) {
+              
               Navigator.pop(context, true);
+              
             } else if (state is MeetingStateFail) {
               setState(() {
                 loadingAdd = false;

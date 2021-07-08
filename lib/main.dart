@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/bloc/notif-nav-bar/notif-nav-bloc.dart';
 import 'package:zukses_app_1/component/button/button-long-outlined.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/repository/auth-repo.dart';
@@ -161,6 +162,12 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProjectBookmarkBloc>(
           create: (context) => ProjectBookmarkBloc(),
         ),
+        BlocProvider<NotifNavBloc>(create: (context) => NotifNavBloc()),
+        BlocProvider<MessageTypeBloc>(create: (context) => MessageTypeBloc()),
+        BlocProvider<GetAdminBloc>(create: (context) => GetAdminBloc()),
+        BlocProvider<ContactSupervisorBloc>(
+            create: (context) => ContactSupervisorBloc()),
+        BlocProvider<NotifAllBloc>(create: (context) => NotifAllBloc()),
       ],
       child: MaterialApp(
         localizationsDelegates: context.localizationDelegates,

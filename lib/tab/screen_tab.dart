@@ -6,6 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/bloc/notif-nav-bar/notif-nav-bloc.dart';
+import 'package:zukses_app_1/bloc/notif-nav-bar/notif-nav-event.dart';
+import 'package:zukses_app_1/bloc/notif-nav-bar/notif-nav-state.dart';
 import 'package:zukses_app_1/model/fb_model_sender.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
@@ -29,12 +32,14 @@ class ScreenTab extends StatefulWidget {
       this.index,
       this.link,
       this.projectId,
-      this.meetingId})
+      this.meetingId,
+      this.gotoMeeting})
       : super(key: key);
   final String title;
   final int index;
   final Uri link;
   final String projectId;
+  final bool gotoMeeting;
   final String meetingId;
   @override
   _ScreenTab createState() => _ScreenTab();
@@ -43,7 +48,7 @@ class ScreenTab extends StatefulWidget {
 class _ScreenTab extends State<ScreenTab> {
   List<Widget> screenList = [];
   int _currentScreenIndex;
-
+  int notifTask = 0, notifSchedule = 0;
   @override
   void initState() {
     super.initState();
@@ -60,6 +65,9 @@ class _ScreenTab extends State<ScreenTab> {
 
     // Init data user and pass it to home via bloc listener
     authenticateUser();
+
+    //Function for get Notif badge.
+    getNotifBadge();
   }
 
   Widget build(BuildContext context) {
@@ -77,10 +85,25 @@ class _ScreenTab extends State<ScreenTab> {
           }
         }
       }
-      return Scaffold(
-          backgroundColor: colorBackground,
-          body: screenList[_currentScreenIndex],
-          bottomNavigationBar: bottomNavbar(user));
+      return Stack(
+        children: [
+          BlocListener<NotifNavBloc, NotifNavState>(
+            listener: (context, state) {
+              if (state is NotifNavStateSuccess) {
+                setState(() {
+                  notifTask = state.model.taskUnfinished;
+                  notifSchedule = state.model.meetingToday;
+                });
+              }
+            },
+            child: Container(),
+          ),
+          Scaffold(
+              backgroundColor: colorBackground,
+              body: screenList[_currentScreenIndex],
+              bottomNavigationBar: bottomNavbar(user)),
+        ],
+      );
     });
   }
 
@@ -122,7 +145,7 @@ class _ScreenTab extends State<ScreenTab> {
                   padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
                   child: FaIcon(FontAwesomeIcons.clipboardList),
                 ),
-                //badgeNotification(count: "100+")
+                badgeNotification(count: notifTask)
               ],
             ),
             label: 'tab_text3'.tr()),
@@ -133,7 +156,7 @@ class _ScreenTab extends State<ScreenTab> {
                   padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
                   child: FaIcon(FontAwesomeIcons.solidCalendar),
                 ),
-                //badgeNotification(count: "99")
+                badgeNotification(count: notifSchedule)
               ],
             ),
             label: 'tab_text4'.tr()),
@@ -148,7 +171,10 @@ class _ScreenTab extends State<ScreenTab> {
     );
   }
 
-  Widget badgeNotification({String count}) {
+  Widget badgeNotification({int count}) {
+    if (count < 1) {
+      return Positioned(right: 0, top: 0, child: Container());
+    }
     return Positioned(
       right: 0,
       top: 0,
@@ -158,19 +184,13 @@ class _ScreenTab extends State<ScreenTab> {
           color: colorError,
           borderRadius: BorderRadius.circular(10),
         ),
-        child:
-            Text(count, style: TextStyle(color: colorBackground, fontSize: 10)),
+        child: Text("$count",
+            style: TextStyle(color: colorBackground, fontSize: 10)),
       ),
     );
   }
 
   void initializationScreen() {
-    if (widget.index != null) {
-      _currentScreenIndex = widget.index;
-    } else {
-      _currentScreenIndex = 0;
-    }
-
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
     if (widget.projectId != null) {
@@ -186,6 +206,18 @@ class _ScreenTab extends State<ScreenTab> {
       ));
     } else {
       screenList.add(MeetingScreen());
+    }
+
+    if (widget.index != null) {
+      _currentScreenIndex = widget.index;
+    } else {
+      _currentScreenIndex = 0;
+    }
+
+    if (widget.gotoMeeting != null) {
+      if (widget.gotoMeeting) {
+        _currentScreenIndex = screenList.length - 2;
+      }
     }
   }
 
@@ -237,6 +269,10 @@ class _ScreenTab extends State<ScreenTab> {
     setState(() {
       _currentScreenIndex = index;
     });
+  }
+
+  void getNotifBadge() {
+    BlocProvider.of<NotifNavBloc>(context).add(GetNotifNavEvent());
   }
 
   void getUserProfile() async {

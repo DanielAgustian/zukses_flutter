@@ -5,7 +5,7 @@ class ScheduleModel {
   DateTime date, meetingEndTime;
   List<UserModel> members;
   List<String> userID;
-
+  String makerId;
   //String status;
   ScheduleModel(
       {this.meetingID,
@@ -16,7 +16,8 @@ class ScheduleModel {
       this.meetingEndTime,
       this.userID,
       this.accepted,
-      this.reason});
+      this.reason,
+      this.makerId});
 
   Map<String, dynamic> toJson(ScheduleModel schedule) {
     var map = Map<String, dynamic>();
@@ -30,6 +31,7 @@ class ScheduleModel {
     map["accepted"] = schedule.accepted;
     map["rejectedReason"] = schedule.reason;
     map["members"] = schedule.members;
+
     return map;
   }
 
@@ -41,7 +43,6 @@ class ScheduleModel {
     this.description = map["description"];
     this.date = DateTime.parse(map["date"]);
 
-  
     if (map["meetingEndTime"] != null) {
       this.meetingEndTime = DateTime.parse(map["meetingEndTime"]);
     }
@@ -49,7 +50,7 @@ class ScheduleModel {
     this.userID = map["userID"];
     this.accepted = map["accepted"].toString();
     this.reason = map["rejectedReason"];
-
+    this.makerId = map["user_id"].toString();
     this.members = _convertMembers(map["members"]); //List<UserModel>
   }
   List<UserModel> _convertMembers(List membersMap) {
