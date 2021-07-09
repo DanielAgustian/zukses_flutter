@@ -24,8 +24,8 @@ class ListCSVGetListStateSuccess extends ListCSVState {
   }
 }
 
-class ListCSVAnswerStateSuccess extends ListCSVState {
-  ListCSVAnswerStateSuccess();
+class ListCSVDeleteStateSuccess extends ListCSVState {
+  ListCSVDeleteStateSuccess();
   List<Object> get props => [];
 
   @override
@@ -33,5 +33,5 @@ class ListCSVAnswerStateSuccess extends ListCSVState {
     return 'Data : { employee List:  }';
   }
 }
-
+class ListCSVDeleteStateFailed extends ListCSVState {}
 class ListCSVStateLoading extends ListCSVState {}

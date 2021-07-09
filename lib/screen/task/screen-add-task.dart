@@ -251,9 +251,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
                       waitingLabel = false;
                     });
                   } else if (state is LabelTaskStateFailLoad) {
-                    setState(() {
-                      //freeLabel = true;
-                    });
+                   
                     labelList.clear();
                     labelList.add("Click Here for Label");
                     labelList.add("+ New Label");

@@ -63,8 +63,18 @@ class _ScreenAnswerContact extends State<ScreenAnswerContact> {
                 ))),
           ),
         ),
-        body: BlocBuilder<ContactSupervisorBloc, ContactSupervisorState>(
-            builder: (context, state) {
+        body: BlocConsumer<ContactSupervisorBloc, ContactSupervisorState>(
+            listener: (context, state) {
+          if (state is ContactSupervisorAnswerStateSuccess) {
+            setState(() {
+              response = false;
+              textMessage.text = "";
+            });
+            BlocProvider.of<ContactSupervisorBloc>(context)
+                .add(ContactSupervisorGetEvent(conversationId: messageId));
+            BlocProvider.of<ListCSVBloc>(context).add(ListCSVGetListEvent());
+          }
+        }, builder: (context, state) {
           if (state is ContactSupervisorGetStateSuccess) {
             List<ContactSupervisorModel> model = state.model;
             // print("myID in blocbuilder" + myId);
@@ -202,10 +212,6 @@ class _ScreenAnswerContact extends State<ScreenAnswerContact> {
                 ),
               ),
             );
-          } else if (state is ContactSupervisorAnswerStateSuccess) {
-            BlocProvider.of<ContactSupervisorBloc>(context)
-                .add(ContactSupervisorGetEvent(conversationId: messageId));
-            BlocProvider.of<ListCSVBloc>(context).add(ListCSVGetListEvent());
           }
           return Container(
             width: size.width,

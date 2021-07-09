@@ -16,6 +16,8 @@ class ListCSVBloc extends Bloc<ListCSVEvent, ListCSVState> {
   Stream<ListCSVState> mapEventToState(ListCSVEvent event) async* {
     if (event is ListCSVGetListEvent) {
       yield* mapGetListCSVList(event);
+    } else if (event is ListCSVDeleteEvent) {
+      yield* mapDeleteListCSV(event);
     }
   }
 
@@ -27,6 +29,17 @@ class ListCSVBloc extends Bloc<ListCSVEvent, ListCSVState> {
       yield ListCSVGetListStateSuccess(res);
     } else {
       yield ListCSVGetListStateFailed();
+    }
+  }
+
+  Stream<ListCSVState> mapDeleteListCSV(ListCSVDeleteEvent event) async* {
+    yield ListCSVStateLoading();
+    var res = await _cspv.deleteContactSupervisor(event.conversationId);
+
+    if (res >= 200 && res < 300) {
+      yield ListCSVDeleteStateSuccess();
+    } else {
+      yield ListCSVDeleteStateFailed();
     }
   }
 

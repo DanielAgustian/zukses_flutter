@@ -98,17 +98,6 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SmallButton(
-                        size: 120,
-                        title: "continue_text".tr(),
-                        bgColor: colorPrimary,
-                        textColor: colorBackground,
-                        onClick: () {
-                          // pushtoScreenTab();
-                          clockIn();
-                        },
-                      ),
-                      SizedBox(width: 10),
                       InkWell(
                         onTap: () {
                           retakeButton();
@@ -136,7 +125,18 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
                             ),
                           ),
                         ),
-                      )
+                      ),
+                      SizedBox(width: 10),
+                      SmallButton(
+                        size: 120,
+                        title: "continue_text".tr(),
+                        bgColor: colorPrimary,
+                        textColor: colorBackground,
+                        onClick: () {
+                          // FOr Clock in
+                          clockIn();
+                        },
+                      ),
                     ],
                   ),
                 ],

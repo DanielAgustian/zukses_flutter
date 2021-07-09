@@ -69,10 +69,9 @@ class TaskServicesHTTP {
           'labelId': task.label,
           'notes': task.notes
         }));
-    //print(res.body);
 
     print("Add task ${res.statusCode}");
-
+    print(res.body);
     if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

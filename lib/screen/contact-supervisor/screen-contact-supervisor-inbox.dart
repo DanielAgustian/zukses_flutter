@@ -179,6 +179,10 @@ class _ScreenContactSupervisorInbox extends State<ScreenContactSupervisorInbox>
                             ],
                           ),
                         );
+                      } else if (state is ListCSVDeleteStateSuccess) {
+                        getList();
+                      } else if (state is ListCSVDeleteStateFailed) {
+                        getList();
                       }
                       return Container();
                     }))),
@@ -251,10 +255,10 @@ class _ScreenContactSupervisorInbox extends State<ScreenContactSupervisorInbox>
   }
 
   deleteData(String id) {
-    BlocProvider.of<ContactSupervisorBloc>(context)
-        .add(ContactSupervisorDeleteEvent(conversationId: id));
+    BlocProvider.of<ListCSVBloc>(context)
+        .add(ListCSVDeleteEvent(conversationId: id));
     Navigator.pop(context);
-    getList();
+    //getList();
   }
 
   gotoAnswer(String messageId) {
