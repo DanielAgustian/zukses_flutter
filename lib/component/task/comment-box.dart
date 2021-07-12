@@ -128,7 +128,7 @@ class HistoryBox extends StatelessWidget {
 class PostBox extends StatelessWidget {
   PostBox(
       {Key key,
-      
+      this.pp = true,
       this.hint = "Add a comment.. ",
       this.date,
       @required this.onPost,
@@ -136,7 +136,7 @@ class PostBox extends StatelessWidget {
       @required this.textEditController})
       : super(key: key);
   final String hint;
- 
+  final bool pp;
   final DateTime date;
   final Size size;
   final TextEditingController textEditController;
@@ -149,8 +149,9 @@ class PostBox extends StatelessWidget {
         Container(
           width: 0.1 * size.width,
           height: 0.1 * size.width,
-          decoration:
-              BoxDecoration(shape: BoxShape.circle, color: colorNeutral2),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: pp ? colorNeutral2 : colorBackground),
         ),
         Container(
           width: 0.77 * size.width,

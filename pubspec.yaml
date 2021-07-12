@@ -57,7 +57,7 @@ dependencies:
   flutter_facebook_login:
   flutter_local_notifications:
   time_picker_widget:
-
+  file_picker:
 dev_dependencies:
   flutter_test:
     sdk: flutter

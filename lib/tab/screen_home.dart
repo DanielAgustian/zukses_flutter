@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // checkStatusClock();
     _getMeetingToday();
     _getMeetingRequest();
-
+    _getNotifAll();
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
 
@@ -790,23 +790,54 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ScreenNotificationList(),
-                              ));
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          child: FaIcon(
-                            FontAwesomeIcons.solidBell,
-                            size: size.height < 569 ? 18 : 25,
-                            color: colorPrimary,
-                          ),
-                        ),
-                      ),
+                      BlocBuilder<NotifAllBloc, NotifAllState>(
+                          builder: (context, state) {
+                        if (state is NotifAllStateSuccessLoad) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScreenNotificationList(),
+                                  ));
+                            },
+                            child: Stack(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.solidBell,
+                                    size: size.height < 569 ? 18 : 25,
+                                    color: colorPrimary,
+                                  ),
+                                ),
+                                badgeNotification(count: state.models.length)
+                              ],
+                            ),
+                          );
+                        } else if (state is NotifAllStateFailed) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScreenNotificationList(),
+                                  ));
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              child: FaIcon(
+                                FontAwesomeIcons.solidBell,
+                                size: size.height < 569 ? 18 : 25,
+                                color: colorPrimary,
+                              ),
+                            ),
+                          );
+                        }
+                        return Container();
+                      }),
                       SizedBox(
                         width: size.height < 569 ? 10 : 15,
                       ),
@@ -1159,6 +1190,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _getTaskHighPriority();
     _getMeetingToday();
     _getMeetingRequest();
+    _getNotifAll();
     checkStatusClock();
   }
 
@@ -1271,6 +1303,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         .add(LoadHighPriorityEvent("high"));
   }
 
+  void _getNotifAll() async {
+    BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
+  }
+
   pushToWaitRegis(
       {@required String companyID, @required int companyAcceptance}) async {
     if (companyID != "" && companyAcceptance == 0) {
@@ -1358,5 +1394,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     } else {
       return 86400;
     }
+  }
+
+  Widget badgeNotification({int count}) {
+    if (count < 1) {
+      return Positioned(right: 0, top: 0, child: Container());
+    }
+    return Positioned(
+      right: 0,
+      top: 0,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        decoration: BoxDecoration(
+          color: colorError,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text("$count",
+            style: TextStyle(color: colorBackground, fontSize: 10)),
+      ),
+    );
   }
 }

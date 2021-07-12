@@ -20,12 +20,7 @@ import 'package:zukses_app_1/component/task/list-task-detail2.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:easy_localization/easy_localization.dart';
-
-/*class InnerList {
-  final String name;
-  List<String> children;
-  InnerList({this.name, this.children});
-}*/
+import 'package:file_picker/file_picker.dart';
 
 // ignore: must_be_immutable
 class TaskDetailScreen extends StatefulWidget {
@@ -877,13 +872,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
           itemBuilder: (context, index) {
             if (index == state.listCheckList.length) {
               return Container(
-                alignment: Alignment.centerLeft,
-                child: CheckboxListTile(
-                    value: checkBoxClick,
-                    onChanged: _onCheckBoxClick,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: _textBoxCheck(context, clickTask.idTask)),
-              );
+                  alignment: Alignment.centerLeft,
+                  child: _textBoxCheck(context, clickTask.idTask)
+                  // CheckboxListTile(
+                  //     value: checkBoxClick,
+                  //     onChanged: _onCheckBoxClick,
+                  //     controlAffinity: ListTileControlAffinity.leading,
+                  //     title: _textBoxCheck(context, clickTask.idTask)),
+                  );
             }
             return Container(
               alignment: Alignment.centerLeft,
@@ -922,13 +918,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         );
       } else if (state is CLTStateGetFailLoad) {
         return Container(
-          alignment: Alignment.centerLeft,
-          child: CheckboxListTile(
-              value: checkBoxClick,
-              onChanged: _onCheckBoxClick,
-              controlAffinity: ListTileControlAffinity.leading,
-              title: _textBoxCheck(context, clickTask.idTask)),
-        );
+            alignment: Alignment.centerLeft,
+            child: _textBoxCheck(context, clickTask.idTask)
+            // CheckboxListTile(
+            //     value: checkBoxClick,
+            //     onChanged: _onCheckBoxClick,
+            //     controlAffinity: ListTileControlAffinity.leading,
+            //     title: _textBoxCheck(context, clickTask.idTask)),
+            );
       } else if (state is CLTStateAddSuccessLoad) {
         BlocProvider.of<CLTBloc>(context)
             .add(LoadAllCLTEvent(clickTask.idTask.toString()));
@@ -985,46 +982,61 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   Widget _textBoxCheck(context, int taskId) {
-    return Container(
-      width: 0.5 * size.width,
-      decoration: BoxDecoration(
-        boxShadow: [boxShadowStandard],
-        color: colorBackground,
-        border: Border.all(width: 1, color: colorPrimary),
-      ),
-      child: TextField(
-        style: TextStyle(fontSize: 16, height: 1.0),
-        textInputAction: TextInputAction.next,
-        onChanged: (val) {},
-        controller: textAddCheckBox,
-        decoration: InputDecoration(
-            isDense: true,
-            contentPadding: EdgeInsets.only(top: 15, left: 10),
-            hintText: "task_text17".tr(),
-            hintStyle: TextStyle(
-              color: colorNeutral1,
-            ),
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            suffixIcon: TextButton(
-                child: Text(
-                  "Post",
-                  style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: size.height < 569 ? 14 : 16,
-                      fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  if (textAddCheckBox.text != "") {
-                    BlocProvider.of<CLTBloc>(context).add(
-                        AddCLTEvent(taskId.toString(), textAddCheckBox.text));
-                    setState(() {
-                      textAddCheckBox.text = "";
-                    });
-                  }
-                })),
-      ),
-    );
+    return PostBox(
+        pp: false,
+        hint: "Add a checklist ...",
+        onPost: () {
+          if (textAddCheckBox.text != "") {
+            BlocProvider.of<CLTBloc>(context)
+                .add(AddCLTEvent(taskId.toString(), textAddCheckBox.text));
+            setState(() {
+              textAddCheckBox.text = "";
+            });
+          }
+        },
+        size: size,
+        textEditController: textAddCheckBox);
+
+    // Container(
+    //   width: 0.5 * size.width,
+    //   decoration: BoxDecoration(
+    //     boxShadow: [boxShadowStandard],
+    //     color: colorBackground,
+    //     border: Border.all(width: 1, color: colorPrimary),
+    //   ),
+    //   child: TextField(
+    //     style: TextStyle(fontSize: 16, height: 1.0),
+    //     textInputAction: TextInputAction.next,
+    //     onChanged: (val) {},
+    //     controller: textAddCheckBox,
+    //     decoration: InputDecoration(
+    //         isDense: true,
+    //         contentPadding: EdgeInsets.only(top: 15, left: 10),
+    //         hintText: "task_text17".tr(),
+    //         hintStyle: TextStyle(
+    //           color: colorNeutral1,
+    //         ),
+    //         enabledBorder: InputBorder.none,
+    //         focusedBorder: InputBorder.none,
+    //         suffixIcon: TextButton(
+    //             child: Text(
+    //               "Post",
+    //               style: TextStyle(
+    //                   color: colorPrimary,
+    //                   fontSize: size.height < 569 ? 14 : 16,
+    //                   fontWeight: FontWeight.bold),
+    //             ),
+    //             onPressed: () {
+    //               if (textAddCheckBox.text != "") {
+    //                 BlocProvider.of<CLTBloc>(context).add(
+    //                     AddCLTEvent(taskId.toString(), textAddCheckBox.text));
+    //                 setState(() {
+    //                   textAddCheckBox.text = "";
+    //                 });
+    //               }
+    //             })),
+    //   ),
+    // );
   }
 
   //TO make alertdialog for picture preview
@@ -1255,6 +1267,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                     },
                   ),
                   new ListTile(
+                    leading: new Icon(Icons.file_present),
+                    title: new Text('Other Files'),
+                    onTap: () {
+                      _filePicker();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
                     leading: new Icon(Icons.cancel),
                     title: new Text('cancel_text').tr(),
                     onTap: () {
@@ -1268,9 +1288,19 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         });
   }
 
+  _filePicker() async {
+    FilePickerResult result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc'],
+    );
+    if (result != null) {
+      File file = File(result.files.single.path);
+      _uploadAttachment(file);
+    }
+  }
+
   _imagePicker() async {
     //ImagePicker for gallery
-
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
@@ -1279,7 +1309,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         print(data);
         _uploadAttachment(File(data));
       });
-    } else {}
+    }
   }
 
   _imagePickerCamera() async {
@@ -1327,7 +1357,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
     dataIndex(outerIndex);
     return DragAndDropList(
       header: Container(
-        width: size.width * 0.8,
+        width: size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.vertical(top: Radius.circular(7.0)),
           color: colorPrimary,

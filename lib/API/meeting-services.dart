@@ -125,17 +125,16 @@ class MeetingServicesHTTP {
     );
 
     print("Delete schedule ${response.statusCode}");
-
+    
     if (response.statusCode >= 200 && response.statusCode < 300) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-
       return response.statusCode;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       // throw Exception('Failed to login');
-      print("Data Error");
+      print("Delete Error");
       return null;
     }
   }

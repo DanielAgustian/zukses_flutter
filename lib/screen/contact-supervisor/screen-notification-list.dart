@@ -18,7 +18,7 @@ class ScreenNotificationList extends StatefulWidget {
 class _ScreenNotificationList extends State<ScreenNotificationList> {
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
   }

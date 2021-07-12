@@ -225,6 +225,8 @@ class TaskServicesHTTP {
         body: jsonEncode(
             <String, dynamic>{'taskId': taskId, 'image': base64Image}));
 
+    print('Upload Attachment' + res.statusCode.toString());
+    print(res.body);
     if (res.statusCode >= 200 && res.statusCode < 300) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/component/button/button-long-outlined.dart';
+import 'package:zukses_app_1/component/button/button-small-outlined.dart';
+import 'package:zukses_app_1/component/button/button-small.dart';
 import 'package:zukses_app_1/component/schedule/schedule-item-request.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
@@ -32,7 +35,7 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen>
     with TickerProviderStateMixin {
   DateTime _selectedDate;
-
+  final _textReasonReject = TextEditingController();
   List<ScheduleModel> meetings;
   final textSearch = TextEditingController();
 
@@ -224,8 +227,8 @@ class _MeetingScreenState extends State<MeetingScreen>
             loading = false;
           } else if (state is MeetingStateSuccess) {
             loading = false;
-            // _meetingBloc.add(GetAcceptedMeetingEvent(
-            //     month: _currentDate.month, year: _currentDate.year));
+            _meetingBloc.add(GetAcceptedMeetingEvent(
+                month: _currentDate.month, year: _currentDate.year));
           } else if (state is MeetingStateLoading) {
             loading = true;
           }
@@ -506,6 +509,20 @@ class _MeetingScreenState extends State<MeetingScreen>
                                         schedule: scheduleModel, index: index);
                                   }),
                             ),
+                      LongButtonOutline(
+                        outlineColor: colorError,
+                        size: size,
+                        bgColor: colorBackground,
+                        textColor: colorError,
+                        title: "reject_text".tr(),
+                        onClick: () {
+                          Navigator.pop(context);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  _dialog(context, model: scheduleModel));
+                        },
+                      )
                     ],
                   ),
                 );
@@ -620,6 +637,104 @@ class _MeetingScreenState extends State<MeetingScreen>
     );
   }
 
+  Widget _dialog(BuildContext context, {ScheduleModel model}) {
+    bool reasonReject = false;
+    return AlertDialog(
+      //title: const Text('Popup example'),
+      content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Center(
+              child: Text(
+                "schedule_text11".tr(),
+                style: TextStyle(
+                    color: colorPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: colorBackground,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorNeutral2.withOpacity(0.7),
+                      spreadRadius: 4,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                  border: Border.all(
+                      color: reasonReject ? colorError : Colors.transparent)),
+              width: double.infinity,
+              child: TextFormField(
+                controller: _textReasonReject,
+                keyboardType: TextInputType.multiline,
+                minLines: 6,
+                maxLines: 6,
+                decoration: new InputDecoration(
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.all(5),
+                    hintText: 'schedule_text14'.tr(),
+                    hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: reasonReject ? colorError : colorNeutral2)),
+              ),
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SmallButton(
+                    bgColor: colorPrimary,
+                    textColor: colorBackground,
+                    title: "cancel_text".tr(),
+                    onClick: () {
+                      Navigator.pop(context);
+                      //loadBeginningData();
+                    },
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  SmallButtonOutlined(
+                    bgColor: colorBackground,
+                    textColor: colorPrimary,
+                    borderColor: colorPrimary,
+                    title: "confirm_text".tr(),
+                    onClick: () {
+                      if (_textReasonReject.text != "") {
+                        BlocProvider.of<MeetingBloc>(context).add(
+                            PostAcceptanceMeetingEvent(
+                                meetingId: model.meetingID,
+                                accept: "0",
+                                reason: _textReasonReject.text));
+                        setState(() => _textReasonReject.text = "");
+                        Navigator.pop(context);
+                      } else {
+                        setState(() => reasonReject = true);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      }),
+      actions: <Widget>[],
+    );
+  }
+
   // --------------------------Logic-----------------------------//
   // Logic to limit the showed member in detail meeting modal
   int countShowItem({@required List<UserModel> members, @required bool show}) {
@@ -645,7 +760,6 @@ class _MeetingScreenState extends State<MeetingScreen>
   _getMyID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myId = prefs.getString('myID');
-    
   }
 
   void getMeetingReq() async {
