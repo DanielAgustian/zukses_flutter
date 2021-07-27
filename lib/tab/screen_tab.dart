@@ -68,6 +68,11 @@ class _ScreenTab extends State<ScreenTab> {
 
     //Function for get Notif badge.
     getNotifBadge();
+
+    //Function for Loading Screen Home APIs
+    screenHomeLoader();
+
+    //Function for Loading Attendance SCreen API
   }
 
   Widget build(BuildContext context) {
@@ -365,5 +370,47 @@ class _ScreenTab extends State<ScreenTab> {
                     meetingId: message.data["meetingId"],
                   )));
     }
+  }
+
+  //=================== Beginning API For Screen Home =========================//
+  void screenHomeLoader() {
+    getMember();
+    getCompanyProfile();
+    _getMeetingToday();
+    _getMeetingRequest();
+    _getTaskLowPriority();
+    _getTaskHighPriority();
+    _getNotifAll();
+  }
+
+  void getCompanyProfile() async {
+    BlocProvider.of<CompanyBloc>(context).add(CompanyEventGetProfile());
+  }
+
+  void _getMeetingToday() async {
+    DateTime now = DateTime.now();
+    BlocProvider.of<MeetingBloc>(context)
+        .add(GetAcceptedMeetingEvent(month: now.month, year: now.year));
+  }
+
+  void _getMeetingRequest() async {
+    BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
+  }
+
+  void getMember() async {
+    BlocProvider.of<TeamBloc>(context).add(LoadAllTeamEvent());
+  }
+
+  void _getTaskLowPriority() async {
+    BlocProvider.of<TaskBloc>(context).add(LoadLowPriorityTaskEvent("low"));
+  }
+
+  void _getTaskHighPriority() async {
+    BlocProvider.of<TaskPriorityBloc>(context)
+        .add(LoadHighPriorityEvent("high"));
+  }
+
+  void _getNotifAll() async {
+    BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
   }
 }

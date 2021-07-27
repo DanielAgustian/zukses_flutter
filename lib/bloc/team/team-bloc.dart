@@ -17,15 +17,18 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
   Stream<TeamState> mapAllTeam() async* {
     yield TeamStateLoading();
     // return list user model
-    var res = await _teamServiceHTTP.fetchTeamMember();
+    try {
+      var res = await _teamServiceHTTP.fetchTeamMember();
 
-    // return checkbox handler
-
-    // directly throw into success load or fail load
-    if (res != null) {
-      yield TeamStateSuccessLoad(team: res);
-    } else {
-      print("MapAllTeamFailed");
+      // directly throw into success load or fail load
+      if (res != null ) {
+        yield TeamStateSuccessLoad(team: res);
+      } else {
+        print("MapAllTeamFailed");
+        yield TeamStateFailLoad();
+      }
+    } catch (e) {
+      print(e);
       yield TeamStateFailLoad();
     }
   }

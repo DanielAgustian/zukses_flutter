@@ -70,11 +70,12 @@ class _AttendanceScreen extends State<AttendanceScreen> {
     return BlocListener<AttendanceBloc, AttendanceState>(
       listener: (context, state) {
         // BLOC when success load
+        print(state);
         setState(() {
           if (state is AttendanceStateSuccessLoad) {
             attendanceList = state.attendanceList;
             isLoading = false;
-
+            print("Attendance State Success Load");
             // auto pass data when open screen
             // used for weekly calendar
             absensiList = attendanceList.where((data) {
@@ -104,6 +105,7 @@ class _AttendanceScreen extends State<AttendanceScreen> {
               }
             }
           } else if (state is AttendanceStateFailLoad) {
+            print("Attendance State Failed Load");
             isLoading = false;
             attendanceList = null;
           } else if (state is AttendanceStateLoading) {

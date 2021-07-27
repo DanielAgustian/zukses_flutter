@@ -92,16 +92,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    getMember();
-    getCompanyProfile();
+    // getMember();
+    // getCompanyProfile();
     sharedPrefInstruction();
-    getUserProfile();
-    _getTaskLowPriority();
-    _getTaskHighPriority();
+    // getUserProfile();
+    // _getTaskLowPriority();
+    // _getTaskHighPriority();
     // checkStatusClock();
-    _getMeetingToday();
-    _getMeetingRequest();
-    _getNotifAll();
+    // _getMeetingToday();
+    // _getMeetingRequest();
+    // _getNotifAll();
     _controller = AnimationController(vsync: this, duration: _duration);
     Util().initDynamicLinks(context);
 
