@@ -264,7 +264,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
             InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(
+                                gotoMeeting: true,
+                              )));
+                },
                 child: Container(
                   child: Center(
                     child: Text(
@@ -364,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         Container(
           width: double.infinity,
-          margin: EdgeInsets.only(top: 5, bottom:5),
+          margin: EdgeInsets.only(top: 5, bottom: 5),
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraint) {
               double innerWidth = constraint.maxWidth;
@@ -1234,7 +1241,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
             InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(
+                                gotoProject: true,
+                              )));
+                },
                 child: Container(
                   child: Center(
                     child: Text(
@@ -1342,8 +1356,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget taskListItem(
       bool loading, Size size, List<TaskModel> tasks, String type) {
     return Container(
-        decoration: BoxDecoration(
-            color: colorBackground),
+        decoration: BoxDecoration(color: colorBackground),
         child: Column(
           children: [
             // List Builder for Task List

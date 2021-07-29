@@ -33,13 +33,14 @@ class ScreenTab extends StatefulWidget {
       this.link,
       this.projectId,
       this.meetingId,
-      this.gotoMeeting})
+      this.gotoMeeting,
+      this.gotoProject})
       : super(key: key);
   final String title;
   final int index;
   final Uri link;
   final String projectId;
-  final bool gotoMeeting;
+  final bool gotoMeeting, gotoProject;
   final String meetingId;
   @override
   _ScreenTab createState() => _ScreenTab();
@@ -221,6 +222,11 @@ class _ScreenTab extends State<ScreenTab> {
 
     if (widget.gotoMeeting != null) {
       if (widget.gotoMeeting) {
+        _currentScreenIndex = screenList.length - 1;
+      }
+    }
+    if (widget.gotoProject != null) {
+      if (widget.gotoProject) {
         _currentScreenIndex = screenList.length - 2;
       }
     }
@@ -383,7 +389,6 @@ class _ScreenTab extends State<ScreenTab> {
     _getTaskMedPriority();
     _getNotifAll();
     _getProjectList();
-    
   }
 
   void getCompanyProfile() async {
