@@ -168,8 +168,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<ContactSupervisorBloc>(
             create: (context) => ContactSupervisorBloc()),
         BlocProvider<NotifAllBloc>(create: (context) => NotifAllBloc()),
-        BlocProvider<ListCSVBloc>(
-            create: (context) => ListCSVBloc()),
+        BlocProvider<ListCSVBloc>(create: (context) => ListCSVBloc()),
+        BlocProvider<TaskPriorityLowBloc>(create: (context) => TaskPriorityLowBloc()),
+        BlocProvider<TaskPriorityMedBloc>(create: (context) => TaskPriorityMedBloc()),
       ],
       child: MaterialApp(
         localizationsDelegates: context.localizationDelegates,

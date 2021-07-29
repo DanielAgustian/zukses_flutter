@@ -38,6 +38,8 @@ const colorSkeleton = Color(0xFFa1a1a1);
 const colorOrange = Color(0xFFFF8C00);
 const colorShadow = Color(0xFF1C1C1E);
 const colorBorder = Color(0xFFBFBFBF);
+
+const colorLink = Color(0xFF2F80ED);
 Widget dotYellow = Container(
     width: 5,
     height: 5,

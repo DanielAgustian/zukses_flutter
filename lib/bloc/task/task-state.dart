@@ -40,7 +40,7 @@ class TaskStateSuccessLoad extends TaskState {
   }
 }
 
-class TaskStateLowPriorityFailLoad extends TaskState {}
+
 
 class TaskStateLowPrioritySuccessLoad extends TaskState {
   final List<TaskModel> task;

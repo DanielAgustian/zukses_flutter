@@ -19,9 +19,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* mapAddTaskFree(event);
     } else if (event is UpdateTaskEvent) {
       yield* mapUpdateTask(event);
-    } else if (event is LoadLowPriorityTaskEvent) {
-      yield* mapLowPriority(event);
-    }
+    } 
   }
 
   Stream<TaskState> mapGetTask(GetAllTaskEvent event) async* {
@@ -38,20 +36,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-  // Bloc for load the low priority task
-  Stream<TaskState> mapLowPriority(LoadLowPriorityTaskEvent event) async* {
-    yield TaskStateLoading();
-    // return list user model
-    var res = await _taskServicesHTTP.fetchTaskByPriority(event.priority);
-    // directly throw into success load or fail load
-    if (res != null) {
-      yield TaskStateSuccessLoad(task: res);
-      //print(state);
-    } else {
-      yield TaskStateFailLoad();
-      //print(state);
-    }
-  }
+  
 
   Stream<TaskState> mapUpdateTask(UpdateTaskEvent event) async* {
     yield TaskStateLoading();

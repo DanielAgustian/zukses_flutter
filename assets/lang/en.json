@@ -165,10 +165,10 @@
     "tab_text3": "Project",
     "tab_text4": "Schedule",
 
-    "home_text1": "Tap here to Clock In",
+    "home_text1": "Tap to Clock In",
     "home_text2": "Good work!",
-    "home_text3": "Tap here to Clock Out",
-    "home_text4": "WELCOME BACK",
+    "home_text3": "Tap to Clock Out",
+    "home_text4": "Ready for Today?",
     "home_text5": "Team Member",
     "home_text6": "Tasklist",
     "home_text7": "High Priority Task",
@@ -186,7 +186,9 @@
     "home_text19": "Are you sure want to clock out?",
     "home_text20": "No {} Today.",
     "home_text21": "Directing to next page . . .",
-    
+    "home_text22": "Show All Project",
+
+
     "instruction_text1": "Good lighting",
     "instruction_text2": "Make sure you take the photo with good lighting",
     "instruction_text3": "Ready in your seat",

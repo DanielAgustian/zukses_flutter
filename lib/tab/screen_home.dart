@@ -21,13 +21,14 @@ import 'package:zukses_app_1/model/auth-model.dart';
 import 'package:zukses_app_1/model/company-model.dart';
 import 'package:zukses_app_1/model/fb_model_sender.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
+import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/model/schedule-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/screen/contact-supervisor/screen-notification-list.dart';
-import 'package:zukses_app_1/screen/profile/user-settings.dart';
+
 import 'package:zukses_app_1/screen/punch-system/camera-instruction.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-avatar.dart';
 import 'package:zukses_app_1/component/skeleton/skeleton-less-3.dart';
@@ -58,7 +59,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TextEditingController textReasonOvertime = new TextEditingController();
   TextEditingController textProjectOvertime = new TextEditingController();
-
+  final textSearch = new TextEditingController();
   final picker = ImagePicker();
 
   String statusOvertime = "";
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   String tokenFCM = "";
   String companyID = "";
-
+  String type = "high";
   @override
   void initState() {
     super.initState();
@@ -133,30 +134,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: colorBackground,
-      body: WillPopScope(
-        onWillPop: onWillPop,
-        child: RefreshIndicator(
-          backgroundColor: colorPrimary70,
-          color: colorBackground,
-          strokeWidth: 1,
-          onRefresh: refreshData,
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [realComponent(context, size)],
-              )),
-              BlocBuilder<TeamDetailBloc, TeamDetailState>(
-                  builder: (context, state) {
-                if (state is TeamDetailStateSuccess) {
-                  return scrollInvitation(context, size, state.team);
-                }
-                return Container();
-              })
-            ],
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        backgroundColor: colorBackground,
+        body: WillPopScope(
+          onWillPop: onWillPop,
+          child: RefreshIndicator(
+            backgroundColor: colorPrimary70,
+            color: colorBackground,
+            strokeWidth: 1,
+            onRefresh: refreshData,
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [realComponent(context, size)],
+                )),
+                BlocBuilder<TeamDetailBloc, TeamDetailState>(
+                    builder: (context, state) {
+                  if (state is TeamDetailStateSuccess) {
+                    return scrollInvitation(context, size, state.team);
+                  }
+                  return Container();
+                })
+              ],
+            ),
           ),
         ),
       ),
@@ -176,6 +180,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
         return Column(
           children: [
+            buildHeaderProfile(size, company: company),
+
             buildTapPresence(size,
                 company: company,
                 authModel: authModel,
@@ -185,60 +191,49 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             SizedBox(
               height: 10,
             ),
+            buildTeamWidget(context, size),
+            SizedBox(height: 20),
             //======================BlocBuilder Profile User===========================
-            buildHeaderProfile(size, company: company),
 
             //====================BlocBuilder Team =================================
-            SizedBox(height: 20),
-            buildTeamWidget(context, size),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "home_text6".tr(),
-                  style: TextStyle(
-                      color: colorPrimary,
-                      letterSpacing: 0,
-                      fontSize: size.width <= 600 ? 20 : 22,
-                      fontWeight: FontWeight.bold),
-                ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              width: size.width,
+              decoration: BoxDecoration(
+                color: colorBackground,
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(64, 109, 161, 0.2), blurRadius: 15)
+                ],
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(30)),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  searchBox(size),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  listProject(size),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  buildTaskList(size, context),
+                  buildCounterBoxMeeting(size),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  buildMeetingList(size),
+                  SizedBox(
+                    height: 20,
+                  )
+                ],
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-
-            buildCounterBoxTask(size),
-            SizedBox(
-              height: 15,
-            ),
-            buildTaskList(size, context),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 30, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "home_text10".tr(),
-                  style: TextStyle(
-                      color: colorPrimary,
-                      letterSpacing: 0,
-                      fontSize: size.width <= 600 ? 20 : 22,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            buildCounterBoxMeeting(size),
-            SizedBox(
-              height: 15,
-            ),
-            buildMeetingList(size),
-            SizedBox(
-              height: 20,
-            )
           ],
         );
       },
@@ -251,9 +246,42 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     int meetCounter = 0;
     int reqCounter = 0;
 
-    return Container(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: Row(
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: 30),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "home_text10".tr(),
+                style: TextStyle(
+                    color: colorPrimary,
+                    letterSpacing: 0,
+                    fontSize: size.width <= 600 ? 20 : 22,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            InkWell(
+                onTap: () {},
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      "home_text9".tr(args: ["Meeting"]),
+                      style: TextStyle(
+                          color: colorLink,
+                          fontSize: size.height <= 600 ? 12 : 14),
+                    ),
+                  ),
+                ))
+          ]),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+            child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             BlocBuilder<MeetingBloc, MeetingState>(
@@ -267,11 +295,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   meetLoading = false;
                 }
                 return BoxHome(
-                    loading: meetLoading,
-                    title: "home_text11".tr(),
-                    total: meetCounter,
-                    numberColor: colorSecondaryRed,
-                    fontSize: size.width <= 600 ? 34 : 36);
+                  bgColor: colorPrimary,
+                  txtColor: Colors.white,
+                  loading: meetLoading,
+                  title: "home_text11".tr(),
+                  total: meetCounter,
+                  fontSize: size.height < 569 ? 12 : 14,
+                );
               },
             ),
             BlocBuilder<MeetingReqBloc, MeetingReqState>(
@@ -286,168 +316,139 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 }
 
                 return BoxHome(
-                    loading: reqLoading,
-                    title: "home_text12".tr(),
-                    total: reqCounter,
-                    numberColor: colorSecondaryYellow,
-                    fontSize: size.width <= 600 ? 34 : 36);
+                  txtColor: colorPrimary,
+                  bgColor: Colors.white,
+                  loading: reqLoading,
+                  title: "home_text12".tr(),
+                  total: reqCounter,
+                  fontSize: size.height < 569 ? 12 : 14,
+                );
               },
             )
           ],
-        ));
+        )),
+      ],
+    );
   }
 
   Widget buildTaskList(Size size, BuildContext context) {
     List<TaskModel> tasks;
     bool loading = true;
 
-    return BlocBuilder<TaskPriorityBloc, TaskPriorityState>(
-      builder: (context, state) {
-        if (state is TaskPriorityStateSuccessLoad) {
-          loading = false;
-          tasks =
-              state.task.length < 2 ? state.task : state.task.take(2).toList();
-        } else if (state is TaskPriorityStateFailLoad) {
-          loading = false;
-          tasks = [];
-        }
-
-        return Container(
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            decoration: BoxDecoration(
-                color: colorBackground, boxShadow: [boxShadowStandard]),
-            child: Column(
-              children: [
-                // List Builder for Task List
-                if (loading)
-                  ...skeleton.map((item) => SkeletonLess3(
-                        size: size,
-                        row: 2,
-                        col: 1,
-                      ))
-                else
-                  tasks == null || tasks.length == 0
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 1, color: colorBorder))),
-                              height: 40,
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text("home_text20".tr(args: ["Task"]),
-                                      style: TextStyle(
-                                        color: colorPrimary,
-                                        fontSize: size.height < 569 ? 14 : 16,
-                                      )),
-                                ),
-                              )))
-                      : ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.all(1.0),
-                          itemCount: tasks.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListViewBox(
-                              title: tasks[index].taskName,
-                              detail: tasks[index].details,
-                              viewType: "task",
-                            );
-                          },
-                        ),
-
-                Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            primary: colorBackground),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScreenTab(index: 2)));
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("home_text9".tr(args: ["Task"]),
-                                style: TextStyle(
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.bold)),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: colorPrimary,
-                            )
-                          ],
-                        )))
-              ],
-            ));
-      },
-    );
-  }
-
-  Widget buildCounterBoxTask(Size size) {
-    int highPriorityCount = 0;
-    int lowPriorityCount = 0;
-    bool highLoading = true;
-    bool lowLoading = true;
-
-    return Container(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: Row(
+    return Column(
+      children: [
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            BlocBuilder<TaskPriorityBloc, TaskPriorityState>(
-              builder: (context, state) {
-                if (state is TaskPriorityStateSuccessLoad) {
-                  highPriorityCount = state.task.length;
-                  highLoading = false;
-
-                  return BoxHome(
-                    loading: highLoading,
-                    title: "home_text7".tr(),
-                    total: highPriorityCount,
-                    numberColor: colorSecondaryRed,
-                    fontSize: size.width <= 600 ? 34 : 36,
-                  );
-                } else if (state is TaskPriorityStateLoading) {
-                  highLoading = true;
-                } else {
-                  highLoading = false;
-                }
-                return BoxHome(
-                  loading: highLoading,
-                  title: "home_text7".tr(),
-                  total: highPriorityCount,
-                  numberColor: colorSecondaryRed,
-                  fontSize: size.width <= 600 ? 34 : 36,
-                );
-              },
+            Text(
+              "home_text6".tr(),
+              style: TextStyle(
+                  color: colorPrimary,
+                  letterSpacing: 0,
+                  fontSize: size.width <= 600 ? 20 : 22,
+                  fontWeight: FontWeight.bold),
             ),
-            BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-              if (state is TaskStateSuccessLoad) {
-                lowPriorityCount = state.task.length;
-                lowLoading = false;
-              } else if (state is TaskStateLoading) {
-                lowLoading = true;
-              } else {
-                lowLoading = false;
-              }
-              return BoxHome(
-                  loading: lowLoading,
-                  title: "home_text8".tr(),
-                  total: lowPriorityCount,
-                  numberColor: colorClear,
-                  fontSize: size.width <= 600 ? 34 : 36);
-            }),
+            InkWell(
+                onTap: () {},
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      "home_text9".tr(args: ["Task"]),
+                      style: TextStyle(
+                          color: colorLink,
+                          fontSize: size.height <= 600 ? 12 : 14),
+                    ),
+                  ),
+                ))
           ],
-        ));
+        ),
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(top: 5, bottom:5),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraint) {
+              double innerWidth = constraint.maxWidth;
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          type = "high";
+                        });
+                        print("Med is clicked");
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        width: innerWidth / 3 - 10,
+                        child: Text(
+                          "High Task",
+                          style: TextStyle(
+                              fontWeight: type == "high"
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              fontSize: 14,
+                              color: type == "high"
+                                  ? colorPrimary
+                                  : colorNeutral3),
+                        ),
+                      )),
+                  SizedBox(width: 10),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          type = "med";
+                        });
+                        print("Med is clicked");
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        width: innerWidth / 3 - 10,
+                        constraints:
+                            BoxConstraints(maxWidth: innerWidth / 3 - 10),
+                        child: Text(
+                          "Medium Task",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: type == "med"
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color:
+                                  type == "med" ? colorPrimary : colorNeutral3),
+                        ),
+                      )),
+                  SizedBox(width: 10),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          type = "low";
+                        });
+
+                        print("Low is Clicked");
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        width: innerWidth / 3 - 10,
+                        child: Text(
+                          "Low Task",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: type == "low"
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color:
+                                  type == "low" ? colorPrimary : colorNeutral3),
+                        ),
+                      )),
+                ],
+              );
+            },
+          ),
+        ),
+        builderTaskList(size, tasks, loading, type)
+      ],
+    );
   }
 
   // Widget to tap clock in or clock out
@@ -509,101 +510,64 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             authModel.maxClockIn = "true";
           }
 
-          return InkWell(
-            onTap: () {
-              onClickWatch(size,
-                  company: company,
-                  companyAcceptance: companyAcceptance,
-                  authModel: authModel);
-            },
-            child: Container(
-                width: double.infinity,
-                height: size.height * 0.40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(40),
-                      bottomLeft: Radius.circular(40)),
-                  color: colorPrimary,
-                ),
-                child: Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                      TimerBuilder.periodic(Duration(seconds: 1),
-                          builder: (context) {
-                        return Text(
-                          getSystemTime(),
-                          style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 1.5,
-                              fontSize: size.height < 600 ? 56 : 72,
-                              fontWeight: FontWeight.w500),
-                        );
-                      }),
-                      loading
-                          ? SkeletonAnimation(
-                              shimmerColor: colorNeutral170,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: colorSkeleton,
-                                  borderRadius: BorderRadius.circular(10),
+          return Container(
+            width: size.width,
+            height: size.height * 0.35,
+            child: InkWell(
+              onTap: () {
+                onClickWatch(size,
+                    company: company,
+                    companyAcceptance: companyAcceptance,
+                    authModel: authModel);
+              },
+              child: Center(
+                child: Container(
+                  width: size.height < 569 ? 190 : 215,
+                  height: size.height < 569 ? 190 : 215,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromRGBO(20, 43, 114, 0.05),
+                  ),
+                  child: Center(
+                    child: Container(
+                        width: size.height < 569 ? 140 : 165,
+                        height: size.height < 569 ? 140 : 165,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorPrimary,
+                        ),
+                        child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                              TimerBuilder.periodic(Duration(seconds: 1),
+                                  builder: (context) {
+                                return Text(
+                                  getSystemTime(),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: 1.5,
+                                      fontSize: size.height < 600 ? 32 : 36,
+                                      fontWeight: FontWeight.bold),
+                                );
+                              }),
+                              SizedBox(
+                                height: size.height < 569 ? 7 : 10,
+                              ),
+                              Center(
+                                child: Text(
+                                  util.dateToCalendarDayName(DateTime.now()),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: colorBackground,
+                                      fontSize: size.height < 600 ? 14 : 16),
                                 ),
-                                width: size.width * 0.4,
-                                height: 20,
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: colorBackground,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: companyAcceptance == 1
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                            "assets/images/tap-clock-in.svg",
-                                            width: size.height < 569 ? 20 : 25,
-                                            height:
-                                                size.height < 569 ? 20 : 25),
-                                        // SizedBox(width: 10),
-                                        Text(
-                                          stringTap,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: colorPrimary,
-                                              fontSize:
-                                                  size.height < 600 ? 14 : 16),
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Center(
-                                          child: Text(
-                                            "Welcome to Zukses!",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: colorPrimary,
-                                                fontSize: size.height < 600
-                                                    ? 14
-                                                    : 16),
-                                          ),
-                                        )
-                                      ],
-                                    ))
-                    ]))),
+                              )
+                            ]))),
+                  ),
+                ),
+              ),
+            ),
           );
         },
         listener: (context, state) {
@@ -613,12 +577,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 msg: "Something Wrong !",
                 color: colorError,
                 txtColor: colorBackground);
-          } else if (state is AttendanceStateSuccessClockIn) {
-            //if they already clock in
-            // stringTap = enumTap[1];
           } else if (state is AttendanceStateSuccessClockOut) {
             //if they already clock out
-            // stringTap = enumTap[2];
+
             // authModel.maxClockIn = "true";
 
             // show confirm dialog success clock out
@@ -739,7 +700,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             name = parts[0];
           }
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: EdgeInsets.fromLTRB(20, 56, 20, 0),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -773,17 +734,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 fontSize: size.width <= 600 ? 20 : 24,
                                 fontWeight: FontWeight.bold),
                           ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "home_text4".tr() + " !",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                letterSpacing: 0,
-                                fontSize: size.width <= 600 ? 12 : 14,
-                              ),
-                            ),
-                          ),
+                          statusTapWidget(size)
                         ],
                       ),
                     ),
@@ -838,39 +789,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         }
                         return Container();
                       }),
-                      SizedBox(
-                        width: size.height < 569 ? 10 : 15,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          if (company != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UserProfile(
-                                      company: company, user: state.userModel),
-                                ));
-                          } else {
-                            Util().showToast(
-                                msg: "Company Empty!",
-                                color: colorError,
-                                txtColor: colorBackground,
-                                context: context,
-                                duration: 3);
-                          }
-                        },
-                        child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                AvatarMedium(
-                                  imgUrl:
-                                      "https://api-zukses.yokesen.com/${state.userModel.imgUrl}",
-                                ),
-                              ],
-                            )),
-                      ),
+                      // SizedBox(
+                      //   width: size.height < 569 ? 10 : 15,
+                      // ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     if (company != null) {
+                      //       Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //             builder: (context) => UserProfile(
+                      //                 company: company, user: state.userModel),
+                      //           ));
+                      //     } else {
+                      //       Util().showToast(
+                      //           msg: "Company Empty!",
+                      //           color: colorError,
+                      //           txtColor: colorBackground,
+                      //           context: context,
+                      //           duration: 3);
+                      //     }
+                      //   },
+                      //   child: Padding(
+                      //       padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      //       child: Column(
+                      //         mainAxisAlignment: MainAxisAlignment.end,
+                      //         children: [
+                      //           AvatarMedium(
+                      //             imgUrl:
+                      //                 "https://api-zukses.yokesen.com/${state.userModel.imgUrl}",
+                      //           ),
+                      //         ],
+                      //       )),
+                      // ),
                     ],
                   )
                 ]),
@@ -879,7 +830,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           getUserProfile();
         } else {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: EdgeInsets.fromLTRB(20, 56, 20, 0),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1039,84 +990,77 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         } else {
           loading = false;
         }
-        return Container(
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            decoration: BoxDecoration(
-                color: colorBackground, boxShadow: [boxShadowStandard]),
-            child: Column(
-              children: [
-                if (loading)
-                  ...skeleton.map((item) => SkeletonLess3(
-                        size: size,
-                        row: 2,
-                        col: 1,
-                      ))
-                else
-                  meetings == null || meetings.length == 0
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 1, color: colorBorder))),
-                              height: 40,
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(
-                                      "home_text20".tr(args: ["Meeting"]),
-                                      style: TextStyle(
-                                        color: colorPrimary,
-                                        fontSize: size.height < 569 ? 14 : 16,
-                                      )),
-                                ),
-                              )))
-                      : ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.all(1.0),
-                          itemCount: meetings.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListViewBox(
-                              title: meetings[index].title,
-                              detail: util.hourFormat(meetings[index].date) +
-                                  " - " +
-                                  util.hourFormat(
-                                      meetings[index].meetingEndTime),
-                              viewType: "meeting",
-                            );
-                          },
-                        ),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            backgroundColor: colorBackground),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScreenTab(index: 3)));
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("home_text9".tr(args: ["Meeting"]),
-                                style: TextStyle(
+        return Column(
+          children: [
+            if (loading)
+              ...skeleton.map((item) => SkeletonLess3(
+                    size: size,
+                    row: 2,
+                    col: 1,
+                  ))
+            else
+              meetings == null || meetings.length == 0
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 1, color: colorBorder))),
+                          height: 40,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Text("home_text20".tr(args: ["Meeting"]),
+                                  style: TextStyle(
                                     color: colorPrimary,
-                                    fontWeight: FontWeight.bold)),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: colorPrimary,
-                            )
-                          ],
-                        )))
-              ],
-            ));
+                                    fontSize: size.height < 569 ? 14 : 16,
+                                  )),
+                            ),
+                          )))
+                  : ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(1.0),
+                      itemCount: meetings.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListMeetingItem(
+                          size: size,
+                          title: meetings[index].title,
+                          detail: util.hourFormat(meetings[index].date) +
+                              " - " +
+                              util.hourFormat(meetings[index].meetingEndTime),
+                        );
+                      },
+                    ),
+            // Padding(
+            //     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            //     child: TextButton(
+            //         style: TextButton.styleFrom(
+            //             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            //             backgroundColor: colorBackground),
+            //         onPressed: () {
+            //           Navigator.pushReplacement(
+            //               context,
+            //               MaterialPageRoute(
+            //                   builder: (context) => ScreenTab(index: 3)));
+            //         },
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //           children: [
+            //             Text("home_text9".tr(args: ["Meeting"]),
+            //                 style: TextStyle(
+            //                     color: colorPrimary,
+            //                     fontWeight: FontWeight.bold)),
+            //             Icon(
+            //               Icons.arrow_forward_ios,
+            //               color: colorPrimary,
+            //             )
+            //           ],
+            //         )))
+          ],
+        );
       },
     );
   }
@@ -1179,6 +1123,274 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  //WIDGET FOR CHANGE STATUS TAP IN HEADER PROFILE
+  Widget statusTapWidget(Size size) {
+    AuthModel authModel = AuthModel();
+    String stringTap = enumTap[0];
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        if (state is AuthStateFailLoad) {
+          Util().showToast(
+              context: context,
+              msg: "Authentication Failed!",
+              duration: 3,
+              color: colorError,
+              txtColor: colorBackground);
+        } else if (state is AuthStateSuccessLoad) {
+          authModel = state.authUser;
+          // handle to get company acceptance after register
+
+          //This function is for employee not yet accepted.
+
+          if (authModel.maxClockIn == "false") {
+            //if they arent clockout today
+            if (authModel.attendance == "true") {
+              // if they already clock in.
+              stringTap = enumTap[1];
+            }
+          } else if (authModel.maxClockIn == "true") {
+            //If they already clock out for today
+            stringTap = enumTap[2];
+          }
+        }
+
+        return BlocBuilder<AttendanceBloc, AttendanceState>(
+            builder: (context, state) {
+          if (state is AttendanceStateSuccessClockIn) {
+            //if they already clock in
+            stringTap = enumTap[1];
+          } else if (state is AttendanceStateSuccessClockOut) {
+            //if they already clock out
+            stringTap = enumTap[2];
+          }
+
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "home_text4".tr() + " " + stringTap,
+              style: TextStyle(
+                color: colorPrimary,
+                letterSpacing: 0,
+                fontSize: size.width <= 600 ? 14 : 16,
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  Widget searchBox(Size size) {
+    return Container(
+      height: 30,
+      decoration: BoxDecoration(
+          color: colorBackground,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: colorNeutral2)),
+      child: TextField(
+        controller: textSearch,
+        onChanged: (val) {},
+        style: TextStyle(color: Colors.black, fontSize: 16, height: 1.1),
+        decoration: InputDecoration(
+          isDense: true,
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: EdgeInsets.only(top: 6),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(5),
+            child: FaIcon(FontAwesomeIcons.search,
+                color: colorPrimary, size: size.height < 569 ? 14 : 16),
+          ),
+          suffixIcon: InkWell(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
+              child: FaIcon(FontAwesomeIcons.times,
+                  color: colorNeutral2, size: size.height < 569 ? 14 : 16),
+            ),
+            onTap: () {},
+          ),
+          hintText: "Search",
+          hintStyle: TextStyle(color: colorNeutral2),
+        ),
+      ),
+    );
+  }
+
+  Widget listProject(Size size) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "home_text16".tr(),
+                style: TextStyle(
+                    color: colorPrimary,
+                    letterSpacing: 0,
+                    fontSize: size.width <= 600 ? 20 : 22,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            InkWell(
+                onTap: () {},
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      "home_text22".tr(),
+                      style: TextStyle(
+                          color: colorLink,
+                          fontSize: size.height <= 600 ? 12 : 14),
+                    ),
+                  ),
+                ))
+          ],
+        ),
+        BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
+          if (state is ProjectStateSuccessLoad) {
+            int length;
+            if (state.project.length > 2) {
+              length = 2;
+            } else {
+              length = state.project.length;
+            }
+            return ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.all(1.0),
+              itemCount: length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListProjectItem(
+                    title: state.project[index].name,
+                    lastWorked: DateTime.now(),
+                    status: "In Progress",
+                    percentage: 0.45,
+                    size: size);
+              },
+            );
+          }
+          return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Container(
+                  height: 40,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Text("home_text20".tr(args: ["Project"]),
+                          style: TextStyle(
+                            color: colorPrimary,
+                            fontSize: size.height < 569 ? 14 : 16,
+                          )),
+                    ),
+                  )));
+        })
+      ],
+    );
+  }
+
+  Widget builderTaskList(
+      Size size, List<TaskModel> tasks, bool loading, String type) {
+    if (type == "high") {
+      return BlocBuilder<TaskPriorityBloc, TaskPriorityState>(
+        builder: (context, state) {
+          if (state is TaskPriorityStateSuccessLoad) {
+            loading = false;
+            tasks = state.task.length < 2
+                ? state.task
+                : state.task.take(2).toList();
+          } else if (state is TaskPriorityStateFailLoad) {
+            loading = false;
+            tasks = [];
+          }
+          return taskListItem(loading, size, tasks, type);
+        },
+      );
+    } else if (type == "med") {
+      return BlocBuilder<TaskPriorityMedBloc, TaskPriorityMedState>(
+          builder: (context, state) {
+        if (state is TaskPriorityMedStateSuccessLoad) {
+          loading = false;
+          tasks =
+              state.task.length < 2 ? state.task : state.task.take(2).toList();
+        } else if (state is TaskPriorityMedStateFailLoad) {
+          loading = false;
+          tasks = [];
+        }
+        return taskListItem(loading, size, tasks, type);
+      });
+    } else if (type == "low") {
+      return BlocBuilder<TaskPriorityLowBloc, TaskPriorityLowState>(
+          builder: (context, state) {
+        if (state is TaskPriorityLowStateSuccessLoad) {
+          loading = false;
+          tasks =
+              state.task.length < 2 ? state.task : state.task.take(2).toList();
+        } else if (state is TaskPriorityLowStateFailLoad) {
+          loading = false;
+          tasks = [];
+        }
+        return taskListItem(loading, size, tasks, type);
+      });
+    }
+    return Container(
+      child: Center(child: Text("Error Data")),
+    );
+  }
+
+  Widget taskListItem(
+      bool loading, Size size, List<TaskModel> tasks, String type) {
+    return Container(
+        decoration: BoxDecoration(
+            color: colorBackground),
+        child: Column(
+          children: [
+            // List Builder for Task List
+            if (loading)
+              ...skeleton.map((item) => SkeletonLess3(
+                    size: size,
+                    row: 2,
+                    col: 1,
+                  ))
+            else
+              tasks == null || tasks.length == 0
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 1, color: colorBorder))),
+                          height: 40,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Text("home_text20".tr(args: ["Task"]),
+                                  style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: size.height < 569 ? 14 : 16,
+                                  )),
+                            ),
+                          )))
+                  : ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(1.0),
+                      itemCount: tasks.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListViewBox(
+                          title: tasks[index].taskName,
+                          detail: tasks[index].details,
+                          status: type,
+                          size: size,
+                        );
+                      },
+                    ),
+          ],
+        ));
+  }
   //---------------------Function Logic----------------------------//
 
   Future<void> refreshData() async {
@@ -1192,6 +1404,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _getMeetingRequest();
     _getNotifAll();
     checkStatusClock();
+    _getProjectList();
+    _getTaskMedPriority();
   }
 
   void doneLoading() {
@@ -1295,7 +1509,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _getTaskLowPriority() async {
-    BlocProvider.of<TaskBloc>(context).add(LoadLowPriorityTaskEvent("low"));
+    BlocProvider.of<TaskPriorityLowBloc>(context)
+        .add(LoadLowPriorityEvent("low"));
+  }
+
+  void _getTaskMedPriority() async {
+    BlocProvider.of<TaskPriorityMedBloc>(context)
+        .add(LoadMedPriorityEvent("medium"));
   }
 
   void _getTaskHighPriority() async {
@@ -1305,6 +1525,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _getNotifAll() async {
     BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
+  }
+
+  void _getProjectList() async {
+    BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 
   pushToWaitRegis(

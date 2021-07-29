@@ -92,6 +92,10 @@ class Util {
     return DateFormat('yMMMd').format(date);
   }
 
+  String dateToCalendarDayName(DateTime date) {
+    return DateFormat('EEE, d MMM yyyy').format(date);
+  }
+
   String shorteningName(String name) {
     if (name.length > 15) {
       var parts = name.split(" ");
@@ -223,10 +227,8 @@ class Util {
                         token: token,
                       )));
         }
-        // Jika dynamic link yang dipakai untuk forgot password 
+        // Jika dynamic link yang dipakai untuk forgot password
         else if (deepLink.path.toLowerCase().contains("/registerteam")) {
-
-          
           if (deepLink.queryParameters['token'] != null) {
             //if he has account
             String token = deepLink.queryParameters['token'];

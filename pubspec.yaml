@@ -54,6 +54,7 @@ dependencies:
   firebase_dynamic_links: any
   url_launcher:
   google_sign_in:
+  percent_indicator:
   flutter_facebook_login:
   flutter_local_notifications:
   time_picker_widget:

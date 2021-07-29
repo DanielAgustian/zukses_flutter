@@ -165,10 +165,10 @@
     "tab_text3": "Proyek",
     "tab_text4": "Jadwal",
 
-    "home_text1": "Ketuk di sini untuk Clock In",
+    "home_text1": "Ketuk untuk Clock In",
     "home_text2": "Selamat bekerja!",
-    "home_text3": "Ketuk di sini untuk Clock Out",
-    "home_text4": "SELAMAT DATANG KEMBALI",
+    "home_text3": "Ketuk untuk Clock Out",
+    "home_text4": "Sudah siap?",
     "home_text5": "Anggota tim",
     "home_text6": "Daftar tugas",
     "home_text7": "Tugas Prioritas Tinggi",
@@ -186,6 +186,7 @@
     "home_text19": "Apakah kamu yakin ingin clock out?",
     "home_text20": "Tidak ada {} hari ini.",
     "home_text21": "Memindahkan ke halaman selanjutnya . . .",
+    "home_text22": "Lihat Seluruh Proyek",
 
     "instruction_text1": "Pencahayaan yang bagus",
     "instruction_text2": "Pastikan kamu mengambil foto dengan pencahayaan yang baik",

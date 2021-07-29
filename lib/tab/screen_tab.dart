@@ -380,7 +380,10 @@ class _ScreenTab extends State<ScreenTab> {
     _getMeetingRequest();
     _getTaskLowPriority();
     _getTaskHighPriority();
+    _getTaskMedPriority();
     _getNotifAll();
+    _getProjectList();
+    
   }
 
   void getCompanyProfile() async {
@@ -402,7 +405,13 @@ class _ScreenTab extends State<ScreenTab> {
   }
 
   void _getTaskLowPriority() async {
-    BlocProvider.of<TaskBloc>(context).add(LoadLowPriorityTaskEvent("low"));
+    BlocProvider.of<TaskPriorityLowBloc>(context)
+        .add(LoadLowPriorityEvent("low"));
+  }
+
+  void _getTaskMedPriority() async {
+    BlocProvider.of<TaskPriorityMedBloc>(context)
+        .add(LoadMedPriorityEvent("medium"));
   }
 
   void _getTaskHighPriority() async {
@@ -412,5 +421,9 @@ class _ScreenTab extends State<ScreenTab> {
 
   void _getNotifAll() async {
     BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
+  }
+
+  void _getProjectList() async {
+    BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 }

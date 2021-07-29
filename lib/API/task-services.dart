@@ -122,6 +122,7 @@ class TaskServicesHTTP {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+    print("priority" + priority);
     //Query to API
     var queryParameters = {
       'priority': priority,

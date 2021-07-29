@@ -116,6 +116,15 @@ export 'task-priority/task-priority-bloc.dart';
 export 'task-priority/task-priority-event.dart';
 export 'task-priority/task-priority-state.dart';
 
+
+export 'task-priority-low/task-priority-low-bloc.dart';
+export 'task-priority-low/task-priority-low-event.dart';
+export 'task-priority-low/task-priority-low-state.dart';
+
+export 'task-priority-medium/task-priority-med-bloc.dart';
+export 'task-priority-medium/task-priority-med-event.dart';
+export 'task-priority-medium/task-priority-med-state.dart';
+
 export 'team/team-bloc.dart';
 export 'team/team-event.dart';
 export 'team/team-state.dart';
