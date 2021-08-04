@@ -2,20 +2,24 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/model/project-model.dart';
+import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-project.dart';
 import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class TaskScreen extends StatefulWidget {
-  TaskScreen({Key key, this.title, this.projectId}) : super(key: key);
+  TaskScreen({Key key, this.title, this.projectId, this.task})
+      : super(key: key);
   final String title;
   final String projectId;
+  final int task;
   @override
   _TaskScreen createState() => _TaskScreen();
 }
@@ -120,37 +124,11 @@ class _TaskScreen extends State<TaskScreen> {
         projects = state.project;
         bools = state.bools;
       } else if (state is ProjectStateFailLoad) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          width: size.width,
-          height: size.height * 0.75,
-          child: Center(
-              child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              text: 'task_text30'.tr(),
-              style: TextStyle(color: colorPrimary),
-              children: <TextSpan>[
-                TextSpan(
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddProject()));
-                      },
-                    text: 'task_text31'.tr(),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: colorPrimary)),
-                TextSpan(text: 'task_text32'.tr()),
-              ],
-            ),
-          )),
-        );
+        emptyState(size);
       }
       return projects == null || projects.length == 0
           ? SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(), child: Container())
+              physics: AlwaysScrollableScrollPhysics(), child: emptyState(size))
           : ListView.builder(
               itemCount: projects.length,
               scrollDirection: Axis.vertical,
@@ -183,9 +161,48 @@ class _TaskScreen extends State<TaskScreen> {
                     ));
               },
             );
+      // : emptyState(size);
     });
   }
 
+  Widget emptyState(Size size) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      width: size.width,
+      height: size.height * 0.75,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/images/Empty-Project.svg',
+              height: size.height < 569 ? 200 : 300,
+              width: size.height < 569 ? 200 : 300,
+            ),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                text: 'task_text30'.tr(),
+                style: TextStyle(color: colorPrimary),
+                children: <TextSpan>[
+                  TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddProject()));
+                        },
+                      text: 'task_text31'.tr(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: colorPrimary)),
+                  TextSpan(text: 'task_text32'.tr()),
+                ],
+              ),
+            )
+          ]),
+    );
+  }
   // --------------------------Logic-----------------------------//
 
   Future<void> refreshData() async {
@@ -203,21 +220,28 @@ class _TaskScreen extends State<TaskScreen> {
             } else if (state is ProjectStateSuccessLoad) {
               setState(() {
                 isLoading = false;
+
                 if (widget.projectId != null) {
-                  ProjectModel project;
-                  if (widget.projectId != null) {
-                    for (int i = 0; i < state.project.length; i++) {
-                      if (state.project[i].id.toString() == widget.projectId) {
-                        project = state.project[i];
+                  for (int i = 0; i < state.project.length; i++) {
+                    if (state.project[i].id.toString() == widget.projectId) {
+                      if (widget.task != null) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TaskDetailScreen(
+                                    project: state.project[i],
+                                    task: widget.task)));
+                      } else {
+                        print("Task  null");
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TaskDetailScreen(
+                                      project: state.project[i],
+                                    )));
                       }
                     }
                   }
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TaskDetailScreen(
-                                project: project,
-                              )));
                 }
               });
             } else if (state is ProjectStateFailLoad) {

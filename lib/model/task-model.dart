@@ -30,7 +30,7 @@ class TaskModel {
       this.notes});
   TaskModel.fromJson(Map<String, dynamic> map) {
     this.idTask = map["id"];
-    this.idProject = map["projectId"];
+    this.idProject = map["project_id"];
     this.taskName = map["title"];
     this.details = map["description"];
     this.reporter = map["reporter"] == null

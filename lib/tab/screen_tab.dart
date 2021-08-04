@@ -11,6 +11,7 @@ import 'package:zukses_app_1/bloc/notif-nav-bar/notif-nav-event.dart';
 import 'package:zukses_app_1/bloc/notif-nav-bar/notif-nav-state.dart';
 import 'package:zukses_app_1/model/fb_model_sender.dart';
 import 'package:zukses_app_1/model/google-sign-in-model.dart';
+import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 
@@ -34,12 +35,14 @@ class ScreenTab extends StatefulWidget {
       this.projectId,
       this.meetingId,
       this.gotoMeeting,
+      this.task,
       this.gotoProject})
       : super(key: key);
   final String title;
   final int index;
   final Uri link;
   final String projectId;
+  final int task;
   final bool gotoMeeting, gotoProject;
   final String meetingId;
   @override
@@ -200,9 +203,16 @@ class _ScreenTab extends State<ScreenTab> {
     screenList.add(HomeScreen());
     screenList.add(AttendanceScreen());
     if (widget.projectId != null) {
-      screenList.add(TaskScreen(
-        projectId: widget.projectId,
-      ));
+      if (widget.task != null) {
+        screenList.add(TaskScreen(
+          projectId: widget.projectId,
+          task: widget.task,
+        ));
+      } else {
+        screenList.add(TaskScreen(
+          projectId: widget.projectId,
+        ));
+      }
     } else {
       screenList.add(TaskScreen());
     }

@@ -308,6 +308,8 @@
     "task_text30": "No project listed at the moment. Click", 
     "task_text31": " here", 
     "task_text32": " to add a new project", 
+    "task_text33": "No Project Yet",
+    "task_text34": "You don’t have project right now. Please come back again later.",
 
     "forgot_text1": "Please check your email and click the given link to reset password",
     "forgot_text2": "Check your email", 
@@ -385,5 +387,9 @@
     "contact_spv_10": "Answer",
     "contact_spv_11": "Answered",
     "contact_spv_12": "Pending",
-    "contact_spv_13": "Read"
+    "contact_spv_13": "Read",
+
+    "notif_list_1": "Notification List",
+    "notif_list_2": "No Notification Yet",
+    "notif_list_3": "You have no notification right now. Please come back again later."
 }

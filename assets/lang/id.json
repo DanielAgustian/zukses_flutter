@@ -307,6 +307,8 @@
     "task_text30": "Tidak ada proyek untuk sekarang. Klik", 
     "task_text31": " di sini", 
     "task_text32": " untuk menambah proyek baru", 
+    "task_text33": "Belum ada proyek",
+    "task_text34": "Anda tidak memiliki proyek sekarang . Silakan kembali lagi nanti.",
 
     "forgot_text1": "Tolong cek email untuk mendapatkan tautan mengatur ulang password",
     "forgot_text2": "Tolong cek email anda",
@@ -384,5 +386,9 @@
     "contact_spv_10": "Jawaban",
     "contact_spv_11": "Telah Dijawab",
     "contact_spv_12": "Menunggu",
-    "contact_spv_13": "Dibaca"
+    "contact_spv_13": "Dibaca",
+
+    "notif_list_1": "Daftar Notifikasi",
+    "notif_list_2": "Tidak Ada Notifikasi",
+    "notif_list_3": "Tidak ada notifikasi sekarang. Silakan kembali nanti."
 }

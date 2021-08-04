@@ -36,6 +36,7 @@ import 'package:zukses_app_1/screen/punch-system/camera-non-instruction.dart';
 import 'package:zukses_app_1/screen/member/screen-member.dart';
 import 'package:zukses_app_1/screen/profile/user-profile.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
+import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 
@@ -214,13 +215,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   SizedBox(
                     height: 20,
                   ),
-                  searchBox(size),
-                  SizedBox(
-                    height: 20,
-                  ),
                   listProject(size),
                   SizedBox(
-                    height: 15,
+                    height: 25,
                   ),
                   buildTaskList(size, context),
                   buildCounterBoxMeeting(size),
@@ -278,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       "home_text9".tr(args: ["Meeting"]),
                       style: TextStyle(
                           color: colorLink,
-                          fontSize: size.height <= 600 ? 12 : 14),
+                          fontSize: size.height <= 600 ? 10 : 12),
                     ),
                   ),
                 ))
@@ -344,34 +341,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "home_text6".tr(),
-              style: TextStyle(
-                  color: colorPrimary,
-                  letterSpacing: 0,
-                  fontSize: size.width <= 600 ? 20 : 22,
-                  fontWeight: FontWeight.bold),
-            ),
-            InkWell(
-                onTap: () {},
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      "home_text9".tr(args: ["Task"]),
-                      style: TextStyle(
-                          color: colorLink,
-                          fontSize: size.height <= 600 ? 12 : 14),
-                    ),
-                  ),
-                ))
-          ],
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "home_text6".tr(),
+            style: TextStyle(
+                color: colorPrimary,
+                letterSpacing: 0,
+                fontSize: size.width <= 600 ? 20 : 22,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(
+          height: 15,
         ),
         Container(
           width: double.infinity,
-          margin: EdgeInsets.only(top: 5, bottom: 5),
+          //margin: EdgeInsets.only(top: 5),
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraint) {
               double innerWidth = constraint.maxWidth;
@@ -387,7 +373,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         print("Med is clicked");
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
                         width: innerWidth / 3 - 10,
                         child: Text(
                           "High Task",
@@ -410,7 +395,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         print("Med is clicked");
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
                         width: innerWidth / 3 - 10,
                         constraints:
                             BoxConstraints(maxWidth: innerWidth / 3 - 10),
@@ -435,7 +419,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         print("Low is Clicked");
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
                         width: innerWidth / 3 - 10,
                         child: Text(
                           "Low Task",
@@ -1033,6 +1016,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         return ListMeetingItem(
+                          onClick: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ScreenTab(
+                                          gotoMeeting: true,
+                                          meetingId: meetings[index].meetingID,
+                                        )));
+                          },
                           size: size,
                           title: meetings[index].title,
                           detail: util.hourFormat(meetings[index].date) +
@@ -1187,42 +1179,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget searchBox(Size size) {
-    return Container(
-      height: 30,
-      decoration: BoxDecoration(
-          color: colorBackground,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: colorNeutral2)),
-      child: TextField(
-        controller: textSearch,
-        onChanged: (val) {},
-        style: TextStyle(color: Colors.black, fontSize: 16, height: 1.1),
-        decoration: InputDecoration(
-          isDense: true,
-          border: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: EdgeInsets.only(top: 6),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(5),
-            child: FaIcon(FontAwesomeIcons.search,
-                color: colorPrimary, size: size.height < 569 ? 14 : 16),
-          ),
-          suffixIcon: InkWell(
-            child: Container(
-              padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
-              child: FaIcon(FontAwesomeIcons.times,
-                  color: colorNeutral2, size: size.height < 569 ? 14 : 16),
-            ),
-            onTap: () {},
-          ),
-          hintText: "Search",
-          hintStyle: TextStyle(color: colorNeutral2),
-        ),
-      ),
-    );
-  }
-
   Widget listProject(Size size) {
     return Column(
       children: [
@@ -1255,12 +1211,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       "home_text22".tr(),
                       style: TextStyle(
                           color: colorLink,
-                          fontSize: size.height <= 600 ? 12 : 14),
+                          fontSize: size.height <= 600 ? 10 : 12),
                     ),
                   ),
                 ))
           ],
         ),
+        SizedBox(height: 15),
         BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
           if (state is ProjectStateSuccessLoad) {
             int length;
@@ -1277,12 +1234,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return ListProjectItem(
+                    onClick: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TaskDetailScreen(
+                                    project: state.project[index],
+                                  )));
+                    },
                     title: state.project[index].name,
                     lastWorked: DateTime.now(),
                     status: "In Progress",
                     percentage: 0.45,
                     size: size);
               },
+            );
+          } else if (state is ProjectStateLoading) {
+            return Column(
+              children: [
+                ...skeleton.map((item) => SkeletonLess3(
+                      size: size,
+                      row: 2,
+                      col: 1,
+                    ))
+              ],
             );
           }
           return Padding(
@@ -1394,6 +1369,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         return ListViewBox(
+                          onClick: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ScreenTab(
+                                          task: tasks[index].idTask,
+                                          gotoProject: true,
+                                          projectId:
+                                              tasks[index].idProject.toString(),
+                                        )));
+                          },
                           title: tasks[index].taskName,
                           detail: tasks[index].details,
                           status: type,

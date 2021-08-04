@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/bloc/notif-all/notif-all-bloc.dart';
@@ -9,6 +10,7 @@ import 'package:zukses_app_1/model/notif-model.dart';
 import 'package:zukses_app_1/screen/contact-supervisor/screen-answer-contact.dart';
 import 'package:zukses_app_1/screen/meeting/screen-req-inbox.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScreenNotificationList extends StatefulWidget {
   ScreenNotificationList();
@@ -18,7 +20,6 @@ class ScreenNotificationList extends StatefulWidget {
 class _ScreenNotificationList extends State<ScreenNotificationList> {
   @override
   void initState() {
-
     super.initState();
     BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
   }
@@ -45,7 +46,7 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
               ))),
         ),
         title: Text(
-          "Notification List",
+          "notif_list_1".tr(),
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
@@ -58,7 +59,8 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
         child: BlocBuilder<NotifAllBloc, NotifAllState>(
           builder: (context, state) {
             if (state is NotifAllStateSuccessLoad) {
-              return ListView.builder(
+              return 
+              ListView.builder(
                   itemCount: state.models.length,
                   itemBuilder: (context, index) {
                     return NotificationBox(
@@ -70,6 +72,8 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
                       },
                     );
                   });
+            } else if (state is NotifAllStateFailed) {
+              return emptyState(size);
             }
             return Container(
               height: 0.6 * size.height,
@@ -80,6 +84,36 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget emptyState(Size size) {
+    return Container(
+      width: size.width,
+      height: 0.7 * size.height,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset("assets/images/Empty-Notif.svg",
+              height: size.height < 569 ? 200 : 300,
+              width: size.height < 569 ? 200 : 300),
+          Text(
+            "notif_list_2".tr(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: size.height < 569 ? 18 : 22),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            "notif_list_3".tr(),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: size.height < 569 ? 12 : 14),
+          )
+        ],
       ),
     );
   }

@@ -223,6 +223,15 @@ class _MeetingScreenState extends State<MeetingScreen>
           if (state is MeetingStateSuccessLoad) {
             loading = false;
             meetings = state.meetings;
+            int i = 0;
+            while (i < state.meetings.length) {
+              if (widget.meetingId == state.meetings[i].meetingID) {
+                showModalResult(size, state.meetings[i]);
+                i = state.meetings.length;
+              } else {
+                i++;
+              }
+            }
           } else if (state is MeetingStateFailLoad) {
             loading = false;
           } else if (state is MeetingStateSuccess) {

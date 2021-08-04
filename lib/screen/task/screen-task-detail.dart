@@ -24,9 +24,11 @@ import 'package:file_picker/file_picker.dart';
 
 // ignore: must_be_immutable
 class TaskDetailScreen extends StatefulWidget {
-  TaskDetailScreen({Key key, this.title, this.project}) : super(key: key);
+  TaskDetailScreen({Key key, this.title, this.project, this.task})
+      : super(key: key);
   final String title;
   ProjectModel project;
+  int task;
   //final String projectName;
   @override
   _TaskDetailScreen createState() => _TaskDetailScreen();
@@ -374,7 +376,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                     fontWeight: FontWeight.w500),
                               ),
                               Container(
-                                width: size.height < 569 ? 140 : 160,
+                                width: 0.45 * size.width,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -411,7 +413,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                           ),
                                     SizedBox(width: 10),
                                     Container(
-                                      width: 0.3 * size.width,
+                                      width: 0.35 * size.width,
                                       child: Text(clickTask.reporter.name,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -699,7 +701,8 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Container(
-                  width: size.height < 569 ? 140 : 160,
+                  width:
+                      size.height < 569 ? 0.45 * size.width : 0.45 * size.width,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -731,7 +734,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                             ),
                       SizedBox(width: 10),
                       Container(
-                        width: 0.3 * size.width,
+                        width: 0.35 * size.width,
                         child: Text(
                           tasks.assignment[index].name,
                           overflow: TextOverflow.ellipsis,
@@ -1147,7 +1150,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   }
 
   // --------------------------Logic-----------------------------//
-
+  bool doneLabel = false;
   // Bloc Listener getter
   List<BlocListener> listeners() => [
         BlocListener<LabelTaskBloc, LabelTaskState>(
@@ -1162,6 +1165,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                   labelList.add(element.name);
                   print(element.name);
                 });
+                doneLabel = true;
               });
             } else if (state is LabelTaskStateFailLoad) {
               setState(() {
@@ -1206,6 +1210,13 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
               taskDone.clear();
               state.task.forEach((element) {
                 //print("LAbel in Task" + element.label.toString());
+                if (widget.task == element.idTask) {
+                  _setDataTask(element);
+
+                  if (doneLabel) {
+                    _animationController.forward();
+                  }
+                }
                 if (element.taskType.toLowerCase() == "to-do") {
                   taskToDo.add(element);
                 } else if (element.taskType.toLowerCase() == "in-progress") {
@@ -1389,42 +1400,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         hour: util.hourFormat(DateTime.parse(item.date)),
         index: index,
         onClick: () {
-          setState(() {
-            if (item.taskType.toLowerCase() == "in progress") {
-              historyMoveTo = dbEnum[1];
-            } else {
-              historyMoveTo = item.taskType.toLowerCase();
-            }
-          });
-          for (int i = 0; i < dbEnum.length; i++) {
-            if (item.taskType.toLowerCase() == dbEnum[i]) {
-              setState(() {
-                moveTo = moveToList[i];
-              });
-            } else {
-              if (item.taskType.toLowerCase() == "in progress") {
-                setState(() {
-                  moveTo = moveToList[1];
-                });
-              }
-            }
-          }
-
-          setState(() {
-            data = "";
-            upload = false;
-            clickTask = item;
-            chooseLabel = item.label;
-            priority = item.priority.titleCase;
-            print("Priorrity:" + item.priority);
-          });
-          BlocProvider.of<CommentBloc>(context)
-              .add(LoadAllCommentEvent(item.idTask.toString()));
-          BlocProvider.of<CLTBloc>(context)
-              .add(LoadAllCLTEvent(item.idTask.toString()));
-          BlocProvider.of<UploadAttachBloc>(context)
-              .add(UploadAttachGetEvent(item.idTask.toString()));
-          _onClickItem(item);
+          _setDataTask(item);
         },
       ),
     );
@@ -1484,6 +1460,44 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
       _controller.animateTo(_controller.position.maxScrollExtent - 320,
           curve: Curves.linear, duration: Duration(milliseconds: 500));
     }
+  }
+
+  _setDataTask(TaskModel item) {
+    setState(() {
+      if (item.taskType.toLowerCase() == "in progress") {
+        historyMoveTo = dbEnum[1];
+      } else {
+        historyMoveTo = item.taskType.toLowerCase();
+      }
+    });
+    for (int i = 0; i < dbEnum.length; i++) {
+      if (item.taskType.toLowerCase() == dbEnum[i]) {
+        setState(() {
+          moveTo = moveToList[i];
+        });
+      } else {
+        if (item.taskType.toLowerCase() == "in progress") {
+          setState(() {
+            moveTo = moveToList[1];
+          });
+        }
+      }
+    }
+
+    setState(() {
+      data = "";
+      upload = false;
+      clickTask = item;
+      chooseLabel = item.label;
+      priority = item.priority.titleCase;
+    });
+    BlocProvider.of<CommentBloc>(context)
+        .add(LoadAllCommentEvent(item.idTask.toString()));
+    BlocProvider.of<CLTBloc>(context)
+        .add(LoadAllCLTEvent(item.idTask.toString()));
+    BlocProvider.of<UploadAttachBloc>(context)
+        .add(UploadAttachGetEvent(item.idTask.toString()));
+    _onClickItem(item);
   }
 
   _onClickItem(TaskModel task) {
