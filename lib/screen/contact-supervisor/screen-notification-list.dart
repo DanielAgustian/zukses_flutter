@@ -59,8 +59,7 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
         child: BlocBuilder<NotifAllBloc, NotifAllState>(
           builder: (context, state) {
             if (state is NotifAllStateSuccessLoad) {
-              return 
-              ListView.builder(
+              return ListView.builder(
                   itemCount: state.models.length,
                   itemBuilder: (context, index) {
                     return NotificationBox(
@@ -133,6 +132,8 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
           MaterialPageRoute(
               builder: (context) => ScreenTab(
                     projectId: model.slugId.toString(),
+                    gotoProject: true,
+                    task: model.id,
                   )));
     } else if (text == "today meeting") {
       Navigator.push(
@@ -140,6 +141,7 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
           MaterialPageRoute(
               builder: (context) => ScreenTab(
                     gotoMeeting: true,
+                    meetingId: model.slugId.toString(),
                   )));
     } else if (text == "meeting request") {
       Navigator.push(

@@ -167,33 +167,37 @@ class _CameraInstructionScreen extends State<CameraInstruction> {
     setState(() {
       waiting = false;
     });
-    final pickedFile = await picker.getImage(
-        preferredCameraDevice: CameraDevice.front,
-        source: ImageSource.camera,
-        imageQuality: imageQualityCamera,
-        maxHeight: maxHeight,
-        maxWidth: maxWidth);
-    if (pickedFile != null) {
-      setState(() {
-        String data = pickedFile.path;
-        
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PreviewCamera(
-                      path: data,
-                    )));
-      });
-    } else {
-      setState(() {
-        waiting = true;
-      });
+    try {
+      final pickedFile = await picker.pickImage(
+          preferredCameraDevice: CameraDevice.front,
+          source: ImageSource.camera,
+          imageQuality: imageQualityCamera,
+          maxHeight: maxHeight,
+          maxWidth: maxWidth);
+      if (pickedFile != null) {
+        setState(() {
+          String data = pickedFile.path;
+
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PreviewCamera(
+                        path: data,
+                      )));
+        });
+      } else {
+        setState(() {
+          waiting = true;
+        });
+      }
+    } on Exception catch (e) {
+      print(e);
     }
   }
 
   void changeSharedPreferences(value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool("instruction", value);
-      print("instruction changed to " + value.toString());
+    await prefs.setBool("instruction", value);
+    print("instruction changed to " + value.toString());
   }
 }

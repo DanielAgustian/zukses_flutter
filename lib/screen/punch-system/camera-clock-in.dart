@@ -213,18 +213,22 @@ class _PreviewCameraScreen extends State<PreviewCamera> {
   }
 
   void retakeButton() async {
-    final pickedFile = await picker.getImage(
-        preferredCameraDevice: CameraDevice.front,
-        source: ImageSource.camera,
-        imageQuality: imageQualityCamera,
-        maxHeight: maxHeight,
-        maxWidth: maxWidth);
+    try {
+      final pickedFile = await picker.pickImage(
+          preferredCameraDevice: CameraDevice.front,
+          source: ImageSource.camera,
+          imageQuality: imageQualityCamera,
+          maxHeight: maxHeight,
+          maxWidth: maxWidth);
+          
+      String newImage = pickedFile.path;
 
-    String newImage = pickedFile.path;
-
-    setState(() {
-      _image = File(newImage);
-    });
+      setState(() {
+        _image = File(newImage);
+      });
+    } on Exception catch (e) {
+      print(e);
+    }
   }
 
   void getAuthData() async {

@@ -377,8 +377,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 ),
               )
             : Container(
-                width: 30,
-                height: 30,
+                width: widget.size.height < 450 ? 15 : 30,
+                height: widget.size.height < 450 ? 15 : 30,
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(50),

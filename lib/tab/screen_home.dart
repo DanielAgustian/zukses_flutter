@@ -502,7 +502,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
           return Container(
             width: size.width,
-            height: size.height * 0.35,
+            height: size.height < 569 ? 250 : 275,
             child: InkWell(
               onTap: () {
                 onClickWatch(size,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:recase/recase.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:zukses_app_1/component/task/comment-box.dart';
 import 'package:zukses_app_1/component/task/row-task.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -1301,6 +1303,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
 
   _filePicker() async {
     FilePickerResult result = await FilePicker.platform.pickFiles(
+      //allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc'],
     );
@@ -1312,7 +1315,18 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
 
   _imagePicker() async {
     //ImagePicker for gallery
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    // final listPickedFile = await picker.pickMultiImage();
+    // if (listPickedFile != null) {
+    //   for (int i = 0; i < listPickedFile.length; i++) {
+    //     setState(() {
+    //       data = listPickedFile[i].path;
+    //       print(data);
+    //       _uploadAttachment(File(data));
+    //     });
+    //   }
+    // }
 
     if (pickedFile != null) {
       setState(() {
@@ -1326,7 +1340,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   _imagePickerCamera() async {
     //ImagePicker for Camera
     final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 85);
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 85);
 
     if (pickedFile != null) {
       setState(() {
