@@ -201,6 +201,7 @@ class RowTaskUndroppable extends StatelessWidget {
   const RowTaskUndroppable(
       {Key key,
       this.title,
+      this.changeColor = 0,
       this.textItem,
       this.fontSize: 16,
       this.priority = false,
@@ -211,6 +212,7 @@ class RowTaskUndroppable extends StatelessWidget {
   final double fontSize;
   final bool needArrow;
   final bool priority;
+  final int changeColor;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -229,7 +231,7 @@ class RowTaskUndroppable extends StatelessWidget {
                 textItem,
                 style: TextStyle(
                     fontSize: fontSize,
-                    color: colorPrimary,
+                    color: colorChangeText(changeColor),
                     fontWeight: FontWeight.w700),
               ),
               priority || needArrow
@@ -254,7 +256,9 @@ class RowTaskUndroppable extends StatelessWidget {
                     )
                   : FaIcon(FontAwesomeIcons.chevronDown,
                       size: 18,
-                      color: needArrow ? colorPrimary : Colors.transparent)
+                      color: needArrow
+                          ? colorChangeText(changeColor)
+                          : Colors.transparent)
             ],
           )
         ],
@@ -271,6 +275,16 @@ class RowTaskUndroppable extends StatelessWidget {
       return colorClear;
     } else {
       return Colors.transparent;
+    }
+  }
+
+  Color colorChangeText(int change) {
+    if (change == 0) {
+      return colorPrimary;
+    } else if (change == 1) {
+      return colorSecondaryYellow;
+    } else {
+      return colorError;
     }
   }
 }

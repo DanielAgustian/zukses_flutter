@@ -19,50 +19,97 @@ class CommentBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size.width,
-      margin: EdgeInsets.only(bottom: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 35,
-                height: 35,
-                decoration:
-                    BoxDecoration(color: colorNeutral2, shape: BoxShape.circle),
-              ),
-              SizedBox(width: 5),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(user,
-                          style: TextStyle(
-                              color: colorPrimary,
-                              fontWeight: FontWeight.bold)),
-                      SizedBox(width: 20),
-                      Text(date,
-                          style: TextStyle(color: colorPrimary, fontSize: 12))
-                    ],
+    return InkWell(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        width: size.width,
+        margin: EdgeInsets.only(bottom: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                      color: colorNeutral2, shape: BoxShape.circle),
+                ),
+                SizedBox(width: 5),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(user,
+                            style: TextStyle(
+                                color: colorPrimary,
+                                fontWeight: FontWeight.bold)),
+                        SizedBox(width: 20),
+                        Text(date,
+                            style: TextStyle(color: colorPrimary, fontSize: 12))
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                        width: size.width * 0.7,
+                        child: Text(comment,
+                            style: TextStyle(color: colorPrimary))),
+                  ],
+                )
+              ],
+            ),
+            PopupMenuButton<int>(
+              onSelected: (val) {
+                switch (val) {
+                  case 1:
+                    FocusScope.of(context).unfocus();
+                    break;
+                  case 2:
+                    FocusScope.of(context).unfocus();
+                    break;
+                  default:
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Text(
+                    "Edit Comment",
+                    style: TextStyle(
+                        color: colorPrimary, fontWeight: FontWeight.w700),
                   ),
-                  SizedBox(height: 5),
-                  Container(
-                      width: size.width * 0.7,
-                      child:
-                          Text(comment, style: TextStyle(color: colorPrimary))),
-                ],
-              )
-            ],
-          ),
-          InkWell(
-              onTap: () {},
-              child: FaIcon(FontAwesomeIcons.ellipsisV, size: 16)),
-        ],
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(
+                        color: colorError, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+              child: Container(
+                height: 20,
+                width: 20,
+                decoration: BoxDecoration(
+                    color: colorBackground,
+                    borderRadius: BorderRadius.circular(5)),
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.ellipsisV,
+                    color: colorPrimary,
+                    size: 16,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

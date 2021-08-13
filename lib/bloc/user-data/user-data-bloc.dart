@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/API/user-data-services.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-event.dart';
 import 'package:zukses_app_1/bloc/user-data/user-data-state.dart';
@@ -17,7 +18,10 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
     // return user model
     var res = await _userDataService.fetchUserProfile();
     // directly throw into success load or fail load
+
     if (res is UserModel && res != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("companyID", res.companyID);
       yield UserDataStateSuccessLoad(res);
     } else {
       yield UserDataStateFailLoad();

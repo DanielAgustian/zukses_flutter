@@ -16,6 +16,7 @@ import 'package:zukses_app_1/model/comment-model.dart';
 import 'package:zukses_app_1/model/label-task-model.dart';
 import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/model/task-model.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/task/screen-add-task.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zukses_app_1/component/task/list-task-detail2.dart';
@@ -119,16 +120,35 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
       backgroundColor: colorBackground,
       automaticallyImplyLeading: false,
       centerTitle: true,
-      leading: IconButton(
-          icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
-          onPressed: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ScreenTab(
-                          index: 2,
-                        )));
-          }),
+      leading: BlocBuilder<UserDataBloc, UserDataState>(
+        builder: (context, state) {
+          UserModel user;
+          if (state is UserDataStateSuccessLoad) {
+            user = state.userModel;
+          }
+          return IconButton(
+              icon: FaIcon(FontAwesomeIcons.chevronLeft, color: colorPrimary),
+              onPressed: () {
+                if (user.companyID != null) {
+                  if (user.companyID != "") {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScreenTab(
+                                  index: 2,
+                                )));
+                  } else {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScreenTab(
+                                  index: 1,
+                                )));
+                  }
+                }
+              });
+        },
+      ),
       title: Text(
         widget.project.name,
         style: TextStyle(
@@ -471,6 +491,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                                           DateTime.parse(clickTask.date)),
                               fontSize: size.height <= 600 ? 12 : 14,
                               needArrow: true,
+                              changeColor: date != null
+                                  ? dateCalculationforLateness(date.toString())
+                                  : dateCalculationforLateness(clickTask.date),
                             ),
                           ),
                           SizedBox(
@@ -1068,12 +1091,14 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
       onSelected: (val) {
         switch (val) {
           case 1:
+            FocusScope.of(context).unfocus();
             showDialog(
                 context: context,
                 builder: (context) => _buildCupertinoEditCheckList(
                     context: context, idCheckList: idCheckList));
             break;
           case 2:
+            FocusScope.of(context).unfocus();
             BlocProvider.of<CLTBloc>(context).add(DeleteCLTEvent(idCheckList));
             break;
           default:
@@ -1602,5 +1627,19 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         });
       }
     }
+  }
+
+  int dateCalculationforLateness(String date) {
+    DateTime dateTask = DateTime.parse(date);
+    DateTime now = DateTime.now();
+    DateTime dueDate = DateTime(dateTask.year, dateTask.month, dateTask.day);
+    DateTime nowDay = DateTime(now.year, now.month, now.day);
+    int dif = dueDate.difference(nowDay).inDays;
+    if (dif > 0)
+      return 0;
+    else if (dif < 0)
+      return 2;
+    else
+      return 1;
   }
 }

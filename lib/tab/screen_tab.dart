@@ -45,6 +45,7 @@ class ScreenTab extends StatefulWidget {
   final int task;
   final bool gotoMeeting, gotoProject;
   final String meetingId;
+
   @override
   _ScreenTab createState() => _ScreenTab();
 }
@@ -52,12 +53,20 @@ class ScreenTab extends StatefulWidget {
 class _ScreenTab extends State<ScreenTab> {
   List<Widget> screenList = [];
   int _currentScreenIndex;
+  String companyId = "";
   int notifTask = 0, notifSchedule = 0;
+  bool alreadyTapped = false;
   @override
   void initState() {
     super.initState();
-    getUserProfile();
 
+    getUserProfile();
+    SharedPreferences.getInstance().then((prefValue) => {
+          setState(() {
+            companyId = prefValue.getString("companyID");
+            print("companyID " + companyId);
+          })
+        });
     //Function for Init Screen
     initializationScreen();
 
@@ -80,8 +89,8 @@ class _ScreenTab extends State<ScreenTab> {
   }
 
   Widget build(BuildContext context) {
-    UserModel user;
     return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      UserModel user;
       if (state is UserDataStateSuccessLoad) {
         user = state.userModel;
         if (user != null) {
@@ -93,6 +102,25 @@ class _ScreenTab extends State<ScreenTab> {
             }
           }
         }
+        return Stack(
+          children: [
+            BlocListener<NotifNavBloc, NotifNavState>(
+              listener: (context, state) {
+                if (state is NotifNavStateSuccess) {
+                  setState(() {
+                    notifTask = state.model.taskUnfinished;
+                    notifSchedule = state.model.meetingToday;
+                  });
+                }
+              },
+              child: Container(),
+            ),
+            Scaffold(
+                backgroundColor: colorBackground,
+                body: screenList[_currentScreenIndex],
+                bottomNavigationBar: bottomNavbar(user)),
+          ],
+        );
       }
       return Stack(
         children: [
@@ -110,10 +138,70 @@ class _ScreenTab extends State<ScreenTab> {
           Scaffold(
               backgroundColor: colorBackground,
               body: screenList[_currentScreenIndex],
-              bottomNavigationBar: bottomNavbar(user)),
+              bottomNavigationBar: bottomNavbarEmpty()),
         ],
       );
     });
+  }
+
+  Widget bottomNavbarEmpty() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      onTap: onTabTapped,
+      currentIndex:
+          _currentScreenIndex, // this will be set when a new tab is tapped
+      items: [
+        BottomNavigationBarItem(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: SvgPicture.asset(
+              'assets/images/home-icon.svg',
+              color: _currentScreenIndex == 0 ? colorPrimary : colorPrimary70,
+            ),
+          ),
+          label: 'tab_text1'.tr(),
+        ),
+        BottomNavigationBarItem(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: SvgPicture.asset(
+              'assets/images/attendance-icon.svg',
+              color: _currentScreenIndex == 1 ? colorPrimary : colorPrimary70,
+            ),
+          ),
+          label: 'tab_text2'.tr(),
+        ),
+        BottomNavigationBarItem(
+            icon: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
+                  child: FaIcon(FontAwesomeIcons.clipboardList),
+                ),
+                badgeNotification(count: notifTask)
+              ],
+            ),
+            label: 'tab_text3'.tr()),
+        BottomNavigationBarItem(
+            icon: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 10, right: 10),
+                  child: FaIcon(FontAwesomeIcons.solidCalendar),
+                ),
+                badgeNotification(count: notifSchedule)
+              ],
+            ),
+            label: 'tab_text4'.tr()),
+      ],
+      unselectedFontSize: 12,
+      selectedFontSize: 12,
+      showUnselectedLabels: true,
+      selectedItemColor: Color.fromRGBO(20, 43, 111, 0.9),
+      unselectedItemColor: colorPrimary70,
+      selectedIconTheme: IconThemeData(color: colorPrimary),
+      unselectedIconTheme: IconThemeData(color: colorPrimary70),
+    );
   }
 
   //Nav bar for full version
@@ -201,6 +289,7 @@ class _ScreenTab extends State<ScreenTab> {
 
   void initializationScreen() {
     screenList.add(HomeScreen());
+
     screenList.add(AttendanceScreen());
     if (widget.projectId != null) {
       if (widget.task != null) {
@@ -229,15 +318,31 @@ class _ScreenTab extends State<ScreenTab> {
     } else {
       _currentScreenIndex = 0;
     }
-
     if (widget.gotoMeeting != null) {
       if (widget.gotoMeeting) {
-        _currentScreenIndex = screenList.length - 1;
+        if (companyId != null) {
+          if (companyId == "") {
+            _currentScreenIndex = 2;
+          } else {
+            _currentScreenIndex = 3;
+          }
+        }
+
+        print("Current Screen Index" + _currentScreenIndex.toString());
       }
     }
     if (widget.gotoProject != null) {
       if (widget.gotoProject) {
-        _currentScreenIndex = screenList.length - 2;
+        if (companyId != null) {
+          if (companyId == "") {
+            _currentScreenIndex = 1;
+          } else {
+            _currentScreenIndex = 2;
+          }
+        }
+
+        print("Current Screen Index" + _currentScreenIndex.toString());
+        print("ScreenList.length" + screenList.length.toString());
       }
     }
   }
@@ -288,6 +393,7 @@ class _ScreenTab extends State<ScreenTab> {
 
   void onTabTapped(int index) {
     setState(() {
+      alreadyTapped = true;
       _currentScreenIndex = index;
     });
   }

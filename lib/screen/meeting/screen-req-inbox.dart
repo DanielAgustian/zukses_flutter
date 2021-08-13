@@ -35,7 +35,7 @@ class _RequestInboxState extends State<RequestInbox>
   void initState() {
     super.initState();
     BlocProvider.of<MeetingReqBloc>(context).add(LoadAllMeetingReqEvent());
-    BlocProvider.of<MeetingBloc>(context).add(GetRejectedMeetingEvent());
+    BlocProvider.of<MeetingRejBloc>(context).add(LoadAllMeetingRejEvent());
     tabController = TabController(length: 2, vsync: this);
     if (widget.animate != null) {
       tabController.animateTo(1);
@@ -89,64 +89,17 @@ class _RequestInboxState extends State<RequestInbox>
             color: colorPrimary,
           ),
           onPressed: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => (ScreenTab(index: 3))));
+            Navigator.pop(context);
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (BuildContext context) => (ScreenTab(index: 3))));
           },
         ),
       ),
       body: Stack(
         children: [
-          BlocListener<MeetingReqBloc, MeetingReqState>(
-            listener: (context, state) {
-              if (state is MeetingReqStateSuccessLoad) {
-                setState(() {
-                  loadingData = false;
-                  requestSchedule[0] = state.schedule.length;
-                });
-              } else if (state is MeetingReqStateLoading) {
-                setState(() {
-                  loadingData = true;
-                });
-              } else if (state is MeetingReqStateFailLoad) {
-                setState(() {
-                  loadingData = false;
-                  requestSchedule[0] = 0;
-                });
-              }
-            },
-            child: Container(),
-          ),
-          BlocListener<MeetingBloc, MeetingState>(
-            listener: (context, state) {
-              if (state is MeetingStateSuccessLoad) {
-                setState(() {
-                  loadingData = false;
-
-                  requestSchedule[1] = state.meetings.length;
-                });
-              } else if (state is MeetingStateSuccess) {
-                setState(() {
-                  loadingData = true;
-                });
-                BlocProvider.of<MeetingReqBloc>(context)
-                    .add(LoadAllMeetingReqEvent());
-                BlocProvider.of<MeetingBloc>(context)
-                    .add(GetRejectedMeetingEvent());
-              } else if (state is MeetingStateLoading) {
-                setState(() {
-                  loadingData = true;
-                });
-              } else if (state is MeetingStateFailLoad) {
-                setState(() {
-                  loadingData = false;
-                  requestSchedule[1] = 0;
-                });
-              }
-            },
-            child: Container(),
-          ),
+          MultiBlocListener(listeners: listeners(), child: Container()),
           DefaultTabController(
             length: 2,
             child: Scaffold(
@@ -210,6 +163,67 @@ class _RequestInboxState extends State<RequestInbox>
       ),
     );
   }
+
+  //===============Listeners======================//
+  List<BlocListener> listeners() => [
+        BlocListener<MeetingReqBloc, MeetingReqState>(
+          listener: (context, state) {
+            if (state is MeetingReqStateSuccessLoad) {
+              setState(() {
+                loadingData = false;
+                requestSchedule[0] = state.schedule.length;
+              });
+            } else if (state is MeetingReqStateLoading) {
+              setState(() {
+                loadingData = true;
+              });
+            } else if (state is MeetingReqStateFailLoad) {
+              setState(() {
+                loadingData = false;
+                requestSchedule[0] = 0;
+              });
+            }
+          },
+        ),
+        BlocListener<MeetingBloc, MeetingState>(
+          listener: (context, state) {
+            if (state is MeetingStateSuccess) {
+              setState(() {
+                loadingData = true;
+              });
+              BlocProvider.of<MeetingReqBloc>(context)
+                  .add(LoadAllMeetingReqEvent());
+              BlocProvider.of<MeetingRejBloc>(context)
+                  .add(LoadAllMeetingRejEvent());
+            } else if (state is MeetingStateLoading) {
+              setState(() {
+                loadingData = true;
+              });
+            } else if (state is MeetingStateFailLoad) {
+              setState(() {
+                loadingData = false;
+                //requestSchedule[1] = 0;
+              });
+            }
+          },
+        ),
+        BlocListener<MeetingRejBloc, MeetingRejState>(
+          listener: (context, state) {
+            if (state is MeetingRejStateSuccessLoad) {
+              setState(() {
+                loadingData = false;
+
+                requestSchedule[1] = state.meetings.length;
+              });
+            } else if (state is MeetingRejStateFailLoad) {
+              setState(() {
+                loadingData = false;
+                requestSchedule[1] = 0;
+              });
+            }
+          },
+        ),
+      ];
 
   //-----------------Widget for Tab Waiting------------------------//
 
@@ -524,8 +538,9 @@ class _RequestInboxState extends State<RequestInbox>
 
   //-------------Widget for Rejected Meeting REquest --------------//
   Widget requestReject(BuildContext context, Size size) {
-    return BlocBuilder<MeetingBloc, MeetingState>(builder: (context, state) {
-      if (state is MeetingStateSuccessLoad) {
+    return BlocBuilder<MeetingRejBloc, MeetingRejState>(
+        builder: (context, state) {
+      if (state is MeetingRejStateSuccessLoad) {
         int panjang = state.meetings.length;
         return panjang >= 1
             ? Stack(

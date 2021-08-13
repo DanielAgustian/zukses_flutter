@@ -274,6 +274,9 @@
     "schedule_text14": "Alasan", 
     "schedule_text15": "Tidak ada permintaan agenda", 
     "schedule_text16": "Tidak ada agenda yang ditolak", 
+    "schedule_text17": "Waktu mulai sudah lewat. Silihkan pilih waktu lain. ",
+    "schedule_text18": "Waktu berakhir sudah lewat. Silahkan pilih waktu lain",
+    "schedule_text19": "Waktu berakhir lebih awal dibanding waktu mulai. Silahkan pilih waktu lain.",
 
     "task_text1": "Daftar Proyek", 
     "task_text2": "Tambahkan Proyek", 
@@ -390,5 +393,6 @@
 
     "notif_list_1": "Daftar Notifikasi",
     "notif_list_2": "Tidak Ada Notifikasi",
-    "notif_list_3": "Tidak ada notifikasi sekarang. Silakan kembali nanti."
+    "notif_list_3": "Tidak ada notifikasi sekarang. Silakan kembali nanti.",
+    "notif_list_4": "TANDAI DIBACA"
 }

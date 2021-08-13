@@ -31,7 +31,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
   bool _titleValidator = false;
   bool _descriptionValidator = false;
   bool _timeValidator = false;
-
+  bool _timeStartLateValidator = false;
+  bool _timeEndLateValidator = false;
   // Search controlerr
   TextEditingController textSearch = new TextEditingController();
   String searchQuery = "";
@@ -223,9 +224,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         body: BlocListener<MeetingBloc, MeetingState>(
           listener: (context, state) {
             if (state is MeetingStateSuccess) {
-              
               Navigator.pop(context, true);
-              
             } else if (state is MeetingStateFail) {
               setState(() {
                 loadingAdd = false;
@@ -352,7 +351,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                   decoration: BoxDecoration(
                                       color: colorBackground,
                                       border: Border.all(
-                                          color: _timeValidator
+                                          color: _timeValidator ||
+                                                  _timeStartLateValidator
                                               ? colorError
                                               : colorBackground)),
                                   child: AddScheduleRow(
@@ -376,7 +376,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                   decoration: BoxDecoration(
                                       color: colorBackground,
                                       border: Border.all(
-                                          color: _timeValidator
+                                          color: _timeValidator ||
+                                                  _timeEndLateValidator
                                               ? colorError
                                               : colorBackground)),
                                   child: AddScheduleRow(
@@ -397,6 +398,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                                   });
                                 },
                               ),
+                              textError(size),
                               SizedBox(
                                 height: 20,
                               ),
@@ -520,6 +522,45 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
         }
         return Container();
       },
+    );
+  }
+
+  Widget textError(Size size) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _timeStartLateValidator || _timeEndLateValidator
+            ? SizedBox(height: 10)
+            : Container(),
+        _timeValidator
+            ? Text(
+                "schedule_text19".tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: colorError, fontSize: 11),
+              )
+            : Container(),
+        (_timeStartLateValidator || _timeEndLateValidator) && _timeValidator
+            ? SizedBox(height: 5)
+            : Container(),
+        _timeStartLateValidator
+            ? Text(
+                "schedule_text17".tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: colorError, fontSize: 11),
+              )
+            : Container(),
+        _timeStartLateValidator && _timeEndLateValidator
+            ? SizedBox(height: 5)
+            : Container(),
+        _timeEndLateValidator
+            ? Text(
+                "schedule_text18".tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: colorError, fontSize: 11),
+              )
+            : Container(),
+      ],
     );
   }
 
@@ -795,17 +836,27 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       });
     }
 
+    setState(() {
+      startMeeting =
+          DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
+      endMeeting =
+          DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+      _timeStartLateValidator = dateCalculationforLateness(startMeeting);
+      _timeEndLateValidator = dateCalculationforLateness(endMeeting);
+    });
+
     // print("dateValidator = " + _dateStartEndValidator.toString());
-    if (!_descriptionValidator && !_titleValidator && !_timeValidator) {
+    if (!_descriptionValidator &&
+        !_titleValidator &&
+        !_timeValidator &&
+        !_timeStartLateValidator &&
+        !_timeEndLateValidator) {
       // print(repeat);
       setState(() {
         loadingAdd = true;
       });
       String temp = repeat.replaceAll(" ", "");
-      startMeeting =
-          DateTime(date.year, date.month, date.day, time1.hour, time1.minute);
-      endMeeting =
-          DateTime(date.year, date.month, date.day, time2.hour, time2.minute);
+
       ScheduleModel meeting = ScheduleModel(
           title: textTitle.text,
           description: textDescription.text,
@@ -818,5 +869,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
       BlocProvider.of<MeetingBloc>(context)
           .add(AddMeetingEvent(model: meeting));
     }
+  }
+
+  bool dateCalculationforLateness(DateTime dateTask) {
+    DateTime now = DateTime.now();
+
+    int dif = dateTask.difference(now).inMinutes;
+    if (dif >= 0)
+      return false;
+    else
+      return true;
   }
 }

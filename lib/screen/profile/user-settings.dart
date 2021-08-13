@@ -29,10 +29,13 @@ class _UserSettingsScreen extends State<UserSettings> {
 
   List<String> langs = ["English", "Indonesia"];
   String choosedLang;
-
+  String companyId;
+  int companyAcceptance;
   @override
   void initState() {
     super.initState();
+    companyId = widget.user.companyID;
+    companyAcceptance = widget.user.companyAcceptance;
     switchValue = widget.user.notif == 1 ? true : false;
   }
 
@@ -198,15 +201,17 @@ class _UserSettingsScreen extends State<UserSettings> {
                           ),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          gotoContactSPVList();
-                        },
-                        child: TextFormatSettings2(
-                            size: size,
-                            title: "setting_text4".tr(),
-                            detail: "setting_text5".tr()),
-                      ),
+                      companyId == "" && companyAcceptance == 0
+                          ? Container()
+                          : InkWell(
+                              onTap: () {
+                                gotoContactSPVList();
+                              },
+                              child: TextFormatSettings2(
+                                  size: size,
+                                  title: "setting_text4".tr(),
+                                  detail: "setting_text5".tr()),
+                            ),
                       InkWell(
                         onTap: () {
                           showDialog(

@@ -19,7 +19,11 @@ class NotifAllBloc extends Bloc<NotifAllEvent, NotifAllState> {
     yield NotifAllStateLoading();
     var res = await _NotifAllServicesHTTP.fetchNotifAll();
     if (res != null) {
-      yield NotifAllStateSuccessLoad(res);
+      if (res.length > 0) {
+        yield NotifAllStateSuccessLoad(res);
+      } else {
+        yield NotifAllStateFailed();
+      }
     } else {
       yield NotifAllStateFailed();
     }

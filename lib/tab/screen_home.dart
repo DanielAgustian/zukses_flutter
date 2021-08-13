@@ -27,6 +27,7 @@ import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/team-detail-model.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/contact-supervisor/screen-notification-list.dart';
 
 import 'package:zukses_app_1/screen/punch-system/camera-instruction.dart';
@@ -89,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   DateTime backbuttonpressedTime;
 
   String tokenFCM = "";
-  String companyID = "";
+  String companyIDGlobal = "";
   String type = "high";
   @override
   void initState() {
@@ -217,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   listProject(size),
                   SizedBox(
-                    height: 25,
+                    height: 10,
                   ),
                   buildTaskList(size, context),
                   buildCounterBoxMeeting(size),
@@ -260,29 +261,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenTab(
-                                gotoMeeting: true,
-                              )));
-                },
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      "home_text9".tr(args: ["Meeting"]),
-                      style: TextStyle(
-                          color: colorLink,
-                          fontSize: size.height <= 600 ? 10 : 12),
-                    ),
-                  ),
-                ))
+            linkMeeting(size)
           ]),
         ),
         SizedBox(
-          height: 15,
+          height: 17,
         ),
         Container(
             child: Row(
@@ -357,6 +340,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         Container(
           width: double.infinity,
+
           //margin: EdgeInsets.only(top: 5),
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraint) {
@@ -436,6 +420,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             },
           ),
         ),
+        SizedBox(
+          height: 10,
+        ),
         builderTaskList(size, tasks, loading, type)
       ],
     );
@@ -450,8 +437,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     bool loading = true;
     String stringTap = "home_text1".tr();
 
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
+    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
+      if (state is AuthStateSuccessLoad) {
+        setState(() {
+          companyIDGlobal = state.authUser.user.companyID;
+        });
+      }
+    }, builder: (context, state) {
       if (state is AuthStateFailLoad) {
         loading = false;
         Util().showToast(
@@ -721,8 +714,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             style: TextStyle(
                                 color: colorPrimary,
                                 letterSpacing: 0,
-                                fontSize: size.width <= 600 ? 20 : 24,
+                                fontSize: size.width <= 600 ? 22 : 26,
                                 fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 5,
                           ),
                           statusTapWidget(size)
                         ],
@@ -749,7 +745,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   padding: EdgeInsets.all(5),
                                   child: FaIcon(
                                     FontAwesomeIcons.solidBell,
-                                    size: size.height < 569 ? 18 : 25,
+                                    size: size.height < 569 ? 22 : 24,
                                     color: colorPrimary,
                                   ),
                                 ),
@@ -961,107 +957,102 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget buildMeetingList(Size size) {
     List<ScheduleModel> meetings;
     bool loading = true;
-
-    return BlocBuilder<MeetingBloc, MeetingState>(
-      builder: (context, state) {
-        if (state is MeetingStateSuccessLoad) {
-          loading = false;
-          if (state.meetings == null || state.meetings.length == 0) {
-            meetings = state.meetings;
+    UserModel user;
+    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      if (state is UserDataStateSuccessLoad) {
+        user = state.userModel;
+      }
+      return BlocBuilder<MeetingBloc, MeetingState>(
+        builder: (context, state) {
+          if (state is MeetingStateSuccessLoad) {
+            loading = false;
+            if (state.meetings == null || state.meetings.length == 0) {
+              meetings = state.meetings;
+            } else {
+              meetings = state.meetings
+                  .where((element) =>
+                      util.yearFormat(now) == util.yearFormat(element.date))
+                  .take(2)
+                  .toList();
+            }
+          } else if (state is MeetingStateLoading) {
+            loading = true;
           } else {
-            meetings = state.meetings
-                .where((element) =>
-                    util.yearFormat(now) == util.yearFormat(element.date))
-                .take(2)
-                .toList();
+            loading = false;
           }
-        } else if (state is MeetingStateLoading) {
-          loading = true;
-        } else {
-          loading = false;
-        }
-        return Column(
-          children: [
-            if (loading)
-              ...skeleton.map((item) => SkeletonLess3(
-                    size: size,
-                    row: 2,
-                    col: 1,
-                  ))
-            else
-              meetings == null || meetings.length == 0
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      width: 1, color: colorBorder))),
-                          height: 40,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Text("home_text20".tr(args: ["Meeting"]),
-                                  style: TextStyle(
-                                    color: colorPrimary,
-                                    fontSize: size.height < 569 ? 14 : 16,
-                                  )),
-                            ),
-                          )))
-                  : ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(1.0),
-                      itemCount: meetings.length,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListMeetingItem(
-                          onClick: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ScreenTab(
-                                          gotoMeeting: true,
-                                          meetingId: meetings[index].meetingID,
-                                        )));
-                          },
-                          size: size,
-                          title: meetings[index].title,
-                          detail: util.hourFormat(meetings[index].date) +
-                              " - " +
-                              util.hourFormat(meetings[index].meetingEndTime),
-                        );
-                      },
-                    ),
-            // Padding(
-            //     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            //     child: TextButton(
-            //         style: TextButton.styleFrom(
-            //             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            //             backgroundColor: colorBackground),
-            //         onPressed: () {
-            //           Navigator.pushReplacement(
-            //               context,
-            //               MaterialPageRoute(
-            //                   builder: (context) => ScreenTab(index: 3)));
-            //         },
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           children: [
-            //             Text("home_text9".tr(args: ["Meeting"]),
-            //                 style: TextStyle(
-            //                     color: colorPrimary,
-            //                     fontWeight: FontWeight.bold)),
-            //             Icon(
-            //               Icons.arrow_forward_ios,
-            //               color: colorPrimary,
-            //             )
-            //           ],
-            //         )))
-          ],
-        );
-      },
-    );
+          return Column(
+            children: [
+              if (loading)
+                ...skeleton.map((item) => SkeletonLess3(
+                      size: size,
+                      row: 2,
+                      col: 1,
+                    ))
+              else
+                meetings == null || meetings.length == 0
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        width: 1, color: colorBorder))),
+                            height: 40,
+                            child: Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: Text("home_text20".tr(args: ["Meeting"]),
+                                    style: TextStyle(
+                                      color: colorPrimary,
+                                      fontSize: size.height < 569 ? 14 : 16,
+                                    )),
+                              ),
+                            )))
+                    : ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(1.0),
+                        itemCount: meetings.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListMeetingItem(
+                            onClick: () {
+                              if (user.companyID != null) {
+                                if (user.companyID != "") {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ScreenTab(
+                                                index: 3,
+                                                meetingId:
+                                                    meetings[index].meetingID,
+                                              )));
+                                } else {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ScreenTab(
+                                                index: 2,
+                                                meetingId:
+                                                    meetings[index].meetingID,
+                                              )));
+                                }
+                              }
+                            },
+                            size: size,
+                            title: meetings[index].title,
+                            detail: util.hourFormat(meetings[index].date) +
+                                " - " +
+                                util.hourFormat(meetings[index].meetingEndTime),
+                          );
+                        },
+                      ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   Widget scrollInvitation(
@@ -1140,16 +1131,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           // handle to get company acceptance after register
 
           //This function is for employee not yet accepted.
-
-          if (authModel.maxClockIn == "false") {
-            //if they arent clockout today
-            if (authModel.attendance == "true") {
-              // if they already clock in.
-              stringTap = enumTap[1];
+          if (authModel.user.companyID == "" &&
+              authModel.user.companyAcceptance == 0) {
+            stringTap = "";
+          } else {
+            if (authModel.maxClockIn == "false") {
+              //if they arent clockout today
+              if (authModel.attendance == "true") {
+                // if they already clock in.
+                stringTap = enumTap[1];
+              }
+            } else if (authModel.maxClockIn == "true") {
+              //If they already clock out for today
+              stringTap = enumTap[2];
             }
-          } else if (authModel.maxClockIn == "true") {
-            //If they already clock out for today
-            stringTap = enumTap[2];
           }
         }
 
@@ -1164,16 +1159,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           }
 
           return Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "home_text4".tr() + " " + stringTap,
-              style: TextStyle(
-                color: colorPrimary,
-                letterSpacing: 0,
-                fontSize: size.width <= 600 ? 14 : 16,
-              ),
-            ),
-          );
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                text: TextSpan(
+                  text: "home_text4".tr(),
+                  style: TextStyle(
+                    color: colorPrimary,
+                    letterSpacing: 0,
+                    fontSize: size.width <= 600 ? 14 : 16,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: " " + stringTap,
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ));
         });
       },
     );
@@ -1196,28 +1197,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ScreenTab(
-                                gotoProject: true,
-                              )));
-                },
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      "home_text22".tr(),
-                      style: TextStyle(
-                          color: colorLink,
-                          fontSize: size.height <= 600 ? 10 : 12),
-                    ),
-                  ),
-                ))
+            linkProject(size)
           ],
         ),
-        SizedBox(height: 15),
+        SizedBox(height: 20),
         BlocBuilder<ProjectBloc, ProjectState>(builder: (context, state) {
           if (state is ProjectStateSuccessLoad) {
             int length;
@@ -1330,65 +1313,181 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget taskListItem(
       bool loading, Size size, List<TaskModel> tasks, String type) {
-    return Container(
-        decoration: BoxDecoration(color: colorBackground),
-        child: Column(
-          children: [
-            // List Builder for Task List
-            if (loading)
-              ...skeleton.map((item) => SkeletonLess3(
-                    size: size,
-                    row: 2,
-                    col: 1,
-                  ))
-            else
-              tasks == null || tasks.length == 0
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      width: 1, color: colorBorder))),
-                          height: 40,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Text("home_text20".tr(args: ["Task"]),
-                                  style: TextStyle(
-                                    color: colorPrimary,
-                                    fontSize: size.height < 569 ? 14 : 16,
-                                  )),
-                            ),
-                          )))
-                  : ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(1.0),
-                      itemCount: tasks.length,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListViewBox(
-                          onClick: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ScreenTab(
-                                          task: tasks[index].idTask,
-                                          gotoProject: true,
-                                          projectId:
-                                              tasks[index].idProject.toString(),
-                                        )));
-                          },
-                          title: tasks[index].taskName,
-                          detail: tasks[index].details,
-                          status: type,
-                          size: size,
-                        );
-                      },
-                    ),
-          ],
-        ));
+    UserModel user;
+    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      if (state is UserDataStateSuccessLoad) {
+        user = state.userModel;
+      }
+      return Container(
+          decoration: BoxDecoration(color: colorBackground),
+          child: Column(
+            children: [
+              // List Builder for Task List
+              if (loading)
+                ...skeleton.map((item) => SkeletonLess3(
+                      size: size,
+                      row: 2,
+                      col: 1,
+                    ))
+              else
+                tasks == null || tasks.length == 0
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        width: 1, color: colorBorder))),
+                            height: 40,
+                            child: Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: Text("home_text20".tr(args: ["Task"]),
+                                    style: TextStyle(
+                                      color: colorPrimary,
+                                      fontSize: size.height < 569 ? 14 : 16,
+                                    )),
+                              ),
+                            )))
+                    : ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(1.0),
+                        itemCount: tasks.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListViewBox(
+                            onClick: () {
+                              if (user.companyID != null) {
+                                if (user.companyID != "") {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ScreenTab(
+                                                task: tasks[index].idTask,
+                                                index: 2,
+                                                projectId: tasks[index]
+                                                    .idProject
+                                                    .toString(),
+                                              )));
+                                } else {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ScreenTab(
+                                                task: tasks[index].idTask,
+                                                index: 1,
+                                                projectId: tasks[index]
+                                                    .idProject
+                                                    .toString(),
+                                              )));
+                                }
+                              }
+                            },
+                            title: tasks[index].taskName,
+                            detail: tasks[index].details,
+                            status: type,
+                            size: size,
+                          );
+                        },
+                      ),
+            ],
+          ));
+    });
+  }
+
+  //Widget for Link Beside Meeting Title
+  Widget linkMeeting(Size size) {
+    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      if (state is UserDataStateSuccessLoad) {
+        return InkWell(
+            onTap: () {
+              if (state.userModel.companyID != null) {
+                if (state.userModel.companyID != "") {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(
+                                index: 3,
+                              )));
+                } else {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(
+                                index: 2,
+                              )));
+                }
+              }
+            },
+            child: Container(
+              child: Center(
+                child: Text(
+                  "home_text9".tr(args: ["Meeting"]),
+                  style: TextStyle(
+                      color: colorLink, fontSize: size.height <= 600 ? 10 : 12),
+                ),
+              ),
+            ));
+      } else {
+        return SkeletonAnimation(
+            shimmerColor: colorNeutral170,
+            child: Container(
+                decoration: BoxDecoration(
+                  color: colorSkeleton,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                width: 120,
+                height: 15));
+      }
+    });
+  }
+
+  //Widget for Link Project beside Project Title
+  Widget linkProject(Size size) {
+    return BlocBuilder<UserDataBloc, UserDataState>(builder: (context, state) {
+      if (state is UserDataStateSuccessLoad) {
+        return InkWell(
+            onTap: () {
+              if (state.userModel.companyID != null) {
+                if (state.userModel.companyID != "") {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(
+                                index: 2,
+                              )));
+                } else {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScreenTab(
+                                index: 1,
+                              )));
+                }
+              }
+            },
+            child: Container(
+              child: Center(
+                child: Text(
+                  "home_text22".tr(),
+                  style: TextStyle(
+                      color: colorLink, fontSize: size.height <= 600 ? 10 : 12),
+                ),
+              ),
+            ));
+      }
+      return SkeletonAnimation(
+          shimmerColor: colorNeutral170,
+          child: Container(
+              decoration: BoxDecoration(
+                color: colorSkeleton,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              width: 120,
+              height: 15));
+    });
   }
   //---------------------Function Logic----------------------------//
 
@@ -1627,13 +1726,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       right: 0,
       top: 0,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        padding: EdgeInsets.symmetric(horizontal: 3, vertical: 1),
         decoration: BoxDecoration(
           color: colorError,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text("$count",
-            style: TextStyle(color: colorBackground, fontSize: 10)),
+        child: Center(
+          child: Text("$count",
+              style: TextStyle(color: colorBackground, fontSize: 10)),
+        ),
       ),
     );
   }

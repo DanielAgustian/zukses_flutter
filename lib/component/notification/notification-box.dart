@@ -13,10 +13,11 @@ class NotificationBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 5),
-      width: size.width - 40,
+      width: size.width,
+      padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
       decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: colorNeutral2, width: 1)),
-          color: colorBackground),
+          color: colorBackgroundBlue),
       child: InkWell(
         onTap: onClick,
         child: Row(
@@ -24,21 +25,18 @@ class NotificationBox extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 0.15 * size.width,
-              width: 0.15 * size.width,
+              height: 50,
+              width: 50,
               margin: EdgeInsets.fromLTRB(0, 10, 15, 10),
               decoration: BoxDecoration(
                   color: colorPrimary, borderRadius: BorderRadius.circular(10)),
               child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.envelope,
-                  color: colorBackground,
-                  size: 0.1 * size.width,
-                ),
+                child: FaIcon(FontAwesomeIcons.envelope,
+                    color: colorBackground, size: 30),
               ),
             ),
             Container(
-              width: size.width * 0.7,
+              width: size.width - 120,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +60,7 @@ class NotificationBox extends StatelessWidget {
                         " at " +
                         Util().dateTimeToTimeOfDay(date),
                     style: TextStyle(
-                      color: colorNeutral2,
+                      color: colorNeutral3,
                       fontSize: size.height < 569 ? 12 : 14,
                     ),
                     textAlign: TextAlign.left,

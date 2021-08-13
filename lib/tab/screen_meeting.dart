@@ -240,7 +240,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                 month: _currentDate.month, year: _currentDate.year));
           } else if (state is MeetingStateLoading) {
             loading = true;
-          }
+          } 
         });
       },
       child: Stack(

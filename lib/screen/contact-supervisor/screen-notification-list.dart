@@ -50,12 +50,26 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
           style: TextStyle(
               color: colorPrimary,
               fontWeight: FontWeight.bold,
-              fontSize: size.height <= 600 ? 20 : 22),
+              fontSize: size.height <= 600 ? 16 : 18),
         ),
-        actions: [],
+        actions: [
+          InkWell(
+            child: Container(
+              margin: EdgeInsets.only(right: 5),
+              child: Center(
+                child: Text(
+                  "notif_list_4".tr(),
+                  style: TextStyle(
+                      color: colorPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.height <= 600 ? 9 : 10),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
         child: BlocBuilder<NotifAllBloc, NotifAllState>(
           builder: (context, state) {
             if (state is NotifAllStateSuccessLoad) {

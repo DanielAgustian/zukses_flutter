@@ -194,7 +194,7 @@ class AddScheduleRow2 extends StatelessWidget {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: SizedBox(
-                    width: 100,
+                    width: 140,
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Padding(

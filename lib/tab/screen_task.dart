@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/bloc/bloc-core.dart';
 import 'package:zukses_app_1/component/task/list-revise-project.dart';
 import 'package:zukses_app_1/constant/constant.dart';
@@ -31,13 +32,13 @@ class _TaskScreen extends State<TaskScreen> {
   int count = 4;
   int tab = 0;
   String text = "";
-
+  int projectLength = 0;
   bool isLoading = true;
-
+  String companyId = "";
   @override
   void initState() {
     super.initState();
-
+    _getSharedPrefCompany();
     BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
   }
 
@@ -58,22 +59,25 @@ class _TaskScreen extends State<TaskScreen> {
                 fontSize: size.height <= 569 ? 18 : 22,
                 color: colorPrimary),
           ),
+
           actions: [
-            IconButton(
-              padding: EdgeInsets.only(right: 20),
-              splashColor: Colors.transparent,
-              icon: FaIcon(
-                FontAwesomeIcons.plusCircle,
-                color: colorPrimary,
-                size: size.height < 570 ? 20 : 25,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddProject()),
-                );
-              },
-            ),
+            companyId == "" && projectLength >= 3
+                ? Container()
+                : IconButton(
+                    padding: EdgeInsets.only(right: 20),
+                    splashColor: Colors.transparent,
+                    icon: FaIcon(
+                      FontAwesomeIcons.plusCircle,
+                      color: colorPrimary,
+                      size: size.height < 570 ? 20 : 25,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddProject()),
+                      );
+                    },
+                  ),
           ],
         ),
         body: WillPopScope(
@@ -220,7 +224,7 @@ class _TaskScreen extends State<TaskScreen> {
             } else if (state is ProjectStateSuccessLoad) {
               setState(() {
                 isLoading = false;
-
+                projectLength = state.project.length;
                 if (widget.projectId != null) {
                   for (int i = 0; i < state.project.length; i++) {
                     if (state.project[i].id.toString() == widget.projectId) {
@@ -233,7 +237,7 @@ class _TaskScreen extends State<TaskScreen> {
                                     task: widget.task)));
                       } else {
                         print("Task  null");
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => TaskDetailScreen(
@@ -259,6 +263,13 @@ class _TaskScreen extends State<TaskScreen> {
               BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
             }
           },
+        ),
+        BlocListener<ProjectBookmarkBloc, ProjectBookmarkState>(
+          listener: (context, state) {
+            if (state is ProjectBookmarkStateSuccessLoad) {
+              BlocProvider.of<ProjectBloc>(context).add(GetAllProjectEvent());
+            }
+          },
         )
       ];
 
@@ -271,5 +282,13 @@ class _TaskScreen extends State<TaskScreen> {
                   index: 0,
                 )));
     return false;
+  }
+
+  _getSharedPrefCompany() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      companyId = prefs.getString("companyId");
+    });
+    
   }
 }

@@ -52,10 +52,10 @@ class ListViewBox extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 7,
                   ),
                   Container(
-                    width: 0.5 * size.width,
+                    width: 0.65 * size.width,
                     child: Text(
                       detail,
                       overflow: TextOverflow.ellipsis,
@@ -98,13 +98,13 @@ class ListViewBox extends StatelessWidget {
 }
 
 class ListMeetingItem extends StatelessWidget {
-  ListMeetingItem({
-    Key key,
-    this.title,
-    this.detail,
-    @required this.size,
-    @required this.onClick
-  }) : super(key: key);
+  ListMeetingItem(
+      {Key key,
+      this.title,
+      this.detail,
+      @required this.size,
+      @required this.onClick})
+      : super(key: key);
 
   final String title, detail;
   final Size size;
@@ -114,7 +114,7 @@ class ListMeetingItem extends StatelessWidget {
     return InkWell(
       onTap: onClick,
       child: Container(
-          margin: EdgeInsets.only(bottom: 10),
+          margin: EdgeInsets.only(bottom: 15),
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
           decoration: BoxDecoration(
               color: colorBackground, boxShadow: [boxShadowStandard]),
@@ -125,10 +125,12 @@ class ListMeetingItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(
+                  Container(
+                    width: 0.7 * size.width,
                     alignment: Alignment.centerLeft,
                     child: Text(
                       title,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: size.height < 569 ? 12 : 14,
                         color: colorPrimary,
@@ -136,7 +138,7 @@ class ListMeetingItem extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 7,
                   ),
                   Text(
                     detail,
@@ -148,7 +150,7 @@ class ListMeetingItem extends StatelessWidget {
               ),
               FaIcon(
                 FontAwesomeIcons.chevronRight,
-                size: size.height < 569 ? 22 : 26,
+                size: size.height < 569 ? 14 : 16,
                 color: colorPrimary,
               )
             ],
@@ -175,10 +177,12 @@ class ListProjectItem extends StatelessWidget {
     return InkWell(
       onTap: onClick,
       child: Container(
-        margin: EdgeInsets.only(bottom: 10),
-        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.only(bottom: 15),
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         decoration: BoxDecoration(
-            boxShadow: [boxShadowStandard], color: colorBackground),
+            borderRadius: BorderRadius.circular(7),
+            boxShadow: [boxShadowStandard],
+            color: colorBackground),
         child: Column(
           children: [
             Row(
@@ -200,7 +204,7 @@ class ListProjectItem extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 8,
+              height: 12,
             ),
             Align(
               alignment: Alignment.bottomLeft,
@@ -212,7 +216,7 @@ class ListProjectItem extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 15,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

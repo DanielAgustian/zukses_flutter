@@ -17,6 +17,8 @@ class MeetingStateFail extends MeetingState {}
 
 class MeetingStateFailLoad extends MeetingState {}
 
+
+
 class MeetingStateSuccessLoad extends MeetingState {
   final List<ScheduleModel> meetings;
 
