@@ -128,11 +128,10 @@ class _TaskScreen extends State<TaskScreen> {
         projects = state.project;
         bools = state.bools;
       } else if (state is ProjectStateFailLoad) {
-        emptyState(size);
+        return emptyState(size);
       }
       return projects == null || projects.length == 0
-          ? SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(), child: emptyState(size))
+          ? Container()
           : ListView.builder(
               itemCount: projects.length,
               scrollDirection: Axis.vertical,
@@ -289,6 +288,5 @@ class _TaskScreen extends State<TaskScreen> {
     setState(() {
       companyId = prefs.getString("companyId");
     });
-    
   }
 }
