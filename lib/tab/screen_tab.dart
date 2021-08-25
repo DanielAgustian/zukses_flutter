@@ -512,9 +512,7 @@ class _ScreenTab extends State<ScreenTab> {
   }
 
   void _getMeetingToday() async {
-    DateTime now = DateTime.now();
-    BlocProvider.of<MeetingBloc>(context)
-        .add(GetAcceptedMeetingEvent(month: now.month, year: now.year));
+    BlocProvider.of<MeetingTodayBloc>(context).add(LoadAllMeetingTodayEvent());
   }
 
   void _getMeetingRequest() async {

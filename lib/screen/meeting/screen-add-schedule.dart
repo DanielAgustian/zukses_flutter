@@ -211,7 +211,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen>
                   child: Text(
                     "done_text".tr(),
                     style: TextStyle(
-                        fontSize: size.height <= 569 ? 15 : 18,
+                        fontSize: size.height <= 569 ? 14 : 16,
                         color: colorPrimary,
                         fontWeight: FontWeight.bold),
                   ),

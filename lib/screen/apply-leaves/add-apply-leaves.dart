@@ -16,6 +16,7 @@ import 'package:zukses_app_1/model/leave-type-model.dart';
 import 'package:zukses_app_1/model/project-model.dart';
 import 'package:zukses_app_1/screen/apply-leaves/screen-list-leaves.dart';
 import 'package:zukses_app_1/util/util.dart';
+import 'package:zukses_app_1/util/util_string_lang.dart';
 
 class ApplyLeavesFormScreen extends StatefulWidget {
   ApplyLeavesFormScreen({Key key, this.title, this.index, this.permission});
@@ -39,7 +40,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
   bool _reasonValidator = false;
   String durationOvertime = "";
   // Dropdown menu
-
+  UtilStringLang utilString = UtilStringLang();
   LeaveTypeModel result = LeaveTypeModel();
   List<LeaveTypeModel> dataLeaveType = [];
 
@@ -99,7 +100,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
         elevation: 0,
         centerTitle: true,
         backgroundColor: colorBackground,
-        leadingWidth: 70,
+        leadingWidth: 80,
         leading: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: InkWell(
@@ -195,7 +196,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                     fontSize: size.height <= 600 ? 14 : 16,
                   ),
                 ),
-                repeat == "Multiple Day"
+                // repeat == "Multiple Day" ||
+                repeat == items[1]
                     ? InkWell(
                         onTap: () {
                           _selectDate(context, 1);
@@ -207,7 +209,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         ),
                       )
                     : Container(),
-                repeat == "Half Day"
+                // repeat == "Half Day" ||
+                repeat == items[2]
                     ? InkWell(
                         onTap: () {
                           pickTime(context, 0);
@@ -219,7 +222,8 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                         ),
                       )
                     : Container(),
-                repeat == "Half Day"
+                // repeat == "Half Day"
+                repeat == items[2]
                     ? InkWell(
                         onTap: () {
                           pickTime(context, 1);
@@ -357,7 +361,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: colorBackground,
-        leadingWidth: 70,
+        leadingWidth: 75,
         leading: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: InkWell(
@@ -371,7 +375,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                 child: Text(
                   "cancel_text".tr(),
                   style: TextStyle(
-                      fontSize: size.height <= 600 ? 15 : 18,
+                      fontSize: size.height <= 600 ? 14 : 16,
                       color: colorPrimary,
                       fontWeight: FontWeight.w500),
                 ),
@@ -398,7 +402,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
                   child: Text(
                     "done_text".tr(),
                     style: TextStyle(
-                        fontSize: size.height <= 600 ? 15 : 18,
+                        fontSize: size.height <= 600 ? 14 : 16,
                         color: colorPrimary,
                         fontWeight: FontWeight.bold),
                   ),
@@ -589,7 +593,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     if (repeat == items[0]) {
       //Duration: Single Day
       sentLeave = LeaveModel(
-          duration: repeat,
+          duration: utilString.leaveLabelDeTransform(repeat, items),
           leaveDate: Util().yearFormat(startDate),
           startTime: "",
           endTime: "",
@@ -599,7 +603,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
       //Duration: Multiple Day
       print("Date End: " + endDate.toString());
       sentLeave = LeaveModel(
-          duration: repeat,
+          duration: utilString.leaveLabelDeTransform(repeat, items),
           leaveDate: Util().yearFormat(startDate),
           startTime: "",
           endTime: "",
@@ -608,7 +612,7 @@ class _ApplyLeavesFormScreenState extends State<ApplyLeavesFormScreen> {
     } else if (repeat == items[2]) {
       //Duration : Half Day
       sentLeave = LeaveModel(
-          duration: repeat,
+          duration: utilString.leaveLabelDeTransform(repeat, items),
           leaveDate: Util().yearFormat(startDate),
           startTime: Util().changeTimeToString(startTime) + ":00",
           endTime: Util().changeTimeToString(endTime) + ":00",

@@ -42,8 +42,8 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   Stream<CommentState> mapUpdateComment(UpdateCommentEvent event) async* {
     yield CommentStateLoading();
     // return list user model
-    var res =
-        await _commentServiceHTTP.updateComment(event.comment, event.image);
+    var res = await _commentServiceHTTP.updateComment(
+        event.commentModel.id.toString(), event.comment);
     if (res != null) {
       if (res == 200) {
         yield CommentStateUpdateSuccessLoad(kode: res);

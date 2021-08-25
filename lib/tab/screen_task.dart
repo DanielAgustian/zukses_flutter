@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,23 +62,16 @@ class _TaskScreen extends State<TaskScreen> {
           ),
 
           actions: [
-            companyId == "" && projectLength >= 3
-                ? Container()
-                : IconButton(
-                    padding: EdgeInsets.only(right: 20),
-                    splashColor: Colors.transparent,
-                    icon: FaIcon(
-                      FontAwesomeIcons.plusCircle,
-                      color: colorPrimary,
-                      size: size.height < 570 ? 20 : 25,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AddProject()),
-                      );
-                    },
-                  ),
+            BlocBuilder<ProjectBloc, ProjectState>(
+              builder: (context, state) {
+                if (state is ProjectStateSuccessLoad) {
+                  print("Length Project" + state.project.length.toString());
+                  return buttonAddProject(
+                      size, state.project.length, companyId);
+                }
+                return buttonAddProject(size, projectLength, companyId);
+              },
+            ),
           ],
         ),
         body: WillPopScope(
@@ -206,6 +200,58 @@ class _TaskScreen extends State<TaskScreen> {
           ]),
     );
   }
+
+  //Widget for Dialog more than 3 & free ver.
+  Widget _buildDialogFull(BuildContext context, Size size) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "task_text35".tr(),
+      ),
+      content: new Text("task_text36").tr(),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text(
+              "yes_text".tr(),
+              style: TextStyle(fontWeight: FontWeight.bold, color: colorError),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "no_text".tr(),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ],
+    );
+  }
+
+  Widget buttonAddProject(Size size, int length, String companyID) {
+    return IconButton(
+      padding: EdgeInsets.only(right: 20),
+      splashColor: Colors.transparent,
+      icon: FaIcon(
+        FontAwesomeIcons.plusCircle,
+        color: colorPrimary,
+        size: size.height < 570 ? 20 : 25,
+      ),
+      onPressed: () {
+        if (companyId == "" && length >= 3) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  _buildDialogFull(context, size));
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddProject()),
+          );
+        }
+      },
+    );
+  }
   // --------------------------Logic-----------------------------//
 
   Future<void> refreshData() async {
@@ -283,10 +329,12 @@ class _TaskScreen extends State<TaskScreen> {
     return false;
   }
 
+  _openDialogfull() {}
   _getSharedPrefCompany() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      companyId = prefs.getString("companyId");
+      companyId = prefs.getString("companyID");
     });
+    print("Company ID = " + companyId);
   }
 }

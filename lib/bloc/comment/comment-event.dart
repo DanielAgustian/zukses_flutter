@@ -18,24 +18,25 @@ class LoadAllCommentEvent extends CommentEvent {
 
 class AddCommentEvent extends CommentEvent {
   final CommentModel comment;
- 
+
   AddCommentEvent(this.comment);
   List<Object> get props => [];
 }
 
 class UpdateCommentEvent extends CommentEvent {
-  final CommentModel comment;
-  final File image;
-  UpdateCommentEvent(this.comment, this.image);
+  final CommentModel commentModel;
+  final String comment;
+  UpdateCommentEvent(this.commentModel, this.comment);
   List<Object> get props => [];
 }
 
 class DeleteCommentEvent extends CommentEvent {
   final CommentModel comment;
-  
+
   DeleteCommentEvent(this.comment);
   List<Object> get props => [];
 }
+
 class CommentEventDidUpdated extends CommentEvent {
   final List<CommentModel> comment;
   const CommentEventDidUpdated(this.comment);

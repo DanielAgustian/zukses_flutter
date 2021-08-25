@@ -43,6 +43,7 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
                   child: FaIcon(
                 FontAwesomeIcons.chevronLeft,
                 color: colorPrimary,
+                size: 20,
               ))),
         ),
         title: Text(
@@ -54,6 +55,10 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
         ),
         actions: [
           InkWell(
+            onTap: () {
+              BlocProvider.of<NotifAllBloc>(context)
+                  .add(MarkNotifForAllEvent());
+            },
             child: Container(
               margin: EdgeInsets.only(right: 5),
               child: Center(
@@ -87,6 +92,8 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
                   });
             } else if (state is NotifAllStateFailed) {
               return emptyState(size);
+            } else if (state is MarkNotifStateSuccess) {
+              BlocProvider.of<NotifAllBloc>(context).add(GetNotifForAllEvent());
             }
             return Container(
               height: 0.6 * size.height,
@@ -133,6 +140,8 @@ class _ScreenNotificationList extends State<ScreenNotificationList> {
 
   void onClickList(NotifModel model) {
     String text = model.about.toLowerCase();
+    BlocProvider.of<NotifAllBloc>(context)
+        .add(MarkNotifForOneEvent(notifId: model.id));
     if (text == "contact supervisor") {
       Navigator.push(
           context,

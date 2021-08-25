@@ -34,6 +34,7 @@
     "min_text": "Menit", 
     "contact_us_text": "Hubungi kami !",
     "overtime_text": "Lembur", 
+    "leave_text":  "Cuti",
     "cancel_text": "Batalkan", 
     "close_text": "Tutup", 
     "done_text": "Selesai", 
@@ -56,7 +57,7 @@
     "on_board_title1": "PEMBUAT AGENDA",
     "on_board_title2": "PENGELOLA TUGAS",
     "on_board_title3": "MANAJEMEN KEHADIRAN",
-    "on_board_desc1": "Buat agenda dengan rapi dan beri tahu semua anggota tim hanya dalam satu klik.",
+    "on_board_desc1": "Buat agenda dengan rapi dan beri tahu semua anggota tim hanya dengan satu klik.",
     "on_board_desc2": "Mengelola tugas tidak pernah semudah ini. Perencanaan dan penentuan prioritas dapat dilakukan dengan mudah hanya dengan drag and drop.",
     "on_board_desc3": "Tinggalkan semua metode bertele-tele, clock-in dan clock-out adalah semua yang perlu kamu lakukan untuk mencatat kehadiranmu.", 
 
@@ -68,7 +69,7 @@
 
     "register_text1": "Silakan isi formulir ini untuk membuat akun",
     "register_text2": "ATAU", 
-    "register_text3": "Sudah punya akun ?",
+    "register_text3": "Sudah punya akun?",
     "register_text4": "Apakah anda yakin data yang dimasukan sudah benar ?", 
     "register_text5": "Email telah terpakai, coba masukan email lain",
     "register_text6": "Nama Lengkap",
@@ -187,6 +188,8 @@
     "home_text20": "Tidak ada {} hari ini.",
     "home_text21": "Memindahkan ke halaman selanjutnya . . .",
     "home_text22": "Lihat Seluruh Proyek",
+    "home_text23":"Tingkatkan akun ke premium untuk mengakses fitur ini",
+    "home_text24":"Apakah anda ingin meningkatkan akun ke premium?",
 
     "instruction_text1": "Pencahayaan yang bagus",
     "instruction_text2": "Pastikan kamu mengambil foto dengan pencahayaan yang baik",
@@ -237,6 +240,8 @@
     "setting_text5": "Kami terbuka dengan setiap saran",  
     "setting_text6": "Keluar",  
     "setting_text7": "Keluar dari akunmu",  
+    "setting_text8": "Ubah kata sandi",
+    "setting_text9": "Mengubah kata sandimu sekarang",
 
     "profile_text1": "Profil",  
     "profile_text2": "Pribadi",  
@@ -312,6 +317,9 @@
     "task_text32": " untuk menambah proyek baru", 
     "task_text33": "Belum ada proyek",
     "task_text34": "Anda tidak memiliki proyek sekarang . Silakan kembali lagi nanti.",
+    "task_text35": "Kamu telah mencapai batas jumlah proyek",
+    "task_text36": "Apakah kami ingin meningkatkan akunmu?",
+
 
     "forgot_text1": "Tolong cek email untuk mendapatkan tautan mengatur ulang password",
     "forgot_text2": "Tolong cek email anda",
@@ -394,5 +402,17 @@
     "notif_list_1": "Daftar Notifikasi",
     "notif_list_2": "Tidak Ada Notifikasi",
     "notif_list_3": "Tidak ada notifikasi sekarang. Silakan kembali nanti.",
-    "notif_list_4": "TANDAI DIBACA"
+    "notif_list_4": "TANDAI DIBACA",
+
+    "change_password_text_1": "Ubah Kata Sandi",
+    "change_password_text_2": "Kata Sandi Saat Ini",
+    "change_password_text_3": "Masukan kata sandimu saat ini",
+    "change_password_text_4": "Kata Sandi Baru",
+    "change_password_text_5": "Masukan kata sandri barumu",
+    "change_password_text_6": "Konfirmasi Password",
+    "change_password_text_7": "Konfirmasi kata sandi barumu",
+    "change_password_text_8": "Kata Sandi baru dan Kata Sandi Konfirmasi harus sama",
+    "change_password_text_9": "Password baru tidak boleh sama dengan password lama",
+    "change_password_text_10": "Apakah Anda yakin ingin mengubah kata sandi Anda? ",
+    "change_password_text_11": "Anda telah berhasil mengubah kata sandi anda!"
 }

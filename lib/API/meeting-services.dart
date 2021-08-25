@@ -332,4 +332,39 @@ class MeetingServicesHTTP {
       return null;
     }
   }
+  Future<List<ScheduleModel>> fetchAcceptedScheduleToday(
+      {int month, int year}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+   
+    try {
+      var response = await http.get(
+        Uri.https(baseURI, 'api/schedule/today'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        });
+
+    print("fetch accepted schedule ${response.statusCode}");
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var responseJson = jsonDecode(response.body);
+      return (responseJson['data'] as List)
+          .map((p) => ScheduleModel.fromJson(p))
+          .toList();
+    } else {
+      return null;
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+     // throw Exception('Failed to load album');
+    }
+    } catch (e) {
+      return null;
+    }
+    
+  }
 }

@@ -240,7 +240,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                 month: _currentDate.month, year: _currentDate.year));
           } else if (state is MeetingStateLoading) {
             loading = true;
-          } 
+          }
         });
       },
       child: Stack(
@@ -651,7 +651,8 @@ class _MeetingScreenState extends State<MeetingScreen>
     return AlertDialog(
       //title: const Text('Popup example'),
       content: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
+          builder: (BuildContext contextDialog, StateSetter setState) {
+        Size sizeDialog = MediaQuery.of(contextDialog).size;
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -712,9 +713,7 @@ class _MeetingScreenState extends State<MeetingScreen>
                       //loadBeginningData();
                     },
                   ),
-                  SizedBox(
-                    width: 15,
-                  ),
+                  SizedBox(width: 10),
                   SmallButtonOutlined(
                     bgColor: colorBackground,
                     textColor: colorPrimary,

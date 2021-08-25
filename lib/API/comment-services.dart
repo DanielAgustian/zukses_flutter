@@ -82,14 +82,14 @@ class CommentServicesHTTP {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     //Query to API
-    var res = await http.post(Uri.https(baseURI, 'api/comment/delete'),
+    var res = await http.delete(Uri.https(baseURI, 'api/comment'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         },
         body: jsonEncode(<String, dynamic>{
-          'id': comment.id,
+          'commentId': comment.id,
           //'userId': comment.user.userID,
         }));
 
@@ -107,19 +107,20 @@ class CommentServicesHTTP {
     }
   }
 
-  Future<int> updateComment(CommentModel comment, File image) async {
+  Future<int> updateComment(String commentId, String comment) async {
     //Token from Login
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     //Query to API
-    var res = await http.post(Uri.https(baseURI, 'api/comment/update'),
+    var res = await http.put(Uri.https(baseURI, 'api/comment'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
           'Authorization': 'Bearer $token'
         },
         body: jsonEncode(<String, dynamic>{
-          'content': comment.content,
+          'comment': comment,
+          'commentId': commentId
           //'userId': comment.user.userID,
         }));
 

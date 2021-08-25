@@ -134,4 +134,7 @@ class UserDataServiceHTTP {
       return msg;
     }
   }
+  Future<int> changePassword(String password, String newPassword){
+    
+  }
 }

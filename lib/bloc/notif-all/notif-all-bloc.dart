@@ -12,6 +12,10 @@ class NotifAllBloc extends Bloc<NotifAllEvent, NotifAllState> {
   Stream<NotifAllState> mapEventToState(NotifAllEvent event) async* {
     if (event is GetNotifForAllEvent) {
       yield* mapGetNotifAll(event);
+    } else if (event is MarkNotifForAllEvent) {
+      yield* mapMarkNotifAll(event);
+    } else if (event is MarkNotifForOneEvent) {
+      yield* mapMarkNotifForOne(event);
     }
   }
 
@@ -21,6 +25,34 @@ class NotifAllBloc extends Bloc<NotifAllEvent, NotifAllState> {
     if (res != null) {
       if (res.length > 0) {
         yield NotifAllStateSuccessLoad(res);
+      } else {
+        yield NotifAllStateFailed();
+      }
+    } else {
+      yield NotifAllStateFailed();
+    }
+  }
+
+  Stream<NotifAllState> mapMarkNotifAll(MarkNotifForAllEvent event) async* {
+    yield NotifAllStateLoading();
+    var res = await _NotifAllServicesHTTP.readNotifAll();
+    if (res != null) {
+      if (res >= 200 && res < 300) {
+        yield MarkNotifStateSuccess();
+      } else {
+        yield NotifAllStateFailed();
+      }
+    } else {
+      yield NotifAllStateFailed();
+    }
+  }
+
+  Stream<NotifAllState> mapMarkNotifForOne(MarkNotifForOneEvent event) async* {
+    yield NotifAllStateLoading();
+    var res = await _NotifAllServicesHTTP.readNotifOnce(event.notifId);
+    if (res != null) {
+      if (res >= 200 && res < 300) {
+        yield MarkNotifStateSuccess();
       } else {
         yield NotifAllStateFailed();
       }

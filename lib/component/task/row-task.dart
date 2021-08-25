@@ -51,7 +51,7 @@ class TaskRow extends StatelessWidget {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: SizedBox(
-                    width: 100,
+                    width: 130,
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Row(
@@ -136,7 +136,7 @@ class TaskRow2 extends StatelessWidget {
                   children: [
                     SizedBox(width: 10),
                     SizedBox(
-                      width: 100,
+                      width: 130,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Row(
@@ -187,9 +187,10 @@ class TaskRow2 extends StatelessWidget {
   }
 
   Color colorChange(String priority) {
-    if (priority.toLowerCase() == "high") {
+    String string = priority.toLowerCase();
+    if (string == "high" || string == "tinggi") {
       return colorError;
-    } else if (priority.toLowerCase() == "medium") {
+    } else if (string == "medium" || string == "menengah") {
       return colorSecondaryYellow;
     } else {
       return colorClear;
@@ -438,11 +439,12 @@ class RowTaskAddPriority extends StatelessWidget {
   }
 
   Color colorChange(String priority) {
-    if (priority.toLowerCase() == "high") {
+    String string = priority.toLowerCase();
+    if (string == "high" || string == "tinggi") {
       return colorError;
-    } else if (priority.toLowerCase() == "medium") {
+    } else if (string == "medium" || string == "menengah") {
       return colorSecondaryYellow;
-    } else if (priority.toLowerCase() == "low") {
+    } else if (string == "low" || string == "rendah") {
       return colorClear;
     } else {
       return Colors.transparent;

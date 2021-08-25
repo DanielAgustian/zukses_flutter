@@ -9,7 +9,7 @@ class SmallButtonOutlined extends StatelessWidget {
       this.bgColor,
       this.borderColor,
       this.textColor,
-      this.size = 100,
+      this.size = 120,
       this.loading = false})
       : super(key: key);
 
@@ -24,6 +24,7 @@ class SmallButtonOutlined extends StatelessWidget {
     return InkWell(
       onTap: onClick,
       child: AnimatedContainer(
+        
         width: loading ? 70 : size,
         duration: Duration(milliseconds: 700),
         curve: Curves.fastOutSlowIn,

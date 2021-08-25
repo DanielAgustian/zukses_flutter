@@ -444,6 +444,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
     });
 
     if (errorInvEmail == false) {
+      listEmail.clear();
       for (int i = 0; i <= jumlahTextEditing; i++) {
         listEmail.add(textEmail[i].text);
       }
@@ -455,9 +456,24 @@ class _SetupTeamScreen extends State<SetupTeam> {
                 child: Column(
                   children: [
                     Text("Team Name: " + widget.namaTeam),
+                    Container(
+                      height: 110,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: listEmail.length,
+                          itemBuilder: (context, index) {
+                            int data = index + 1;
+
+                            return Text("Email " +
+                                data.toString() +
+                                ":" +
+                                listEmail[index]);
+                          }),
+                    ),
                   ],
                 ),
               )));
+      print("Result " + result.toString());
       if (result) {
         BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
             namaTeam: widget.namaTeam,

@@ -12,6 +12,7 @@ import 'package:zukses_app_1/constant/constant.dart';
 import 'package:zukses_app_1/main.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/screen/contact-supervisor/screen-contact-supervisor-inbox.dart';
+import 'package:zukses_app_1/screen/profile/change-password-form.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 class UserSettings extends StatefulWidget {
@@ -200,6 +201,19 @@ class _UserSettingsScreen extends State<UserSettings> {
                             ],
                           ),
                         ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChangePasswordForm()));
+                        },
+                        child: TextFormatSettings2(
+                            //onClick: toLogOut(),
+                            size: size,
+                            title: "setting_text8".tr(),
+                            detail: "setting_text9".tr()),
                       ),
                       companyId == "" && companyAcceptance == 0
                           ? Container()

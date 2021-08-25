@@ -77,7 +77,9 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                 },
               ),
             ),
-            title: widget.permission == "leaves" ? "Leaves" : "Overtime",
+            title: widget.permission == "leaves"
+                ? "leave_text".tr()
+                : "overtime_text".tr(),
             actionList: [
               Padding(
                 padding: const EdgeInsets.only(top: 4),

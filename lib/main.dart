@@ -173,7 +173,8 @@ class MyApp extends StatelessWidget {
             create: (context) => TaskPriorityLowBloc()),
         BlocProvider<TaskPriorityMedBloc>(
             create: (context) => TaskPriorityMedBloc()),
-        BlocProvider<MeetingRejBloc>(create: (context) => MeetingRejBloc())
+        BlocProvider<MeetingRejBloc>(create: (context) => MeetingRejBloc()),
+        BlocProvider<MeetingTodayBloc>(create: (context) => MeetingTodayBloc()),
       ],
       child: MaterialApp(
         localizationsDelegates: context.localizationDelegates,

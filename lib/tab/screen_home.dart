@@ -271,12 +271,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            BlocBuilder<MeetingBloc, MeetingState>(
+            BlocBuilder<MeetingTodayBloc, MeetingTodayState>(
               builder: (context, state) {
-                if (state is MeetingStateSuccessLoad) {
+                if (state is MeetingTodayStateSuccessLoad) {
                   meetLoading = false;
-                  meetCounter = state.meetings.length;
-                } else if (state is MeetingStateLoading) {
+                  meetCounter = state.schedule.length;
+                } else if (state is MeetingTodayStateLoading) {
                   meetLoading = true;
                 } else {
                   meetLoading = false;
@@ -954,6 +954,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildUpgradeAccount(BuildContext context, Size size) {
+    return new CupertinoAlertDialog(
+      title: new Text(
+        "home_text23".tr(),
+      ),
+      content: new Text("home_text24").tr(),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            child: Text("no_text".tr(), style: TextStyle(color: colorError)),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        CupertinoDialogAction(
+            child: Text(
+              "yes_text".tr(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ],
+    );
+  }
+
+  //Widget for Meeting LIst
   Widget buildMeetingList(Size size) {
     List<ScheduleModel> meetings;
     bool loading = true;
@@ -962,20 +987,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       if (state is UserDataStateSuccessLoad) {
         user = state.userModel;
       }
-      return BlocBuilder<MeetingBloc, MeetingState>(
+      return BlocBuilder<MeetingTodayBloc, MeetingTodayState>(
         builder: (context, state) {
-          if (state is MeetingStateSuccessLoad) {
+          if (state is MeetingTodayStateSuccessLoad) {
             loading = false;
-            if (state.meetings == null || state.meetings.length == 0) {
-              meetings = state.meetings;
+            if (state.schedule == null || state.schedule.length == 0) {
+              meetings = state.schedule;
             } else {
-              meetings = state.meetings
+              meetings = state.schedule
                   .where((element) =>
                       util.yearFormat(now) == util.yearFormat(element.date))
                   .take(2)
                   .toList();
             }
-          } else if (state is MeetingStateLoading) {
+          } else if (state is MeetingTodayStateLoading) {
             loading = true;
           } else {
             loading = false;
@@ -1594,8 +1619,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _getMeetingToday() async {
-    BlocProvider.of<MeetingBloc>(context)
-        .add(GetAcceptedMeetingEvent(month: now.month, year: now.year));
+    BlocProvider.of<MeetingTodayBloc>(context).add(LoadAllMeetingTodayEvent());
   }
 
   void _getMeetingRequest() async {
@@ -1644,32 +1668,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       {@required int companyAcceptance,
       @required AuthModel authModel,
       @required CompanyModel company}) {
-    if (companyAcceptance == 1) {
-      if (authModel.maxClockIn != null && authModel.attendance != null) {
-        if (authModel.maxClockIn == "false") {
-          if (authModel.attendance == "false") {
-            if (instruction == true) {
-              Navigator.push(
+    if (authModel.user.companyID == "") {
+      //For Free Version Open Dialog.
+      showDialog(
+          context: context,
+          builder: (context) => _buildUpgradeAccount(context, size));
+    } else {
+      if (companyAcceptance == 1) {
+        if (authModel.maxClockIn != null && authModel.attendance != null) {
+          if (authModel.maxClockIn == "false") {
+            if (authModel.attendance == "false") {
+              if (instruction == true) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CameraNonInstruction()));
+              } else {
+                Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => CameraNonInstruction()));
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CameraInstruction()),
-              );
-            }
-          } else if (authModel.attendance == "true") {
-            //Clock Out
-            int diff = timeCalculation(company.endOfficeTime);
-            //if employee clock out before office closing time
-            if (diff < 0) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      _buildClockOutNotFinished(context, size));
-            } else {
-              clockOut();
+                  MaterialPageRoute(builder: (context) => CameraInstruction()),
+                );
+              }
+            } else if (authModel.attendance == "true") {
+              //Clock Out
+              int diff = timeCalculation(company.endOfficeTime);
+              //if employee clock out before office closing time
+              if (diff < 0) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildClockOutNotFinished(context, size));
+              } else {
+                clockOut();
+              }
             }
           }
         }

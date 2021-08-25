@@ -8,6 +8,7 @@ const colorPrimary50 = Color(0xFF8A95B7);
 const colorPrimary30 = Color(0xFFB9C0D4);
 
 const colorBackgroundBlue = Color.fromRGBO(141, 165, 235, 0.1);
+const colorBackgroundRed = Color(0xFFFCF4F6);
 
 const colorPrimaryGradient1 = Color(0xFF00224D);
 const colorPrimaryGradient2 = Color(0xFF002F5F);

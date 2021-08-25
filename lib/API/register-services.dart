@@ -103,7 +103,7 @@ class RegisterServicesHTTP {
       },
       body: jsonEncode(map),
     );
-    // print(response.body);
+    print(response.body);
     print("Register team ${response.statusCode}");
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return response.statusCode;

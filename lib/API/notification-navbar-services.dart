@@ -48,13 +48,70 @@ class NotifNavServiceHTTP {
       });
 
       print("Notif All label ${res.statusCode}");
-
+      print(res.body);
       if (res.statusCode >= 200 && res.statusCode < 300) {
         var responseJson = jsonDecode(res.body);
 
         return (responseJson['getNotif'] as List)
             .map((p) => NotifModel.fromJson(p))
             .toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error : $e");
+      return null;
+    }
+  }
+
+  Future<int> readNotifOnce(int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    try {
+      var res = await http.post(
+        Uri.https(baseURI, 'api/read-notif'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'notif_id': id,
+        }),
+      );
+
+      print("Read Notif once ${res.statusCode}");
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return res.statusCode;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error : $e");
+      return null;
+    }
+  }
+
+  Future<int> readNotifAll() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+
+    try {
+      var res = await http.post(
+        Uri.https(baseURI, 'api/read-all-notif'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      print("Read Notif All ${res.statusCode}");
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return res.statusCode;
       } else {
         return null;
       }

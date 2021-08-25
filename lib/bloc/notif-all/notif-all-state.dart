@@ -9,10 +9,8 @@ abstract class NotifAllState extends Equatable {
 
 class NotifAllStateFailed extends NotifAllState {}
 
-class NotifAllStateSuccess extends NotifAllState {
-  
-
-  NotifAllStateSuccess();
+class MarkNotifStateSuccess extends NotifAllState {
+  MarkNotifStateSuccess();
   List<Object> get props => [];
 
   @override
@@ -20,6 +18,7 @@ class NotifAllStateSuccess extends NotifAllState {
     return 'Data : { employee List: }';
   }
 }
+
 class NotifAllStateSuccessLoad extends NotifAllState {
   final List<NotifModel> models;
 
@@ -31,4 +30,5 @@ class NotifAllStateSuccessLoad extends NotifAllState {
     return 'Data : { employee List: $models }';
   }
 }
+
 class NotifAllStateLoading extends NotifAllState {}

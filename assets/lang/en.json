@@ -34,6 +34,7 @@
     "min_text": "Min", 
     "contact_us_text": "Contact us !",
     "overtime_text": "Overtime", 
+    "leave_text": "Leave",
     "cancel_text": "Cancel", 
     "close_text": "Close", 
     "done_text": "Done", 
@@ -187,7 +188,8 @@
     "home_text20": "No {} Today.",
     "home_text21": "Directing to next page . . .",
     "home_text22": "Show All Project",
-    
+    "home_text23":"Upgrade to premium to access this feature",
+    "home_text24":"Do you want to upgrade your account?",
 
     "instruction_text1": "Good lighting",
     "instruction_text2": "Make sure you take the photo with good lighting",
@@ -238,6 +240,8 @@
     "setting_text5": "We are pleased with your suggestions",  
     "setting_text6": "Log out",  
     "setting_text7": "log out from your account",  
+    "setting_text8": "Change Password",
+    "setting_text9": "Change your current password",
 
     "profile_text1": "Profile",  
     "profile_text2": "Personal", 
@@ -313,6 +317,8 @@
     "task_text32": " to add a new project", 
     "task_text33": "No Project Yet",
     "task_text34": "You don’t have project right now. Please come back again later.",
+    "task_text35":"You have reached the maximum limit",
+    "task_text36":"Do you want to upgrade your account?",
 
     "forgot_text1": "Please check your email and click the given link to reset password",
     "forgot_text2": "Check your email", 
@@ -395,5 +401,17 @@
     "notif_list_1": "Notification List",
     "notif_list_2": "No Notification Yet",
     "notif_list_3": "You have no notification right now. Please come back again later.",
-    "notif_list_4": "MARK ALL READ"
+    "notif_list_4": "MARK ALL READ",
+
+    "change_password_text_1": "Change Password",
+    "change_password_text_2":"Current Password",
+    "change_password_text_3":"Enter your current password",
+    "change_password_text_4":"New Password",
+    "change_password_text_5":"Enter your new password",
+    "change_password_text_6":"Confirm Password",
+    "change_password_text_7":"Confirm your new password",
+    "change_password_text_8": "Password and Confirm Password must be match",
+    "change_password_text_9":"Your new password can not be the same as your current password",
+    "change_password_text_10":"Are you sure you wanted to change your password?",
+    "change_password_text_11": "You have successfully changed your password!"
 }

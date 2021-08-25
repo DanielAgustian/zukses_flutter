@@ -24,6 +24,7 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:zukses_app_1/util/util_string_lang.dart';
 
 // ignore: must_be_immutable
 class TaskDetailScreen extends StatefulWidget {
@@ -64,7 +65,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
   List<String> labelList = [];
   String chooseLabel = "";
   //var label = "";
-
+  UtilStringLang utilP = UtilStringLang();
   //=======================================================//
 
   bool historyClick = true;
@@ -532,11 +533,12 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                           TaskRow2(
                             items: priorityList,
                             title: "task_text12".tr(),
-                            textItem: priority,
+                            textItem: utilP.priorityTransformation(
+                                priority, priorityList),
                             fontSize: size.height <= 600 ? 12 : 14,
                             onSelectedItem: (val) {
                               setState(() {
-                                priority = val;
+                                priority = utilP.priorityDeTransformation(val);
                               });
                             },
                           ),
@@ -975,7 +977,9 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
       builder: (context, state) {
         if (state is CommentStateGetSuccessLoad) {
           comments = state.comment;
-        } else if (state is CommentStateAddSuccessLoad) {
+        } else if (state is CommentStateAddSuccessLoad ||
+            state is CommentStateUpdateSuccessLoad ||
+            state is CommentStateDeleteSuccessLoad) {
           BlocProvider.of<CommentBloc>(context)
               .add(LoadAllCommentEvent(clickTask.idTask.toString()));
         } else if (state is CommentStateLoading) {
@@ -998,6 +1002,7 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return CommentBox(
+                      commentModel: comments[index],
                       size: size,
                       comment: comments[index].content,
                       user: comments[index].nameUser,
@@ -1024,47 +1029,6 @@ class _TaskDetailScreen extends State<TaskDetailScreen>
         },
         size: size,
         textEditController: textAddCheckBox);
-
-    // Container(
-    //   width: 0.5 * size.width,
-    //   decoration: BoxDecoration(
-    //     boxShadow: [boxShadowStandard],
-    //     color: colorBackground,
-    //     border: Border.all(width: 1, color: colorPrimary),
-    //   ),
-    //   child: TextField(
-    //     style: TextStyle(fontSize: 16, height: 1.0),
-    //     textInputAction: TextInputAction.next,
-    //     onChanged: (val) {},
-    //     controller: textAddCheckBox,
-    //     decoration: InputDecoration(
-    //         isDense: true,
-    //         contentPadding: EdgeInsets.only(top: 15, left: 10),
-    //         hintText: "task_text17".tr(),
-    //         hintStyle: TextStyle(
-    //           color: colorNeutral1,
-    //         ),
-    //         enabledBorder: InputBorder.none,
-    //         focusedBorder: InputBorder.none,
-    //         suffixIcon: TextButton(
-    //             child: Text(
-    //               "Post",
-    //               style: TextStyle(
-    //                   color: colorPrimary,
-    //                   fontSize: size.height < 569 ? 14 : 16,
-    //                   fontWeight: FontWeight.bold),
-    //             ),
-    //             onPressed: () {
-    //               if (textAddCheckBox.text != "") {
-    //                 BlocProvider.of<CLTBloc>(context).add(
-    //                     AddCLTEvent(taskId.toString(), textAddCheckBox.text));
-    //                 setState(() {
-    //                   textAddCheckBox.text = "";
-    //                 });
-    //               }
-    //             })),
-    //   ),
-    // );
   }
 
   //TO make alertdialog for picture preview

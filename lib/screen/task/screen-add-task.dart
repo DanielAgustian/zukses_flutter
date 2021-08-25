@@ -20,6 +20,7 @@ import 'package:zukses_app_1/model/task-model.dart';
 import 'package:zukses_app_1/model/user-model.dart';
 import 'package:zukses_app_1/util/util.dart';
 import 'package:recase/recase.dart';
+import 'package:zukses_app_1/util/util_string_lang.dart';
 
 class AddTaskScreen extends StatefulWidget {
   AddTaskScreen({Key key, this.title, this.projectId}) : super(key: key);
@@ -66,7 +67,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
   final textNewLabel = TextEditingController();
   final textSearch = TextEditingController();
   Util util = Util();
-
+  UtilStringLang utilP = UtilStringLang();
   bool _titleValidator = false;
   bool _descValidation = false;
   bool _assignToValidator = false;
@@ -251,7 +252,6 @@ class _AddTaskScreen extends State<AddTaskScreen>
                       waitingLabel = false;
                     });
                   } else if (state is LabelTaskStateFailLoad) {
-                   
                     labelList.clear();
                     labelList.add("Click Here for Label");
                     labelList.add("+ New Label");
@@ -429,106 +429,17 @@ class _AddTaskScreen extends State<AddTaskScreen>
               SizedBox(
                 height: 10,
               ),
+              // To Select Date and Time
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      FocusScopeNode currentFocus = FocusScope.of(context);
-                      if (!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                      }
-                      _selectDate(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
-                      width: size.height < 600
-                          ? size.width * 0.4
-                          : size.width * 0.45,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: _dateValidator
-                                  ? colorError
-                                  : Colors.transparent),
-                          color: colorBackground,
-                          boxShadow: [boxShadowStandard],
-                          borderRadius: BorderRadius.circular(5)),
-                      child: IgnorePointer(
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: textDueDate,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {},
-                          decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                icon: FaIcon(FontAwesomeIcons.chevronDown,
-                                    color: colorPrimary),
-                                onPressed: () {
-                                  _selectDate(context);
-                                },
-                              ),
-                              hintText: "task_text23".tr(),
-                              hintStyle: TextStyle(),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
-                      ),
-                    ),
-                  ),
+                  selectDateWidget(size),
                   SizedBox(
                     width: 10,
                   ),
-                  InkWell(
-                    onTap: () {
-                      FocusScopeNode currentFocus = FocusScope.of(context);
-                      if (!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                      }
-                      _selectTime();
-                    },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      width: size.width * 0.40,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: _timeValidator
-                                  ? colorError
-                                  : Colors.transparent),
-                          color: colorBackground,
-                          boxShadow: [boxShadowStandard],
-                          borderRadius: BorderRadius.circular(5)),
-                      child: IgnorePointer(
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: textTime,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {},
-                          decoration: InputDecoration(
-                              prefixIcon: IconButton(
-                                icon: FaIcon(FontAwesomeIcons.clock,
-                                    color: colorPrimary),
-                                onPressed: () {
-                                  FocusScopeNode currentFocus =
-                                      FocusScope.of(context);
-                                  if (!currentFocus.hasPrimaryFocus) {
-                                    currentFocus.unfocus();
-                                  }
-                                  _selectTime();
-                                },
-                              ),
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20, 15, 20, 0),
-                              hintText: "task_text24".tr(),
-                              hintStyle: TextStyle(),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none),
-                        ),
-                      ),
-                    ),
-                  ),
+                  //Select date and tme
+                  selectTimeWidget(size),
                 ],
               ),
               SizedBox(
@@ -906,6 +817,98 @@ class _AddTaskScreen extends State<AddTaskScreen>
     );
   }
 
+  //Widget for select date
+  Widget selectDateWidget(Size size) {
+    return InkWell(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+        _selectDate(context);
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
+        width: size.height < 600 ? size.width * 0.4 : size.width * 0.45,
+        decoration: BoxDecoration(
+            border: Border.all(
+                color: _dateValidator ? colorError : Colors.transparent),
+            color: colorBackground,
+            boxShadow: [boxShadowStandard],
+            borderRadius: BorderRadius.circular(5)),
+        child: IgnorePointer(
+          child: TextFormField(
+            readOnly: true,
+            controller: textDueDate,
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.text,
+            onChanged: (val) {},
+            decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon:
+                      FaIcon(FontAwesomeIcons.chevronDown, color: colorPrimary),
+                  onPressed: () {
+                    _selectDate(context);
+                  },
+                ),
+                hintText: "task_text23".tr(),
+                hintStyle: TextStyle(),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none),
+          ),
+        ),
+      ),
+    );
+  }
+
+  //Widget for select Time
+  Widget selectTimeWidget(Size size) {
+    return InkWell(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+        _selectTime();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        width: size.width * 0.40,
+        decoration: BoxDecoration(
+            border: Border.all(
+                color: _timeValidator ? colorError : Colors.transparent),
+            color: colorBackground,
+            boxShadow: [boxShadowStandard],
+            borderRadius: BorderRadius.circular(5)),
+        child: IgnorePointer(
+          child: TextFormField(
+            readOnly: true,
+            controller: textTime,
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.text,
+            onChanged: (val) {},
+            decoration: InputDecoration(
+                prefixIcon: IconButton(
+                  icon: FaIcon(FontAwesomeIcons.clock, color: colorPrimary),
+                  onPressed: () {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
+                    }
+                    _selectTime();
+                  },
+                ),
+                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 0),
+                hintText: "task_text24".tr(),
+                hintStyle: TextStyle(),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none),
+          ),
+        ),
+      ),
+    );
+  }
+
   //==========================Function Logic ============================//
   Future<void> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -1083,7 +1086,7 @@ class _AddTaskScreen extends State<AddTaskScreen>
           details: textDescription.text,
           assignee: hasilMultiple,
           date: datePush.toString(),
-          priority: textItem,
+          priority: utilP.priorityDeTransformation(textItem),
           notes: textNotes.text,
           label: idLabel.toString(),
         );
