@@ -134,7 +134,38 @@ class UserDataServiceHTTP {
       return msg;
     }
   }
-  Future<int> changePassword(String password, String newPassword){
-    
+
+  Future<String> changePassword(
+      String password, String newPassword, String passwordConfirmation) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    var res = await http.post(Uri.https(baseURI, 'api/change-password'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Charset': 'utf-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          "old_password": password,
+          "password": newPassword,
+          "password_confirmation": passwordConfirmation
+        }));
+
+    print("change Password status " + res.statusCode.toString());
+    print(res.body);
+
+    String msg = "";
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var jsonResult = jsonDecode(res.body);
+
+      msg = jsonResult["Status"];
+      return msg;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return msg;
+    }
   }
 }

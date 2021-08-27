@@ -41,10 +41,10 @@ class AddRegisterGoogle extends RegisterEvent {
 
 class AddRegisterTeamEvent extends RegisterEvent {
   final String link;
-  final List<String> email;
+
   final String namaTeam;
   final String token;
-  AddRegisterTeamEvent({this.namaTeam, this.token, this.link, this.email});
+  AddRegisterTeamEvent({this.namaTeam, this.token, this.link});
   List<Object> get props => [namaTeam, token];
 }
 

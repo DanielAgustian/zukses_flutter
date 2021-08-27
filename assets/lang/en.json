@@ -411,7 +411,8 @@
     "change_password_text_6":"Confirm Password",
     "change_password_text_7":"Confirm your new password",
     "change_password_text_8": "Password and Confirm Password must be match",
-    "change_password_text_9":"Your new password can not be the same as your current password",
-    "change_password_text_10":"Are you sure you wanted to change your password?",
-    "change_password_text_11": "You have successfully changed your password!"
+    "change_password_text_9": "Your new password can not be the same as your current password",
+    "change_password_text_10": "Are you sure you wanted to change your password?",
+    "change_password_text_11": "You have successfully changed your password!",
+    "change_password_text_12": "Current Password is wrong. Please try again."
 }

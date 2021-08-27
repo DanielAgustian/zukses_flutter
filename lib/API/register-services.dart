@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 
 import 'package:zukses_app_1/model/register-model.dart';
+import 'package:zukses_app_1/model/team-detail-model.dart';
+import 'package:zukses_app_1/model/team-model.dart';
 
 class RegisterServicesHTTP {
   final baseURI = "api-zukses.yokesen.com";
@@ -80,8 +82,8 @@ class RegisterServicesHTTP {
     }
   }
 
-  Future<int> createRegisterTeam(
-      String token, String namaTeam, String link, List<String> email) async {
+  Future<TeamDetailModel> createRegisterTeam(
+      String token, String namaTeam, String link) async {
     /*String dynamicLink =
         await Util().createDynamicLink(short: false, page: "registerteam");
     print(dynamicLink);*/
@@ -90,9 +92,9 @@ class RegisterServicesHTTP {
       'invitationLink': link,
     };
 
-    for (int i = 0; i < email.length; i++) {
-      map['email${i + 1}'] = email[i];
-    }
+    // for (int i = 0; i < email.length; i++) {
+    //   map['email${i + 1}'] = email[i];
+    // }
     // print(map);
     final response = await http.post(
       Uri.https(baseURI, '/api/team'),
@@ -103,10 +105,12 @@ class RegisterServicesHTTP {
       },
       body: jsonEncode(map),
     );
-    print(response.body);
+    //print(response.body);
     print("Register team ${response.statusCode}");
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response.statusCode;
+      var jsonResult = jsonDecode(response.body);
+      TeamDetailModel team = TeamDetailModel.fromJson(jsonResult["data"]);
+      return team;
     } else {
       return null;
     }

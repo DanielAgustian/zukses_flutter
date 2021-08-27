@@ -414,5 +414,6 @@
     "change_password_text_8": "Kata Sandi baru dan Kata Sandi Konfirmasi harus sama",
     "change_password_text_9": "Password baru tidak boleh sama dengan password lama",
     "change_password_text_10": "Apakah Anda yakin ingin mengubah kata sandi Anda? ",
-    "change_password_text_11": "Anda telah berhasil mengubah kata sandi anda!"
+    "change_password_text_11": "Anda telah berhasil mengubah kata sandi anda!",
+    "change_password_text_12": "Kata sandi salah. Silahkan coba lagi."
 }

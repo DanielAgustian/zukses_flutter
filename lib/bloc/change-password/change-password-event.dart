@@ -7,7 +7,8 @@ abstract class ChangePasswordEvent extends Equatable {
 }
 
 class ChangePasswordPostEvent extends ChangePasswordEvent {
-  final String password, newPassword;
-  ChangePasswordPostEvent({this.password, this.newPassword});
+  final String password, newPassword, passwordConfirm;
+  ChangePasswordPostEvent(
+      {this.password, this.newPassword, this.passwordConfirm});
   List<Object> get props => [];
 }

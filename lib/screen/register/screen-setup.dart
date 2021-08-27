@@ -98,10 +98,13 @@ class _SetupRegisterScreen extends State<SetupRegister> {
                               color: colorError,
                               msg: "Register Company Failed");
                         } else if (state is RegisterStateTeamSuccess) {
+                          String link = state.team.invitationLink;
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SetupTeam()));
+                                  builder: (context) => SetupTeam(
+                                        link: link,
+                                      )));
                         }
                       },
                       child: Container(),
@@ -534,15 +537,19 @@ class _SetupRegisterScreen extends State<SetupRegister> {
 
   _registerTeam() async {
     String data = await _makeLink();
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SetupTeam(
-                  link: data,
-                  namaTeam: textTeamName.text,
-                  token: widget.token,
-                )));
+    BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+      namaTeam: textTeamName.text,
+      token: widget.token,
+      link: data,
+    ));
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => SetupTeam(
+    //               link: data,
+    //               namaTeam: textTeamName.text,
+    //               token: widget.token,
+    //             )));
   }
 
   _catchPopPricing() async {

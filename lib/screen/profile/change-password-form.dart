@@ -1,9 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zukses_app_1/bloc/bloc-core.dart';
+import 'package:zukses_app_1/bloc/change-password/change-password-bloc.dart';
 import 'package:zukses_app_1/component/button/button-long.dart';
 import 'package:zukses_app_1/constant/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:zukses_app_1/util/util.dart';
 
 class ChangePasswordForm extends StatefulWidget {
   ChangePasswordForm();
@@ -23,6 +30,72 @@ class _ChangePasswordForm extends State<ChangePasswordForm> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    return Stack(
+      children: [scaffoldForm(size, context), blocConsumer(size)],
+    );
+  }
+
+  Widget blocConsumer(Size size) {
+    return BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
+      builder: (context, state) {
+        if (state is ChangePasswordStateLoading) {
+          return loadingChangePassword(size);
+        }
+        return Container();
+      },
+      listener: (context, state) {
+        if (state is ChangePasswordStateSuccess) {
+          setState(() {
+            _passwordCurrentValidator = true;
+          });
+          _loginSharedPref();
+          showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      _buildPopupSuccess(context))
+              .then((value) => Navigator.pop(context));
+        } else if (state is ChangePasswordStateFailedDiffPass) {
+          Util().showToast(
+              duration: 3,
+              context: context,
+              msg: "change_password_text_12".tr(),
+              color: colorError,
+              txtColor: Colors.white);
+        }
+      },
+    );
+  }
+
+  Widget loadingChangePassword(Size size) {
+    return BackdropFilter(
+      filter: new ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+      child: Container(
+        width: size.width,
+        height: size.height,
+        color: Colors.white.withOpacity(0),
+        child: Column(
+          children: [
+            SizedBox(height: 200),
+            CircularProgressIndicator(
+              backgroundColor: colorPrimary70,
+              valueColor: AlwaysStoppedAnimation(colorBackground),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Add meeting . .".tr(),
+              style: TextStyle(
+                  color: colorPrimary,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget scaffoldForm(Size size, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorBackground,
@@ -51,6 +124,9 @@ class _ChangePasswordForm extends State<ChangePasswordForm> {
               horizontal: paddingHorizontal, vertical: paddingVertical),
           child: Column(
             children: [
+              //---------------------------Listener------------------
+
+              //----------------------------------------------------
               SizedBox(
                 height: 15,
               ),
@@ -307,11 +383,11 @@ class _ChangePasswordForm extends State<ChangePasswordForm> {
             child: Text("yes_text".tr()),
             onPressed: () {
               Navigator.pop(context);
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => _buildPopupSuccess(
-                        context,
-                      ));
+              BlocProvider.of<ChangePasswordBloc>(context).add(
+                  ChangePasswordPostEvent(
+                      password: textPasswordController.text,
+                      newPassword: textNewPassController.text,
+                      passwordConfirm: textConfirmController.text));
             })
       ],
     );
@@ -326,8 +402,14 @@ class _ChangePasswordForm extends State<ChangePasswordForm> {
             child: Text("OK"),
             onPressed: () {
               Navigator.pop(context);
+              Navigator.pop(context);
             })
       ],
     );
+  }
+
+  _loginSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("passLogin", textNewPassController.text);
   }
 }

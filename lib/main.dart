@@ -25,6 +25,8 @@ import 'package:zukses_app_1/tab/screen_tab.dart';
 import 'package:zukses_app_1/test_ios.dart';
 import 'package:zukses_app_1/util/util.dart';
 
+import 'bloc/change-password/change-password-bloc.dart';
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -174,7 +176,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<TaskPriorityMedBloc>(
             create: (context) => TaskPriorityMedBloc()),
         BlocProvider<MeetingRejBloc>(create: (context) => MeetingRejBloc()),
-        BlocProvider<MeetingTodayBloc>(create: (context) => MeetingTodayBloc()),
+        BlocProvider<MeetingTodayBloc>(create: (context) => MeetingTodayBloc(),
+        ),
+        BlocProvider<ChangePasswordBloc>(create: (context) => ChangePasswordBloc(),
+        ),
       ],
       child: MaterialApp(
         localizationsDelegates: context.localizationDelegates,

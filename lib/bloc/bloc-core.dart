@@ -32,6 +32,10 @@ export 'company-profile/company-bloc.dart';
 export 'company-profile/company-event.dart';
 export 'company-profile/company-state.dart';
 
+export 'change-password/change-password-state.dart';
+export 'change-password/change-password-event.dart';
+export 'change-password/change-password-state.dart';
+
 export 'employee/employee-bloc.dart';
 export 'employee/employee-event.dart';
 export 'employee/employee-state.dart';
@@ -67,7 +71,6 @@ export 'list-contact-spv/list-csv-state.dart';
 export 'meeting/meeting-bloc.dart';
 export 'meeting/meeting-event.dart';
 export 'meeting/meeting-state.dart';
-
 
 export 'meeting-rejected/meeting-rej-bloc.dart';
 export 'meeting-rejected/meeting-rej-event.dart';
@@ -125,7 +128,6 @@ export 'task-priority/task-priority-bloc.dart';
 export 'task-priority/task-priority-event.dart';
 export 'task-priority/task-priority-state.dart';
 
-
 export 'task-priority-low/task-priority-low-bloc.dart';
 export 'task-priority-low/task-priority-low-event.dart';
 export 'task-priority-low/task-priority-low-state.dart';
@@ -149,4 +151,3 @@ export 'upload-attachment/upload-attachment-state.dart';
 export 'user-data/user-data-bloc.dart';
 export 'user-data/user-data-event.dart';
 export 'user-data/user-data-state.dart';
-

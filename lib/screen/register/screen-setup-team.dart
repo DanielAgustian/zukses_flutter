@@ -11,12 +11,11 @@ import 'package:clipboard/clipboard.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class SetupTeam extends StatefulWidget {
-  SetupTeam({Key key, this.title, this.link, this.token, this.namaTeam})
-      : super(key: key);
+  SetupTeam({Key key, this.title, this.link}) : super(key: key);
   final String title;
   final String link;
-  final String token;
-  final String namaTeam;
+  // final String token;
+  // final String namaTeam;
   @override
   _SetupTeamScreen createState() => _SetupTeamScreen();
 }
@@ -34,12 +33,13 @@ class _SetupTeamScreen extends State<SetupTeam> {
   @override
   void initState() {
     super.initState();
-    getLinkTeam();
+
     data = widget.link;
+    getLinkTeam();
     for (int i = 0; i < 4; i++) {
       textEmail.add(TextEditingController());
     }
-    textLink.text = widget.link;
+    print("Data: " + data);
   }
 
   @override
@@ -397,16 +397,16 @@ class _SetupTeamScreen extends State<SetupTeam> {
             wData: Container(
               child: Column(
                 children: [
-                  Text("Team Name: " + widget.namaTeam),
+                  // Text("Team Name: " + widget.namaTeam),
                 ],
               ),
             )));
     if (result) {
-      BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-          namaTeam: widget.namaTeam,
-          token: widget.token,
-          link: widget.link,
-          email: listData));
+      // BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+      //     namaTeam: widget.namaTeam,
+      //     token: widget.token,
+      //     link: widget.link,
+      //     email: listData));
     }
   }
 
@@ -455,7 +455,7 @@ class _SetupTeamScreen extends State<SetupTeam> {
               wData: Container(
                 child: Column(
                   children: [
-                    Text("Team Name: " + widget.namaTeam),
+                    // Text("Team Name: " + widget.namaTeam),
                     Container(
                       height: 110,
                       child: ListView.builder(
@@ -475,11 +475,11 @@ class _SetupTeamScreen extends State<SetupTeam> {
               )));
       print("Result " + result.toString());
       if (result) {
-        BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
-            namaTeam: widget.namaTeam,
-            token: widget.token,
-            link: widget.link,
-            email: listEmail));
+        // BlocProvider.of<RegisterBloc>(context).add(AddRegisterTeamEvent(
+        //     namaTeam: widget.namaTeam,
+        //     token: widget.token,
+        //     link: widget.link,
+        //     email: listEmail));
       }
     }
   }

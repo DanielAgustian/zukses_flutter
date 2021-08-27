@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:zukses_app_1/model/auth-model.dart';
 
 import 'package:zukses_app_1/model/schedule-model.dart';
+import 'package:zukses_app_1/model/team-detail-model.dart';
+import 'package:zukses_app_1/model/team-model.dart';
 
 abstract class RegisterState extends Equatable {
   const RegisterState();
@@ -65,13 +67,13 @@ class RegisterStateCompanySuccess extends RegisterState {
 class RegisterStateCompanyFailed extends RegisterState {}
 
 class RegisterStateTeamSuccess extends RegisterState {
-  final int status;
+  final TeamDetailModel team;
 
-  RegisterStateTeamSuccess(this.status);
-  List<Object> get props => [status];
+  RegisterStateTeamSuccess(this.team);
+  List<Object> get props => [team];
    @override
   String toString() {
-    return 'Data : { Register Company Status: $status }';
+    return 'Data : { Register Team Success Status: $team }';
   }
 }
 

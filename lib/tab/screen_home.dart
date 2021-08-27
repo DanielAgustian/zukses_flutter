@@ -1144,14 +1144,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     String stringTap = enumTap[0];
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
-        if (state is AuthStateFailLoad) {
-          Util().showToast(
-              context: context,
-              msg: "Authentication Failed!",
-              duration: 3,
-              color: colorError,
-              txtColor: colorBackground);
-        } else if (state is AuthStateSuccessLoad) {
+        if (state is AuthStateSuccessLoad) {
           authModel = state.authUser;
           // handle to get company acceptance after register
 
