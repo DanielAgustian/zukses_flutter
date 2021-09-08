@@ -1234,6 +1234,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
+                int percent = state.project[index].percentage;
+                int totalTask = state.project[index].totalTask;
                 return ListProjectItem(
                     onClick: () {
                       Navigator.push(
@@ -1245,8 +1247,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     },
                     title: state.project[index].name,
                     lastWorked: DateTime.now(),
-                    status: "In Progress",
-                    percentage: 0.45,
+                    status: percentToStatus(percent, totalTask),
+                    percentage: state.project[index].percentage / 100,
                     size: size);
               },
             );
@@ -1761,5 +1763,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  String percentToStatus(int data, int totalTask) {
+    if (data >= 100 || totalTask > 0) {
+      return "Completed";
+    } else if (data == 0 || totalTask < 1) {
+      return "To Do";
+    } else {
+      return "In Progress";
+    }
   }
 }

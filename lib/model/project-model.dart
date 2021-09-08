@@ -3,11 +3,13 @@ class ProjectModel {
   String name, details, imgUrl;
   int totalTask;
   int bookmark;
+  int percentage;
   ProjectModel(
       {this.id,
       this.name,
       this.details,
       this.imgUrl,
+      this.percentage,
       this.totalTask,
       this.bookmark});
 
@@ -18,5 +20,6 @@ class ProjectModel {
     this.imgUrl = map["image"];
     this.totalTask = map["totalTask"];
     this.bookmark = map["bookmark"];
+    this.percentage = map["percentage"];
   }
 }

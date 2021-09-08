@@ -106,7 +106,7 @@ class CheckListTaskService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     print(checkListName);
-    var res = await http.put(Uri.https(baseURI, 'api/checklist'),
+    var res = await http.put(Uri.https(baseURI, 'api/checklist/edit'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Charset': 'utf-8',
