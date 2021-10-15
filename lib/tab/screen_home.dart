@@ -39,6 +39,7 @@ import 'package:zukses_app_1/screen/profile/user-profile.dart';
 import 'package:zukses_app_1/screen/register/screen-regis-approved.dart';
 import 'package:zukses_app_1/screen/task/screen-task-detail.dart';
 import 'package:zukses_app_1/tab/screen_tab.dart';
+import 'package:zukses_app_1/util/UtilWidget.dart';
 import 'package:zukses_app_1/util/util.dart';
 
 /*
@@ -437,15 +438,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     bool loading = true;
     String stringTap = "home_text1".tr();
 
-    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
-      if (state is AuthStateSuccessLoad) {
-        setState(() {
-          companyIDGlobal = state.authUser.user.companyID;
-        });
-      }
-    }, builder: (context, state) {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
       if (state is AuthStateFailLoad) {
+        //IF AUTH STATE FAILED
         loading = false;
         Util().showToast(
             context: context,
@@ -474,7 +470,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           //If they already clock out for today
           stringTap = enumTap[2];
         }
-        // doneLoading();
       } else if (state is AuthStateSuccessTeamLoad) {
         loading = false;
         _controller.reverse();
@@ -489,75 +484,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             stringTap = enumTap[1];
           } else if (state is AttendanceStateSuccessClockOut) {
             //if they already clock out
+
             stringTap = enumTap[2];
             authModel.maxClockIn = "true";
           }
-
-          return Container(
-            width: size.width,
-            height: size.height < 569 ? 250 : 275,
-            child: InkWell(
-              onTap: () {
-                onClickWatch(size,
-                    company: company,
-                    companyAcceptance: companyAcceptance,
-                    authModel: authModel);
-              },
-              child: Center(
-                child: Container(
-                  width: size.height < 569 ? 190 : 215,
-                  height: size.height < 569 ? 190 : 215,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color.fromRGBO(20, 43, 114, 0.05),
-                  ),
-                  child: Center(
-                    child: Container(
-                        width: size.height < 569 ? 140 : 165,
-                        height: size.height < 569 ? 140 : 165,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colorPrimary,
-                        ),
-                        child: Center(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              TimerBuilder.periodic(Duration(seconds: 1),
-                                  builder: (context) {
-                                return Text(
-                                  getSystemTime(),
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      letterSpacing: 1.5,
-                                      fontSize: size.height < 600 ? 32 : 36,
-                                      fontWeight: FontWeight.bold),
-                                );
-                              }),
-                              SizedBox(
-                                height: size.height < 569 ? 7 : 10,
-                              ),
-                              Center(
-                                child: Text(
-                                  util.dateToCalendarDayName(DateTime.now()),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      color: colorBackground,
-                                      fontSize: size.height < 600 ? 14 : 16),
-                                ),
-                              )
-                            ]))),
-                  ),
-                ),
-              ),
-            ),
-          );
+          return clockWidget(size, company, companyAcceptance, authModel);
         },
+        //Only for Pop up clock out
         listener: (context, state) {
           if (state is AttendanceStateFailed) {
             Util().showToast(
                 context: this.context,
-                msg: "Something Wrong !",
+                msg: "Something Wrong in Attendance Bloc!",
                 color: colorError,
                 txtColor: colorBackground);
           } else if (state is AttendanceStateSuccessClockOut) {
@@ -1509,6 +1447,70 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               height: 15));
     });
   }
+
+  Widget clockWidget(Size size, CompanyModel company, int companyAcceptance,
+      AuthModel authModel) {
+    return Container(
+      width: size.width,
+      height: size.height < 569 ? 250 : 275,
+      child: InkWell(
+        onTap: () {
+          onClickWatch(size,
+              company: company,
+              companyAcceptance: companyAcceptance,
+              authModel: authModel);
+        },
+        child: Center(
+          child: Container(
+            width: size.height < 569 ? 190 : 215,
+            height: size.height < 569 ? 190 : 215,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color.fromRGBO(20, 43, 114, 0.05),
+            ),
+            child: Center(
+              child: Container(
+                  width: size.height < 569 ? 140 : 165,
+                  height: size.height < 569 ? 140 : 165,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colorPrimary,
+                  ),
+                  child: Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                        TimerBuilder.periodic(Duration(seconds: 1),
+                            builder: (context) {
+                          return Text(
+                            getSystemTime(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 1.5,
+                                fontSize: size.height < 600 ? 32 : 36,
+                                fontWeight: FontWeight.bold),
+                          );
+                        }),
+                        SizedBox(
+                          height: size.height < 569 ? 7 : 10,
+                        ),
+                        Center(
+                          child: Text(
+                            util.dateToCalendarDayName(DateTime.now()),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: colorBackground,
+                                fontSize: size.height < 600 ? 14 : 16),
+                          ),
+                        )
+                      ]))),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   //---------------------Function Logic----------------------------//
 
   Future<void> refreshData() async {
@@ -1663,16 +1665,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       {@required int companyAcceptance,
       @required AuthModel authModel,
       @required CompanyModel company}) {
-    if (authModel.user.companyID == "") {
+    if (authModel.user.companyID == "" || authModel.user.companyID == null) {
       //For Free Version Open Dialog.
+      util.showToast(
+          context: context,
+          msg: "User not registered to company",
+          duration: 3,
+          color: colorError,
+          txtColor: Colors.white);
       showDialog(
           context: context,
           builder: (context) => _buildUpgradeAccount(context, size));
     } else {
       if (companyAcceptance == 1) {
-        if (authModel.maxClockIn != null && authModel.attendance != null) {
-          if (authModel.maxClockIn == "false") {
-            if (authModel.attendance == "false") {
+        if (authModel.maxClockIn != "" && authModel.attendance != "") {
+          if (authModel.maxClockIn.toLowerCase() == "false") {
+            if (authModel.attendance.toLowerCase() == "false") {
               if (instruction == true) {
                 Navigator.push(
                     context,
@@ -1684,8 +1692,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   MaterialPageRoute(builder: (context) => CameraInstruction()),
                 );
               }
-            } else if (authModel.attendance == "true") {
+            } else if (authModel.attendance.toLowerCase() == "true") {
               //Clock Out
+
               int diff = timeCalculation(company.endOfficeTime);
               //if employee clock out before office closing time
               if (diff < 0) {
@@ -1696,10 +1705,45 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               } else {
                 clockOut();
               }
-            }
+            } 
+            // else {
+            //   util.showToast(
+            //       context: context,
+            //       msg: "Attendance Data Error",
+            //       duration: 3,
+            //       color: colorError,
+            //       txtColor: Colors.white);
+            // }
           }
-        }
-      }
+          //  else {
+          //   util.showToast(
+          //       context: context,
+          //       msg: "Already Clock Out",
+          //       duration: 3,
+          //       color: colorError,
+          //       txtColor: Colors.white);
+          // }
+        } 
+        // else {
+        //   util.showToast(
+        //       context: context,
+        //       msg: "Null Problem. AuthModel.maxClockIn: " +
+        //           authModel.maxClockIn +
+        //           "\nAuthModel.attendance: " +
+        //           authModel.attendance,
+        //       duration: 3,
+        //       color: colorError,
+        //       txtColor: Colors.white);
+        // }
+      } 
+      // else {
+      //   util.showToast(
+      //       context: context,
+      //       msg: "Company Acceptance Problem " + companyAcceptance.toString(),
+      //       duration: 3,
+      //       color: colorError,
+      //       txtColor: Colors.white);
+      // }
     }
   }
 
