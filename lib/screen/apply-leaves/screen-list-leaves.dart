@@ -186,9 +186,7 @@ class _ScreenListLeaves extends State<ScreenListLeaves>
                             child: Container(
                               child: Stack(
                                 children: [
-                                  Center(
-                                    child: Text("accepted_text").tr(),
-                                  ),
+                                  
                                   positionedDot(
                                       context, size, permissionTotal[0])
                                 ],
